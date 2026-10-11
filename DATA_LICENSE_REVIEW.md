@@ -1,6 +1,6 @@
 # CT data provenance and license review
 
-**Status: one modified teaching slice is integrated. Source terms and volume geometry were inspected; third-party rights and independent anatomical review remain required before external release.**
+**Status: the viewer supports a generated 113-slice axial stack from the source volume. This adds slice navigation, not higher in-plane resolution or multiplanar reconstruction. Source terms, third-party rights and independent anatomical review remain release gates.**
 
 ## Source and files
 
@@ -26,17 +26,17 @@ The MRML scene names Data/I.nrrd as the CT background and Data/seg.nrrd as the s
 
 atlasStructure.json provides 94 Structure entries with authoritative LabelMapSelector data keys. The browser catalogue maps the nine structures visible on the selected slice to their authoritative segment IDs. The lossless label-ID PNG stores an ID as R + 256 × G.
 
-The first in-app example is axial slice k=26 (zero-based), 256 × 256 pixels. The grayscale display window and pixel row order are transformed for screen display; the label map receives the exact same row flip. The palette follows the atlas's segment colors. The matching CT/labelmap overlay preview was visually inspected: major regions for liver, spleen, kidneys, aorta, IVC, pancreas, stomach/duodenum and gallbladder appear aligned on this candidate slice.
+The first in-app position defaults to axial slice k=26 (zero-based) of a 113-slice volume. Every exported slice is 256 × 256 pixels. The grayscale display window and pixel row order are transformed for screen display; each corresponding labelmap receives the exact same row flip. The palette follows the atlas's segment colors. The matching CT/labelmap overlay preview for k=26 was visually inspected: major regions for liver, spleen, kidneys, aorta, IVC, pancreas, stomach/duodenum and gallbladder appear aligned on this candidate slice.
 
-This is a **single-slice teaching preview**, not a volumetric viewer. Header geometry plus a visual contact-sheet check is not a substitute for an independent radiologist/anatomy educator review. Do not claim clinical validation. The source archives remain unmodified.
+The browser viewer can navigate the 113 axial slices, but it is **not yet a full multiplanar CT viewer**: coronal/sagittal MPR and adjustable raw-voxel window/level are not implemented. The source in-plane matrix is 256 × 256 (about 0.94 mm spacing in-plane) with 1.5 mm spacing between slices. Do not treat larger on-screen display dimensions as higher source resolution. Header geometry plus a visual contact-sheet check is not a substitute for an independent radiologist/anatomy educator review. Do not claim clinical validation. The source archives remain unmodified.
 
-To inspect/regenerate assets:
+To inspect/regenerate the volume assets:
 
 ~~~bash
 python3 scripts/inspect_archives.py
 python3 scripts/read_atlas_metadata.py
 python3 -m pip install numpy pillow
-python3 scripts/build_demo_assets.py --output build/ct-demo-slice
+python3 scripts/build_demo_assets.py --output build/ct-demo-volume
 ~~~
 
 ## License and attribution
@@ -55,7 +55,9 @@ The in-app notice attributes the SPL Abdominal Atlas and describes the web-displ
 
 ## Before broader release
 
-- Obtain independent review of left/right display, orientation, overlay alignment, label names and teaching explanations.
+- Obtain independent review of left/right display, orientation and alignment across the axial stack, label names and teaching explanations.
+- Evaluate a higher-resolution, properly licensed CT source if the expected learning experience requires finer anatomical detail; do not synthesize or interpolate detail and present it as native resolution.
+- Add and validate coronal/sagittal MPR plus configurable window/level using raw voxel values before calling this a complete CT viewer.
 - If a volumetric viewer is added, verify axis ordering, spacing, origin and transforms against the full MRML scene; matching headers alone are insufficient.
 - Check third-party notices for any additional scene/model/software components.
 - Keep the license notice with applicable dataset copies and documentation.
