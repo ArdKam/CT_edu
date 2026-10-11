@@ -151,8 +151,8 @@ test('local progress is loaded before app code and states that it never uploads 
 test('dynamic UI uses DOM APIs and textContent instead of HTML injection sinks', function () {
   const app = read('src/app.js');
   const data = require('../src/data/anatomy.js');
-  assert.doesNotMatch(app, /\\b(?:innerHTML|outerHTML|insertAdjacentHTML)\\b/);
-  assert.doesNotMatch(app, /\\beval\\s*\\(|new Function\\s*\\(/);
+  assert.equal(/\b(innerHTML|outerHTML|insertAdjacentHTML)\b/.test(app), false);
+  assert.equal(/\beval\s*\(|new Function\s*\(/.test(app), false);
   data.items.forEach(function (item) {
     assert.match(item.color, /^#[0-9a-f]{6}$/i, 'catalogue color must be a strict six-digit hex value: ' + item.id);
   });
@@ -174,6 +174,6 @@ test('CSP limits executable content and keeps only the required font origins ext
   const sources = Array.from(html.matchAll(/<script[^>]+src="([^"]+)"/gi), function (match) { return match[1]; });
   assert.ok(sources.length > 0);
   sources.forEach(function (src) {
-    assert.doesNotMatch(src, /^(?:https?:)?\\/\\//i, 'scripts must be served locally: ' + src);
+    assert.equal(/^(?:https?:)?\/\//i.test(src), false, 'scripts must be served locally: ' + src);
   });
 });
