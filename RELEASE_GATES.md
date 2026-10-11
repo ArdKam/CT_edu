@@ -51,7 +51,8 @@ See [DATASET_ROADMAP.md](DATASET_ROADMAP.md) for reviewed candidate sources and 
 - [ ] Conduct a broader browser/device matrix, including iOS Safari and Android devices; the current Chromium mobile smoke test is not comprehensive touch QA.
 - [x] Add a synchronized side-by-side axial/coronal/sagittal overview with shared voxel-index crosshairs and separate i/j/k sliders. The overview does not claim patient-space coordinates or add oblique reconstruction; expert review of orientation and crosshair alignment remains open.
 - [ ] Define case/image loading, memory, and responsiveness budgets from representative large studies and test them on lower-powered devices.
-- [ ] Audit accessible names, focus order, keyboard operation, touch targets, contrast, and reduced-motion behavior.
+- [x] Targeted accessibility fixes: localize major landmarks and plane-specific slice-slider names; connect tri-planar sliders to their plane headings and coordinate outputs; expose passive tri-planar canvases as images and remove them from the tab order.
+- [ ] Complete a broader accessibility audit of accessible names, focus order, keyboard operation, touch-target sizing, contrast, and reduced-motion behavior (automated smoke assertions are not a full WCAG audit).
 - [ ] Keep reference interpretations server-side if a backend is introduced; never expose quiz answer keys before submission.
 - [ ] Keep the educational-only/non-diagnostic disclaimer visible. Do not connect to clinical systems or market this as a diagnostic tool in this release.
 
