@@ -55,6 +55,7 @@ const { chromium } = require('playwright');
     assert.equal(status.status.height, 113);
     assert.equal(status.info.indexAxis, 'j');
     assert.match(await page.locator('#volume-coordinate-readout').textContent(), /k=(27|۲۷)/, 'coronal view should retain the previously selected axial coordinate');
+    assert.match(await page.locator('#module-name-label').textContent(), /coronal|کرونال/i, 'breadcrumb should identify the active coronal view');
     assert.equal(await page.locator('#orientation-letter-left').textContent(), 'R');
     await page.locator('#schematic-canvas').screenshot({ path: path.join(screenshotDir, 'coronal.png') });
 
@@ -72,6 +73,7 @@ const { chromium } = require('playwright');
     assert.equal(status.info.indexAxis, 'i');
     assert.equal(await page.locator('#orientation-letter-left').textContent(), 'A');
     assert.equal(await page.locator('#orientation-letter-right').textContent(), 'P');
+    assert.match(await page.locator('#module-name-label').textContent(), /sagittal|ساژیتال/i, 'breadcrumb should identify the active sagittal view');
     await page.locator('#schematic-canvas').screenshot({ path: path.join(screenshotDir, 'sagittal.png') });
 
     const previousIndex = status.status.sliceIndex;
