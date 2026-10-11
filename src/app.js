@@ -128,7 +128,8 @@
     canvasEl.style.touchAction=state.zoom>100?'none':'pan-y';
   }
   function renderViewer(){
-    const status=Viewer.getStatus(),loadMessage=el('viewer-load-error'),hasFrame=canvasEl.dataset.hasRendered==='true';
+    const status=Viewer.getStatus(),loadMessage=el('viewer-load-error'),emptyState=el('viewer-empty-state'),hasFrame=canvasEl.dataset.hasRendered==='true';
+    emptyState.hidden=!(status.state==='ready'&&status.hasSignal===false);
     const planeAvailable=Viewer.getVolumeInfo().availablePlanes||['axial'];
     const planeTitleKey=state.plane==='coronal'?'viewCoronal':state.plane==='sagittal'?'viewSagittal':'viewAxial';
     el('viewer-plane-title').textContent=t(planeTitleKey);
