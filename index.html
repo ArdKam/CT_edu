@@ -159,7 +159,12 @@
                 <span class="panel-kicker" data-i18n="progressKicker">پیشرفت محلی</span>
                 <h3 id="learning-progress-title" data-i18n="progressTitle">پیشرفت تمرین</h3>
               </div>
-              <button id="reset-local-progress" class="progress-reset" type="button" data-i18n="progressReset">پاک کردن</button>
+              <div class="progress-actions">
+                <button id="export-local-progress" class="progress-reset" type="button" data-i18n="progressExport">پشتیبان‌گیری</button>
+                <button id="restore-local-progress" class="progress-reset" type="button" data-i18n="progressRestore">بازیابی</button>
+                <button id="reset-local-progress" class="progress-reset" type="button" data-i18n="progressReset">پاک کردن</button>
+                <input id="restore-local-progress-file" type="file" accept="application/json,.json" hidden>
+              </div>
             </header>
             <div class="learning-progress-metrics">
               <div><strong id="progress-attempts">۰</strong><span data-i18n="progressAttempts">پاسخ‌ها</span></div>
