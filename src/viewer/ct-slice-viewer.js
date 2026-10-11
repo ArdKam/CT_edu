@@ -268,8 +268,8 @@
     ctx.textBaseline = 'middle';
     const width = Math.min(76, ctx.measureText(text).width + 6);
     const height = 10;
-    const x = Math.max(width / 2 + 2, Math.min(WIDTH - width / 2 - 2, targetX));
-    const y = Math.max(height / 2 + 2, Math.min(HEIGHT - height / 2 - 2, targetY));
+    const x = Math.max(width / 2 + 2, Math.min(activeWidth - width / 2 - 2, targetX));
+    const y = Math.max(height / 2 + 2, Math.min(activeHeight - height / 2 - 2, targetY));
     const endX = Math.max(x - width / 2, Math.min(x + width / 2, centroid.x));
     const endY = Math.max(y - height / 2, Math.min(y + height / 2, centroid.y));
     ctx.beginPath();
@@ -290,12 +290,13 @@
 
   function draw(canvas, args) {
     if (state !== 'ready' || !canvas) return false;
-    canvas.width = WIDTH;
-    canvas.height = HEIGHT;
+    canvas.width = activeWidth;
+    canvas.height = activeHeight;
+    canvas.style.aspectRatio = activeWidth + ' / ' + activeHeight;
     const ctx = canvas.getContext('2d');
     if (!ctx) return false;
 
-    const imageData = ctx.createImageData(WIDTH, HEIGHT);
+    const imageData = ctx.createImageData(activeWidth, activeHeight);
     imageData.data.set(sourceGray);
     const itemsBySegment = Object.create(null);
     const itemsById = Object.create(null);
@@ -338,12 +339,12 @@
 
     // Selected/quiz structures get a narrow edge cue, without modifying label IDs.
     if (highlightedId >= 0) {
-      for (let y = 1; y < HEIGHT - 1; y += 1) {
-        for (let x = 1; x < WIDTH - 1; x += 1) {
-          const i = y * WIDTH + x;
+      for (let y = 1; y < activeHeight - 1; y += 1) {
+        for (let x = 1; x < activeWidth - 1; x += 1) {
+          const i = y * activeWidth + x;
           if (segmentIds[i] !== highlightedId) continue;
           if (segmentIds[i - 1] === highlightedId && segmentIds[i + 1] === highlightedId &&
-              segmentIds[i - WIDTH] === highlightedId && segmentIds[i + WIDTH] === highlightedId) continue;
+              segmentIds[i - activeWidth] === highlightedId && segmentIds[i + activeWidth] === highlightedId) continue;
           const k = i * 4;
           imageData.data[k] = highlightColor[0];
           imageData.data[k + 1] = highlightColor[1];
@@ -369,18 +370,19 @@
     if (state !== 'ready' || !canvas || !segmentIds) return null;
     const rect = canvas.getBoundingClientRect();
     if (!rect.width || !rect.height) return null;
-    const x = Math.floor((clientX - rect.left) / rect.width * WIDTH);
-    const y = Math.floor((clientY - rect.top) / rect.height * HEIGHT);
-    if (x < 0 || x >= WIDTH || y < 0 || y >= HEIGHT) return null;
-    return segmentIds[y * WIDTH + x];
+    const x = Math.floor((clientX - rect.left) / rect.width * activeWidth);
+    const y = Math.floor((clientY - rect.top) / rect.height * activeHeight);
+    if (x < 0 || x >= activeWidth || y < 0 || y >= activeHeight) return null;
+    return segmentIds[y * activeWidth + x];
   }
 
   function getStatus() {
     return {
       state: state,
       error: failure ? String(failure.message || failure) : null,
-      width: WIDTH,
-      height: HEIGHT,
+      width: activeWidth,
+      height: activeHeight,
+      plane: activePlane,
       sliceIndex: volumeInfo.currentSliceIndex,
       sliceCount: volumeInfo.sliceCount,
       isVolume: volumeInfo.isVolume
@@ -425,7 +427,7 @@
     loadSlice: loadSlice,
     decodeLabelId: decodeLabelId,
     accessibleLabel: accessibleLabel,
-    getImageSize: function () { return { width: WIDTH, height: HEIGHT }; }
+    getImageSize: function () { return { width: activeWidth, height: activeHeight }; }
   };
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
   root.CTEduSliceViewer = api;
