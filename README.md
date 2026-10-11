@@ -25,6 +25,12 @@ CT Edu is an early-stage bilingual educational web app for medical students. The
 - A potential separately licensed source is [CT-ORG at TCIA](https://wiki.cancerimagingarchive.net/pages/viewpage.action?pageId=133072448): TCIA lists 140 NIfTI volumes with labels for lung, bones, liver, kidneys and bladder (brain on some scans) under CC BY 3.0 and says the stored CT values are HU. But cases vary in acquisition and pathology, some may be left-right flipped, and the labels do not cover most current normal-abdominal lesson targets. It is a candidate for a **separate, reviewed clinical-case mode**, not a drop-in replacement for the SPL atlas.
 - The current catalogue contains nine bilingual target structures. The atlas metadata lists more structures, but broad catalogue coverage needs educational review before adding them.
 
+## Dataset and release planning
+
+- [Dataset selection roadmap](DATASET_ROADMAP.md) tracks candidate CT sources for head, chest and abdomen, including exact licensing and validation gates. Candidate collections are not treated as approved teaching cases until reviewed.
+- [Release gates](RELEASE_GATES.md) tracks technical, medical-content, privacy and publication requirements.
+- [Current data-license review](DATA_LICENSE_REVIEW.md) records the SPL Abdominal Atlas provenance, geometry, and unresolved redistribution checks.
+
 ## Known limitations and release gates
 
 - The synchronized three-plane overview now displays axial, coronal and sagittal reformats at once, with shared voxel-coordinate crosshairs and an independent slider for each axis. It uses the dataset's pre-windowed images; full source-intensity Window/Level controls remain available after opening one plane in the large view. Arbitrary oblique reformatting and DICOM-series import are not implemented.
