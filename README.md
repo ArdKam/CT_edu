@@ -1,6 +1,17 @@
-# CT Edu — abdominal cross-sectional anatomy learning prototype
+# CT Edu — imaging anatomy learning workspace
 
 CT Edu is an early-stage bilingual educational web app for medical students. The SPL Abdominal Atlas teaching volume now supports axial, coronal and sagittal viewing planes, per-plane slice navigation, labelled segment overlays where annotations are available, structure inspection and a four-option active-recall mode.
+
+## Multi-modality roadmap status
+
+The app now includes a bilingual modality catalog for four learning paths: the current abdominal CT teaching prototype, plus planned brain CT, chest CT, and chest radiography modules. The catalog intentionally shows data/readiness blockers instead of implying that unavailable images or lessons are already integrated.
+
+- **Abdominal CT:** the SPL-based teaching volume is available for prototype use; clinical/educational review and exact source-rights checks remain release gates.
+- **Brain CT:** candidate sources and curriculum are under review. Do not embed RSNA-IHD/MIRA source or derived images in the public site unless the applicable current terms clearly permit that use.
+- **Chest CT:** LIDC-IDRI is a potential source for a small, attributed, expert-reviewed teaching subset; its full collection is too large for GitHub Pages.
+- **Chest radiography:** the currently reviewed VinDr-CXR access terms prohibit redistribution. It is listed for source research only; a different dataset with public redistribution rights or explicit written permission is required before integration.
+
+The catalog is **not** a claim that those three additional image modules are implemented. No extra patient images, labelmaps, or unreviewed clinical examples were bundled in this change. Per-modality data must pass the gates in [DATASET_ROADMAP.md](DATASET_ROADMAP.md) and [RELEASE_GATES.md](RELEASE_GATES.md) before the catalog marks a path available.
 
 ## Current capabilities
 

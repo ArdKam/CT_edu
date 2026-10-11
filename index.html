@@ -4,19 +4,21 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#101923">
-  <meta name="description" content="CT Edu — interactive cross-sectional anatomy learning prototype for medical students.">
+  <meta name="description" content="CT Edu — a bilingual imaging-anatomy learning workspace for medical students, with explicit dataset and publication readiness gates.">
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'self'; object-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: blob:; connect-src 'self'; form-action 'self'; frame-src 'none'">
   <link rel="icon" type="image/svg+xml" href="./favicon.svg">
-  <title>CT Edu · Abdominal Anatomy Lab</title>
+  <title>CT Edu · Imaging Anatomy Lab</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Vazirmatn:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="src/styles.css">
   <script defer src="src/data/anatomy.js"></script>
+  <script defer src="src/data/modality-catalog.js"></script>
   <script defer src="src/viewer/ct-slice-viewer.js"></script>
   <script defer src="src/viewer/tri-planar-viewer.js"></script>
   <script defer src="src/quiz/quiz-engine.js"></script>
   <script defer src="src/data/progress-store.js"></script>
+  <script defer src="src/modality-catalog.js"></script>
   <script defer src="src/app.js"></script>
 </head>
 <body>
@@ -39,6 +41,11 @@
           <div class="learning-path" aria-label="Learning sequence"><span class="path-step active"><b>01</b><span data-i18n="pathLearn">یادگیری</span></span><span class="path-connector"></span><span class="path-step"><b>02</b><span data-i18n="pathIdentify">شناسایی</span></span><span class="path-connector"></span><span class="path-step"><b>03</b><span data-i18n="pathRecall">یادآوری فعال</span></span></div>
         </div>
         <div class="session-meta"><div class="meta-number"><strong id="structure-count">۹</strong><span data-i18n="structuresLabel">ساختار در این نما</span></div><span class="meta-divider"></span><div class="meta-note"><span class="meta-icon" aria-hidden="true">⌁</span><span data-i18n="sessionHint">برش محوری واقعی برای شروع</span></div></div>
+      </section>
+
+      <section class="modality-catalog" id="modality-catalog" aria-labelledby="modality-catalog-title">
+        <div id="modality-catalog-content"></div>
+        <section class="modality-detail" id="modality-detail" aria-live="polite" hidden></section>
       </section>
 
       <section class="workspace" id="workspace" data-i18n-aria-label="workspaceLabel">

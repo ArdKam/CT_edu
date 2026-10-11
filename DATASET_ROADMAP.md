@@ -80,3 +80,31 @@ Before claiming a multi-region clinical MVP, assemble a **small candidate bundle
 - a versioned case manifest and acceptance checklist.
 
 The current source repositories are research datasets, not ready-made lessons. Do not expose their raw labels as the educational answer without checking what the labels mean and reviewing them against the source images.
+
+
+## Multi-modality expansion status — 2026-10-11
+
+The product now has a code-level modality catalog. This does not change the approved data scope: abdominal CT remains the only data-backed viewer in the current prototype. Brain CT, chest CT, and chest radiography remain gated until source rights, geometry, teaching labels, and specialist review are complete.
+
+### Brain CT — candidate source is not cleared for public image hosting
+- Candidate for curriculum and access review: [RSNA-IHD in the RSNA ATLAS data card](https://atlas.rsna.org/cards/bd41bbe2-f161-4c19-841c-85d8b645e306) / [MIRA](https://mira.rsna.org/dataset/1).
+- The current data card identifies the RSNA MIRA Dataset Research Use Agreement. Do not assume that permission to download or use the data for non-commercial research/education also permits hosting DICOMs or derived images on a public website. Obtain a clear permitted-use decision for the exact release or select a source with suitable redistribution rights.
+- Future scope may include normal anatomy, ventricles/midline, acute hemorrhage patterns, mass effect, and hydrocephalus. These lessons require neuroradiology/anatomy review and are not complete yet.
+
+### Chest CT — select a small LIDC-IDRI subset
+- The [official LIDC-IDRI collection page](https://www.cancerimagingarchive.net/collection/lidc-idri/) lists CC BY 3.0 for collection image resources and describes a large DICOM collection.
+- Do not copy the whole collection into the Pages bundle. Select a few complete, suitable CT series; retain source geometry; record required attribution and identifiers; review orientation, series completeness, annotations and quality; verify the exact files being redistributed before publishing derivatives.
+- Multi-reader pulmonary nodule annotations should be presented as reader assessments rather than a single unquestioned ground truth.
+
+### Chest radiography — current VinDr-CXR access is not a public redistribution route
+- [VinDr-CXR on PhysioNet](https://physionet.org/content/vindr-cxr/1.0.0/) currently requires credentialed access, specified training, and a Data Use Agreement. Its accompanying paper says users agree not to share the dataset.
+- Do **not** bundle VinDr-CXR images or derivatives into the public app under those terms. Find a separate source with explicit public redistribution permission or obtain written permission. Verify source, labels, and attribution for each selected image.
+- The eventual viewer should be two-dimensional with preserved aspect ratio, pan/zoom, fit-to-view and clear PA/AP/lateral projection metadata—not the CT volume controls.
+
+### Per-modality release gate
+1. Record exact source/version and confirm permission for the intended public hosting and derivatives.
+2. Validate completeness and quality; remove patient-identifying metadata and burned-in identifiers from public derivatives.
+3. CT: verify series geometry, patient orientation, slice spacing and intensity/window semantics. CXR: preserve source resolution and record projection/display transform.
+4. Obtain expert review of anatomy/findings, annotations, and feedback. Do not present ambiguous source labels as ground truth.
+5. Test representative browsers/devices and performance; load only what is required and avoid oversized raw archives in the source repository.
+6. Change a catalog state to available only after all relevant gates pass.
