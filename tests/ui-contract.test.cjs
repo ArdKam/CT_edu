@@ -13,7 +13,7 @@ test('UI contains expected controls, real-slice canvas and medical-use disclaime
     'toggle-labels', 'zoom-in', 'zoom-out', 'zoom-reset', 'quiz-mode',
     'learn-mode', 'answer-options', 'next-question', 'reset-quiz', 'workspace',
     'anatomy-panel', 'ct-slice-canvas', 'viewer-load-error', 'slice-navigation',
-    'slice-slider', 'slice-prev', 'slice-next', 'slice-position', 'plane-axial', 'plane-coronal', 'plane-sagittal', 'orientation-glyph'
+    'slice-slider', 'slice-prev', 'slice-next', 'slice-position', 'plane-axial', 'plane-coronal', 'plane-sagittal', 'orientation-glyph', 'window-level-controls', 'window-width-slider', 'window-level-slider', 'window-level-reset', 'window-level-status'
   ].forEach(function (id) {
     assert.ok(html.includes('id="' + id + '"') || html.includes("id='" + id + "'"), 'missing UI control: ' + id);
   });
@@ -35,6 +35,9 @@ test('UI contains expected controls, real-slice canvas and medical-use disclaime
   assert.match(builder, /"sagittal"/);
   assert.match(viewer, /function getVolumeInfo\(planeName\)/);
   assert.match(viewer, /canvas\.style\.aspectRatio/);
+  assert.match(viewer, /function setWindowLevel\(/);
+  assert.match(builder, /ct-volume-int16\.bin\.gz/);
+  assert.match(builder, /HU calibration has not been independently verified/);
 });
 
 test('real CT slice and lossless segment-ID map are present', function () {
