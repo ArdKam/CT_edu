@@ -64,6 +64,7 @@ test('project-relative favicon resolves for GitHub Pages subpaths', function () 
   const workflow = read('.github/workflows/pages-deploy.yml');
   assert.ok(workflow.includes('cp favicon.svg _site/'), "Pages workflow should copy the favicon into the published artifact");
   assert.ok(workflow.includes('test -s _site/favicon.svg'), "Pages staging should verify the favicon exists");
+  assert.ok(workflow.includes('fetch_with_retry "$base/favicon.svg"'), "post-deploy checks should fetch the live favicon");
 });
 
 test('real CT slice and lossless segment-ID map are present', function () {
