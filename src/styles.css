@@ -203,7 +203,7 @@
 .tri-plane-card header p{margin:3px 0 0;color:#97a4a0;font-size:8px;line-height:1.5}
 .tri-plane-card output{color:#526d68;font:600 9px 'DM Sans','Vazirmatn',sans-serif;white-space:nowrap;font-variant-numeric:tabular-nums}
 .tri-canvas-wrap{display:grid;place-items:center;min-height:130px;height:190px;overflow:hidden;border:1px solid #243747;border-radius:8px;background:#0b121a}
-.tri-canvas{display:block;width:100%;max-width:100%;height:auto;max-height:188px;object-fit:contain;background:#05090e;image-rendering:auto}
+.tri-canvas{display:block;width:100%;max-width:100%;height:auto;max-height:188px;object-fit:fill;background:#05090e;image-rendering:auto}
 .tri-canvas:focus-visible{outline:3px solid #56a9a2;outline-offset:-3px}
 .tri-slider-row{display:grid;gap:5px;color:#82908d;font-size:9px}
 .tri-slider-row input{display:block;width:100%;min-width:0;margin:0;accent-color:#2c8985;direction:ltr;cursor:pointer}
