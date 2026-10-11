@@ -31,6 +31,8 @@ See [DATASET_ROADMAP.md](DATASET_ROADMAP.md) for reviewed candidate sources and 
 
 ### Privacy, legal, and governance
 
+- [x] Add [`SECURITY.md`](SECURITY.md) with private vulnerability-reporting instructions, scope notes, and a warning not to submit patient data or backups in public reports.
+- [ ] Verify GitHub private vulnerability reporting is enabled for this repository; confirm a private fallback contact method before broader public release.
 - [x] Add a bilingual, public [privacy notice](privacy.html) linked from the app, covering local-only progress, clear/export/restore behavior, no app-account upload, and the current Google Fonts third-party request.
 - [ ] Complete the legal/privacy review of Google Fonts and static-hosting request logs; decide whether fonts should be self-hosted before a broader public release. The notice is transparent but is not a substitute for jurisdiction-specific legal advice.
 - [ ] Confirm exact source and derivative redistribution permissions before publication; see [DATA_LICENSE_REVIEW.md](DATA_LICENSE_REVIEW.md) and [DATASET_ROADMAP.md](DATASET_ROADMAP.md).
