@@ -206,7 +206,7 @@ const { chromium } = require('playwright');
     await page.waitForFunction(function () {
       const status = window.CTEduSliceViewer.getStatus();
       return status.state === 'ready' && status.plane === 'coronal' && status.sliceIndex === 140 &&
-        !document.querySelector('#tri-planar-panel').hidden;
+        document.querySelector('#tri-planar-panel').hidden;
     }, null, { timeout: 10000 });
     assert.equal(await page.locator('#viewer-frame').isVisible(), true);
     assert.equal(await page.locator('#slice-navigation').isVisible(), true);
