@@ -193,6 +193,39 @@ def main() -> int:
         Image.fromarray(slice_ct8, mode="L").save(slice_dir / ("ct-" + suffix), optimize=True)
         Image.fromarray(slice_rgb, mode="RGB").save(slice_dir / ("labels-" + suffix), optimize=True)
 
+    # Export orthogonal reformats at native voxel sampling. Their pixel aspect ratio
+    # is intentionally not square: z spacing is 1.5 mm vs 0.9375 mm in-plane.
+    coronal_dir = outdir / "coronal"
+    sagittal_dir = outdir / "sagittal"
+    coronal_dir.mkdir(parents=True, exist_ok=True)
+    sagittal_dir.mkdir(parents=True, exist_ok=True)
+
+    # Coronal slice y: horizontal = source x (patient right -> left), vertical = k
+    # (superior at top, inferior at bottom). Image shape is (z, x).
+    for plane_index in range(image_volume.shape[1]):
+        ct_plane = image_volume[:, plane_index, :].astype(np.float32)
+        ct_plane8 = np.clip((ct_plane - lo) / (hi - lo) * 255, 0, 255).astype(np.uint8)
+        labels_plane = label_volume[:, plane_index, :].astype(np.int32)
+        plane_rgb = np.zeros((labels_plane.shape[0], labels_plane.shape[1], 3), dtype=np.uint8)
+        plane_rgb[:, :, 0] = np.bitwise_and(labels_plane, 255).astype(np.uint8)
+        plane_rgb[:, :, 1] = np.right_shift(labels_plane, 8).astype(np.uint8)
+        suffix = "%03d.png" % plane_index
+        Image.fromarray(ct_plane8, mode="L").save(coronal_dir / ("ct-" + suffix), optimize=True)
+        Image.fromarray(plane_rgb, mode="RGB").save(coronal_dir / ("labels-" + suffix), optimize=True)
+
+    # Sagittal slice x: horizontal = anterior -> posterior (reverse source y),
+    # vertical = superior -> inferior (k). Image shape is (z, y).
+    for plane_index in range(image_volume.shape[2]):
+        ct_plane = np.flip(image_volume[:, :, plane_index], axis=1).astype(np.float32)
+        ct_plane8 = np.clip((ct_plane - lo) / (hi - lo) * 255, 0, 255).astype(np.uint8)
+        labels_plane = np.flip(label_volume[:, :, plane_index], axis=1).astype(np.int32)
+        plane_rgb = np.zeros((labels_plane.shape[0], labels_plane.shape[1], 3), dtype=np.uint8)
+        plane_rgb[:, :, 0] = np.bitwise_and(labels_plane, 255).astype(np.uint8)
+        plane_rgb[:, :, 1] = np.right_shift(labels_plane, 8).astype(np.uint8)
+        suffix = "%03d.png" % plane_index
+        Image.fromarray(ct_plane8, mode="L").save(sagittal_dir / ("ct-" + suffix), optimize=True)
+        Image.fromarray(plane_rgb, mode="RGB").save(sagittal_dir / ("labels-" + suffix), optimize=True)
+
     # Store spatial metadata alongside the stack so the viewer can accurately report
     # the source matrix and voxel spacing without implying that this is clinical DICOM.
     direction_vectors = re.findall(r"\(([^)]+)\)", image_header.get("space directions", ""))
@@ -221,12 +254,45 @@ def main() -> int:
         },
         "originLpsMm": origin_lps,
         "window": {"width": args.window, "level": args.level},
+        "planes": {
+            "axial": {
+                "sliceCount": int(image_volume.shape[0]),
+                "defaultSliceIndex": int(chosen),
+                "dimensions": {"width": int(image_volume.shape[2]), "height": int(image_volume.shape[1])},
+                "pixelSpacingMm": {"x": spacing_mm[0], "y": spacing_mm[1]},
+                "sliceSpacingMm": spacing_mm[2],
+                "ctPattern": "slices/ct-{index:03d}.png",
+                "labelsPattern": "slices/labels-{index:03d}.png",
+                "indexAxis": "k"
+            },
+            "coronal": {
+                "sliceCount": int(image_volume.shape[1]),
+                "defaultSliceIndex": int(image_volume.shape[1] // 2),
+                "dimensions": {"width": int(image_volume.shape[2]), "height": int(image_volume.shape[0])},
+                "pixelSpacingMm": {"x": spacing_mm[0], "y": spacing_mm[2]},
+                "sliceSpacingMm": spacing_mm[1],
+                "ctPattern": "coronal/ct-{index:03d}.png",
+                "labelsPattern": "coronal/labels-{index:03d}.png",
+                "indexAxis": "j"
+            },
+            "sagittal": {
+                "sliceCount": int(image_volume.shape[2]),
+                "defaultSliceIndex": int(image_volume.shape[2] // 2),
+                "dimensions": {"width": int(image_volume.shape[1]), "height": int(image_volume.shape[0])},
+                "pixelSpacingMm": {"x": spacing_mm[1], "y": spacing_mm[2]},
+                "sliceSpacingMm": spacing_mm[0],
+                "ctPattern": "sagittal/ct-{index:03d}.png",
+                "labelsPattern": "sagittal/labels-{index:03d}.png",
+                "indexAxis": "i",
+                "screenOrientation": "anterior on left, posterior on right"
+            }
+        },
         "sliceFiles": {
             "ct": "slices/ct-{index:03d}.png",
             "labels": "slices/labels-{index:03d}.png",
             "labelEncoding": "segment ID = R + 256 * G"
         },
-        "displayTransform": "CT and segmentation rows are both flipped vertically; x-axis is unchanged."
+        "displayTransform": "Axial rows are flipped vertically; coronal rows preserve k with superior at top; sagittal horizontal axis is reversed to put anterior on screen-left. CT and labels use identical transforms."
     }
     (outdir / "volume.json").write_text(json.dumps(volume_meta, ensure_ascii=False, indent=2), encoding="utf-8")
 
@@ -284,8 +350,14 @@ def main() -> int:
     for record in z_records[:12]:
         print("  k=%3d core=%d targets=%d total_pixels=%d" % (
             record["slice_index"], record["core_count"], record["target_count"], record["target_pixel_count"]))
-    print("volume slices exported: " + str(image_volume.shape[0]))
-    print("source in-plane matrix: %dx%d; voxel spacing (mm): %s" % (image_volume.shape[2], image_volume.shape[1], json.dumps(spacing_mm)))
+    print("axial/coronal/sagittal slice counts: %s" % json.dumps({
+        "axial": int(image_volume.shape[0]),
+        "coronal": int(image_volume.shape[1]),
+        "sagittal": int(image_volume.shape[2])
+    }))
+    print("source matrix (x,y,z): %s; voxel spacing (mm): %s" % (
+        json.dumps([int(image_volume.shape[2]), int(image_volume.shape[1]), int(image_volume.shape[0])]),
+        json.dumps(spacing_mm)))
     print("outputs: " + ", ".join(str(p) for p in sorted(outdir.iterdir())))
     print("source ZIP files were not modified.")
     return 0
