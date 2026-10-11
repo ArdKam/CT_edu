@@ -12,7 +12,7 @@ test('UI contains expected controls, real-slice canvas and medical-use disclaime
     'language-toggle', 'structure-search', 'structure-list', 'toggle-overlays',
     'toggle-labels', 'zoom-in', 'zoom-out', 'zoom-reset', 'quiz-mode',
     'learn-mode', 'answer-options', 'next-question', 'reset-quiz', 'workspace',
-    'anatomy-panel', 'ct-slice-canvas', 'viewer-load-error', 'slice-navigation',
+    'anatomy-panel', 'ct-slice-canvas', 'viewer-load-error', 'slice-navigation', 'display-mode-controls', 'display-single', 'display-triplanar', 'tri-planar-panel', 'tri-axial-canvas', 'tri-coronal-canvas', 'tri-sagittal-canvas', 'tri-axial-slider', 'tri-coronal-slider', 'tri-sagittal-slider',
     'slice-slider', 'slice-prev', 'slice-next', 'slice-position', 'plane-axial', 'plane-coronal', 'plane-sagittal', 'orientation-glyph', 'window-level-controls', 'window-width-slider', 'window-level-slider', 'window-level-reset', 'window-level-status'
   ].forEach(function (id) {
     assert.ok(html.includes('id="' + id + '"') || html.includes("id='" + id + "'"), 'missing UI control: ' + id);
@@ -82,4 +82,15 @@ test('release workflow deploys only main and viewer wording is not misleading', 
   const html = read('index.html');
   assert.doesNotMatch(html, /aria-label="Schematic teaching emphasis"/);
   assert.match(html, /aria-label="Anatomy layer emphasis"/);
+});
+
+test('tri-planar overview uses its own renderer and exposes synchronized crosshair state', function () {
+  const html = read('index.html');
+  const app = read('src/app.js');
+  const viewer = require('../src/viewer/tri-planar-viewer.js');
+  assert.match(html, /src\\/viewer\\/tri-planar-viewer\\.js/);
+  assert.match(app, /function renderTriPlanar\\(/);
+  assert.match(app, /state\\.slicePositions\\[config\\.axis\\]/);
+  assert.deepEqual(viewer.getStatus().planes, ['axial', 'coronal', 'sagittal']);
+  assert.equal(viewer.getStatus().ready, false, 'overview starts idle before browser assets load');
 });
