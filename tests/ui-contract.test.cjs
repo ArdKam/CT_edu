@@ -5,47 +5,47 @@ const path = require('node:path');
 const root = path.resolve(__dirname, '..');
 const read = function (name) { return fs.readFileSync(path.join(root, name), 'utf8'); };
 
-test('UI contains expected controls and medical-use disclaimer', function () {
+test('UI contains expected controls, real-slice canvas and medical-use disclaimer', function () {
   const html = read('index.html');
+  const app = read('src/app.js');
   [
     'language-toggle', 'structure-search', 'structure-list', 'toggle-overlays',
     'toggle-labels', 'zoom-in', 'zoom-out', 'zoom-reset', 'quiz-mode',
-    'learn-mode', 'answer-options', 'next-question', 'reset-quiz', 'workspace', 'anatomy-panel'
+    'learn-mode', 'answer-options', 'next-question', 'reset-quiz', 'workspace',
+    'anatomy-panel', 'ct-slice-canvas', 'viewer-load-error'
   ].forEach(function (id) {
     assert.ok(html.includes('id="' + id + '"') || html.includes("id='" + id + "'"), 'missing UI control: ' + id);
   });
-  assert.match(html, /CT واقعی نیست|NOT A REAL CT/i);
-  assert.match(html, /هیچ CT بیمار|No patient CT/i);
+  assert.match(html, /SPL ATLAS|sourceBadge/i);
   assert.match(html, /برای تشخیص|not for diagnosis/i);
+  assert.match(app, /not for clinical diagnosis|برای تشخیص بالینی نیست/);
   assert.match(html, /href="data-license.html"/);
+  assert.match(html, /src="src\/viewer\/ct-slice-viewer\.js"/);
 });
 
-test('viewer and data catalogue remain decoupled', function () {
-  const viewer = read('src/viewer/schematic-viewer.js');
-  const data = read('src/data/anatomy.js');
-  assert.match(viewer, /function buildSvg/);
-  assert.match(viewer, /شماتیک|SCHEMATIC/);
-  assert.match(data, /descriptionFa/);
-  assert.match(data, /shape: .liver./);
-  assert.doesNotMatch(viewer, /fetch\(|XMLHttpRequest|DICOM parser|NIfTI parser/i);
+test('real CT slice and lossless segment-ID map are present', function () {
+  const ctPath = path.join(root, 'assets/spl-abdominal-demo/ct-slice.png');
+  const labelPath = path.join(root, 'assets/spl-abdominal-demo/label-ids-rgb.png');
+  assert.ok(fs.existsSync(ctPath), 'missing CT teaching slice asset');
+  assert.ok(fs.existsSync(labelPath), 'missing segment-ID PNG asset');
+  assert.ok(fs.statSync(ctPath).size < 100000, 'CT single-slice asset should stay small');
+  assert.ok(fs.statSync(labelPath).size < 25000, 'label-ID map should stay small');
 });
 
+test('data catalogue maps anatomy names to authoritative atlas label IDs', function () {
+  const data = require('../src/data/anatomy.js');
+  assert.equal(data.items.length, 9);
+  assert.equal(data.bySegmentId(3).id, 'liver');
+  assert.equal(data.bySegmentId(4).id, 'spleen');
+  assert.equal(data.bySegmentId(51).id, 'right-kidney');
+  assert.equal(data.bySegmentId(52).id, 'left-kidney');
+  assert.equal(data.bySegmentId(7).id, 'aorta');
+  assert.equal(data.bySegmentId(8).id, 'ivc');
+});
 
-test('quiz renderer does not expose the target name through accessible labels', function () {
-  const viewer = require('../src/viewer/schematic-viewer.js');
-  const anatomy = require('../src/data/anatomy.js');
-  const svg = viewer.buildSvg({
-    items: anatomy.items,
-    visible: Object.fromEntries(anatomy.items.map(function (item) { return [item.id, true]; })),
-    overlaysOn: true,
-    labelsOn: false,
-    selectedId: 'liver',
-    quizId: 'liver',
-    zoom: 100,
-    language: 'en',
-    level: 'organs'
-  });
-  assert.match(svg, /aria-label="Highlighted structure"/);
-  assert.doesNotMatch(svg, /aria-label="Liver"/);
-  assert.doesNotMatch(svg, /tabindex="0"/);
+test('quiz canvas accessibility label does not disclose the highlighted structure', function () {
+  const viewer = require('../src/viewer/ct-slice-viewer.js');
+  assert.equal(viewer.accessibleLabel({ quizId: 'liver', language: 'en' }), 'Highlighted region on CT slice');
+  assert.equal(viewer.accessibleLabel({ quizId: 'spleen', language: 'fa' }), 'ناحیهٔ برجسته‌شده روی برش CT');
+  assert.doesNotMatch(viewer.accessibleLabel({ quizId: 'liver', language: 'en' }), /liver/i);
 });
