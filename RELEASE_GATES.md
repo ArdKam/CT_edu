@@ -16,6 +16,10 @@ This checklist separates code that exists from educational, legal, and release r
 - [x] Pages deployment workflow restricted to `main`; feature branches and PRs must not overwrite the single public Pages site.
 - [x] Interface language clarifies that anatomy controls filter real image overlays rather than a schematic drawing.
 
+## Dataset acquisition plan
+
+See [DATASET_ROADMAP.md](DATASET_ROADMAP.md) for reviewed candidate sources and their exact access/redistribution caveats. Do not mark head/chest coverage complete merely because candidate datasets have been identified.
+
 ## Release blockers
 
 ### Git / deployment
