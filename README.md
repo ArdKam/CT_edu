@@ -29,9 +29,11 @@ CT Edu is an early-stage web app for medical students. The first lesson now supp
 
 ## Run locally
 
-Requires Node.js 18+ to run tests and Python 3 for archive inspection. The UI itself requires no package installation.
+Requires Node.js 18+ for tests and Python 3 plus `numpy`/`Pillow` to generate the slice stack. Build the browser-ready assets before starting the local server:
 
 ~~~bash
+python3 -m pip install numpy pillow
+python3 scripts/build_demo_assets.py --output assets/spl-abdominal-demo
 python3 -m http.server 8000
 ~~~
 
