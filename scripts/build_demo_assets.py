@@ -66,7 +66,7 @@ def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--output", default="build/ct-demo-slice", help="Output directory")
     parser.add_argument("--window", type=float, default=400, help="CT soft-tissue window width")
-    parser.add_argument("--level", type=float, default=40, help="CT soft-tissue window level")
+    parser.add_argument("--level", type=float, default=1064, help="CT raw soft-tissue window level (atlas values are stored with a positive offset)")
     args = parser.parse_args()
 
     archives = sorted(Path(".").glob(ARCHIVE_GLOB))
@@ -222,6 +222,8 @@ def main() -> int:
     print("array shape (z,y,x): " + str(image_volume.shape))
     print("raw CT range: %d..%d; selected slice range: %.1f..%.1f" % (
         int(image_volume.min()), int(image_volume.max()), float(ct.min()), float(ct.max())))
+    print("raw CT percentiles [0,1,5,25,50,75,95,99,100]: " + json.dumps(
+        [round(float(v), 1) for v in np.percentile(ct, [0,1,5,25,50,75,95,99,100])]))
     print("slice chosen (0-based k): " + str(chosen))
     print("target structure pixel counts:")
     for item in visible_masks:
