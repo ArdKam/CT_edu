@@ -35,6 +35,9 @@ test('UI contains expected controls, real-slice canvas and medical-use disclaime
   assert.match(builder, /"sagittal"/);
   assert.match(viewer, /function getVolumeInfo\(planeName\)/);
   assert.match(viewer, /canvas\.style\.aspectRatio/);
+  assert.match(app, /widthInput\.min='10'/);
+  assert.match(app, /widthInput\.step='10'/);
+  assert.match(app, /pendingWindowLevel/);
   assert.match(viewer, /function setWindowLevel\(/);
   assert.ok(viewer.includes('const gray = sourceGray[i * 4]'), 'overlay blending must read the grayscale channel, not the raw RGBA byte index');
   assert.match(builder, /ct-volume-int16\.bin\.gz/);
