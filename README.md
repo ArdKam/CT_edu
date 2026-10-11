@@ -13,6 +13,7 @@ CT Edu is an early-stage bilingual educational web app for medical students. The
 - **Local learning progress:** submitted active-recall answers are saved in this browser only, capped at 500 records, and summarized as attempts, accuracy, and distinct target structures. Users can clear the history or export/import a versioned JSON backup. Restore validates the schema and replaces the current local history only after confirmation. There are no accounts, no server upload, and no cross-device sync.
 - **Bilingual UI:** Persian RTL and English LTR.
 - **Browser security baseline:** dynamic structure and answer-list UI is built with DOM APIs and `textContent`, not HTML string injection sinks. A document-level Content Security Policy restricts scripts and data connections to the same origin, blocks objects/frames, and allowlists only the Google Fonts CSS/font origins currently required by the UI. CSP and untrusted-search-input behavior are exercised in Chromium; this is not a substitute for a complete security review.
+- **Privacy notice:** [privacy.html](privacy.html) explains local browser storage, portable progress backups, limits on what the app sends, and the third-party Google Fonts request. It does not claim to settle hosting-provider log retention or source-data redistribution rights.
 - **Static publication:** GitHub Pages build generates the plane image stack in CI; the original source ZIP files are not copied into the Pages artifact.
 - **Review and tests:** Node.js unit/UI contract tests, Python syntax and metadata checks, validation of generated CT/label pairs, and live HTTP probes for representative orthogonal planes.
 
@@ -31,6 +32,7 @@ CT Edu is an early-stage bilingual educational web app for medical students. The
 
 - [Dataset selection roadmap](DATASET_ROADMAP.md) tracks candidate CT sources for head, chest and abdomen, including exact licensing and validation gates. Candidate collections are not treated as approved teaching cases until reviewed.
 - [Release gates](RELEASE_GATES.md) tracks technical, medical-content, privacy and publication requirements.
+- [Privacy notice](privacy.html) is the in-app user-facing explanation of local progress storage and current external requests.
 - [Current data-license review](DATA_LICENSE_REVIEW.md) records the SPL Abdominal Atlas provenance, geometry, and unresolved redistribution checks.
 
 ## Known limitations and release gates
