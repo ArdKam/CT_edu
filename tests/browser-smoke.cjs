@@ -96,6 +96,15 @@ const { chromium } = require('playwright');
       return info.rawAvailable && info.width === 600 && info.level === expectedLevel;
     }, targetLevel, { timeout: 20000 });
     assert.match(await page.locator('#window-level-status').textContent(), /raw|intensity|شدت/i);
+    await page.locator('#window-level-slider').evaluate(function (slider) {
+      slider.value = '0';
+      slider.dispatchEvent(new Event('input', { bubbles: true }));
+      slider.dispatchEvent(new Event('change', { bubbles: true }));
+    });
+    await page.waitForFunction(function () {
+      const info = window.CTEduSliceViewer.getWindowLevelInfo();
+      return info.rawAvailable && info.level === 0;
+    }, null, { timeout: 10000 });
     await page.locator('#window-level-reset').click();
     await page.waitForFunction(function () {
       const info = window.CTEduSliceViewer.getWindowLevelInfo();
