@@ -1,0 +1,243 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#101923">
+  <meta name="description" content="CT Edu — a bilingual imaging-anatomy learning workspace for medical students, with explicit dataset and publication readiness gates.">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'self'; object-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: blob:; connect-src 'self'; form-action 'self'; frame-src 'none'">
+  <link rel="icon" type="image/svg+xml" href="./favicon.svg">
+  <title>CT Edu · Imaging Anatomy Lab</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Vazirmatn:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="src/styles.css">
+  <script defer src="src/data/anatomy.js"></script>
+  <script defer src="src/data/modality-catalog.js"></script>
+  <script defer src="src/data/case-manifest.js"></script>
+  <script defer src="src/viewer/ct-slice-viewer.js"></script>
+  <script defer src="src/viewer/tri-planar-viewer.js"></script>
+  <script defer src="src/quiz/quiz-engine.js"></script>
+  <script defer src="src/data/progress-store.js"></script>
+  <script defer src="src/data/bookmark-store.js"></script>
+  <script defer src="src/viewer/radiograph-viewer.js"></script>
+  <script defer src="src/modality-catalog.js"></script>
+  <script defer src="src/app.js"></script>
+</head>
+<body>
+  <div class="app-shell" id="app" data-mode="learn">
+    <header class="topbar">
+      <a class="brand" href="#top" aria-label="CT Edu home">
+        <span class="brand-mark" aria-hidden="true"><span></span><span></span><span></span></span>
+        <span class="brand-copy"><strong>CT <em>EDU</em></strong><small>ANATOMY LAB</small></span>
+      </a>
+      <div class="topbar-center"><span class="crumb-dot"></span><span data-i18n="moduleCrumb">آناتومی مقطعی</span><span class="crumb-slash">/</span><strong id="module-name-label" data-i18n="moduleName">شکم · نمای محوری</strong></div>
+      <div class="topbar-actions"><span class="educational-tag"><span class="status-dot"></span><span data-i18n="educationalOnly">صرفاً آموزشی</span></span><button id="language-toggle" class="language-toggle" type="button" aria-label="Switch language">EN ↔ فا</button></div>
+    </header>
+
+    <main id="top" class="main-wrap">
+      <section class="intro-row" aria-labelledby="page-title">
+        <div class="intro-copy">
+          <div class="eyebrow"><span class="eyebrow-line"></span><span data-i18n="eyebrow">FOUNDATIONS · NORMAL ANATOMY</span></div>
+          <h1 id="page-title" data-i18n="pageTitle">از برش تا شناخت ساختار</h1>
+          <p data-i18n="pageIntro">ساختارهای طبیعی شکم را بشناس، لایه‌های رنگی را بررسی کن و بعد خودت را به چالش بکش.</p>
+          <div class="learning-path" aria-label="Learning sequence"><span class="path-step active"><b>01</b><span data-i18n="pathLearn">یادگیری</span></span><span class="path-connector"></span><span class="path-step"><b>02</b><span data-i18n="pathIdentify">شناسایی</span></span><span class="path-connector"></span><span class="path-step"><b>03</b><span data-i18n="pathRecall">یادآوری فعال</span></span></div>
+        </div>
+        <div class="session-meta"><div class="meta-number"><strong id="structure-count">۹</strong><span data-i18n="structuresLabel">ساختار در این نما</span></div><span class="meta-divider"></span><div class="meta-note"><span class="meta-icon" aria-hidden="true">⌁</span><span data-i18n="sessionHint">برش محوری واقعی برای شروع</span></div></div>
+      </section>
+
+      <section class="modality-catalog" id="modality-catalog" aria-labelledby="modality-catalog-title">
+        <div id="modality-catalog-content"></div>
+        <section class="modality-detail" id="modality-detail" aria-live="polite" hidden></section>
+      </section>
+
+      <section class="radiograph-workspace" id="radiograph-workspace" aria-labelledby="radiograph-title" hidden>
+        <div class="radiograph-heading">
+          <div>
+            <span class="modality-catalog-kicker">CHEST RADIOGRAPH · 2D VIEWER</span>
+            <h2 id="radiograph-title"><span class="rad-fa">نمایشگر گرافی قفسهٔ سینه</span><span class="rad-en">Chest radiograph viewer</span></h2>
+            <p><span class="rad-fa">فایل PNG، JPEG یا WebP را از دستگاه انتخاب کن. تصویر فقط در مرورگر فعلی خوانده می‌شود و به سرور ارسال نمی‌شود؛ این نسخه DICOM را پشتیبانی نمی‌کند.</span><span class="rad-en">Choose a local PNG, JPEG or WebP file. It is read in this browser only and is not uploaded; this prototype does not support DICOM.</span></p>
+          </div>
+          <button id="radiograph-close" class="radiograph-close" type="button"><span class="rad-fa">بستن نمایشگر</span><span class="rad-en">Close viewer</span></button>
+        </div>
+        <div class="radiograph-toolbar" role="group" aria-label="Radiograph viewer controls">
+          <label class="radiograph-file-label" for="radiograph-file-input"><span aria-hidden="true">＋</span><span class="rad-fa">انتخاب تصویر</span><span class="rad-en">Choose image</span></label>
+          <input id="radiograph-file-input" class="radiograph-file-input" type="file" accept="image/png,image/jpeg,image/webp">
+          <label class="radiograph-projection-label" for="radiograph-projection"><span class="rad-fa">نما</span><span class="rad-en">Projection</span></label>
+          <select id="radiograph-projection" aria-label="Radiograph projection"><option value="unspecified">Unknown / نامشخص</option><option value="PA">PA</option><option value="AP">AP</option><option value="lateral">Lateral / لترال</option></select>
+          <span class="radiograph-toolbar-spacer"></span>
+          <button id="radiograph-zoom-out" class="radiograph-tool-button" type="button" disabled aria-label="Zoom out">−</button>
+          <output id="radiograph-zoom-value" class="radiograph-zoom-value">100%</output>
+          <button id="radiograph-zoom-in" class="radiograph-tool-button" type="button" disabled aria-label="Zoom in">+</button>
+          <button id="radiograph-fit" class="radiograph-tool-button" type="button" disabled><span class="rad-fa">جا دادن</span><span class="rad-en">Fit</span></button>
+        </div>
+        <div class="radiograph-stage" id="radiograph-stage">
+          <canvas id="radiograph-canvas" width="1200" height="900" tabindex="0" role="img" aria-label="Local chest radiograph canvas" data-image-loaded="false"></canvas>
+          <div id="radiograph-empty-state" class="radiograph-empty-state" role="status">
+            <span class="radiograph-empty-mark" aria-hidden="true">2D</span>
+            <strong><span class="rad-fa">هنوز تصویری انتخاب نشده است</span><span class="rad-en">No image selected yet</span></strong>
+            <span><span class="rad-fa">تصویر را انتخاب کن یا آن را روی این ناحیه رها کن</span><span class="rad-en">Choose an image or drop it in this area</span></span>
+          </div>
+        </div>
+        <div class="radiograph-status-row"><p id="radiograph-image-status" role="status" aria-live="polite"><span class="rad-fa">فایلی بارگذاری نشده است.</span><span class="rad-en">No file loaded.</span></p><p id="radiograph-viewer-hint"><span class="rad-fa">کشیدن برای جابه‌جایی · چرخ ماوس برای بزرگ‌نمایی · کلیدهای + و −</span><span class="rad-en">Drag to pan · mouse wheel to zoom · + / − keys</span></p></div>
+        <p class="radiograph-disclaimer"><span class="rad-fa">این ابزار فقط فایل تصویری را نمایش می‌دهد؛ جهت پروجکشن را تشخیص نمی‌دهد و تفسیر بالینی تولید نمی‌کند.</span><span class="rad-en">This tool only displays an image; it does not infer projection or produce clinical interpretation.</span></p>
+      </section>
+
+      <section class="workspace" id="workspace" data-i18n-aria-label="workspaceLabel">
+        <aside class="panel anatomy-panel" id="anatomy-panel" aria-labelledby="anatomy-title">
+          <div class="panel-heading"><div><span class="panel-kicker" data-i18n="libraryKicker">ANATOMY LIBRARY</span><h2 id="anatomy-title" data-i18n="anatomyTitle">ساختارها</h2></div><button id="visibility-all" class="text-action" type="button" data-i18n="hideAll">مخفی‌کردن همه</button></div>
+          <label class="search-box"><span class="search-icon" aria-hidden="true">⌕</span><input id="structure-search" type="search" autocomplete="off" data-i18n-placeholder="searchPlaceholder" placeholder="جست‌وجوی ساختار…" aria-label="Search anatomy structures"><kbd>/</kbd></label>
+          <div class="filter-note"><span data-i18n="selectStructure">برای انتخاب، نام ساختار را بزن</span><span class="tiny-count" id="visible-count">۱۰/۱۰</span></div>
+          <ul id="structure-list" class="structure-list" aria-label="Anatomical structures"></ul>
+          <div class="panel-footnote"><span class="mini-legend-dot"></span><span data-i18n="colorNote">هر رنگ نمایندهٔ یک ساختار در نمونه است</span></div>
+        </aside>
+
+        <section class="viewer-column" data-i18n-aria-label="viewerPanelLabel">
+          <div class="viewer-topline"><div class="viewer-title-group"><span class="viewer-live-mark"></span><div><strong id="viewer-plane-title" data-i18n="viewAxial">نمای محوری</strong><small id="viewer-plane-subtitle" data-i18n="viewerSubtitle">اطلس SPL · پیمایش برش‌های محوری</small></div></div><div class="viewer-top-actions"><button class="mode-tab active" id="learn-mode" type="button" aria-pressed="true" data-i18n="learnMode">مطالعه</button><button class="mode-tab" id="quiz-mode" type="button" aria-pressed="false"><span class="mode-spark" aria-hidden="true">✳</span><span data-i18n="quizMode">تمرین</span></button></div></div>
+          <div id="display-mode-controls" class="display-mode-controls" role="group" aria-labelledby="display-mode-label">
+            <span id="display-mode-label" class="display-mode-label" data-i18n="displayModeLabel">حالت نمایش</span>
+            <button id="display-single" class="display-mode-button active" type="button" aria-pressed="true" data-i18n="displaySingle">یک‌نما</button>
+            <button id="display-triplanar" class="display-mode-button" type="button" aria-pressed="false" data-i18n="displayTriPlanar">سه‌نما هم‌زمان</button>
+          </div>
+
+          <div id="plane-tabs" class="plane-tabs" role="group" data-i18n-aria-label="planeGroupLabel">
+            <button type="button" id="plane-axial" class="plane-tab active" data-plane="axial" aria-pressed="true" data-i18n="planeAxial">محوری · Axial</button>
+            <button type="button" id="plane-coronal" class="plane-tab" data-plane="coronal" aria-pressed="false" data-i18n="planeCoronal">کرونال · Coronal</button>
+            <button type="button" id="plane-sagittal" class="plane-tab" data-plane="sagittal" aria-pressed="false" data-i18n="planeSagittal">ساژیتال · Sagittal</button>
+          </div>
+
+          <section id="tri-planar-panel" class="tri-planar-panel" aria-labelledby="tri-planar-title" hidden>
+            <div class="tri-planar-heading">
+              <div>
+                <span class="panel-kicker" data-i18n="triPlanarKicker">SYNCHRONIZED REVIEW</span>
+                <h3 id="tri-planar-title" data-i18n="triPlanarTitle">مرور هم‌زمان سه صفحه</h3>
+                <p data-i18n="triPlanarHint">هر لغزنده مختصات همان محور را تغییر می‌دهد و خطوط راهنما در هر سه صفحه هماهنگ می‌شوند.</p>
+              </div>
+              <button id="tri-planar-return" class="tri-return-button" type="button" data-i18n="returnSingleView">بازگشت به نمای بزرگ</button>
+            </div>
+            <div class="tri-planar-grid">
+              <article class="tri-plane-card" data-tri-plane="axial">
+                <header><div><h4 id="tri-axial-title" data-i18n="planeAxial">Axial</h4><p data-i18n="triAxialAxis">محور k · از پایین به بالا</p></div><output id="tri-axial-position">k=26 / 113</output></header>
+                <div class="tri-canvas-wrap"><canvas class="tri-canvas" id="tri-axial-canvas" width="256" height="256" role="img" aria-label="Axial CT with synchronized crosshair"></canvas><div id="tri-axial-empty-state" class="tri-empty-state" role="status" hidden data-i18n="triEmptySlice">دادهٔ تصویری در این موقعیت وجود ندارد؛ این برش در ناحیهٔ خالی حجم قرار دارد.</div></div>
+                <label class="tri-slider-row" for="tri-axial-slider"><span id="tri-axial-slider-label" data-i18n="triSlicePosition">موقعیت برش</span><input id="tri-axial-slider" type="range" aria-labelledby="tri-axial-title tri-axial-slider-label" aria-describedby="tri-axial-position" min="0" max="112" step="1" value="26"></label>
+                <button class="tri-open-button" type="button" data-open-plane="axial" data-i18n="openSinglePlane">بازکردن این نما</button>
+              </article>
+              <article class="tri-plane-card" data-tri-plane="coronal">
+                <header><div><h4 id="tri-coronal-title" data-i18n="planeCoronal">Coronal</h4><p data-i18n="triCoronalAxis">محور j · قدامی به خلفی</p></div><output id="tri-coronal-position">j=128 / 256</output></header>
+                <div class="tri-canvas-wrap"><canvas class="tri-canvas" id="tri-coronal-canvas" width="256" height="113" role="img" aria-label="Coronal CT with synchronized crosshair"></canvas><div id="tri-coronal-empty-state" class="tri-empty-state" role="status" hidden data-i18n="triEmptySlice">دادهٔ تصویری در این موقعیت وجود ندارد؛ این برش در ناحیهٔ خالی حجم قرار دارد.</div></div>
+                <label class="tri-slider-row" for="tri-coronal-slider"><span id="tri-coronal-slider-label" data-i18n="triSlicePosition">موقعیت برش</span><input id="tri-coronal-slider" type="range" aria-labelledby="tri-coronal-title tri-coronal-slider-label" aria-describedby="tri-coronal-position" min="0" max="255" step="1" value="128"></label>
+                <button class="tri-open-button" type="button" data-open-plane="coronal" data-i18n="openSinglePlane">بازکردن این نما</button>
+              </article>
+              <article class="tri-plane-card" data-tri-plane="sagittal">
+                <header><div><h4 id="tri-sagittal-title" data-i18n="planeSagittal">Sagittal</h4><p data-i18n="triSagittalAxis">محور i · راست به چپ</p></div><output id="tri-sagittal-position">i=128 / 256</output></header>
+                <div class="tri-canvas-wrap"><canvas class="tri-canvas" id="tri-sagittal-canvas" width="256" height="113" role="img" aria-label="Sagittal CT with synchronized crosshair"></canvas><div id="tri-sagittal-empty-state" class="tri-empty-state" role="status" hidden data-i18n="triEmptySlice">دادهٔ تصویری در این موقعیت وجود ندارد؛ این برش در ناحیهٔ خالی حجم قرار دارد.</div></div>
+                <label class="tri-slider-row" for="tri-sagittal-slider"><span id="tri-sagittal-slider-label" data-i18n="triSlicePosition">موقعیت برش</span><input id="tri-sagittal-slider" type="range" aria-labelledby="tri-sagittal-title tri-sagittal-slider-label" aria-describedby="tri-sagittal-position" min="0" max="255" step="1" value="128"></label>
+                <button class="tri-open-button" type="button" data-open-plane="sagittal" data-i18n="openSinglePlane">بازکردن این نما</button>
+              </article>
+            </div>
+            <p class="tri-planar-footnote" data-i18n="triPlanarWindowNote">این نما از پنجرهٔ پیش‌فرض مجموعه استفاده می‌کند. برای تنظیم Window/Level و ابزارهای کامل، هر صفحه را در نمای بزرگ باز کن.</p>
+            <p id="tri-planar-error" class="tri-planar-error" role="status" hidden></p>
+          </section>
+
+          <div id="quiz-banner" class="quiz-banner" hidden><div><span class="quiz-kicker" data-i18n="recallKicker">ACTIVE RECALL</span><strong data-i18n="quizPrompt">ساختار برجسته‌شده کدام است؟</strong></div><div class="score-box"><span data-i18n="sessionScore">امتیاز این جلسه</span><strong><b id="score">۰</b><i>/</i><span id="answered-count">۰</span></strong></div></div>
+
+          <div id="viewer-frame" class="viewer-frame">
+            <div class="viewer-watermark"><span class="watermark-dot"></span><span data-i18n="sourceBadge">SPL ATLAS · AXIAL VOLUME</span></div>
+            <div class="orientation-marker marker-left" id="orientation-marker-left" aria-label="Patient right"><b id="orientation-letter-left">R</b><span id="orientation-label-left" data-i18n="patientRight">راست بیمار</span></div>
+            <div class="orientation-marker marker-right" id="orientation-marker-right" aria-label="Patient left"><b id="orientation-letter-right">L</b><span id="orientation-label-right" data-i18n="patientLeft">چپ بیمار</span></div>
+            <div id="schematic-canvas" class="schematic-canvas"><canvas id="ct-slice-canvas" class="ct-slice-canvas" width="256" height="256" tabindex="0" aria-label="Axial CT slice with educational segmentation overlay"></canvas><p id="viewer-load-error" class="viewer-load-error" hidden>Loading the CT teaching slice…</p><div id="viewer-empty-state" class="viewer-empty-state" role="status" hidden data-i18n="triEmptySlice">No image data is available at this position; this slice is outside the acquired anatomy.</div></div>
+            <div class="viewer-scale"><span data-i18n="notToScale">برش واقعی · لایهٔ آموزشی</span><span id="viewer-axis-labels">R <i>•</i> L</span></div>
+            <div class="zoom-controls" aria-label="Viewer zoom controls"><button id="zoom-in" type="button" aria-label="Zoom in" title="Zoom in">+</button><span id="zoom-value">100%</span><button id="zoom-out" type="button" aria-label="Zoom out" title="Zoom out">−</button><span class="zoom-separator"></span><button id="zoom-reset" type="button" aria-label="Reset zoom" title="Reset zoom">↺</button></div>
+          </div>
+
+          <div id="slice-navigation" class="slice-navigation" data-i18n-aria-label="sliceNavigationGroup">
+            <div class="slice-nav-heading">
+              <span class="toolbar-label" data-i18n="sliceNavLabel">پیمایش برش‌ها</span>
+              <output id="slice-position" for="slice-slider">k=26 / 113</output>
+            </div>
+            <div class="slice-nav-controls">
+              <button id="slice-prev" class="slice-step-button" type="button" aria-label="Previous axial slice" title="Previous slice">−</button>
+              <input id="slice-slider" type="range" min="0" max="112" step="1" value="26" aria-label="Axial CT slice position">
+              <button id="slice-next" class="slice-step-button" type="button" aria-label="Next axial slice" title="Next slice">+</button>
+            </div>
+            <p id="volume-coordinate-readout" class="volume-coordinate-readout" aria-live="polite" aria-label="Current voxel coordinates">i=128 · j=128 · k=26</p>
+            <p class="slice-nav-hint" data-i18n="sliceNavHint">برای جابه‌جایی بین برش‌ها از لغزنده، چرخ ماوس یا کلیدهای بالا و پایین استفاده کن.</p>
+          </div>
+
+          <section id="window-level-controls" class="window-level-controls" aria-label="CT window and level controls">
+            <div class="window-level-heading">
+              <strong data-i18n="windowLevelTitle">کنتراست و روشنایی تصویر</strong>
+              <span data-i18n="windowLevelSource">شدت خام منبع</span>
+            </div>
+            <div class="window-level-fields">
+              <div class="window-level-field">
+                <label for="window-width-slider"><span data-i18n="windowWidth">پنجره (WW)</span><output id="window-width-value" for="window-width-slider">400</output></label>
+                <input id="window-width-slider" type="range" min="1" max="4000" step="10" value="400">
+              </div>
+              <div class="window-level-field">
+                <label for="window-level-slider"><span data-i18n="windowLevel">سطح (WL)</span><output id="window-level-value" for="window-level-slider">1064</output></label>
+                <input id="window-level-slider" type="range" min="0" max="4000" step="10" value="1064">
+              </div>
+              <button type="button" id="window-level-reset" class="window-level-reset" data-i18n="windowLevelReset">بازنشانی</button>
+            </div>
+            <p id="window-level-status" class="window-level-status" aria-live="polite" data-i18n="windowLevelNote">شدت خام ذخیره‌شدهٔ اطلس؛ کالیبراسیون HU مستقلاً تأیید نشده است.</p>
+          </section>
+
+          <div id="viewer-toolbar" class="viewer-toolbar"><div class="view-levels" data-i18n-aria-label="anatomyLayerGroup"><span class="toolbar-label" data-i18n="viewPreset">فیلتر لایه‌های آناتومی</span><button class="level-button active" type="button" data-level="organs"><b>01</b><span data-i18n="levelOrgans">اندام‌ها</span></button><button class="level-button" type="button" data-level="vessels"><b>02</b><span data-i18n="levelVessels">عروق</span></button><button class="level-button" type="button" data-level="posterior"><b>03</b><span data-i18n="levelPosterior">ساختارهای خلفی</span></button></div><div class="viewer-toggles"><label class="switch-row"><span data-i18n="colorOverlays">رنگ‌بندی</span><input id="toggle-overlays" type="checkbox" checked><span class="switch-ui"></span></label><label class="switch-row"><span data-i18n="anatomyLabels">برچسب‌ها</span><input id="toggle-labels" type="checkbox" checked><span class="switch-ui"></span></label></div></div>
+          <div id="source-disclaimer" class="source-disclaimer"><span class="info-icon" aria-hidden="true">i</span><p><strong data-i18n="provenanceTitle">دربارهٔ این تصویر</strong><span data-i18n="provenanceText">این نمایش صرفاً شماتیک است؛ هنوز هیچ CT بیمار یا ماسک قطعه‌بندی بارگذاری نشده است. موقعیت‌ها برای آموزش مفهومی‌اند.</span></p></div>
+        </section>
+
+        <aside class="panel detail-panel" aria-labelledby="detail-title">
+          <div class="panel-heading detail-heading"><div><span class="panel-kicker" data-i18n="inspectorKicker">STRUCTURE INSPECTOR</span><h2 id="detail-title" data-i18n="detailTitle">اطلاعات ساختار</h2></div><span class="detail-index" id="detail-index">01</span></div>
+          <div class="selected-structure"><div class="selected-color" id="selected-color"><span></span></div><span class="selected-overline" data-i18n="selectedStructure">ساختار انتخاب‌شده</span><h3 id="selected-name-fa">کبد</h3><p id="selected-name-en">Liver</p><div class="selected-meta"><span class="color-chip" id="selected-chip"></span><span id="selected-meta-text" data-i18n="demoStructure">ساختار آموزشی نمونه</span></div></div>
+          <div class="detail-divider"></div>
+          <div class="detail-section"><h4 data-i18n="anatomicalNote">نکتهٔ آناتومیک</h4><p id="selected-description">کبد در بخش عمده‌ای از ربع فوقانی راست شکم قرار دارد. در نمایش محوری رادیولوژیک، سمت راست بیمار در سمت چپ صفحه دیده می‌شود.</p></div>
+          <div class="detail-section detail-secondary"><h4 data-i18n="orientationTitle">جهت‌یابی</h4><div class="orientation-card"><span id="orientation-glyph" class="orientation-glyph" aria-hidden="true">R <i>→</i> L</span><p id="orientation-note" data-i18n="orientationNote">سمت راست بیمار در سمت چپ تصویر نمایش داده می‌شود.</p></div></div>
+          <div id="answer-panel" class="answer-panel" hidden><div class="answer-options" id="answer-options"></div><div id="answer-feedback" class="answer-feedback" aria-live="polite"></div><button id="next-question" class="primary-button" type="button" data-i18n="nextQuestion">سؤال بعدی <span aria-hidden="true">←</span></button><button id="reset-quiz" class="quiet-button" type="button" data-i18n="resetQuiz">شروع دوبارهٔ امتیاز</button></div>
+          <div id="learn-nudge" class="learn-nudge"><span class="nudge-icon" aria-hidden="true">↗</span><p data-i18n="learnNudge">یک ساختار را از فهرست انتخاب کن تا رنگ، نام و نکتهٔ آن را بررسی کنی.</p></div>
+
+          <section id="learning-progress" class="learning-progress" aria-labelledby="learning-progress-title">
+            <header class="learning-progress-heading">
+              <div>
+                <span class="panel-kicker" data-i18n="progressKicker">پیشرفت محلی</span>
+                <h3 id="learning-progress-title" data-i18n="progressTitle">پیشرفت تمرین</h3>
+              </div>
+              <div class="progress-actions">
+                <button id="export-local-progress" class="progress-reset" type="button" data-i18n="progressExport">پشتیبان‌گیری</button>
+                <button id="restore-local-progress" class="progress-reset" type="button" data-i18n="progressRestore">بازیابی</button>
+                <button id="reset-local-progress" class="progress-reset" type="button" data-i18n="progressReset">پاک کردن</button>
+                <input id="restore-local-progress-file" type="file" accept="application/json,.json" hidden>
+              </div>
+            </header>
+            <div class="learning-progress-metrics">
+              <div><strong id="progress-attempts">۰</strong><span data-i18n="progressAttempts">پاسخ‌ها</span></div>
+              <div><strong id="progress-accuracy">—</strong><span data-i18n="progressAccuracy">درستی</span></div>
+              <div><strong id="progress-structures">۰</strong><span data-i18n="progressStructures">ساختارها</span></div>
+            </div>
+            <p id="progress-storage-note" class="learning-progress-note" role="status" aria-live="polite" data-i18n="progressLocalNote">فقط در همین مرورگر ذخیره می‌شود؛ به سرور ارسال نمی‌شود.</p>
+            <p id="progress-feedback" class="learning-progress-feedback" role="status" aria-live="polite"></p>
+          </section>
+          <section id="bookmarks-panel" class="bookmarks-panel" aria-labelledby="bookmarks-title">
+            <header class="bookmarks-heading">
+              <div><span class="panel-kicker" data-i18n="bookmarkKicker">بوکمارک‌های محلی</span><h3 id="bookmarks-title" data-i18n="bookmarkTitle">برش‌های ذخیره‌شده</h3></div>
+              <span id="bookmark-count" class="bookmark-count">۰</span>
+            </header>
+            <label class="bookmark-note-label" for="bookmark-note-input" data-i18n="bookmarkNoteLabel">یادداشت اختیاری</label>
+            <textarea id="bookmark-note-input" maxlength="500" rows="2" data-i18n-placeholder="bookmarkNotePlaceholder" placeholder="نکته‌ای برای مرور این برش بنویس…"></textarea>
+            <div class="bookmark-toolbar">
+              <button id="bookmark-save-current" class="bookmark-save-button" type="button" data-i18n="bookmarkSaveCurrent">ذخیرهٔ نمای فعلی</button>
+              <button id="bookmark-export" class="progress-reset" type="button" data-i18n="bookmarkExport">خروجی بوکمارک‌ها</button>
+              <button id="bookmark-restore" class="progress-reset" type="button" data-i18n="bookmarkRestore">بازیابی بوکمارک‌ها</button>
+              <input id="bookmark-restore-file" type="file" accept="application/json,.json" hidden>
+            </div>
+            <p id="bookmark-storage-note" class="learning-progress-note" role="status" aria-live="polite" data-i18n="bookmarkStorageNote">بوکمارک‌ها و یادداشت‌ها فقط در همین مرورگر ذخیره می‌شوند.</p>
+            <div id="bookmark-list" class="bookmark-list" role="list" aria-label="Saved CT slices"></div>
+            <p id="bookmark-feedback" class="learning-progress-feedback" role="status" aria-live="polite"></p>
+          </section>
+        </aside>
+      </section>
+      <footer class="page-footer"><span>CT EDU <i>·</i> FOUNDATION MODULE</span><span data-i18n="footerDisclaimer">مناسب یادگیری آناتومی؛ برای تشخیص یا تصمیم‌گیری بالینی استفاده نشود.</span><a href="privacy.html" data-i18n="privacyLink">حریم خصوصی و داده‌ها</a><a href="DATA_LICENSE_REVIEW.md" data-i18n="dataReviewLink">وضعیت داده و مجوز</a><a href="data-license.html" data-i18n="licenseNoticeLink">متن مجوز اطلس</a></footer>
+    </main>
+  </div>
+</body>
+</html>

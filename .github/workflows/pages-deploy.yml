@@ -1,0 +1,154 @@
+name: Deploy CT Edu to GitHub Pages
+
+on:
+  push:
+    branches:
+      - main
+      - "codex/**"
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+# Keep feature-branch builds from cancelling a main deployment.
+concurrency:
+  group: github-pages-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Check out this revision
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Set up Python for the source-volume build
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: "3.12"
+
+      - name: Build the 113-slice axial CT/labelmap bundle
+        run: |
+          python -m pip install --disable-pip-version-check numpy pillow
+          python scripts/build_demo_assets.py --output build/ct-demo-volume
+
+      - name: Stage and validate the public teaching site
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -rf _site
+          mkdir -p _site/assets _site/licenses
+          cp index.html data-license.html privacy.html DATA_LICENSE_REVIEW.md _site/
+          cp favicon.svg _site/
+          cp -R src _site/src
+          cp -R build/ct-demo-volume _site/assets/spl-abdominal-demo
+          cp licenses/SPL-Abdominal-Atlas-LICENSE.txt _site/licenses/
+          touch _site/.nojekyll
+
+          test -s _site/index.html
+          test -s _site/privacy.html
+          test -s _site/favicon.svg
+          test -s _site/src/styles.css
+          test -s _site/src/viewer/ct-slice-viewer.js
+          test -s _site/src/viewer/tri-planar-viewer.js
+          test -s _site/src/data/progress-store.js
+          test -s _site/assets/spl-abdominal-demo/ct-slice.png
+          test -s _site/assets/spl-abdominal-demo/label-ids-rgb.png
+          test -s _site/assets/spl-abdominal-demo/volume.json
+          test -s _site/assets/spl-abdominal-demo/ct-volume-int16.bin.gz
+          test -s _site/assets/spl-abdominal-demo/slices/ct-000.png
+          test -s _site/assets/spl-abdominal-demo/slices/ct-112.png
+          test -s _site/assets/spl-abdominal-demo/slices/labels-000.png
+          test -s _site/assets/spl-abdominal-demo/slices/labels-112.png
+          test -s _site/assets/spl-abdominal-demo/coronal/ct-000.png
+          test -s _site/assets/spl-abdominal-demo/coronal/labels-128.png
+          test -s _site/assets/spl-abdominal-demo/coronal/ct-255.png
+          test -s _site/assets/spl-abdominal-demo/sagittal/ct-000.png
+          test -s _site/assets/spl-abdominal-demo/sagittal/labels-128.png
+          test -s _site/assets/spl-abdominal-demo/sagittal/ct-255.png
+          test -s _site/data-license.html
+          test -s _site/licenses/SPL-Abdominal-Atlas-LICENSE.txt
+
+          if find _site -type f -name '*.zip' | grep -q .; then
+            echo "Unexpected source ZIP found in the public site bundle."
+            exit 1
+          fi
+
+          echo "Staged files:"
+          find _site -type f -printf '%P (%s bytes)\n' | sort
+
+      - name: Upload validated Pages artifact (no deployment on this job)
+        uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0
+        with:
+          path: _site
+
+  deploy:
+    needs: build
+    # Fail closed until a maintainer explicitly unlocks a release after all non-code gates pass.
+    # Set repository Actions variable CT_EDU_PUBLIC_RELEASE_APPROVED=true only after RELEASE_GATES.md is fully reviewed.
+    if: github.ref == 'refs/heads/main' && vars.CT_EDU_PUBLIC_RELEASE_APPROVED == 'true'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@45bfe0192ca1faeb007ade9deae92b16b8254a0d # v6.0.0
+
+      - name: Deploy the validated Pages artifact
+        id: deployment
+        uses: actions/deploy-pages@368f82528645a54fb793d4d04e342629a3f51346 # v5.0.1
+
+      - name: Verify deployed site and representative CT assets
+        shell: bash
+        env:
+          PAGE_URL: ${{ steps.deployment.outputs.page_url }}
+        run: |
+          set -euo pipefail
+          base="${PAGE_URL%/}"
+          test -n "$base"
+
+          fetch_with_retry() {
+            local url="$1"
+            local expected="$2"
+            local attempt status
+            for attempt in $(seq 1 30); do
+              status="$(curl -sS -L -o /tmp/ct-edu-live-probe -w '%{http_code}' "$url?probe=$GITHUB_RUN_ID-$attempt" || true)"
+              echo "LIVE_CHECK attempt=$attempt status=$status url=$url"
+              if [ "$status" = "200" ] && grep -q "$expected" /tmp/ct-edu-live-probe; then
+                return 0
+              fi
+              sleep 2
+            done
+            echo "Live verification failed for $url"
+            head -c 300 /tmp/ct-edu-live-probe || true
+            return 1
+          }
+
+          fetch_with_retry "$base/" 'ct-slice-viewer.js'
+          fetch_with_retry "$base/favicon.svg" '<svg xmlns='
+          fetch_with_retry "$base/privacy.html" 'Privacy &amp; Local Data'
+          fetch_with_retry "$base/src/viewer/ct-slice-viewer.js" 'label-ids-rgb.png'
+          fetch_with_retry "$base/assets/spl-abdominal-demo/volume.json" '"sliceCount": 113'
+          fetch_with_retry "$base/assets/spl-abdominal-demo/volume.json" '"rawVoxelVolume"'
+          curl -fsS -L "$base/assets/spl-abdominal-demo/ct-volume-int16.bin.gz?probe=$GITHUB_RUN_ID" -o /tmp/ct-edu-raw-volume.bin.gz
+          gzip -t /tmp/ct-edu-raw-volume.bin.gz
+          raw_size="$(gzip -dc /tmp/ct-edu-raw-volume.bin.gz | wc -c)"
+          test "$raw_size" -eq 14811136
+          echo "RAW_CT_VOXEL_BYTES_VERIFIED=$raw_size"
+          fetch_with_retry "$base/assets/spl-abdominal-demo/slices/ct-026.png" 'PNG'
+          fetch_with_retry "$base/assets/spl-abdominal-demo/slices/labels-026.png" 'PNG'
+          fetch_with_retry "$base/assets/spl-abdominal-demo/coronal/ct-128.png" 'PNG'
+          fetch_with_retry "$base/assets/spl-abdominal-demo/coronal/labels-128.png" 'PNG'
+          fetch_with_retry "$base/assets/spl-abdominal-demo/sagittal/ct-128.png" 'PNG'
+          fetch_with_retry "$base/assets/spl-abdominal-demo/sagittal/labels-128.png" 'PNG'
+          echo "CT_EDU_TRIPLANAR_VOLUME_LIVE_VERIFIED"

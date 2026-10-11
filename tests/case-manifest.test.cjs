@@ -1,0 +1,6 @@
+const test = require('node:test');
+const assert = require('node:assert/strict');
+const manifest = require('../src/data/case-manifest.js');
+test('case manifest uses stable versioned identity and current source geometry',function(){assert.equal(manifest.schemaVersion,1);const c=manifest.getById('spl-abdomen-normal-atlas');assert.ok(c);assert.equal(c.version,1);assert.equal(c.region,'abdomen');assert.deepEqual(c.volume.dimensions,{i:256,j:256,k:113});assert.deepEqual(c.volume.availablePlanes.axial,{indexAxis:'k',sliceCount:113,defaultIndex:26});assert.match(c.volume.intensitySemantics,/HU calibration not independently verified/);});
+test('case manifest keeps expert and legal review gates closed',function(){const c=manifest.getById('spl-abdomen-normal-atlas');assert.equal(c.source.redistributionStatus,'review-required');assert.equal(c.review.orientation,'expert-review-required');assert.equal(c.review.segmentationAlignment,'expert-review-required');assert.equal(c.review.publicReleaseApproved,false);assert.equal(manifest.isPublicReleaseApproved(c.id),false);});
+test('unknown cases fail closed',function(){assert.equal(manifest.getById('unknown'),null);assert.equal(manifest.isPublicReleaseApproved('unknown'),false);});
