@@ -30,7 +30,12 @@ jobs:
           node --check src/quiz/quiz-engine.js
           node --check src/app.js
       - name: Check archive inventory script syntax
-        run: python3 -m py_compile scripts/inspect_archives.py
+        run: |
+          python3 -m py_compile scripts/inspect_archives.py
+          python3 -m py_compile scripts/read_atlas_metadata.py
       - name: Inventory uploaded atlas archives without extracting them
         continue-on-error: true
         run: python3 scripts/inspect_archives.py
+      - name: Read license, README and NRRD header in-place
+        continue-on-error: true
+        run: python3 scripts/read_atlas_metadata.py
