@@ -7,7 +7,11 @@ const { chromium } = require('playwright');
   const browser = await chromium.launch({ headless: true });
   const page = await browser.newPage({ viewport: { width: 1440, height: 1180 }, deviceScaleFactor: 1 });
   const pageErrors = [];
+  const browserConsoleErrors = [];
+  const failedRequests = [];
   page.on('pageerror', function (error) { pageErrors.push(error.message); });
+  page.on('console', function (message) { if (message.type() === 'error') browserConsoleErrors.push(message.text()); });
+  page.on('requestfailed', function (request) { failedRequests.push(request.url() + ' :: ' + request.failure()?.errorText); });
 
   try {
     const response = await page.goto('http://127.0.0.1:8765/', { waitUntil: 'domcontentloaded' });
@@ -91,10 +95,26 @@ const { chromium } = require('playwright');
       slider.dispatchEvent(new Event('input', { bubbles: true }));
       slider.dispatchEvent(new Event('change', { bubbles: true }));
     }, targetLevel);
-    await page.waitForFunction(function (expectedLevel) {
-      const info = window.CTEduSliceViewer.getWindowLevelInfo();
-      return info.rawAvailable && info.width === 600 && info.level === expectedLevel;
-    }, targetLevel, { timeout: 20000 });
+    try {
+      await page.waitForFunction(function (expectedLevel) {
+        const info = window.CTEduSliceViewer.getWindowLevelInfo();
+        return info.rawAvailable && info.width === 600 && info.level === expectedLevel;
+      }, targetLevel, { timeout: 20000 });
+    } catch (error) {
+      console.error('Window/level diagnostic', await page.evaluate(function () {
+        return {
+          info: window.CTEduSliceViewer.getWindowLevelInfo(),
+          status: window.CTEduSliceViewer.getStatus(),
+          controls: {
+            width: document.querySelector('#window-width-slider').value,
+            level: document.querySelector('#window-level-slider').value,
+            note: document.querySelector('#window-level-status').textContent
+          }
+        };
+      }));
+      console.error('Browser errors', { pageErrors: pageErrors, consoleErrors: browserConsoleErrors, failedRequests: failedRequests });
+      throw error;
+    }
     assert.match(await page.locator('#window-level-status').textContent(), /raw|intensity|شدت/i);
     await page.locator('#window-level-slider').evaluate(function (slider) {
       slider.value = '0';
