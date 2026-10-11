@@ -13,6 +13,7 @@ This checklist separates code that exists from educational, legal, and release r
 - [x] Anatomy search, visibility controls, structure detail panel, and four-choice active recall.
 - [x] Node unit/UI tests and Chromium smoke test: all planes and orientation labels, coordinate continuity, active-plane breadcrumb, real window/level pixel changes, pan/zoom, recall flow, and a 390px touch-enabled viewport without horizontal overflow.
 - [x] CI compares the compressed int16 sidecar byte-for-byte with the source NRRD CT and verifies sampled CT/labelmap transforms pixel-by-pixel in all three planes. The Pages build also checks representative live assets and excludes source ZIPs from the public artifact.
+- [x] Main and synchronized viewers explain all-zero padded edge slices instead of disguising them as diagnostic black images; Chromium smoke covers this behavior in both layouts.
 - [x] Pages deployment workflow restricted to `main`; feature branches and PRs must not overwrite the single public Pages site.
 - [x] Interface language clarifies that anatomy controls filter real image overlays rather than a schematic drawing.
 
