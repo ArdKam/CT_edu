@@ -28,8 +28,8 @@
       <section class="legal-intro" aria-labelledby="privacy-title">
         <div class="eyebrow"><span class="eyebrow-line"></span><span>PRIVACY · LOCAL-FIRST PROTOTYPE</span></div>
         <h1 id="privacy-title">حریم خصوصی و داده‌های محلی</h1>
-        <p class="legal-lead">CT Edu یک نمونهٔ آموزشی ایستا است. پاسخ‌های تمرین در مرورگر شما نگه‌داری می‌شوند؛ حساب کاربری یا همگام‌سازی ابری در این نسخه وجود ندارد.</p>
-        <p class="legal-lead" lang="en" dir="ltr">CT Edu is a static educational prototype. Practice answers stay in your browser; this version has no account system or cloud sync.</p>
+        <p class="legal-lead">CT Edu یک نمونهٔ آموزشی ایستا است. پاسخ‌های تمرین، بوکمارک‌های برش و یادداشت‌های اختیاری آن‌ها در مرورگر شما نگه‌داری می‌شوند؛ حساب کاربری یا همگام‌سازی ابری در این نسخه وجود ندارد.</p>
+        <p class="legal-lead" lang="en" dir="ltr">CT Edu is a static educational prototype. Practice answers, slice bookmarks, and optional bookmark notes stay in your browser; this version has no account system or cloud sync.</p>
         <p class="legal-reviewed">Last reviewed: 11 October 2026 · نسخهٔ فعلی آزمایشی است</p>
       </section>
 
@@ -37,8 +37,8 @@
         <article class="legal-card">
           <span class="panel-kicker">01 · LOCAL STORAGE</span>
           <h2>چه چیزی ذخیره می‌شود؟ / What is stored?</h2>
-          <p>برنامه ترجیح زبان و تاریخچهٔ یادآوری فعال را در فضای ذخیره‌سازی محلی همین مرورگر نگه می‌دارد. تاریخچه حداکثر ۵۰۰ پاسخ دارد و شامل شناسهٔ درس، ناحیه، مهارت، ساختار هدف، پاسخ انتخاب‌شده، درستی پاسخ و زمان ثبت است.</p>
-          <p lang="en" dir="ltr">The app stores a language preference and active-recall history in this browser. History is capped at 500 attempts and contains case, region, skill, target structure, selected answer, correctness, and timestamp.</p>
+          <p>برنامه ترجیح زبان، تاریخچهٔ یادآوری فعال (حداکثر ۵۰۰ پاسخ) و حداکثر ۱۰۰ بوکمارک برش را در فضای ذخیره‌سازی محلی همین مرورگر نگه می‌دارد. هر بوکمارک شامل شناسهٔ کیس، صفحه و شمارهٔ برش، مختصات voxel، ساختار انتخابی و در صورت واردکردن یادداشت متنی حداکثر ۵۰۰ نویسه‌ای است.</p>
+          <p lang="en" dir="ltr">The app stores a language preference, active-recall history capped at 500 attempts, and up to 100 slice bookmarks in this browser. A bookmark contains a case ID, plane and slice index, voxel coordinates, selected structure, and an optional plain-text note of up to 500 characters.</p>
           <p class="legal-note">این داده‌ها به حساب کاربری یا هویت شما متصل نیستند؛ اما هر کسی که به همین پروفایل مرورگر یا فضای ذخیره‌سازی مبدأ دسترسی داشته باشد ممکن است بتواند آن‌ها را بخواند.</p>
           <p class="legal-note" lang="en" dir="ltr">These records are not linked to an account, but someone with access to this browser profile or the same-origin storage may be able to read them.</p>
         </article>
@@ -46,10 +46,10 @@
         <article class="legal-card">
           <span class="panel-kicker">02 · BACKUP & DELETE</span>
           <h2>پشتیبان‌گیری و حذف / Backup and deletion</h2>
-          <p>می‌توانید تاریخچه را به‌صورت فایل JSON دانلود کنید، از فایل معتبر نسخهٔ پشتیبان بازیابی کنید یا تاریخچهٔ محلی را پاک کنید. بازیابی پس از تأیید انجام می‌شود و تاریخچهٔ فعلی را جایگزین می‌کند؛ فایل بیش از ۱ مگابایت پذیرفته نمی‌شود.</p>
-          <p lang="en" dir="ltr">You can export a JSON backup, restore a valid backup, or clear local history. Restore requires confirmation and replaces current history. Files larger than 1 MB are rejected.</p>
-          <p class="legal-note">فایل پشتیبان را مانند دادهٔ شخصی در نظر بگیرید. آن را در مخزن عمومی، issue عمومی یا پیام عمومی بارگذاری نکنید. پاک‌کردن داخل برنامه فقط تاریخچهٔ CT Edu را از این مبدأ حذف می‌کند؛ دانلودها یا نسخه‌های کپی‌شده حذف نمی‌شوند.</p>
-          <p class="legal-note" lang="en" dir="ltr">Treat backups as personal data. Do not upload them to a public repository, issue, or public message. Clearing in the app removes only CT Edu's local history; downloaded or copied backups remain.</p>
+          <p>تاریخچه و بوکمارک‌ها دو فایل پشتیبان JSON جداگانه دارند؛ هر کدام را می‌توان پس از تأیید از نسخهٔ معتبر بازیابی کرد. بازیابی، دادهٔ همان بخش را جایگزین می‌کند و فایل بیش از ۱ مگابایت پذیرفته نمی‌شود. بوکمارک را می‌توان جداگانه حذف کرد؛ پاک‌کردن تاریخچهٔ تمرین، بوکمارک‌ها را حذف نمی‌کند.</p>
+          <p lang="en" dir="ltr">Progress history and bookmarks use separate JSON backups. Each can be restored after confirmation, replacing data in that section; files larger than 1 MB are rejected. Bookmarks can be removed individually. Clearing quiz history does not clear bookmarks.</p>
+          <p class="legal-note">بوکمارک و یادداشت می‌توانند محتوای شخصی داشته باشند. اطلاعات بیمار، شناسه یا گزارش واقعی را در یادداشت ذخیره نکنید. فایل پشتیبان را مانند دادهٔ شخصی در نظر بگیرید و آن را در مخزن عمومی، issue عمومی یا پیام عمومی بارگذاری نکنید. پاک‌کردن داخل برنامه فقط تاریخچهٔ CT Edu را از این مبدأ حذف می‌کند؛ دانلودها یا نسخه‌های کپی‌شده حذف نمی‌شوند.</p>
+          <p class="legal-note" lang="en" dir="ltr">Bookmarks and notes may contain personal text. Do not store patient information, identifiers, or real reports in notes. Treat backups as personal data and do not upload them to a public repository, issue, or public message. Clearing in the app removes only CT Edu's local history; downloaded or copied backups remain.</p>
         </article>
 
         <article class="legal-card">

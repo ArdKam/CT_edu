@@ -21,11 +21,13 @@ The catalog is **not** a claim that those three additional image modules are imp
 - **Anatomy overlays:** source segment IDs are preserved losslessly as RGB with `id = R + 256 × G`. The structure list is scoped to segments actually present in the currently loaded plane/slice.
 - **Empty edge positions:** if a padded source slice contains no non-zero CT intensity, both the large viewer and synchronized overview identify it as having no image data instead of presenting an unexplained black rectangle.
 - **Inspection tools:** structure search/selection, visibility controls, overlay emphasis, zoom (70–220%) and pointer drag to pan.
-- **Local learning progress:** submitted active-recall answers are saved in this browser only, capped at 500 records, and summarized as attempts, accuracy, and distinct target structures. Users can clear the history or export/import a versioned JSON backup. Restore validates the schema and replaces the current local history only after confirmation. There are no accounts, no server upload, and no cross-device sync.
+- **Local learning progress:** submitted active-recall answers are saved in this browser only, capped at 500 records, and summarized as attempts, accuracy, and distinct target structures. Users can clear the history or export/import a versioned JSON backup. Restore validates the schema and replaces the current local history only after confirmation.
+- **Local slice bookmarks:** save a plane and slice index, i/j/k voxel coordinates, selected structure, and an optional note (up to 500 characters). Bookmarks are capped at 100, de-duplicated per case/plane/slice/structure, and can be opened, removed, exported or restored from a separate versioned JSON backup. Notes render as plain text. Bookmarks remain in this browser; there are no accounts, server upload, or cross-device sync.
+- **Versioned case manifest:** the active SPL anatomy example has a stable case ID, source/geometry metadata, intensity semantics, and explicit medical-review and redistribution gates. A manifest entry does not imply content has been clinically or legally approved.
 - **Bilingual UI:** Persian RTL and English LTR.
 - **Browser security baseline:** dynamic structure and answer-list UI is built with DOM APIs and `textContent`, not HTML string injection sinks. A document-level Content Security Policy restricts scripts and data connections to the same origin, blocks objects/frames, and allowlists only the Google Fonts CSS/font origins currently required by the UI. CSP and untrusted-search-input behavior are exercised in Chromium; this is not a substitute for a complete security review.
 - **CI supply-chain controls:** GitHub Actions are pinned to full commit SHAs, with weekly Dependabot checks for action updates. The Chromium smoke-test dependency is pinned to Playwright 1.63.0, and tests fail if workflow action references lose their immutable SHA pins.
-- **Privacy notice:** [privacy.html](privacy.html) explains local browser storage, portable progress backups, limits on what the app sends, and the third-party Google Fonts request. It does not claim to settle hosting-provider log retention or source-data redistribution rights.
+- **Privacy notice:** [privacy.html](privacy.html) explains local browser storage, portable progress and bookmark backups, optional bookmark notes, limits on what the app sends, and the third-party Google Fonts request. It does not claim to settle hosting-provider log retention or source-data redistribution rights.
 - **Static publication:** the Pages workflow builds and validates an artifact on pull requests and feature branches, including privacy notice and representative CT assets; the deploy job is restricted to `main`. The original source ZIP files are not copied into the Pages artifact.
 - **Review and tests:** Node.js unit/UI contract tests, Python syntax and metadata checks, validation of generated CT/label pairs, and live HTTP probes for representative orthogonal planes.
 
@@ -57,6 +59,13 @@ The catalog is **not** a claim that those three additional image modules are imp
 - The UI remains a prototype, not a clinical workstation or diagnostic viewer.
 
 **Educational use only. Not for diagnosis or clinical decisions.**
+
+## Next product work
+
+- Complete independent medical-image orientation/label review, source redistribution review, public security/privacy checks, accessibility audit, and physical-device Safari/iOS and Android QA before enabling public release.
+- The local bookmark feature is a first step toward a reusable case experience. Next implement a reviewed guided-case flow: clinical context, systematic review prompts, learner-entered findings, independent impression, and rubric-based feedback.
+- Only integrate selected head/chest studies after exact-version use and redistribution rights, metadata review, geometry validation, annotation interpretation, expert review, and attribution are recorded. Candidate dataset names in the roadmap are not approved production content.
+- DICOM-series import, cloud sync, teacher dashboards, and AI-assisted report feedback remain later phases; they are not implemented by the current prototype.
 
 ## Run locally
 

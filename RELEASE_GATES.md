@@ -51,9 +51,11 @@ See [DATASET_ROADMAP.md](DATASET_ROADMAP.md) for reviewed candidate sources and 
 
 ### Educational product completeness
 
-- [ ] Implement case-level clinical context, structured systematic-review prompts, abnormal-finding capture, diagnosis/differential, and structured Findings/Impression writing.
+- [ ] Implement case-level clinical context, structured systematic-review prompts, abnormal-finding capture, diagnosis/differential, and structured Findings/Impression writing. Local bookmarking does not complete the guided-case workflow.
 - [ ] Create reviewed cases with an explicit rubric, teaching rationale, key-finding annotations, accepted alternatives, and provenance.
 - [x] Record active-recall outcomes in a bounded (500-attempt) local-only browser history, show attempts/accuracy/distinct structures, clear history, and export/import a validated versioned JSON backup (restore replaces history after confirmation). This is device/browser-local persistence only.
+- [x] Add local slice bookmarks with stable case ID, plane/index, i/j/k coordinates, selected structure, optional plain-text note (maximum 500 characters), per-location de-duplication, a 100-bookmark cap, per-item deletion, and versioned export/restore with validation and a 1 MB input cap. Bookmarks and notes remain in local browser storage.
+- [x] Add a versioned case manifest for the current SPL normal-anatomy example, recording source, volume geometry, intensity semantics, and open expert/legal review gates. The manifest is not a substitute for case review or rights clearance.
 - [ ] Add account-backed, cross-device sync and per-skill durable history only after a backend and a privacy/data-retention design are approved.
 - [ ] Separate normal-anatomy identification from pathology interpretation and report-writing assessments.
 - [ ] Run a learner pilot with pre/post cases and a transfer test; record usability issues separately from learning outcomes.
@@ -74,7 +76,7 @@ See [DATASET_ROADMAP.md](DATASET_ROADMAP.md) for reviewed candidate sources and 
 
 The MVP is ready for a small educational pilot only when all applicable items below pass:
 
-1. A learner can select each supported anatomical region, inspect a complete study, navigate its slices, and use the supported window/level controls.
+1. A learner can select each supported anatomical region, inspect a complete study, navigate its slices, use the supported window/level controls, and save/resume a local bookmark for a reviewed case.
 2. A learner can complete a guided case, submit an independent interpretation, receive reproducible rubric-based feedback, and attempt a different transfer case.
 3. Every published case has documented source/license, anonymization status where applicable, a reviewed reference interpretation, and a versioned rubric.
 4. Browser tests pass; no uncaught JS errors, failed required asset requests, or horizontal overflow occur in the supported viewport set.
