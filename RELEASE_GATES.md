@@ -8,11 +8,11 @@ This checklist separates code that exists from educational, legal, and release r
 ## Current implementation
 
 - [x] Bilingual Persian RTL / English LTR static web workspace.
-- [x] SPL Abdominal Atlas volume decoded into axial, coronal, and sagittal stacks.
-- [x] Independent slice navigation, zoom/pan, source-intensity window/level, and label-map overlay.
+- [x] SPL Abdominal Atlas volume decoded into 113 axial, 256 coronal, and 256 sagittal positions.
+- [x] Independent slice navigation, per-plane position retention with visible i/j/k voxel indices, zoom/pan, source-intensity window/level, and label-map overlay.
 - [x] Anatomy search, visibility controls, structure detail panel, and four-choice active recall.
-- [x] Node unit/UI tests and Chromium smoke test, including a basic mobile viewport and plane-tab tap.
-- [x] GitHub Pages build validates representative image assets, raw-volume size, and excludes source ZIP archives from the Pages artifact.
+- [x] Node unit/UI tests and Chromium smoke test: all planes and orientation labels, coordinate continuity, active-plane breadcrumb, real window/level pixel changes, pan/zoom, recall flow, and a 390px touch-enabled viewport without horizontal overflow.
+- [x] CI compares the compressed int16 sidecar byte-for-byte with the source NRRD CT and verifies sampled CT/labelmap transforms pixel-by-pixel in all three planes. The Pages build also checks representative live assets and excludes source ZIPs from the public artifact.
 - [x] Pages deployment workflow restricted to `main`; feature branches and PRs must not overwrite the single public Pages site.
 - [x] Interface language clarifies that anatomy controls filter real image overlays rather than a schematic drawing.
 
@@ -27,7 +27,7 @@ This checklist separates code that exists from educational, legal, and release r
 ### Medical image correctness and data
 
 - [ ] Have a radiologist/anatomy educator review patient-left/right orientation, plane orientation, slice ordering, spacing, and segmentation alignment across all three planes.
-- [ ] Compare coronal and sagittal reformats against the source volume and its physical geometry; a larger display or more slice positions must not be represented as added resolution.
+- [ ] Obtain an independent radiologist/anatomy educator review of coronal/sagittal orientation, source physical geometry, left/right conventions, and overlay alignment. Automated pixel checks are necessary but do not replace this review; a larger display or more slice positions must not be represented as added resolution.
 - [ ] Keep stored source intensities explicitly distinct from Hounsfield units until calibration is verified.
 - [ ] Confirm redistribution/derivative-use rights for the SPL atlas and every included third-party component, attribution, notices, and modification language.
 - [ ] Choose, document, and review licensed CT head and chest datasets before claiming multi-region clinical-case coverage.
