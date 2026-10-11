@@ -15,6 +15,7 @@
   let sourceGray = null;
   let activeWidth = WIDTH;
   let activeHeight = HEIGHT;
+  let activePixelSpacing = { x: 1, y: 1 };
   let loadRequestId = 0;
   let volumeManifest = null;
   let activePlane = 'axial';
@@ -95,6 +96,9 @@
     }
     activeWidth = ct.width;
     activeHeight = ct.height;
+    activePixelSpacing = volumeInfo.spacingMm && Number.isFinite(Number(volumeInfo.spacingMm.x)) && Number.isFinite(Number(volumeInfo.spacingMm.y))
+      ? { x: Number(volumeInfo.spacingMm.x), y: Number(volumeInfo.spacingMm.y) }
+      : { x: 1, y: 1 };
     const pixelCount = activeWidth * activeHeight;
     ctPixels = new Uint8Array(pixelCount);
     segmentIds = new Uint16Array(pixelCount);
@@ -292,7 +296,9 @@
     if (state !== 'ready' || !canvas) return false;
     canvas.width = activeWidth;
     canvas.height = activeHeight;
-    canvas.style.aspectRatio = activeWidth + ' / ' + activeHeight;
+    const spacingX = activePixelSpacing.x > 0 ? activePixelSpacing.x : 1;
+    const spacingY = activePixelSpacing.y > 0 ? activePixelSpacing.y : 1;
+    canvas.style.aspectRatio = (activeWidth * spacingX) + ' / ' + (activeHeight * spacingY);
     const ctx = canvas.getContext('2d');
     if (!ctx) return false;
 
@@ -354,7 +360,7 @@
     }
 
     ctx.putImageData(imageData, 0, 0);
-    if (args.labelsOn && !args.quizId) {
+    if (args.labelsOn && !args.quizId && activePlane === 'axial') {
       (args.items || []).forEach(function (item) {
         if (args.visible[item.id] === false) return;
         const summary = centroids[item.segmentId];
