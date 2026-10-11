@@ -235,3 +235,7 @@
   .tri-canvas-wrap{min-height:150px;height:52vw;max-height:210px}
   .tri-canvas{max-height:205px}
 }
+
+
+/* Respect hidden state even for layout components with explicit display styles. */
+#plane-tabs[hidden],#viewer-frame[hidden],#slice-navigation[hidden],#window-level-controls[hidden],#viewer-toolbar[hidden],#source-disclaimer[hidden],#tri-planar-panel[hidden]{display:none!important}
