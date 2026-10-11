@@ -130,6 +130,6 @@ test('local progress is loaded before app code and states that it never uploads 
   assert.match(app, /Progress\.clear\(/);
   assert.match(store, /ctedu-learning-progress-v1/);
   assert.match(store, /MAX_ATTEMPTS = 500/);
-  assert.match(html, /Saved only in this browser; never uploaded\./);
-  assert.match(html, /فقط در همین مرورگر ذخیره می‌شود/);
+  assert.match(app, /Saved only in this browser; never uploaded\./);
+  assert.match(app, /فقط در همین مرورگر ذخیره می‌شود/);
 });
