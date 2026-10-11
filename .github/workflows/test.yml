@@ -151,7 +151,8 @@ jobs:
           PY
       - name: Install Playwright and Chromium for browser smoke tests
         run: |
-          npm install --no-save --package-lock=false playwright
+          npm install --no-save --package-lock=false playwright@1.63.0
+          node -p "'Playwright version: ' + require('./node_modules/playwright/package.json').version"
           npx playwright install --with-deps chromium
       - name: Stage generated orthogonal planes into the local test site
         run: cp -R build/ct-demo-volume/. assets/spl-abdominal-demo/
