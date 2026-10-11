@@ -227,6 +227,31 @@ const { chromium } = require('playwright');
     assert.match(await page.locator('#progress-accuracy').textContent(), /50|۵۰/);
     assert.match(await page.locator('#progress-feedback').textContent(), /بازیابی|restored/i);
 
+    page.once('dialog', function (dialog) { dialog.accept(); });
+    await page.locator('#restore-local-progress-file').setInputFiles({
+      name: 'wrong-app-backup.json',
+      mimeType: 'application/json',
+      buffer: Buffer.from(JSON.stringify({ app: 'different-app', version: 1, attempts: [] }))
+    });
+    await page.waitForFunction(function () {
+      return /valid CT Edu|معتبر CT Edu/.test(document.querySelector('#progress-feedback').textContent);
+    }, null, { timeout: 5000 });
+    assert.equal(await page.evaluate(function () {
+      return JSON.parse(localStorage.getItem('ctedu-learning-progress-v1')).attempts.length;
+    }), 2, 'an invalid backup must not replace current history');
+
+    await page.locator('#restore-local-progress-file').setInputFiles({
+      name: 'oversized-backup.json',
+      mimeType: 'application/json',
+      buffer: Buffer.alloc(1024 * 1024 + 1, 32)
+    });
+    await page.waitForFunction(function () {
+      return /1 MB|۱ مگابایت/.test(document.querySelector('#progress-feedback').textContent);
+    }, null, { timeout: 5000 });
+    assert.equal(await page.evaluate(function () {
+      return JSON.parse(localStorage.getItem('ctedu-learning-progress-v1')).attempts.length;
+    }), 2, 'an oversized backup must not change current history');
+
     await page.locator('#learn-mode').click();
     await page.waitForFunction(function () { return document.querySelector('#app').dataset.mode !== 'quiz'; });
     await page.locator('#reset-local-progress').click();
