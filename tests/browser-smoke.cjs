@@ -6,6 +6,8 @@ const { chromium } = require('playwright');
 (async function main() {
   const browser = await chromium.launch({ headless: true });
   const page = await browser.newPage({ viewport: { width: 1440, height: 1180 }, deviceScaleFactor: 1 });
+  const screenshotDir = path.join(__dirname, '..', 'build', 'browser-smoke');
+  fs.mkdirSync(screenshotDir, { recursive: true });
   const pageErrors = [];
   const browserConsoleErrors = [];
   const failedRequests = [];
@@ -29,6 +31,7 @@ const { chromium } = require('playwright');
     assert.equal(status.status.sliceCount, 113);
     assert.equal(status.status.sliceIndex, 26);
     assert.deepEqual(status.info.availablePlanes.sort(), ['axial', 'coronal', 'sagittal']);
+    await page.locator('#schematic-canvas').screenshot({ path: path.join(screenshotDir, 'axial.png') });
 
     await page.locator('#slice-slider').evaluate(function (slider) {
       slider.value = '27';
@@ -52,6 +55,7 @@ const { chromium } = require('playwright');
     assert.equal(status.status.height, 113);
     assert.equal(status.info.indexAxis, 'j');
     assert.equal(await page.locator('#orientation-letter-left').textContent(), 'R');
+    await page.locator('#schematic-canvas').screenshot({ path: path.join(screenshotDir, 'coronal.png') });
 
     await page.locator('#plane-sagittal').click();
     await page.waitForFunction(function () {
@@ -67,6 +71,7 @@ const { chromium } = require('playwright');
     assert.equal(status.info.indexAxis, 'i');
     assert.equal(await page.locator('#orientation-letter-left').textContent(), 'A');
     assert.equal(await page.locator('#orientation-letter-right').textContent(), 'P');
+    await page.locator('#schematic-canvas').screenshot({ path: path.join(screenshotDir, 'sagittal.png') });
 
     const previousIndex = status.status.sliceIndex;
     const canvasBox = await page.locator('#ct-slice-canvas').boundingBox();
@@ -148,8 +153,7 @@ const { chromium } = require('playwright');
     await page.locator('#learn-mode').click();
     await page.waitForFunction(function () { return document.querySelector('#app').dataset.mode !== 'quiz'; });
 
-    fs.mkdirSync(path.join(__dirname, '..', 'build', 'browser-smoke'), { recursive: true });
-    await page.screenshot({ path: path.join(__dirname, '..', 'build', 'browser-smoke', 'ct-edu-browser-smoke.png'), fullPage: true });
+    await page.screenshot({ path: path.join(screenshotDir, 'ct-edu-browser-smoke.png'), fullPage: true });
     assert.deepEqual(pageErrors, [], 'the browser should not emit uncaught JavaScript errors');
     console.log('Browser smoke passed: axial slice navigation, orthogonal views, orientation, wheel, zoom and active recall.');
   } finally {
