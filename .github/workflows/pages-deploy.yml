@@ -120,6 +120,7 @@ jobs:
           }
 
           fetch_with_retry "$base/" 'ct-slice-viewer.js'
+          fetch_with_retry "$base/favicon.svg" '<svg xmlns='
           fetch_with_retry "$base/src/viewer/ct-slice-viewer.js" 'label-ids-rgb.png'
           fetch_with_retry "$base/assets/spl-abdominal-demo/volume.json" '"sliceCount": 113'
           fetch_with_retry "$base/assets/spl-abdominal-demo/volume.json" '"rawVoxelVolume"'
