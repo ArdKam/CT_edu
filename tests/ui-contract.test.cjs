@@ -197,6 +197,15 @@ test('GitHub Actions are pinned to full release commit SHAs', function () {
   }
 });
 
+test('security policy provides a private vulnerability reporting path and excludes patient data', function () {
+  const policy = read('SECURITY.md');
+  const readme = read('README.md');
+  assert.match(policy, /Security → Report a vulnerability/);
+  assert.match(policy, /Do not include real patient images/);
+  assert.match(policy, /response time or remediation deadline is not guaranteed/);
+  assert.match(readme, /\[Security policy\]\(SECURITY\.md\)/);
+});
+
 test('public privacy notice is linked, staged, and explicit about local data and third-party fonts', function () {
   const html = read('index.html');
   const privacy = read('privacy.html');
