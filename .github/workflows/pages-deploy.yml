@@ -1,0 +1,97 @@
+name: Deploy CT Edu preview to GitHub Pages
+
+on:
+  push:
+    branches:
+      - main
+      - codex/initial-anatomy-workspace
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: github-pages
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Check out the selected branch
+        uses: actions/checkout@v4
+
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@v5
+
+      - name: Stage the public teaching site
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -rf _site
+          mkdir -p _site/assets _site/licenses
+          cp index.html data-license.html DATA_LICENSE_REVIEW.md _site/
+          cp -R src _site/src
+          cp -R assets/spl-abdominal-demo _site/assets/
+          cp licenses/SPL-Abdominal-Atlas-LICENSE.txt _site/licenses/
+          touch _site/.nojekyll
+
+          test -s _site/index.html
+          test -s _site/src/styles.css
+          test -s _site/src/viewer/ct-slice-viewer.js
+          test -s _site/assets/spl-abdominal-demo/ct-slice.png
+          test -s _site/assets/spl-abdominal-demo/label-ids-rgb.png
+          test -s _site/data-license.html
+          test -s _site/licenses/SPL-Abdominal-Atlas-LICENSE.txt
+
+          if find _site -type f -name '*.zip' | grep -q .; then
+            echo "Unexpected source ZIP found in the public site bundle."
+            exit 1
+          fi
+          echo "Staged files:"
+          find _site -type f -printf '%P (%s bytes)\n' | sort
+
+      - name: Upload GitHub Pages artifact
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: _site
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
+
+      - name: Verify the deployed website
+        shell: bash
+        env:
+          PAGE_URL: ${{ steps.deployment.outputs.page_url }}
+        run: |
+          set -euo pipefail
+          base="${PAGE_URL%/}"
+          test -n "$base"
+
+          fetch_with_retry() {
+            local url="$1"
+            local expected="$2"
+            local attempt status
+            for attempt in $(seq 1 30); do
+              status="$(curl -sS -L -o /tmp/ct-edu-live-probe -w '%{http_code}' "$url?probe=$GITHUB_RUN_ID-$attempt" || true)"
+              echo "LIVE_CHECK attempt=$attempt status=$status url=$url"
+              if [ "$status" = "200" ] && grep -q "$expected" /tmp/ct-edu-live-probe; then
+                return 0
+              fi
+              sleep 2
+            done
+            echo "Live verification failed for $url"
+            head -c 300 /tmp/ct-edu-live-probe || true
+            return 1
+          }
+
+          fetch_with_retry "$base/" 'ct-slice-viewer.js'
+          fetch_with_retry "$base/src/viewer/ct-slice-viewer.js" 'label-ids-rgb.png'
+          fetch_with_retry "$base/assets/spl-abdominal-demo/ct-slice.png" 'PNG'
+          echo "CT_EDU_PAGES_LIVE_VERIFIED"
