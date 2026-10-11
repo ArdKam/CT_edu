@@ -13,7 +13,7 @@
   const el=function(id){return document.getElementById(id);};
   function safeGet(k){try{return localStorage.getItem(k);}catch(e){return null;}}
   function safeSet(k,v){try{localStorage.setItem(k,v);}catch(e){}}
-  const state={lang:safeGet('ctedu-lang')==='en'?'en':'fa',selectedId:'liver',plane:'axial',sliceIndex:26,panX:0,panY:0,windowLevelStatus:'note',pendingWindowLevel:null,windowLevelRequestId:0,overlaysOn:true,labelsOn:true,previousLabelsOn:true,zoom:100,level:'organs',query:'',quizMode:false,question:null,score:0,answered:0,lastQuestionId:null,answeredCurrent:false,visible:Object.fromEntries(DATA.items.map(function(i){return [i.id,true];}))};
+  const state={lang:safeGet('ctedu-lang')==='en'?'en':'fa',selectedId:'liver',plane:'axial',sliceIndex:26,slicePositions:{i:128,j:128,k:26},panX:0,panY:0,windowLevelStatus:'note',pendingWindowLevel:null,windowLevelRequestId:0,overlaysOn:true,labelsOn:true,previousLabelsOn:true,zoom:100,level:'organs',query:'',quizMode:false,question:null,score:0,answered:0,lastQuestionId:null,answeredCurrent:false,visible:Object.fromEntries(DATA.items.map(function(i){return [i.id,true];}))};
   const langButton=el('language-toggle'),listEl=el('structure-list'),searchEl=el('structure-search'),canvasEl=el('ct-slice-canvas'),overlaysToggle=el('toggle-overlays'),labelsToggle=el('toggle-labels');
   function t(k){return (copy[state.lang]&&copy[state.lang][k])||copy.en[k]||k;}
   function displayName(item){return state.lang==='fa'?item.nameFa:item.nameEn;}
@@ -112,6 +112,8 @@
     el('slice-position').textContent=isVolume
       ?number(current+1)+' / '+number(info.sliceCount)+' · '+info.indexAxis+'='+number(current)
       :t('sliceSingle')+' · '+info.indexAxis+'='+number(info.currentSliceIndex);
+    const coordinates=state.slicePositions;
+    el('volume-coordinate-readout').textContent='i='+number(coordinates.i)+' · j='+number(coordinates.j)+' · k='+number(coordinates.k);
   }
   let pointerDrag=null, suppressCanvasClick=false;
   function applyCanvasTransform(){
@@ -252,6 +254,7 @@
     const info=Viewer.getVolumeInfo(state.plane);
     if(!info.isVolume||state.quizMode)return;
     state.sliceIndex=Math.max(0,Math.min(info.sliceCount-1,Math.trunc(Number(index)||0)));
+    state.slicePositions[info.indexAxis]=state.sliceIndex;
     renderSliceNavigation();
     Viewer.loadSlice(state.sliceIndex,state.plane);
   }
@@ -259,7 +262,7 @@
     const targetPlane=button.dataset.plane,info=Viewer.getVolumeInfo(targetPlane);
     if(state.quizMode||!info.isVolume)return;
     state.zoom=100;state.panX=0;state.panY=0;
-    state.plane=targetPlane;state.sliceIndex=info.defaultSliceIndex;
+    state.plane=targetPlane;state.sliceIndex=Number(state.slicePositions[info.indexAxis]??info.defaultSliceIndex);
     Viewer.loadSlice(state.sliceIndex,targetPlane);
     render();
   });});
@@ -314,7 +317,7 @@
     const item=DATA.bySegmentId(segmentId);
     if(item&&state.visible[item.id]){state.selectedId=item.id;render();}
   });
-  window.addEventListener('ctedu:assets-ready',function(){const status=Viewer.getStatus();if(status.state==='ready'){state.plane=status.plane||state.plane;state.sliceIndex=status.sliceIndex;if(state.windowLevelStatus==='note'&&Viewer.getWindowLevelInfo&&Viewer.getWindowLevelInfo().rawAvailable)state.windowLevelStatus='applied';const available=getSliceItems();if(available.length&&!available.some(function(item){return item.id===state.selectedId;}))state.selectedId=available[0].id;render();}else renderViewer();});
+  window.addEventListener('ctedu:assets-ready',function(){const status=Viewer.getStatus();if(status.state==='ready'){state.plane=status.plane||state.plane;state.sliceIndex=status.sliceIndex;const info=Viewer.getVolumeInfo(state.plane);if(info.indexAxis)state.slicePositions[info.indexAxis]=status.sliceIndex;if(state.windowLevelStatus==='note'&&Viewer.getWindowLevelInfo&&Viewer.getWindowLevelInfo().rawAvailable)state.windowLevelStatus='applied';const available=getSliceItems();if(available.length&&!available.some(function(item){return item.id===state.selectedId;}))state.selectedId=available[0].id;render();}else renderViewer();});
   document.addEventListener('keydown',function(event){if(event.key==='/'&&!['INPUT','TEXTAREA'].includes(document.activeElement.tagName)){event.preventDefault();searchEl.focus();}if(event.key==='Escape'&&state.quizMode)exitQuiz();});
   render();
 })();
