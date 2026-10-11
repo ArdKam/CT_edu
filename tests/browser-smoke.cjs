@@ -75,9 +75,9 @@ const { chromium } = require('playwright');
     }, previousIndex, { timeout: 5000 });
 
     await page.locator('#zoom-in').click();
-    assert.match(await page.locator('#zoom-value').textContent(), /110/);
+    assert.match(await page.locator('#zoom-value').textContent(), /110|۱۱۰/);
     await page.locator('#zoom-reset').click();
-    assert.match(await page.locator('#zoom-value').textContent(), /100/);
+    assert.match(await page.locator('#zoom-value').textContent(), /100|۱۰۰/);
 
     const wInfo = await page.evaluate(function () { return window.CTEduSliceViewer.getWindowLevelInfo(); });
     const targetLevel = Math.floor((wInfo.intensityRange.min + wInfo.intensityRange.max) / 2);
