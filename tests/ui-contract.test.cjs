@@ -197,6 +197,13 @@ test('GitHub Actions are pinned to full release commit SHAs', function () {
   }
 });
 
+
+test('Dependabot checks GitHub Actions pins weekly', function () {
+  const config = read('.github/dependabot.yml');
+  assert.match(config, /package-ecosystem: github-actions/);
+  assert.match(config, /interval: weekly/);
+  assert.match(config, /open-pull-requests-limit: 5/);
+});
 test('security policy provides a private vulnerability reporting path and excludes patient data', function () {
   const policy = read('SECURITY.md');
   const readme = read('README.md');
