@@ -64,7 +64,6 @@ jobs:
           test -s _site/assets/spl-abdominal-demo/ct-volume-int16.bin.gz
           test -s _site/assets/spl-abdominal-demo/slices/ct-000.png
           test -s _site/assets/spl-abdominal-demo/slices/ct-112.png
-          test -s _site/assets/spl-abdominal-demo/labels-000.png || test -s _site/assets/spl-abdominal-demo/slices/labels-000.png
           test -s _site/assets/spl-abdominal-demo/slices/labels-000.png
           test -s _site/assets/spl-abdominal-demo/slices/labels-112.png
           test -s _site/assets/spl-abdominal-demo/coronal/ct-000.png
