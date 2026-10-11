@@ -104,13 +104,22 @@ test('quiz canvas accessibility label does not disclose the highlighted structur
   assert.doesNotMatch(viewer.accessibleLabel({ quizId: 'liver', language: 'en' }), /liver/i);
 });
 
-test('release workflow deploys only main and viewer wording is not misleading', function () {
+test('Pages artifact builds on PRs but only main can deploy', function () {
   const workflow = read('.github/workflows/pages-deploy.yml');
-  assert.match(workflow, /branches:\s*\n\s*- main/);
-  assert.match(workflow, /if: github\.ref == 'refs\/heads\/main'/);
+  assert.match(workflow, /branches:\s*\n\s*- main\s*\n\s*- "codex\/\*\*"/);
+  assert.match(workflow, /pull_request:\s*\n\s*branches:\s*\n\s*- main/);
   assert.doesNotMatch(workflow, /codex\/initial-anatomy-workspace/);
-  assert.doesNotMatch(workflow, /pull_request:/);
   assert.match(workflow, /Unexpected source ZIP found in the public site bundle/);
+  assert.match(workflow, /test -s _site\/privacy\.html/);
+
+  const buildJob = workflow.split('  build:')[1].split('  deploy:')[0];
+  const deployJob = workflow.split('  deploy:')[1];
+  assert.match(buildJob, /Stage and validate the public teaching site/);
+  assert.match(buildJob, /uses: actions\/upload-pages-artifact@[0-9a-f]{40}/);
+  assert.doesNotMatch(buildJob, /if: github\.ref/);
+  assert.match(deployJob, /needs: build/);
+  assert.match(deployJob, /if: github\.ref == 'refs\/heads\/main'/);
+  assert.match(deployJob, /uses: actions\/deploy-pages@[0-9a-f]{40}/);
 
   const html = read('index.html');
   assert.doesNotMatch(html, /aria-label="Schematic teaching emphasis"/);
