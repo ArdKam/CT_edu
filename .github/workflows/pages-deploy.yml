@@ -29,7 +29,8 @@ jobs:
     if: github.event_name != 'pull_request' || github.event.pull_request.number == 1
     runs-on: ubuntu-latest
     environment:
-      name: github-pages
+      # Use an unrestricted preview environment off main; reserve github-pages for main releases.
+      name: ${{ github.ref == 'refs/heads/main' && 'github-pages' || 'ct-edu-preview' }}
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - name: Check out the selected branch
