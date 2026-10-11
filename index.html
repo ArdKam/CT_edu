@@ -11,7 +11,7 @@
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Vazirmatn:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="src/styles.css">
   <script defer src="src/data/anatomy.js"></script>
-  <script defer src="src/viewer/schematic-viewer.js"></script>
+  <script defer src="src/viewer/ct-slice-viewer.js"></script>
   <script defer src="src/quiz/quiz-engine.js"></script>
   <script defer src="src/app.js"></script>
 </head>
@@ -34,7 +34,7 @@
           <p data-i18n="pageIntro">ساختارهای طبیعی شکم را بشناس، لایه‌های رنگی را بررسی کن و بعد خودت را به چالش بکش.</p>
           <div class="learning-path" aria-label="Learning sequence"><span class="path-step active"><b>01</b><span data-i18n="pathLearn">یادگیری</span></span><span class="path-connector"></span><span class="path-step"><b>02</b><span data-i18n="pathIdentify">شناسایی</span></span><span class="path-connector"></span><span class="path-step"><b>03</b><span data-i18n="pathRecall">یادآوری فعال</span></span></div>
         </div>
-        <div class="session-meta"><div class="meta-number"><strong id="structure-count">۱۰</strong><span data-i18n="structuresLabel">ساختار در این نما</span></div><span class="meta-divider"></span><div class="meta-note"><span class="meta-icon" aria-hidden="true">⌁</span><span data-i18n="sessionHint">یک نمای شماتیک برای شروع</span></div></div>
+        <div class="session-meta"><div class="meta-number"><strong id="structure-count">۹</strong><span data-i18n="structuresLabel">ساختار در این نما</span></div><span class="meta-divider"></span><div class="meta-note"><span class="meta-icon" aria-hidden="true">⌁</span><span data-i18n="sessionHint">برش محوری واقعی برای شروع</span></div></div>
       </section>
 
       <section class="workspace" id="workspace" aria-label="CT anatomy learning workspace">
@@ -52,11 +52,11 @@
           <div id="quiz-banner" class="quiz-banner" hidden><div><span class="quiz-kicker" data-i18n="recallKicker">ACTIVE RECALL</span><strong data-i18n="quizPrompt">ساختار برجسته‌شده کدام است؟</strong></div><div class="score-box"><span data-i18n="sessionScore">امتیاز این جلسه</span><strong><b id="score">۰</b><i>/</i><span id="answered-count">۰</span></strong></div></div>
 
           <div class="viewer-frame">
-            <div class="viewer-watermark"><span class="watermark-dot"></span><span data-i18n="schematicBadge">نمونهٔ شماتیک · CT واقعی نیست</span></div>
+            <div class="viewer-watermark"><span class="watermark-dot"></span><span data-i18n="sourceBadge">SPL ATLAS · MODIFIED SINGLE SLICE</span></div>
             <div class="orientation-marker marker-left" aria-label="Patient right"><b>R</b><span data-i18n="patientRight">راست بیمار</span></div>
             <div class="orientation-marker marker-right" aria-label="Patient left"><b>L</b><span data-i18n="patientLeft">چپ بیمار</span></div>
-            <div id="schematic-canvas" class="schematic-canvas" role="img" aria-label="Schematic axial abdomen, not a real CT scan"></div>
-            <div class="viewer-scale"><span data-i18n="notToScale">شماتیک · غیرمقیاس‌دار</span><span>R <i>•</i> L</span></div>
+            <div id="schematic-canvas" class="schematic-canvas"><canvas id="ct-slice-canvas" class="ct-slice-canvas" width="256" height="256" aria-label="Axial CT slice with educational segmentation overlay"></canvas><p id="viewer-load-error" class="viewer-load-error" hidden>Loading the CT teaching slice…</p></div>
+            <div class="viewer-scale"><span data-i18n="notToScale">برش واقعی · لایهٔ آموزشی</span><span>R <i>•</i> L</span></div>
             <div class="zoom-controls" aria-label="Viewer zoom controls"><button id="zoom-in" type="button" aria-label="Zoom in" title="Zoom in">+</button><span id="zoom-value">100%</span><button id="zoom-out" type="button" aria-label="Zoom out" title="Zoom out">−</button><span class="zoom-separator"></span><button id="zoom-reset" type="button" aria-label="Reset zoom" title="Reset zoom">↺</button></div>
           </div>
 
