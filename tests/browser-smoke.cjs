@@ -79,6 +79,29 @@ const { chromium } = require('playwright');
     await page.locator('#zoom-reset').click();
     assert.match(await page.locator('#zoom-value').textContent(), /100/);
 
+    const wInfo = await page.evaluate(function () { return window.CTEduSliceViewer.getWindowLevelInfo(); });
+    const targetLevel = Math.floor((wInfo.intensityRange.min + wInfo.intensityRange.max) / 2);
+    await page.locator('#window-width-slider').evaluate(function (slider) {
+      slider.value = '600';
+      slider.dispatchEvent(new Event('input', { bubbles: true }));
+      slider.dispatchEvent(new Event('change', { bubbles: true }));
+    });
+    await page.locator('#window-level-slider').evaluate(function (slider, level) {
+      slider.value = String(level);
+      slider.dispatchEvent(new Event('input', { bubbles: true }));
+      slider.dispatchEvent(new Event('change', { bubbles: true }));
+    }, targetLevel);
+    await page.waitForFunction(function (expectedLevel) {
+      const info = window.CTEduSliceViewer.getWindowLevelInfo();
+      return info.rawAvailable && info.width === 600 && info.level === expectedLevel;
+    }, targetLevel, { timeout: 20000 });
+    assert.match(await page.locator('#window-level-status').textContent(), /raw|intensity|شدت/i);
+    await page.locator('#window-level-reset').click();
+    await page.waitForFunction(function () {
+      const info = window.CTEduSliceViewer.getWindowLevelInfo();
+      return info.rawAvailable && info.width === info.defaultWidth && info.level === info.defaultLevel;
+    }, null, { timeout: 10000 });
+
     await page.locator('#plane-axial').click();
     await page.waitForFunction(function () {
       const s = window.CTEduSliceViewer.getStatus();
