@@ -69,10 +69,35 @@ jobs:
                   assert (root / meta["labelsPattern"].replace("{index:03d}", suffix)).is_file(), (plane, suffix)
           print(f"Validated CT/labelmap planes {expected}; axial source matrix {volume['dimensions']['width']}x{volume['dimensions']['height']}; voxel spacing {volume['spacingMm']}")
           PY
-      - name: Upload CT volume review bundle
+      - name: Install Playwright and Chromium for browser smoke tests
+        run: |
+          npm install --no-save --package-lock=false playwright
+          npx playwright install --with-deps chromium
+      - name: Stage generated orthogonal planes into the local test site
+        run: cp -R build/ct-demo-volume/. assets/spl-abdominal-demo/
+      - name: Run real Chromium viewer smoke test
+        run: |
+          set -euo pipefail
+          python3 -m http.server 8765 --bind 127.0.0.1 > build/http-server.log 2>&1 &
+          server_pid=$!
+          trap 'kill "$server_pid" 2>/dev/null || true' EXIT
+          for attempt in $(seq 1 30); do
+            if curl -fsS http://127.0.0.1:8765/ >/dev/null; then break; fi
+            sleep 1
+          done
+          node tests/browser-smoke.cjs
+      - name: Upload generated orthogonal CT review bundle
         uses: actions/upload-artifact@v4
         with:
-          name: ct-edu-axial-volume-review
+          name: ct-edu-orthogonal-volume-review
           path: build/ct-demo-volume/
           if-no-files-found: error
+          retention-days: 7
+      - name: Upload browser smoke screenshot
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ct-edu-browser-smoke
+          path: build/browser-smoke/
+          if-no-files-found: ignore
           retention-days: 7
