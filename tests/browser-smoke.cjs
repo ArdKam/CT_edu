@@ -212,6 +212,61 @@ const { chromium } = require('playwright');
     assert.equal(await page.locator('#slice-navigation').isVisible(), true);
     await page.screenshot({ path: path.join(screenshotDir, 'ct-edu-browser-smoke.png'), fullPage: true });
 
+    await page.locator('#display-triplanar').click();
+    await page.waitForFunction(function () {
+      return document.querySelector('#tri-planar-panel').hidden === false &&
+        window.CTEduTriPlanarViewer &&
+        window.CTEduTriPlanarViewer.getStatus().ready;
+    }, null, { timeout: 20000 });
+    const triStatus = await page.evaluate(function () {
+      return {
+        status: window.CTEduTriPlanarViewer.getStatus(),
+        sizes: ['axial', 'coronal', 'sagittal'].map(function (plane) {
+          const canvas = document.querySelector('#tri-' + plane + '-canvas');
+          return { plane: plane, width: canvas.width, height: canvas.height };
+        }),
+        sagittalCrosshair: window.CTEduTriPlanarViewer.getCrosshairPoint('sagittal', 256, 113, { i: 128, j: 128, k: 27 })
+      };
+    });
+    assert.deepEqual(triStatus.sizes, [
+      { plane: 'axial', width: 256, height: 256 },
+      { plane: 'coronal', width: 256, height: 113 },
+      { plane: 'sagittal', width: 256, height: 113 }
+    ]);
+    assert.deepEqual(triStatus.sagittalCrosshair, { x: 127, y: 27 },
+      'sagittal crosshair should use the 256-pixel j-axis for horizontal position');
+    assert.equal(triStatus.status.indices.axial, 27);
+    assert.equal(triStatus.status.indices.coronal, 128);
+    assert.ok(await page.locator('#tri-axial-canvas').isVisible());
+    assert.ok(await page.locator('#tri-coronal-canvas').isVisible());
+    assert.ok(await page.locator('#tri-sagittal-canvas').isVisible());
+    await page.locator('#tri-coronal-slider').evaluate(function (slider) {
+      slider.value = '240';
+      slider.dispatchEvent(new Event('input', { bubbles: true }));
+    });
+    await page.waitForFunction(function () {
+      const status = window.CTEduTriPlanarViewer.getStatus();
+      return status.ready && status.indices.coronal === 240;
+    }, null, { timeout: 10000 });
+    const sagittalLinkedCrosshair = await page.evaluate(function () {
+      const status = window.CTEduTriPlanarViewer.getStatus();
+      return {
+        j: status.indices.coronal,
+        point: window.CTEduTriPlanarViewer.getCrosshairPoint('sagittal', 256, 113, {
+          i: 128, j: status.indices.coronal, k: status.indices.axial
+        })
+      };
+    });
+    assert.equal(sagittalLinkedCrosshair.j, 240);
+    assert.deepEqual(sagittalLinkedCrosshair.point, { x: 15, y: 27 },
+      'changing coronal position should move the linked sagittal crosshair');
+    await page.screenshot({ path: path.join(screenshotDir, 'tri-planar.png'), fullPage: true });
+    await page.locator('[data-open-plane="sagittal"]').click();
+    await page.waitForFunction(function () {
+      const status = window.CTEduSliceViewer.getStatus();
+      return status.state === 'ready' && status.plane === 'sagittal' && status.sliceIndex === 128;
+    }, null, { timeout: 10000 });
+
     const mobile = await browser.newPage({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 1, isMobile: true, hasTouch: true });
     const mobileErrors = [];
     mobile.on('pageerror', function (error) { mobileErrors.push(error.message); });
@@ -261,7 +316,7 @@ const { chromium } = require('playwright');
     assert.deepEqual(pageErrors, [], 'the browser should not emit uncaught JavaScript errors');
     assert.deepEqual(browserConsoleErrors, [], 'the browser should not emit console errors');
     assert.deepEqual(failedRequests, [], 'the browser should not have failed requests');
-    console.log('Browser smoke passed: desktop axial navigation, three planes, pan/zoom, raw window/level, recall and responsive mobile layout.');
+    console.log('Browser smoke passed: axial navigation, tri-planar synchronized crosshairs, orthogonal planes, pan/zoom, raw window/level, recall and responsive mobile layout.');
   } finally {
     await browser.close();
   }
