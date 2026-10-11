@@ -55,6 +55,7 @@ const { chromium } = require('playwright');
     assert.equal(status.status.width, 256);
     assert.equal(status.status.height, 113);
     assert.equal(status.info.indexAxis, 'j');
+    assert.match(await page.locator('#slice-slider').getAttribute('aria-label'), /موقعیت برش کرونال|Coronal CT slice position/i);
     assert.match(await page.locator('#volume-coordinate-readout').textContent(), /k=(27|۲۷)/, 'coronal view should retain the previously selected axial coordinate');
     assert.match(await page.locator('#module-name-label').textContent(), /coronal|کرونال/i, 'breadcrumb should identify the active coronal view');
     assert.equal(await page.locator('#orientation-letter-left').textContent(), 'R');
@@ -72,6 +73,7 @@ const { chromium } = require('playwright');
     assert.equal(status.status.width, 256);
     assert.equal(status.status.height, 113);
     assert.equal(status.info.indexAxis, 'i');
+    assert.match(await page.locator('#slice-slider').getAttribute('aria-label'), /موقعیت برش ساژیتال|Sagittal CT slice position/i);
     assert.equal(await page.locator('#orientation-letter-left').textContent(), 'A');
     assert.equal(await page.locator('#orientation-letter-right').textContent(), 'P');
     assert.match(await page.locator('#module-name-label').textContent(), /sagittal|ساژیتال/i, 'breadcrumb should identify the active sagittal view');
@@ -270,6 +272,12 @@ const { chromium } = require('playwright');
     assert.equal(await page.locator('#tri-axial-canvas').isVisible(), true);
     assert.equal(await page.locator('#tri-coronal-canvas').isVisible(), true);
     assert.equal(await page.locator('#tri-sagittal-canvas').isVisible(), true);
+    for (const plane of ['axial', 'coronal', 'sagittal']) {
+      assert.equal(await page.locator('#tri-' + plane + '-canvas').getAttribute('role'), 'img');
+      assert.equal(await page.locator('#tri-' + plane + '-canvas').getAttribute('tabindex'), null, 'static tri-planar canvas must not add a dead keyboard focus stop');
+      assert.equal(await page.locator('#tri-' + plane + '-slider').getAttribute('aria-labelledby'), 'tri-' + plane + '-title tri-' + plane + '-slider-label');
+      assert.equal(await page.locator('#tri-' + plane + '-slider').getAttribute('aria-describedby'), 'tri-' + plane + '-position');
+    }
     const triBefore = await page.evaluate(function () { return window.CTEduTriPlanarViewer.getStatus().indices; });
     assert.equal(triBefore.axial, 27, 'axial overview should preserve the selected k coordinate');
     await page.locator('#tri-coronal-slider').evaluate(function (slider) {
