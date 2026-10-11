@@ -18,6 +18,11 @@
   let activePixelSpacing = { x: 1, y: 1 };
   let loadRequestId = 0;
   let volumeManifest = null;
+  let rawVoxelVolume = null;
+  let rawVoxelPromise = null;
+  let rawVoxelError = null;
+  let windowWidth = 400;
+  let windowLevel = 1064;
   let activePlane = 'axial';
   let volumeInfo = {
     isVolume: false,
@@ -87,6 +92,116 @@
     }
   }
 
+  function loadRawVoxelVolume() {
+    if (rawVoxelVolume) return Promise.resolve(rawVoxelVolume);
+    if (rawVoxelPromise) return rawVoxelPromise;
+    if (!volumeManifest || !volumeManifest.rawVoxelVolume || typeof root.fetch !== 'function') {
+      return Promise.reject(new Error('Raw CT voxel data is unavailable'));
+    }
+    if (typeof root.DecompressionStream !== 'function') {
+      return Promise.reject(new Error('This browser does not support gzip decompression for raw CT values'));
+    }
+    const rawMeta = volumeManifest.rawVoxelVolume;
+    rawVoxelPromise = root.fetch(ASSET_BASE + '/' + rawMeta.path).then(function (response) {
+      if (!response.ok) throw new Error('Unable to fetch raw CT voxel data');
+      return response.body.pipeThrough(new root.DecompressionStream('gzip'));
+    }).then(function (stream) {
+      return new Response(stream).arrayBuffer();
+    }).then(function (buffer) {
+      const count = Number(rawMeta.voxelCount);
+      if (!Number.isInteger(count) || count < 1 || buffer.byteLength !== count * 2) {
+        throw new Error('Raw CT voxel data has an unexpected size');
+      }
+      const view = new DataView(buffer);
+      const data = new Int16Array(count);
+      for (let i = 0; i < count; i += 1) data[i] = view.getInt16(i * 2, true);
+      rawVoxelVolume = data;
+      rawVoxelError = null;
+      return rawVoxelVolume;
+    }).catch(function (error) {
+      rawVoxelError = String(error && (error.message || error) || 'Raw CT data could not be loaded');
+      rawVoxelPromise = null;
+      throw error;
+    });
+    return rawVoxelPromise;
+  }
+
+  function renderWindowedSlice() {
+    if (!rawVoxelVolume || !volumeManifest) return false;
+    const dimensions = volumeManifest.dimensions;
+    const sourceWidth = Number(dimensions.width);
+    const sourceHeight = Number(dimensions.height);
+    const sourceSlices = Number(dimensions.slices);
+    if (rawVoxelVolume.length !== sourceWidth * sourceHeight * sourceSlices) return false;
+    const planeIndex = Number(volumeInfo.currentSliceIndex) || 0;
+    const low = windowLevel - windowWidth / 2;
+    const inverseWindow = 255 / Math.max(1, windowWidth);
+    const pixelCount = activeWidth * activeHeight;
+    if (!ctPixels || ctPixels.length !== pixelCount) ctPixels = new Uint8Array(pixelCount);
+    if (!sourceGray || sourceGray.length !== pixelCount * 4) sourceGray = new Uint8ClampedArray(pixelCount * 4);
+    for (let y = 0; y < activeHeight; y += 1) {
+      for (let x = 0; x < activeWidth; x += 1) {
+        let sourceX, sourceY, sourceZ;
+        if (activePlane === 'coronal') {
+          sourceX = x;
+          sourceY = planeIndex;
+          sourceZ = y;
+        } else if (activePlane === 'sagittal') {
+          sourceX = planeIndex;
+          sourceY = sourceHeight - 1 - x;
+          sourceZ = y;
+        } else {
+          sourceX = x;
+          sourceY = sourceHeight - 1 - y;
+          sourceZ = planeIndex;
+        }
+        if (sourceX < 0 || sourceX >= sourceWidth || sourceY < 0 || sourceY >= sourceHeight ||
+            sourceZ < 0 || sourceZ >= sourceSlices) continue;
+        const raw = rawVoxelVolume[(sourceZ * sourceHeight + sourceY) * sourceWidth + sourceX];
+        const value = Math.max(0, Math.min(255, Math.round((raw - low) * inverseWindow)));
+        const i = y * activeWidth + x;
+        ctPixels[i] = value;
+        sourceGray[i * 4] = value;
+        sourceGray[i * 4 + 1] = value;
+        sourceGray[i * 4 + 2] = value;
+        sourceGray[i * 4 + 3] = 255;
+      }
+    }
+    return true;
+  }
+
+  function setWindowLevel(width, level) {
+    const rawMeta = volumeManifest && volumeManifest.rawVoxelVolume;
+    const range = rawMeta && rawMeta.intensityRange || { min: 0, max: 3000 };
+    const safeWidth = Math.max(1, Math.min(Number(range.max) - Number(range.min) || 4000, Number(width) || 400));
+    const safeLevel = Math.max(Number(range.min), Math.min(Number(range.max), Number(level) || 1064));
+    return loadRawVoxelVolume().then(function () {
+      windowWidth = safeWidth;
+      windowLevel = safeLevel;
+      renderWindowedSlice();
+      rawVoxelError = null;
+      dispatchAssetsReady();
+      return true;
+    }).catch(function () {
+      return false;
+    });
+  }
+
+  function getWindowLevelInfo() {
+    const range = volumeManifest && volumeManifest.rawVoxelVolume && volumeManifest.rawVoxelVolume.intensityRange || null;
+    return {
+      width: windowWidth,
+      level: windowLevel,
+      defaultWidth: Number(volumeManifest && volumeManifest.window && volumeManifest.window.width) || 400,
+      defaultLevel: Number(volumeManifest && volumeManifest.window && volumeManifest.window.level) || 1064,
+      intensityRange: range,
+      rawAvailable: Boolean(rawVoxelVolume),
+      loading: Boolean(rawVoxelPromise),
+      error: rawVoxelError,
+      units: 'source stored intensity values; HU calibration not independently verified'
+    };
+  }
+
   function commitSliceImages(images, sliceIndex, planeName, requestId) {
     if (requestId !== loadRequestId) return false;
     const ct = readImagePixels(images[0]);
@@ -120,6 +235,7 @@
     volumeInfo.activePlane = planeName;
     volumeInfo.currentSliceIndex = sliceIndex;
     volumeInfo.dimensions = { width: activeWidth, height: activeHeight };
+    renderWindowedSlice();
     failure = null;
     state = 'ready';
     dispatchAssetsReady();
@@ -457,6 +573,8 @@
     hitTest: hitTest,
     getStatus: getStatus,
     getVolumeInfo: getVolumeInfo,
+    getWindowLevelInfo: getWindowLevelInfo,
+    setWindowLevel: setWindowLevel,
     getPresentSegmentIds: getPresentSegmentIds,
     loadSlice: loadSlice,
     decodeLabelId: decodeLabelId,
