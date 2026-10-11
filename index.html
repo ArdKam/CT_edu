@@ -47,16 +47,21 @@
         </aside>
 
         <section class="viewer-column" aria-label="Anatomy viewer">
-          <div class="viewer-topline"><div class="viewer-title-group"><span class="viewer-live-mark"></span><div><strong data-i18n="viewerTitle">نمای محوری شکم</strong><small data-i18n="viewerSubtitle">پیکربندی آموزشی · غیرتشخیصی</small></div></div><div class="viewer-top-actions"><button class="mode-tab active" id="learn-mode" type="button" aria-pressed="true" data-i18n="learnMode">مطالعه</button><button class="mode-tab" id="quiz-mode" type="button" aria-pressed="false"><span class="mode-spark" aria-hidden="true">✳</span><span data-i18n="quizMode">تمرین</span></button></div></div>
+          <div class="viewer-topline"><div class="viewer-title-group"><span class="viewer-live-mark"></span><div><strong id="viewer-plane-title" data-i18n="viewAxial">نمای محوری</strong><small id="viewer-plane-subtitle" data-i18n="viewerSubtitle">اطلس SPL · پیمایش برش‌های محوری</small></div></div><div class="viewer-top-actions"><button class="mode-tab active" id="learn-mode" type="button" aria-pressed="true" data-i18n="learnMode">مطالعه</button><button class="mode-tab" id="quiz-mode" type="button" aria-pressed="false"><span class="mode-spark" aria-hidden="true">✳</span><span data-i18n="quizMode">تمرین</span></button></div></div>
+          <div id="plane-tabs" class="plane-tabs" role="group" aria-label="CT viewing plane">
+            <button type="button" class="plane-tab active" data-plane="axial" aria-pressed="true" data-i18n="planeAxial">محوری · Axial</button>
+            <button type="button" class="plane-tab" data-plane="coronal" aria-pressed="false" data-i18n="planeCoronal">کرونال · Coronal</button>
+            <button type="button" class="plane-tab" data-plane="sagittal" aria-pressed="false" data-i18n="planeSagittal">ساژیتال · Sagittal</button>
+          </div>
 
           <div id="quiz-banner" class="quiz-banner" hidden><div><span class="quiz-kicker" data-i18n="recallKicker">ACTIVE RECALL</span><strong data-i18n="quizPrompt">ساختار برجسته‌شده کدام است؟</strong></div><div class="score-box"><span data-i18n="sessionScore">امتیاز این جلسه</span><strong><b id="score">۰</b><i>/</i><span id="answered-count">۰</span></strong></div></div>
 
           <div class="viewer-frame">
             <div class="viewer-watermark"><span class="watermark-dot"></span><span data-i18n="sourceBadge">SPL ATLAS · MODIFIED SINGLE SLICE</span></div>
-            <div class="orientation-marker marker-left" aria-label="Patient right"><b>R</b><span data-i18n="patientRight">راست بیمار</span></div>
-            <div class="orientation-marker marker-right" aria-label="Patient left"><b>L</b><span data-i18n="patientLeft">چپ بیمار</span></div>
+            <div class="orientation-marker marker-left" id="orientation-marker-left" aria-label="Patient right"><b id="orientation-letter-left">R</b><span id="orientation-label-left" data-i18n="patientRight">راست بیمار</span></div>
+            <div class="orientation-marker marker-right" id="orientation-marker-right" aria-label="Patient left"><b id="orientation-letter-right">L</b><span id="orientation-label-right" data-i18n="patientLeft">چپ بیمار</span></div>
             <div id="schematic-canvas" class="schematic-canvas"><canvas id="ct-slice-canvas" class="ct-slice-canvas" width="256" height="256" tabindex="0" aria-label="Axial CT slice with educational segmentation overlay"></canvas><p id="viewer-load-error" class="viewer-load-error" hidden>Loading the CT teaching slice…</p></div>
-            <div class="viewer-scale"><span data-i18n="notToScale">برش واقعی · لایهٔ آموزشی</span><span>R <i>•</i> L</span></div>
+            <div class="viewer-scale"><span data-i18n="notToScale">برش واقعی · لایهٔ آموزشی</span><span id="viewer-axis-labels">R <i>•</i> L</span></div>
             <div class="zoom-controls" aria-label="Viewer zoom controls"><button id="zoom-in" type="button" aria-label="Zoom in" title="Zoom in">+</button><span id="zoom-value">100%</span><button id="zoom-out" type="button" aria-label="Zoom out" title="Zoom out">−</button><span class="zoom-separator"></span><button id="zoom-reset" type="button" aria-label="Reset zoom" title="Reset zoom">↺</button></div>
           </div>
 
