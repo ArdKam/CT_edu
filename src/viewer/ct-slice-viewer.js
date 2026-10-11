@@ -173,8 +173,10 @@
   function setWindowLevel(width, level) {
     const rawMeta = volumeManifest && volumeManifest.rawVoxelVolume;
     const range = rawMeta && rawMeta.intensityRange || { min: 0, max: 3000 };
-    const safeWidth = Math.max(1, Math.min(Number(range.max) - Number(range.min) || 4000, Number(width) || 400));
-    const safeLevel = Math.max(Number(range.min), Math.min(Number(range.max), Number(level) || 1064));
+    const requestedWidth = Number(width), requestedLevel = Number(level);
+    const maxWidth = Number(range.max) - Number(range.min) || 4000;
+    const safeWidth = Math.max(1, Math.min(maxWidth, Number.isFinite(requestedWidth) ? requestedWidth : 400));
+    const safeLevel = Math.max(Number(range.min), Math.min(Number(range.max), Number.isFinite(requestedLevel) ? requestedLevel : 1064));
     return loadRawVoxelVolume().then(function () {
       windowWidth = safeWidth;
       windowLevel = safeLevel;
