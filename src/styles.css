@@ -11,3 +11,24 @@
 @media(max-width:780px){.topbar{min-height:64px;padding:0 16px;gap:12px}.topbar-center{display:none}.topbar-actions{gap:8px}.educational-tag{padding:6px 8px;font-size:9px}.intro-row{display:block;padding:26px 2px 20px}.intro-copy>p{font-size:12px;margin-bottom:15px}.session-meta{display:inline-flex;margin-top:21px;padding:10px 13px}.workspace{display:flex;flex-direction:column;gap:13px}.viewer-column{order:0}.viewer-frame{height:min(112vw,520px);min-height:360px}.anatomy-panel{order:1}.detail-panel{order:2;display:flex}.panel{padding:18px 16px;border-radius:15px}.viewer-topline{padding:2px 2px 12px}.viewer-toolbar{align-items:flex-start}.view-levels{width:100%}.toolbar-label{width:100%;margin-bottom:2px}.viewer-toggles{width:100%;justify-content:flex-start;border-top:1px solid #e1e7e5;padding-top:12px}.panel-heading{margin-bottom:14px}.structure-list{grid-template-columns:1fr 1fr;gap:4px}.structure-select{gap:7px;padding:8px 5px}.structure-name strong{font-size:10px}.structure-name small{font-size:8px}.visibility-button{flex-basis:26px;width:26px;margin-inline-end:2px}.detail-panel .detail-heading{display:flex}.detail-panel .detail-divider{margin:0 0 14px}.selected-structure{display:grid;grid-template-columns:54px 1fr;column-gap:12px;align-items:center;padding:7px 0 14px}.selected-color{grid-row:1/span 4;margin:0;width:48px;height:48px}.selected-overline{align-self:end;margin:0 0 3px}.selected-structure h3{font-size:20px}.selected-structure>p{font-size:10px}.selected-meta{grid-column:2;margin-top:4px}.detail-section{margin-bottom:15px}.page-footer{justify-content:flex-start;padding-top:19px}.page-footer>span:first-child{width:100%}}
 @media(max-width:420px){.brand-mark{width:29px;height:29px}.brand-copy strong{font-size:13px}.brand-copy small{font-size:7px}.topbar{padding:0 12px}.educational-tag{font-size:8px;gap:5px}.topbar-actions{gap:6px}.main-wrap{padding-inline:11px}.viewer-topline{align-items:flex-start}.viewer-title-group strong{font-size:11px}.viewer-title-group small{font-size:8px}.mode-tab{padding:7px 8px;font-size:9px}.viewer-frame{min-height:345px}.orientation-marker{font-size:7px}.marker-left{left:7px}.marker-right{right:7px}.viewer-watermark{top:10px;inset-inline-start:9px;font-size:8px;padding:5px 7px}.zoom-controls{bottom:35px;inset-inline-end:8px;gap:2px}.zoom-controls button{width:24px;height:25px}.view-levels{gap:2px}.level-button{gap:4px;padding:5px 6px;font-size:8px}.source-disclaimer{padding:11px}.structure-list{grid-template-columns:1fr}.structure-select{padding:9px 8px}}
 @media(prefers-reduced-motion:reduce){*,*:before,*:after{scroll-behavior:auto!important;transition-duration:.01ms!important;animation-duration:.01ms!important;animation-iteration-count:1!important}}
+
+
+/* In quiz mode, remove the answer-bearing structure list and give the viewer room. */
+.workspace.quiz-active{grid-template-columns:minmax(0,1.65fr) minmax(290px,.7fr)}
+.workspace.quiz-active .viewer-column{grid-column:1}
+.workspace.quiz-active .detail-panel{grid-column:2;display:flex}
+.workspace.quiz-active .detail-panel .detail-heading,
+.workspace.quiz-active .detail-panel .selected-structure,
+.workspace.quiz-active .detail-panel .detail-divider,
+.workspace.quiz-active .detail-panel .detail-section,
+.workspace.quiz-active .detail-panel .answer-panel,
+.workspace.quiz-active .detail-panel .learn-nudge{grid-column:auto}
+@media(max-width:1200px){
+  .workspace.quiz-active{grid-template-columns:minmax(0,1.3fr) minmax(260px,.8fr)}
+  .workspace.quiz-active .detail-panel{grid-column:2;display:flex}
+}
+@media(max-width:780px){
+  .workspace.quiz-active{display:flex;flex-direction:column}
+  .workspace.quiz-active .viewer-column{order:0}
+  .workspace.quiz-active .detail-panel{order:1;display:flex;grid-column:auto}
+}
