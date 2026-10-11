@@ -51,7 +51,7 @@
     const info=Viewer.getWindowLevelInfo?Viewer.getWindowLevelInfo():{width:400,level:1064,defaultWidth:400,defaultLevel:1064,rawAvailable:false};
     const range=info.intensityRange||{min:0,max:4000};
     const min=Number(range.min),max=Number(range.max),span=Math.max(1,max-min);
-    widthInput.min='1';widthInput.max=String(Math.max(400,Math.ceil(span)));widthInput.step='10';
+    widthInput.min='10';widthInput.max=String(Math.ceil(Math.max(400,span)/10)*10);widthInput.step='10';
     levelInput.min=String(min);levelInput.max=String(max);levelInput.step='1';
     const pending=state.windowLevelStatus==='loading'?state.pendingWindowLevel:null;
     if(document.activeElement!==widthInput)widthInput.value=String(pending?pending.width:info.width);
