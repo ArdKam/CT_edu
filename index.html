@@ -12,6 +12,7 @@
   <link rel="stylesheet" href="src/styles.css">
   <script defer src="src/data/anatomy.js"></script>
   <script defer src="src/viewer/ct-slice-viewer.js"></script>
+  <script defer src="src/viewer/tri-planar-viewer.js"></script>
   <script defer src="src/quiz/quiz-engine.js"></script>
   <script defer src="src/app.js"></script>
 </head>
@@ -48,15 +49,54 @@
 
         <section class="viewer-column" aria-label="Anatomy viewer">
           <div class="viewer-topline"><div class="viewer-title-group"><span class="viewer-live-mark"></span><div><strong id="viewer-plane-title" data-i18n="viewAxial">نمای محوری</strong><small id="viewer-plane-subtitle" data-i18n="viewerSubtitle">اطلس SPL · پیمایش برش‌های محوری</small></div></div><div class="viewer-top-actions"><button class="mode-tab active" id="learn-mode" type="button" aria-pressed="true" data-i18n="learnMode">مطالعه</button><button class="mode-tab" id="quiz-mode" type="button" aria-pressed="false"><span class="mode-spark" aria-hidden="true">✳</span><span data-i18n="quizMode">تمرین</span></button></div></div>
+          <div id="display-mode-controls" class="display-mode-controls" role="group" aria-label="CT display layout">
+            <span class="display-mode-label" data-i18n="displayModeLabel">حالت نمایش</span>
+            <button id="display-single" class="display-mode-button active" type="button" aria-pressed="true" data-i18n="displaySingle">یک‌نما</button>
+            <button id="display-triplanar" class="display-mode-button" type="button" aria-pressed="false" data-i18n="displayTriPlanar">سه‌نما هم‌زمان</button>
+          </div>
+
           <div id="plane-tabs" class="plane-tabs" role="group" aria-label="CT viewing plane">
             <button type="button" id="plane-axial" class="plane-tab active" data-plane="axial" aria-pressed="true" data-i18n="planeAxial">محوری · Axial</button>
             <button type="button" id="plane-coronal" class="plane-tab" data-plane="coronal" aria-pressed="false" data-i18n="planeCoronal">کرونال · Coronal</button>
             <button type="button" id="plane-sagittal" class="plane-tab" data-plane="sagittal" aria-pressed="false" data-i18n="planeSagittal">ساژیتال · Sagittal</button>
           </div>
 
+          <section id="tri-planar-panel" class="tri-planar-panel" aria-labelledby="tri-planar-title" hidden>
+            <div class="tri-planar-heading">
+              <div>
+                <span class="panel-kicker" data-i18n="triPlanarKicker">SYNCHRONIZED REVIEW</span>
+                <h3 id="tri-planar-title" data-i18n="triPlanarTitle">مرور هم‌زمان سه صفحه</h3>
+                <p data-i18n="triPlanarHint">هر لغزنده مختصات همان محور را تغییر می‌دهد و خطوط راهنما در هر سه صفحه هماهنگ می‌شوند.</p>
+              </div>
+              <button id="tri-planar-return" class="tri-return-button" type="button" data-i18n="returnSingleView">بازگشت به نمای بزرگ</button>
+            </div>
+            <div class="tri-planar-grid">
+              <article class="tri-plane-card" data-tri-plane="axial">
+                <header><div><h4 data-i18n="planeAxial">Axial</h4><p data-i18n="triAxialAxis">محور k · از پایین به بالا</p></div><output id="tri-axial-position">k=26 / 113</output></header>
+                <div class="tri-canvas-wrap"><canvas id="tri-axial-canvas" width="256" height="256" tabindex="0" aria-label="Axial CT with synchronized crosshair"></canvas></div>
+                <label class="tri-slider-row" for="tri-axial-slider"><span data-i18n="triSlicePosition">موقعیت برش</span><input id="tri-axial-slider" type="range" min="0" max="112" step="1" value="26"></label>
+                <button class="tri-open-button" type="button" data-open-plane="axial" data-i18n="openSinglePlane">بازکردن این نما</button>
+              </article>
+              <article class="tri-plane-card" data-tri-plane="coronal">
+                <header><div><h4 data-i18n="planeCoronal">Coronal</h4><p data-i18n="triCoronalAxis">محور j · قدامی به خلفی</p></div><output id="tri-coronal-position">j=128 / 256</output></header>
+                <div class="tri-canvas-wrap"><canvas id="tri-coronal-canvas" width="256" height="113" tabindex="0" aria-label="Coronal CT with synchronized crosshair"></canvas></div>
+                <label class="tri-slider-row" for="tri-coronal-slider"><span data-i18n="triSlicePosition">موقعیت برش</span><input id="tri-coronal-slider" type="range" min="0" max="255" step="1" value="128"></label>
+                <button class="tri-open-button" type="button" data-open-plane="coronal" data-i18n="openSinglePlane">بازکردن این نما</button>
+              </article>
+              <article class="tri-plane-card" data-tri-plane="sagittal">
+                <header><div><h4 data-i18n="planeSagittal">Sagittal</h4><p data-i18n="triSagittalAxis">محور i · راست به چپ</p></div><output id="tri-sagittal-position">i=128 / 256</output></header>
+                <div class="tri-canvas-wrap"><canvas id="tri-sagittal-canvas" width="256" height="113" tabindex="0" aria-label="Sagittal CT with synchronized crosshair"></canvas></div>
+                <label class="tri-slider-row" for="tri-sagittal-slider"><span data-i18n="triSlicePosition">موقعیت برش</span><input id="tri-sagittal-slider" type="range" min="0" max="255" step="1" value="128"></label>
+                <button class="tri-open-button" type="button" data-open-plane="sagittal" data-i18n="openSinglePlane">بازکردن این نما</button>
+              </article>
+            </div>
+            <p class="tri-planar-footnote" data-i18n="triPlanarWindowNote">این نما از پنجرهٔ پیش‌فرض مجموعه استفاده می‌کند. برای تنظیم Window/Level و ابزارهای کامل، هر صفحه را در نمای بزرگ باز کن.</p>
+            <p id="tri-planar-error" class="tri-planar-error" role="status" hidden></p>
+          </section>
+
           <div id="quiz-banner" class="quiz-banner" hidden><div><span class="quiz-kicker" data-i18n="recallKicker">ACTIVE RECALL</span><strong data-i18n="quizPrompt">ساختار برجسته‌شده کدام است؟</strong></div><div class="score-box"><span data-i18n="sessionScore">امتیاز این جلسه</span><strong><b id="score">۰</b><i>/</i><span id="answered-count">۰</span></strong></div></div>
 
-          <div class="viewer-frame">
+          <div id="viewer-frame" class="viewer-frame">
             <div class="viewer-watermark"><span class="watermark-dot"></span><span data-i18n="sourceBadge">SPL ATLAS · AXIAL VOLUME</span></div>
             <div class="orientation-marker marker-left" id="orientation-marker-left" aria-label="Patient right"><b id="orientation-letter-left">R</b><span id="orientation-label-left" data-i18n="patientRight">راست بیمار</span></div>
             <div class="orientation-marker marker-right" id="orientation-marker-right" aria-label="Patient left"><b id="orientation-letter-right">L</b><span id="orientation-label-right" data-i18n="patientLeft">چپ بیمار</span></div>
@@ -98,8 +138,8 @@
             <p id="window-level-status" class="window-level-status" aria-live="polite" data-i18n="windowLevelNote">شدت خام ذخیره‌شدهٔ اطلس؛ کالیبراسیون HU مستقلاً تأیید نشده است.</p>
           </section>
 
-          <div class="viewer-toolbar"><div class="view-levels" aria-label="Anatomy layer emphasis"><span class="toolbar-label" data-i18n="viewPreset">فیلتر لایه‌های آناتومی</span><button class="level-button active" type="button" data-level="organs"><b>01</b><span data-i18n="levelOrgans">اندام‌ها</span></button><button class="level-button" type="button" data-level="vessels"><b>02</b><span data-i18n="levelVessels">عروق</span></button><button class="level-button" type="button" data-level="posterior"><b>03</b><span data-i18n="levelPosterior">ساختارهای خلفی</span></button></div><div class="viewer-toggles"><label class="switch-row"><span data-i18n="colorOverlays">رنگ‌بندی</span><input id="toggle-overlays" type="checkbox" checked><span class="switch-ui"></span></label><label class="switch-row"><span data-i18n="anatomyLabels">برچسب‌ها</span><input id="toggle-labels" type="checkbox" checked><span class="switch-ui"></span></label></div></div>
-          <div class="source-disclaimer"><span class="info-icon" aria-hidden="true">i</span><p><strong data-i18n="provenanceTitle">دربارهٔ این تصویر</strong><span data-i18n="provenanceText">این نمایش صرفاً شماتیک است؛ هنوز هیچ CT بیمار یا ماسک قطعه‌بندی بارگذاری نشده است. موقعیت‌ها برای آموزش مفهومی‌اند.</span></p></div>
+          <div id="viewer-toolbar" class="viewer-toolbar"><div class="view-levels" aria-label="Anatomy layer emphasis"><span class="toolbar-label" data-i18n="viewPreset">فیلتر لایه‌های آناتومی</span><button class="level-button active" type="button" data-level="organs"><b>01</b><span data-i18n="levelOrgans">اندام‌ها</span></button><button class="level-button" type="button" data-level="vessels"><b>02</b><span data-i18n="levelVessels">عروق</span></button><button class="level-button" type="button" data-level="posterior"><b>03</b><span data-i18n="levelPosterior">ساختارهای خلفی</span></button></div><div class="viewer-toggles"><label class="switch-row"><span data-i18n="colorOverlays">رنگ‌بندی</span><input id="toggle-overlays" type="checkbox" checked><span class="switch-ui"></span></label><label class="switch-row"><span data-i18n="anatomyLabels">برچسب‌ها</span><input id="toggle-labels" type="checkbox" checked><span class="switch-ui"></span></label></div></div>
+          <div id="source-disclaimer" class="source-disclaimer"><span class="info-icon" aria-hidden="true">i</span><p><strong data-i18n="provenanceTitle">دربارهٔ این تصویر</strong><span data-i18n="provenanceText">این نمایش صرفاً شماتیک است؛ هنوز هیچ CT بیمار یا ماسک قطعه‌بندی بارگذاری نشده است. موقعیت‌ها برای آموزش مفهومی‌اند.</span></p></div>
         </section>
 
         <aside class="panel detail-panel" aria-labelledby="detail-title">
