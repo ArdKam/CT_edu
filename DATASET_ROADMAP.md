@@ -38,9 +38,9 @@ Purpose: identify candidate sources for a public educational CT web app. **No ca
 - Decision: potential future source, not approved for integration yet.
 
 ### Alternate head CT source — PhysioNet CT-ICH
-- Older version pages list CC BY 4.0, but the earlier version 1.0.0 is no longer downloadable. The current version 1.3.1 is under the PhysioNet Restricted Health Data License and Data Use Agreement.
+- Versions 1.0.0, 1.2.0 and 1.3.0 list CC BY 4.0, but their version pages state that the files are no longer available. The latest version 1.3.1 is under the PhysioNet Restricted Health Data License and Data Use Agreement.
 - Current restricted version: [CT-ICH v1.3.1](https://physionet.org/content/ct-ich/1.3.1/) and [license](https://physionet.org/content/ct-ich/view-license/1.3.1/).
-- Do **not** use restricted v1.3.1 in a public web app or redistribute it. Reconsider an older release only after verifying that the exact files remain available and that the exact license permits the proposed redistribution; the old version pages alone are not evidence that the files are currently available.
+- **Do not use restricted v1.3.1 in a public web app or redistribute it.** The old version pages are not a viable current source while their files remain unavailable. For the first head-case source, prioritize the RSNA-IHD candidate for a free non-commercial education release, or find another currently downloadable dataset whose exact license permits the planned public use.
 
 ## Recommended data architecture
 
