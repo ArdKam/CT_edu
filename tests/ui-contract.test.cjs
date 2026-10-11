@@ -184,3 +184,15 @@ test('Chromium smoke dependency is pinned to a reproducible Playwright release',
   assert.match(workflow, /node -p .*Playwright version/);
   assert.match(workflow, /npx playwright install --with-deps chromium/);
 });
+
+test('GitHub Actions are pinned to full release commit SHAs', function () {
+  for (const file of ['.github/workflows/test.yml', '.github/workflows/pages-deploy.yml']) {
+    const workflow = read(file);
+    const actions = workflow.split('\n').filter(function (line) { return /^\s*uses: actions\//.test(line); });
+    assert.ok(actions.length > 0, file + ' should use explicit GitHub Actions');
+    actions.forEach(function (line) {
+      assert.match(line, /uses: actions\/[A-Za-z0-9_-]+@[0-9a-f]{40}\s+#\sv\d/,
+        'each action should use a full immutable commit SHA and retain its readable version comment: ' + line);
+    });
+  }
+});
