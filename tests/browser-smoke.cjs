@@ -180,6 +180,36 @@ const { chromium } = require('playwright');
     await page.locator('#learn-mode').click();
     await page.waitForFunction(function () { return document.querySelector('#app').dataset.mode !== 'quiz'; });
 
+    await page.locator('#display-triplanar').click();
+    await page.waitForFunction(function () {
+      return window.CTEduTriPlanarViewer &&
+        !document.querySelector('#tri-planar-panel').hidden &&
+        window.CTEduTriPlanarViewer.getStatus().ready;
+    }, null, { timeout: 30000 });
+    assert.equal(await page.locator('#tri-axial-canvas').isVisible(), true);
+    assert.equal(await page.locator('#tri-coronal-canvas').isVisible(), true);
+    assert.equal(await page.locator('#tri-sagittal-canvas').isVisible(), true);
+    const triBefore = await page.evaluate(function () { return window.CTEduTriPlanarViewer.getStatus().indices; });
+    assert.equal(triBefore.axial, 27, 'axial overview should preserve the selected k coordinate');
+    await page.locator('#tri-coronal-slider').evaluate(function (slider) {
+      slider.value = '140';
+      slider.dispatchEvent(new Event('input', { bubbles: true }));
+    });
+    await page.waitForFunction(function () {
+      return window.CTEduTriPlanarViewer.getStatus().indices.coronal === 140;
+    }, null, { timeout: 10000 });
+    const triAfter = await page.evaluate(function () { return window.CTEduTriPlanarViewer.getStatus().indices; });
+    assert.equal(triAfter.axial, triBefore.axial, 'changing j must preserve k');
+    assert.equal(triAfter.sagittal, triBefore.sagittal, 'changing j must preserve i');
+    await page.locator('#tri-planar-panel').screenshot({ path: path.join(screenshotDir, 'tri-planar.png') });
+    await page.locator('[data-open-plane="coronal"]').click();
+    await page.waitForFunction(function () {
+      const status = window.CTEduSliceViewer.getStatus();
+      return status.state === 'ready' && status.plane === 'coronal' && status.sliceIndex === 140 &&
+        !document.querySelector('#tri-planar-panel').hidden;
+    }, null, { timeout: 10000 });
+    assert.equal(await page.locator('#viewer-frame').isVisible(), true);
+    assert.equal(await page.locator('#slice-navigation').isVisible(), true);
     await page.screenshot({ path: path.join(screenshotDir, 'ct-edu-browser-smoke.png'), fullPage: true });
 
     const mobile = await browser.newPage({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 1, isMobile: true, hasTouch: true });
@@ -213,6 +243,18 @@ const { chromium } = require('playwright');
     });
     assert.ok(mobileCoronalLayout.documentWidth <= mobileCoronalLayout.width + 1,
       'coronal mobile view must not overflow horizontally: ' + JSON.stringify(mobileCoronalLayout));
+    await mobile.locator('#display-triplanar').tap();
+    await mobile.waitForFunction(function () {
+      return window.CTEduTriPlanarViewer && window.CTEduTriPlanarViewer.getStatus().ready &&
+        !document.querySelector('#tri-planar-panel').hidden;
+    }, null, { timeout: 30000 });
+    const mobileTriLayout = await mobile.evaluate(function () {
+      return { width: window.innerWidth, documentWidth: document.documentElement.scrollWidth };
+    });
+    assert.ok(mobileTriLayout.documentWidth <= mobileTriLayout.width + 1,
+      'tri-planar mobile layout must not overflow horizontally: ' + JSON.stringify(mobileTriLayout));
+    await mobile.locator('#display-single').tap();
+    await mobile.waitForFunction(function () { return !document.querySelector('#tri-planar-panel').hidden ? false : true; });
     assert.deepEqual(mobileErrors, [], 'mobile browser should not emit uncaught JavaScript errors');
     await mobile.close();
 
