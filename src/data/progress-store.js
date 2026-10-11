@@ -126,11 +126,48 @@
     }
   }
 
+  function exportData(storage) {
+    const store = arguments.length ? storage : getDefaultStorage();
+    const data = readData(store);
+    return {
+      app: 'ct-edu-local-progress',
+      version: SCHEMA_VERSION,
+      exportedAt: Date.now(),
+      attempts: data.attempts
+    };
+  }
+
+  function importData(payload, storage) {
+    const store = arguments.length > 1 ? storage : getDefaultStorage();
+    if (!store) return { imported: false, count: 0, truncated: false, reason: 'storage-unavailable' };
+    if (!payload || typeof payload !== 'object' ||
+        payload.app !== 'ct-edu-local-progress' ||
+        payload.version !== SCHEMA_VERSION ||
+        !Array.isArray(payload.attempts)) {
+      return { imported: false, count: 0, truncated: false, reason: 'invalid-backup' };
+    }
+
+    const normalized = payload.attempts.map(normalizeAttempt);
+    if (normalized.some(function (attempt) { return attempt === null; })) {
+      return { imported: false, count: 0, truncated: false, reason: 'invalid-attempt' };
+    }
+    const truncated = normalized.length > MAX_ATTEMPTS;
+    const attempts = normalized.slice(-MAX_ATTEMPTS);
+    try {
+      store.setItem(STORAGE_KEY, JSON.stringify({ version: SCHEMA_VERSION, attempts: attempts }));
+      return { imported: true, count: attempts.length, truncated: truncated, reason: null };
+    } catch (error) {
+      return { imported: false, count: 0, truncated: false, reason: 'storage-write-failed' };
+    }
+  }
+
   const api = {
     storageKey: STORAGE_KEY,
     maxAttempts: MAX_ATTEMPTS,
     getSummary: getSummary,
     recordAttempt: recordAttempt,
+    exportData: exportData,
+    importData: importData,
     clear: clear
   };
 
