@@ -47,37 +47,105 @@ jobs:
         run: |
           python -m pip install --disable-pip-version-check numpy pillow
           python scripts/build_demo_assets.py --output build/ct-demo-volume
-      - name: Validate raw intensity data and all CT viewing planes
+      - name: Validate raw CT fidelity, label alignment, and all viewing planes
         run: |
           python - <<'PY'
           import gzip
           import json
+          import sys
+          import zipfile
           from pathlib import Path
+
+          import numpy as np
+          from PIL import Image
+
+          sys.path.insert(0, "scripts")
+          from build_demo_assets import read_nrrd
+
           root = Path("build/ct-demo-volume")
           volume = json.loads((root / "volume.json").read_text(encoding="utf-8"))
-          assert volume["sliceCount"] == volume["dimensions"]["slices"], volume
-          assert volume["sliceCount"] == 113, volume["sliceCount"]
+          assert volume["sliceCount"] == volume["dimensions"]["slices"] == 113
           assert volume["dimensions"]["width"] == 256
           assert volume["dimensions"]["height"] == 256
+          assert set(volume["planes"]) == {"axial", "coronal", "sagittal"}
+          expected_counts = {"axial": 113, "coronal": 256, "sagittal": 256}
+          for plane, count in expected_counts.items():
+              assert volume["planes"][plane]["sliceCount"] == count
+
+          # Prove that the compressed raw sidecar is lossless against the bundled NRRD CT.
+          archives = sorted(Path(".").glob("abacktools-abdomen-2016-09-part*-of6.zip"))
+          source_members = {}
+          for archive in archives:
+              with zipfile.ZipFile(archive) as source_zip:
+                  for info in source_zip.infolist():
+                      name = Path(info.filename).name.lower()
+                      if name in {"i.nrrd", "seg.nrrd"} and name not in source_members:
+                          source_members[name] = source_zip.read(info.filename)
+          assert set(source_members) == {"i.nrrd", "seg.nrrd"}, source_members.keys()
+          ct_header, source_ct = read_nrrd(source_members["i.nrrd"])
+          label_header, source_labels = read_nrrd(source_members["seg.nrrd"])
+          assert source_ct.shape == source_labels.shape == (113, 256, 256)
+          assert ct_header.get("sizes") == label_header.get("sizes")
+
           raw_meta = volume["rawVoxelVolume"]
           raw_path = root / raw_meta["path"]
           assert raw_path.is_file() and raw_path.stat().st_size > 1000
-          assert raw_meta["voxelCount"] == 256 * 256 * 113
+          assert raw_meta["dtype"] == "int16-le"
+          assert raw_meta["voxelCount"] == source_ct.size
+          assert "HU calibration has not been independently verified" in raw_meta["valueSemantics"]
           with gzip.open(raw_path, "rb") as raw_file:
               raw_bytes = raw_file.read()
-          assert len(raw_bytes) == raw_meta["voxelCount"] * 2
-          assert raw_meta["dtype"] == "int16-le"
-          assert "HU calibration has not been independently verified" in raw_meta["valueSemantics"]
-          assert set(volume["planes"]) == {"axial", "coronal", "sagittal"}, volume["planes"].keys()
-          expected = {"axial": 113, "coronal": 256, "sagittal": 256}
-          for plane, count in expected.items():
+          assert len(raw_bytes) == source_ct.size * 2
+          raw_ct = np.frombuffer(raw_bytes, dtype="<i2").reshape(source_ct.shape)
+          np.testing.assert_array_equal(raw_ct, source_ct.astype("<i2"))
+          assert raw_meta["intensityRange"]["min"] == int(source_ct.min())
+          assert raw_meta["intensityRange"]["max"] == int(source_ct.max())
+
+          width = float(volume["window"]["width"])
+          level = float(volume["window"]["level"])
+          low, high = level - width / 2, level + width / 2
+
+          def window_to_u8(values):
+              return np.clip((values.astype(np.float32) - low) / (high - low) * 255, 0, 255).astype(np.uint8)
+
+          def decode_label_png(file_path):
+              rgb = np.asarray(Image.open(file_path).convert("RGB"), dtype=np.uint16)
+              return rgb[:, :, 0] + 256 * rgb[:, :, 1]
+
+          # Test first, middle/default, and last slices in every orientation for exact CT and mask transforms.
+          plane_sources = {
+              "axial": (lambda i: np.flipud(source_ct[i]), lambda i: np.flipud(source_labels[i])),
+              "coronal": (lambda i: source_ct[:, i, :], lambda i: source_labels[:, i, :]),
+              "sagittal": (lambda i: np.flip(source_ct[:, :, i], axis=1), lambda i: np.flip(source_labels[:, :, i], axis=1)),
+          }
+          for plane, count in expected_counts.items():
               meta = volume["planes"][plane]
-              assert meta["sliceCount"] == count, (plane, meta["sliceCount"])
-              for index in sorted({0, count // 2, count - 1}):
+              ct_getter, label_getter = plane_sources[plane]
+              for index in sorted({0, int(meta["defaultSliceIndex"]), count // 2, count - 1}):
                   suffix = f"{index:03d}"
-                  assert (root / meta["ctPattern"].replace("{index:03d}", suffix)).is_file(), (plane, suffix)
-                  assert (root / meta["labelsPattern"].replace("{index:03d}", suffix)).is_file(), (plane, suffix)
-          print(f"Validated CT/labelmap planes {expected}; axial source matrix {volume['dimensions']['width']}x{volume['dimensions']['height']}; voxel spacing {volume['spacingMm']}")
+                  ct_path = root / meta["ctPattern"].replace("{index:03d}", suffix)
+                  label_path = root / meta["labelsPattern"].replace("{index:03d}", suffix)
+                  expected_ct = window_to_u8(ct_getter(index))
+                  actual_ct = np.asarray(Image.open(ct_path).convert("L"))
+                  np.testing.assert_array_equal(actual_ct, expected_ct, err_msg=f"{plane} CT mismatch at {index}")
+                  actual_labels = decode_label_png(label_path)
+                  np.testing.assert_array_equal(actual_labels, label_getter(index).astype(np.uint16),
+                                                err_msg=f"{plane} labelmap mismatch at {index}")
+
+          # The selected axial preview assets must obey exactly the same transform as stack slice k=26.
+          default_k = int(volume["planes"]["axial"]["defaultSliceIndex"])
+          np.testing.assert_array_equal(
+              np.asarray(Image.open(root / "ct-slice.png").convert("L")),
+              window_to_u8(np.flipud(source_ct[default_k]))
+          )
+          np.testing.assert_array_equal(
+              decode_label_png(root / "label-ids-rgb.png"),
+              np.flipud(source_labels[default_k]).astype(np.uint16)
+          )
+          print(
+              "Validated lossless raw CT (int16), exact CT/labelmap alignment for axial/coronal/sagittal samples, "
+              f"plane counts {expected_counts}, matrix 256x256x113, spacing {volume['spacingMm']}."
+          )
           PY
       - name: Install Playwright and Chromium for browser smoke tests
         run: |
