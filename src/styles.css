@@ -277,3 +277,83 @@
 
 /* Respect hidden state even for layout components with explicit display styles. */
 #plane-tabs[hidden],#viewer-frame[hidden],#slice-navigation[hidden],#window-level-controls[hidden],#viewer-toolbar[hidden],#source-disclaimer[hidden],#tri-planar-panel[hidden]{display:none!important}
+
+
+/* Minimal, local-only learner progress. No account or network dependency. */
+.learning-progress{
+  margin-top:14px;
+  padding:12px 13px;
+  border:1px solid #dfe8e5;
+  border-radius:12px;
+  background:#f8faf9;
+}
+.learning-progress-heading{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  margin-bottom:10px;
+}
+.learning-progress-heading h3{
+  margin:3px 0 0;
+  color:#31474d;
+  font-size:12px;
+  line-height:1.45;
+  font-weight:700;
+}
+.progress-reset{
+  flex:0 0 auto;
+  padding:6px 8px;
+  border:1px solid #d8e4e0;
+  border-radius:7px;
+  background:#fff;
+  color:#6e817c;
+  font-size:9px;
+  font-weight:600;
+  cursor:pointer;
+}
+.progress-reset:hover:not(:disabled){border-color:#a5c9c0;color:#2d736b}
+.progress-reset:focus-visible{outline:3px solid #56a9a2;outline-offset:2px}
+.learning-progress-metrics{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:7px;
+}
+.learning-progress-metrics>div{
+  min-width:0;
+  display:flex;
+  flex-direction:column;
+  gap:3px;
+  padding:8px 7px;
+  border:1px solid #e7edeb;
+  border-radius:8px;
+  background:#fff;
+}
+.learning-progress-metrics strong{
+  overflow:hidden;
+  color:#2c5554;
+  font-size:18px;
+  line-height:1.1;
+  font-variant-numeric:tabular-nums;
+  text-overflow:ellipsis;
+}
+.learning-progress-metrics span{
+  color:#84938f;
+  font-size:9px;
+  line-height:1.35;
+}
+.learning-progress-note,.learning-progress-feedback{
+  margin:9px 0 0;
+  color:#84918e;
+  font-size:9px;
+  line-height:1.7;
+}
+.learning-progress-feedback{color:#31776f}
+.learning-progress-feedback:empty{display:none}
+@media(max-width:780px){
+  .learning-progress{margin-top:12px;padding:11px}
+  .learning-progress-metrics{gap:5px}
+  .learning-progress-metrics>div{padding:7px 6px}
+  .learning-progress-metrics strong{font-size:16px}
+  .learning-progress-metrics span{font-size:8px}
+}
