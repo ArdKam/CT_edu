@@ -47,9 +47,10 @@ jobs:
         run: |
           python -m pip install --disable-pip-version-check numpy pillow
           python scripts/build_demo_assets.py --output build/ct-demo-volume
-      - name: Validate exported axial stack and metadata
+      - name: Validate raw intensity data and all CT viewing planes
         run: |
           python - <<'PY'
+          import gzip
           import json
           from pathlib import Path
           root = Path("build/ct-demo-volume")
@@ -58,6 +59,15 @@ jobs:
           assert volume["sliceCount"] == 113, volume["sliceCount"]
           assert volume["dimensions"]["width"] == 256
           assert volume["dimensions"]["height"] == 256
+          raw_meta = volume["rawVoxelVolume"]
+          raw_path = root / raw_meta["path"]
+          assert raw_path.is_file() and raw_path.stat().st_size > 1000
+          assert raw_meta["voxelCount"] == 256 * 256 * 113
+          with gzip.open(raw_path, "rb") as raw_file:
+              raw_bytes = raw_file.read()
+          assert len(raw_bytes) == raw_meta["voxelCount"] * 2
+          assert raw_meta["dtype"] == "int16-le"
+          assert "HU calibration has not been independently verified" in raw_meta["valueSemantics"]
           assert set(volume["planes"]) == {"axial", "coronal", "sagittal"}, volume["planes"].keys()
           expected = {"axial": 113, "coronal": 256, "sagittal": 256}
           for plane, count in expected.items():
