@@ -16,3 +16,12 @@ test('slice navigation clamps indices and remains harmless outside a browser', a
   assert.equal(result, false);
   assert.equal(viewer.getStatus().state, 'loading');
 });
+
+test('raw window-level API reports explicit unavailable state without browser assets', async function () {
+  const info = viewer.getWindowLevelInfo();
+  assert.equal(info.rawAvailable, false);
+  assert.equal(info.width, 400);
+  assert.equal(info.level, 1064);
+  assert.match(info.units, /HU calibration not independently verified/);
+  assert.equal(await viewer.setWindowLevel(600, 900), false);
+});
