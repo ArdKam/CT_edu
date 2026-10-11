@@ -37,5 +37,19 @@ jobs:
         continue-on-error: true
         run: python3 scripts/inspect_archives.py
       - name: Read license, README and NRRD header in-place
-        continue-on-error: true
         run: python3 scripts/read_atlas_metadata.py
+      - name: Set up Python for image preparation
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Prepare one-slice CT/labelmap review bundle
+        run: |
+          python -m pip install --disable-pip-version-check numpy pillow
+          python scripts/build_demo_assets.py --output build/ct-demo-slice
+      - name: Upload CT slice review bundle
+        uses: actions/upload-artifact@v4
+        with:
+          name: ct-edu-demo-slice-review
+          path: build/ct-demo-slice/
+          if-no-files-found: error
+          retention-days: 7
