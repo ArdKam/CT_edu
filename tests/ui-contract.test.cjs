@@ -13,7 +13,7 @@ test('UI contains expected controls, real-slice canvas and medical-use disclaime
     'toggle-labels', 'zoom-in', 'zoom-out', 'zoom-reset', 'quiz-mode',
     'learn-mode', 'answer-options', 'next-question', 'reset-quiz', 'workspace',
     'anatomy-panel', 'ct-slice-canvas', 'viewer-load-error', 'slice-navigation',
-    'slice-slider', 'slice-prev', 'slice-next', 'slice-position'
+    'slice-slider', 'slice-prev', 'slice-next', 'slice-position', 'plane-axial', 'plane-coronal', 'plane-sagittal', 'orientation-glyph'
   ].forEach(function (id) {
     assert.ok(html.includes('id="' + id + '"') || html.includes("id='" + id + "'"), 'missing UI control: ' + id);
   });
@@ -29,6 +29,12 @@ test('UI contains expected controls, real-slice canvas and medical-use disclaime
   assert.match(viewer, /function getVolumeInfo\(/);
   assert.match(builder, /"sliceCount": int\(image_volume\.shape\[0\]\)/);
   assert.match(builder, /for slice_index in range\(image_volume\.shape\[0\]\)/);
+  assert.match(builder, /for plane_index in range\\(image_volume.shape\\[1\\]\\)/);
+  assert.match(builder, /for plane_index in range\\(image_volume.shape\\[2\\]\\)/);
+  assert.match(builder, /"coronal"/);
+  assert.match(builder, /"sagittal"/);
+  assert.match(viewer, /function getVolumeInfo\\(planeName\\)/);
+  assert.match(viewer, /canvas\\.style\\.aspectRatio/);
 });
 
 test('real CT slice and lossless segment-ID map are present', function () {
