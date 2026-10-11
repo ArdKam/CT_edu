@@ -33,6 +33,7 @@ CT Edu is an early-stage bilingual educational web app for medical students. The
 - [Dataset selection roadmap](DATASET_ROADMAP.md) tracks candidate CT sources for head, chest and abdomen, including exact licensing and validation gates. Candidate collections are not treated as approved teaching cases until reviewed.
 - [Release gates](RELEASE_GATES.md) tracks technical, medical-content, privacy and publication requirements.
 - [Privacy notice](privacy.html) is the in-app user-facing explanation of local progress storage and current external requests.
+- [Security policy](SECURITY.md) explains private vulnerability reporting and the limits of this pre-release prototype.
 - [Current data-license review](DATA_LICENSE_REVIEW.md) records the SPL Abdominal Atlas provenance, geometry, and unresolved redistribution checks.
 
 ## Known limitations and release gates
