@@ -261,11 +261,12 @@ const { chromium } = require('playwright');
     assert.deepEqual(sagittalLinkedCrosshair.point, { x: 15, y: 27 },
       'changing coronal position should move the linked sagittal crosshair');
     await page.screenshot({ path: path.join(screenshotDir, 'tri-planar.png'), fullPage: true });
+    const expectedSagittalIndex = triStatus.status.indices.sagittal;
     await page.locator('[data-open-plane="sagittal"]').click();
-    await page.waitForFunction(function () {
+    await page.waitForFunction(function (expectedIndex) {
       const status = window.CTEduSliceViewer.getStatus();
-      return status.state === 'ready' && status.plane === 'sagittal' && status.sliceIndex === 128;
-    }, null, { timeout: 10000 });
+      return status.state === 'ready' && status.plane === 'sagittal' && status.sliceIndex === expectedIndex;
+    }, expectedSagittalIndex, { timeout: 10000 });
 
     const mobile = await browser.newPage({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 1, isMobile: true, hasTouch: true });
     const mobileErrors = [];
