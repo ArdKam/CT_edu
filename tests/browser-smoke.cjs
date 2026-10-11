@@ -195,8 +195,8 @@ const { chromium } = require('playwright');
     await page.waitForFunction(function () { return document.querySelector('#app').dataset.mode !== 'quiz'; });
     await page.locator('#reset-local-progress').click();
     await page.waitForFunction(function () {
-      return document.querySelector('#progress-attempts').textContent().trim() === '۰' ||
-        document.querySelector('#progress-attempts').textContent().trim() === '0';
+      return document.querySelector('#progress-attempts').textContent.trim() === '۰' ||
+        document.querySelector('#progress-attempts').textContent.trim() === '0';
     }, null, { timeout: 5000 });
     assert.match(await page.locator('#progress-feedback').textContent(), /پاک شد|cleared/i);
 
