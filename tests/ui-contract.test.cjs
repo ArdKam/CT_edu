@@ -42,7 +42,7 @@ test('UI contains expected controls, real-slice canvas and medical-use disclaime
   const triViewer = read('src/viewer/tri-planar-viewer.js');
   assert.match(html, /src="src\/viewer\/tri-planar-viewer\.js"/);
   for (const id of ['display-triplanar', 'tri-planar-panel', 'tri-axial-canvas', 'tri-coronal-canvas', 'tri-sagittal-canvas',
-    'tri-axial-slider', 'tri-coronal-slider', 'tri-sagittal-slider']) {
+    'tri-axial-slider', 'tri-coronal-slider', 'tri-sagittal-slider', 'tri-axial-empty-state', 'tri-coronal-empty-state', 'tri-sagittal-empty-state']) {
     assert.ok(html.includes('id="' + id + '"'), 'missing tri-planar control: ' + id);
   }
   assert.match(app, /function renderTriPlanar\(/);
@@ -113,6 +113,8 @@ test('tri-planar overview uses its own renderer and exposes synchronized crossha
   assert.ok(html.includes('src/viewer/tri-planar-viewer.js'));
   assert.ok(app.includes('function renderTriPlanar('));
   assert.ok(app.includes('state.slicePositions[config.axis]'));
+  assert.ok(html.includes('data-i18n="triEmptySlice"'), 'empty edge slices should be explained to learners');
+  assert.ok(require('../src/viewer/tri-planar-viewer.js').getStatus().hasSignal.axial === null, 'signal state begins unknown before CT assets load');
   assert.deepEqual(viewer.getStatus().planes, ['axial', 'coronal', 'sagittal']);
   assert.equal(viewer.getStatus().ready, false, 'overview starts idle before browser assets load');
 });
