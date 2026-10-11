@@ -196,3 +196,19 @@ test('GitHub Actions are pinned to full release commit SHAs', function () {
     });
   }
 });
+
+test('public privacy notice is linked, staged, and explicit about local data and third-party fonts', function () {
+  const html = read('index.html');
+  const privacy = read('privacy.html');
+  const workflow = read('.github/workflows/pages-deploy.yml');
+  assert.match(html, /href="privacy\.html" data-i18n="privacyLink"/);
+  assert.match(privacy, /Content-Security-Policy/);
+  assert.match(privacy, /ct-edu|browser|مرورگر/i);
+  assert.match(privacy, /Google Fonts/);
+  assert.match(privacy, /IP address/);
+  assert.match(privacy, /1 MB/);
+  assert.match(privacy, /no account system or cloud sync/);
+  assert.match(workflow, /cp index\.html data-license\.html privacy\.html DATA_LICENSE_REVIEW\.md _site\//);
+  assert.match(workflow, /test -s _site\/privacy\.html/);
+  assert.match(workflow, /fetch_with_retry "\$base\/privacy\.html" 'Privacy &amp; Local Data'/);
+});
