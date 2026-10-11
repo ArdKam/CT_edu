@@ -14,10 +14,12 @@
   <link rel="stylesheet" href="src/styles.css">
   <script defer src="src/data/anatomy.js"></script>
   <script defer src="src/data/modality-catalog.js"></script>
+  <script defer src="src/data/case-manifest.js"></script>
   <script defer src="src/viewer/ct-slice-viewer.js"></script>
   <script defer src="src/viewer/tri-planar-viewer.js"></script>
   <script defer src="src/quiz/quiz-engine.js"></script>
   <script defer src="src/data/progress-store.js"></script>
+  <script defer src="src/data/bookmark-store.js"></script>
   <script defer src="src/viewer/radiograph-viewer.js"></script>
   <script defer src="src/modality-catalog.js"></script>
   <script defer src="src/app.js"></script>
@@ -214,6 +216,23 @@
             </div>
             <p id="progress-storage-note" class="learning-progress-note" role="status" aria-live="polite" data-i18n="progressLocalNote">فقط در همین مرورگر ذخیره می‌شود؛ به سرور ارسال نمی‌شود.</p>
             <p id="progress-feedback" class="learning-progress-feedback" role="status" aria-live="polite"></p>
+          </section>
+          <section id="bookmarks-panel" class="bookmarks-panel" aria-labelledby="bookmarks-title">
+            <header class="bookmarks-heading">
+              <div><span class="panel-kicker" data-i18n="bookmarkKicker">بوکمارک‌های محلی</span><h3 id="bookmarks-title" data-i18n="bookmarkTitle">برش‌های ذخیره‌شده</h3></div>
+              <span id="bookmark-count" class="bookmark-count">۰</span>
+            </header>
+            <label class="bookmark-note-label" for="bookmark-note-input" data-i18n="bookmarkNoteLabel">یادداشت اختیاری</label>
+            <textarea id="bookmark-note-input" maxlength="500" rows="2" data-i18n-placeholder="bookmarkNotePlaceholder" placeholder="نکته‌ای برای مرور این برش بنویس…"></textarea>
+            <div class="bookmark-toolbar">
+              <button id="bookmark-save-current" class="bookmark-save-button" type="button" data-i18n="bookmarkSaveCurrent">ذخیرهٔ نمای فعلی</button>
+              <button id="bookmark-export" class="progress-reset" type="button" data-i18n="bookmarkExport">خروجی بوکمارک‌ها</button>
+              <button id="bookmark-restore" class="progress-reset" type="button" data-i18n="bookmarkRestore">بازیابی بوکمارک‌ها</button>
+              <input id="bookmark-restore-file" type="file" accept="application/json,.json" hidden>
+            </div>
+            <p id="bookmark-storage-note" class="learning-progress-note" role="status" aria-live="polite" data-i18n="bookmarkStorageNote">بوکمارک‌ها و یادداشت‌ها فقط در همین مرورگر ذخیره می‌شوند.</p>
+            <div id="bookmark-list" class="bookmark-list" role="list" aria-label="Saved CT slices"></div>
+            <p id="bookmark-feedback" class="learning-progress-feedback" role="status" aria-live="polite"></p>
           </section>
         </aside>
       </section>
