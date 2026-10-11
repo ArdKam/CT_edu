@@ -6,6 +6,7 @@ CT Edu is an early-stage bilingual educational web app for medical students. The
 
 - **Three orthogonal planes:** axial (113 positions), coronal (256) and sagittal (256), generated from the same CT and segmentation volumes.
 - **Slice navigation:** plane tabs, previous/next controls, slider, mouse wheel over the viewer, and Up/Down keys when the canvas is focused.
+- **Coordinate continuity:** the selected i/j/k voxel indices remain visible and each plane remembers its last slice when switching views. The UI displays voxel indices, not a claimed patient-space coordinate or verified DICOM world coordinate.
 - **Anatomy overlays:** source segment IDs are preserved losslessly as RGB with `id = R + 256 × G`. The structure list is scoped to segments actually present in the currently loaded plane/slice.
 - **Inspection tools:** structure search/selection, visibility controls, overlay emphasis, zoom (70–220%) and pointer drag to pan.
 - **Bilingual UI:** Persian RTL and English LTR.
