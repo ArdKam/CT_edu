@@ -94,3 +94,42 @@
   .slice-step-button{width:32px;height:32px}
   .slice-nav-hint{font-size:8px}
 }
+
+
+/* Orthogonal CT plane switcher. Buttons remain compact so the image stays primary. */
+.plane-tabs{
+  display:flex;
+  align-items:center;
+  gap:5px;
+  width:max-content;
+  max-width:100%;
+  padding:4px;
+  margin:0 0 12px;
+  border:1px solid #dfe7e5;
+  border-radius:11px;
+  background:#edf2f0;
+}
+.plane-tab{
+  min-width:105px;
+  padding:8px 13px;
+  border:1px solid transparent;
+  border-radius:8px;
+  background:transparent;
+  color:#73817f;
+  font-size:10px;
+  font-weight:600;
+  cursor:pointer;
+  white-space:nowrap;
+}
+.plane-tab:hover:not(:disabled){color:#286f69;background:#f8fbfa}
+.plane-tab.active{color:#246f6a;background:#fff;border-color:#d7e6e2;box-shadow:0 2px 6px rgba(23,52,48,.06)}
+.plane-tab:disabled{opacity:.44;cursor:not-allowed}
+.ct-slice-canvas{image-rendering:auto;touch-action:pan-y;max-height:calc(100% - 72px)}
+@media(max-width:780px){
+  .plane-tabs{width:100%;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:3px;margin-bottom:10px}
+  .plane-tab{min-width:0;padding:8px 5px;font-size:9px}
+  .ct-slice-canvas{max-height:calc(100% - 86px)}
+}
+@media(max-width:420px){
+  .plane-tab{font-size:8px;padding:7px 2px}
+}
