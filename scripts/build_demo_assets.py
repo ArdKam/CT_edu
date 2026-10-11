@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
-"""Build a tiny, review-only CT/labelmap sample from the atlas ZIPs.
+"""Build a reviewable CT teaching bundle from the SPL abdominal atlas ZIPs.
 
-The original ZIPs are read in place; nothing is extracted back into the repository.
-Output is a one-slice PNG + lossless RGB-encoded label IDs and a human-readable preview.
+The original ZIPs are read in place. Outputs include a 113-slice axial stack,
+lossless RGB-encoded segmentation IDs, a selected-slice preview, and geometry metadata.
 """
 from __future__ import annotations
 
@@ -178,6 +178,58 @@ def main() -> int:
     Image.fromarray(seg_rgb, mode="RGB").save(outdir / "label-ids-rgb.png", optimize=True)
     Image.fromarray(overlay8, mode="RGB").save(outdir / "overlay-preview.png", optimize=True)
 
+    # Export every source axial slice separately. Keep the original voxel matrix;
+    # enlarging the canvas would not recover anatomical detail missing in 256x256 data.
+    slice_dir = outdir / "slices"
+    slice_dir.mkdir(parents=True, exist_ok=True)
+    for slice_index in range(image_volume.shape[0]):
+        slice_ct = np.flipud(image_volume[slice_index].astype(np.float32))
+        slice_ct8 = np.clip((slice_ct - lo) / (hi - lo) * 255, 0, 255).astype(np.uint8)
+        slice_labels = np.flipud(label_volume[slice_index].astype(np.int32))
+        slice_rgb = np.zeros((slice_labels.shape[0], slice_labels.shape[1], 3), dtype=np.uint8)
+        slice_rgb[:, :, 0] = np.bitwise_and(slice_labels, 255).astype(np.uint8)
+        slice_rgb[:, :, 1] = np.right_shift(slice_labels, 8).astype(np.uint8)
+        suffix = "%03d.png" % slice_index
+        Image.fromarray(slice_ct8, mode="L").save(slice_dir / ("ct-" + suffix), optimize=True)
+        Image.fromarray(slice_rgb, mode="RGB").save(slice_dir / ("labels-" + suffix), optimize=True)
+
+    # Store spatial metadata alongside the stack so the viewer can accurately report
+    # the source matrix and voxel spacing without implying that this is clinical DICOM.
+    direction_vectors = re.findall(r"\\(([^)]+)\\)", image_header.get("space directions", ""))
+    spacing_mm = []
+    for vector in direction_vectors:
+        components = [float(value.strip()) for value in vector.split(",")]
+        spacing_mm.append(round(float(np.linalg.norm(components)), 6))
+    origin_match = re.search(r"\\(([^)]+)\\)", image_header.get("space origin", ""))
+    origin_lps = [float(value.strip()) for value in origin_match.group(1).split(",")] if origin_match else None
+    volume_meta = {
+        "schemaVersion": 1,
+        "source": "SPL Abdominal Atlas, September 2015",
+        "sourceFiles": member_names,
+        "coordinateSystem": image_header.get("space", "unknown"),
+        "dimensions": {
+            "width": int(image_volume.shape[2]),
+            "height": int(image_volume.shape[1]),
+            "slices": int(image_volume.shape[0])
+        },
+        "sliceCount": int(image_volume.shape[0]),
+        "defaultSliceIndex": int(chosen),
+        "spacingMm": {
+            "x": spacing_mm[0] if len(spacing_mm) > 0 else None,
+            "y": spacing_mm[1] if len(spacing_mm) > 1 else None,
+            "z": spacing_mm[2] if len(spacing_mm) > 2 else None
+        },
+        "originLpsMm": origin_lps,
+        "window": {"width": args.window, "level": args.level},
+        "sliceFiles": {
+            "ct": "slices/ct-{index:03d}.png",
+            "labels": "slices/labels-{index:03d}.png",
+            "labelEncoding": "segment ID = R + 256 * G"
+        },
+        "displayTransform": "CT and segmentation rows are both flipped vertically; x-axis is unchanged."
+    }
+    (outdir / "volume.json").write_text(json.dumps(volume_meta, ensure_ascii=False, indent=2), encoding="utf-8")
+
     # Reviewer contact sheet: CT, source segment palette overlay, plus the highest-level label names.
     scale = 3
     tile_w = image_volume.shape[2] * scale
@@ -199,7 +251,7 @@ def main() -> int:
     canvas.save(outdir / "review-contact-sheet.png", optimize=True)
 
     selected_meta = {
-        "kind": "review-only candidate slice; not yet integrated in app",
+        "kind": "selected slice preview from a generated axial volume stack",
         "source": "SPL Abdominal Atlas, September 2015",
         "source_license": "3D Slicer License Part B (verify third-party components separately)",
         "source_files": member_names,
@@ -216,7 +268,7 @@ def main() -> int:
     }
     (outdir / "demo-slice.json").write_text(json.dumps(selected_meta, ensure_ascii=False, indent=2), encoding="utf-8")
 
-    print("SPL Abdominal Atlas one-slice proof-of-concept")
+    print("SPL Abdominal Atlas axial-volume teaching proof-of-concept")
     print("source files: " + json.dumps(member_names, ensure_ascii=False))
     print("geometry identical in both NRRD headers: yes")
     print("array shape (z,y,x): " + str(image_volume.shape))
@@ -232,6 +284,8 @@ def main() -> int:
     for record in z_records[:12]:
         print("  k=%3d core=%d targets=%d total_pixels=%d" % (
             record["slice_index"], record["core_count"], record["target_count"], record["target_pixel_count"]))
+    print("volume slices exported: " + str(image_volume.shape[0]))
+    print("source in-plane matrix: %dx%d; voxel spacing (mm): %s" % (image_volume.shape[2], image_volume.shape[1], json.dumps(spacing_mm)))
     print("outputs: " + ", ".join(str(p) for p in sorted(outdir.iterdir())))
     print("source ZIP files were not modified.")
     return 0
