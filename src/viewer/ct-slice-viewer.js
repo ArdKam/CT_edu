@@ -219,8 +219,11 @@
     const pixelCount = activeWidth * activeHeight;
     ctPixels = new Uint8Array(pixelCount);
     segmentIds = new Uint16Array(pixelCount);
+    let nonZeroIntensityPixels = 0, maximumIntensity = 0;
     for (let i = 0; i < pixelCount; i += 1) {
       ctPixels[i] = ct.data[i * 4];
+      if (ctPixels[i] > 0) nonZeroIntensityPixels += 1;
+      if (ctPixels[i] > maximumIntensity) maximumIntensity = ctPixels[i];
       // Exact 16-bit class ID is encoded in the label PNG as R + 256*G.
       segmentIds[i] = decodeLabelId(label.data[i * 4], label.data[i * 4 + 1]);
     }
@@ -237,6 +240,8 @@
     volumeInfo.activePlane = planeName;
     volumeInfo.currentSliceIndex = sliceIndex;
     volumeInfo.dimensions = { width: activeWidth, height: activeHeight };
+    volumeInfo.hasSignal = maximumIntensity > 0;
+    volumeInfo.nonZeroIntensityPixels = nonZeroIntensityPixels;
     renderWindowedSlice();
     failure = null;
     state = 'ready';
@@ -274,6 +279,8 @@
       sliceSpacingMm: plane ? plane.sliceSpacingMm : 1.5,
       dimensions: plane ? plane.dimensions : { width: WIDTH, height: HEIGHT },
       coordinateSystem: volumeManifest ? volumeManifest.coordinateSystem || 'unknown' : 'unknown',
+      hasSignal: null,
+      nonZeroIntensityPixels: null,
       indexAxis: plane ? plane.indexAxis : 'k',
       planes: volumeManifest ? Object.keys(volumeManifest.planes || {}) : ['axial']
     };
@@ -510,7 +517,9 @@
       plane: activePlane,
       sliceIndex: volumeInfo.currentSliceIndex,
       sliceCount: volumeInfo.sliceCount,
-      isVolume: volumeInfo.isVolume
+      isVolume: volumeInfo.isVolume,
+      hasSignal: Number.isInteger(volumeInfo.nonZeroIntensityPixels) ? volumeInfo.hasSignal : null,
+      nonZeroIntensityPixels: Number.isInteger(volumeInfo.nonZeroIntensityPixels) ? volumeInfo.nonZeroIntensityPixels : null
     };
   }
 
