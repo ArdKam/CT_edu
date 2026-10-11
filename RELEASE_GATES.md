@@ -26,7 +26,7 @@ This checklist separates code that exists from educational, legal, and release r
 
 ### Medical image correctness and data
 
-- [ ] Have a radiologist/anatomy educator review patient-left/right orientation, plane orientation, slice ordering, spacing, and segmentation alignment across all three planes.
+- [ ] Have a radiologist/anatomy educator review patient-left/right orientation, plane orientation, slice ordering, spacing, segmentation alignment, and tri-planar crosshair placement across all three planes.
 - [ ] Obtain an independent radiologist/anatomy educator review of coronal/sagittal orientation, source physical geometry, left/right conventions, and overlay alignment. Automated pixel checks are necessary but do not replace this review; a larger display or more slice positions must not be represented as added resolution.
 - [ ] Keep stored source intensities explicitly distinct from Hounsfield units until calibration is verified.
 - [ ] Confirm redistribution/derivative-use rights for the SPL atlas and every included third-party component, attribution, notices, and modification language.
@@ -43,7 +43,7 @@ This checklist separates code that exists from educational, legal, and release r
 ### Viewer, accessibility, and security
 
 - [ ] Conduct a broader browser/device matrix, including iOS Safari and Android devices; the current Chromium mobile smoke test is not comprehensive touch QA.
-- [ ] Decide whether a simultaneous synchronized tri-planar layout is required for MVP; current controls switch between independent planes and do not provide shared crosshairs or oblique reconstruction.
+- [x] Add a synchronized side-by-side axial/coronal/sagittal overview with shared voxel-index crosshairs and separate i/j/k sliders. The overview does not claim patient-space coordinates or add oblique reconstruction; expert review of orientation and crosshair alignment remains open.
 - [ ] Define case/image loading, memory, and responsiveness budgets from representative large studies and test them on lower-powered devices.
 - [ ] Audit accessible names, focus order, keyboard operation, touch targets, contrast, and reduced-motion behavior.
 - [ ] Keep reference interpretations server-side if a backend is introduced; never expose quiz answer keys before submission.
