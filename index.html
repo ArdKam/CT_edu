@@ -15,6 +15,7 @@
   <script defer src="src/viewer/ct-slice-viewer.js"></script>
   <script defer src="src/viewer/tri-planar-viewer.js"></script>
   <script defer src="src/quiz/quiz-engine.js"></script>
+  <script defer src="src/data/progress-store.js"></script>
   <script defer src="src/app.js"></script>
 </head>
 <body>
@@ -151,6 +152,23 @@
           <div class="detail-section detail-secondary"><h4 data-i18n="orientationTitle">جهت‌یابی</h4><div class="orientation-card"><span id="orientation-glyph" class="orientation-glyph" aria-hidden="true">R <i>→</i> L</span><p id="orientation-note" data-i18n="orientationNote">سمت راست بیمار در سمت چپ تصویر نمایش داده می‌شود.</p></div></div>
           <div id="answer-panel" class="answer-panel" hidden><div class="answer-options" id="answer-options"></div><div id="answer-feedback" class="answer-feedback" aria-live="polite"></div><button id="next-question" class="primary-button" type="button" data-i18n="nextQuestion">سؤال بعدی <span aria-hidden="true">←</span></button><button id="reset-quiz" class="quiet-button" type="button" data-i18n="resetQuiz">شروع دوبارهٔ امتیاز</button></div>
           <div id="learn-nudge" class="learn-nudge"><span class="nudge-icon" aria-hidden="true">↗</span><p data-i18n="learnNudge">یک ساختار را از فهرست انتخاب کن تا رنگ، نام و نکتهٔ آن را بررسی کنی.</p></div>
+
+          <section class="learning-progress" aria-labelledby="learning-progress-title">
+            <header class="learning-progress-heading">
+              <div>
+                <span class="panel-kicker" data-i18n="progressKicker">پیشرفت محلی</span>
+                <h3 id="learning-progress-title" data-i18n="progressTitle">پیشرفت تمرین</h3>
+              </div>
+              <button id="reset-local-progress" class="progress-reset" type="button" data-i18n="progressReset">پاک کردن</button>
+            </header>
+            <div class="learning-progress-metrics">
+              <div><strong id="progress-attempts">۰</strong><span data-i18n="progressAttempts">پاسخ‌ها</span></div>
+              <div><strong id="progress-accuracy">—</strong><span data-i18n="progressAccuracy">درستی</span></div>
+              <div><strong id="progress-structures">۰</strong><span data-i18n="progressStructures">ساختارها</span></div>
+            </div>
+            <p id="progress-storage-note" class="learning-progress-note" role="status" aria-live="polite" data-i18n="progressLocalNote">فقط در همین مرورگر ذخیره می‌شود؛ به سرور ارسال نمی‌شود.</p>
+            <p id="progress-feedback" class="learning-progress-feedback" role="status" aria-live="polite"></p>
+          </section>
         </aside>
       </section>
       <footer class="page-footer"><span>CT EDU <i>·</i> FOUNDATION MODULE</span><span data-i18n="footerDisclaimer">مناسب یادگیری آناتومی؛ برای تشخیص یا تصمیم‌گیری بالینی استفاده نشود.</span><a href="DATA_LICENSE_REVIEW.md" data-i18n="dataReviewLink">وضعیت داده و مجوز</a><a href="data-license.html" data-i18n="licenseNoticeLink">متن مجوز اطلس</a></footer>
