@@ -78,6 +78,25 @@
             <p class="slice-nav-hint" data-i18n="sliceNavHint">برای جابه‌جایی بین برش‌ها از لغزنده، چرخ ماوس یا کلیدهای بالا و پایین استفاده کن.</p>
           </div>
 
+          <section id="window-level-controls" class="window-level-controls" aria-label="CT window and level controls">
+            <div class="window-level-heading">
+              <strong data-i18n="windowLevelTitle">کنتراست و روشنایی تصویر</strong>
+              <span data-i18n="windowLevelSource">شدت خام منبع</span>
+            </div>
+            <div class="window-level-fields">
+              <div class="window-level-field">
+                <label for="window-width-slider"><span data-i18n="windowWidth">پنجره (WW)</span><output id="window-width-value" for="window-width-slider">400</output></label>
+                <input id="window-width-slider" type="range" min="1" max="4000" step="10" value="400">
+              </div>
+              <div class="window-level-field">
+                <label for="window-level-slider"><span data-i18n="windowLevel">سطح (WL)</span><output id="window-level-value" for="window-level-slider">1064</output></label>
+                <input id="window-level-slider" type="range" min="0" max="4000" step="10" value="1064">
+              </div>
+              <button type="button" id="window-level-reset" class="window-level-reset" data-i18n="windowLevelReset">بازنشانی</button>
+            </div>
+            <p id="window-level-status" class="window-level-status" aria-live="polite" data-i18n="windowLevelNote">شدت خام ذخیره‌شدهٔ اطلس؛ کالیبراسیون HU مستقلاً تأیید نشده است.</p>
+          </section>
+
           <div class="viewer-toolbar"><div class="view-levels" aria-label="Schematic teaching emphasis"><span class="toolbar-label" data-i18n="viewPreset">تأکید آموزشی</span><button class="level-button active" type="button" data-level="organs"><b>01</b><span data-i18n="levelOrgans">اندام‌ها</span></button><button class="level-button" type="button" data-level="vessels"><b>02</b><span data-i18n="levelVessels">عروق</span></button><button class="level-button" type="button" data-level="posterior"><b>03</b><span data-i18n="levelPosterior">ساختارهای خلفی</span></button></div><div class="viewer-toggles"><label class="switch-row"><span data-i18n="colorOverlays">رنگ‌بندی</span><input id="toggle-overlays" type="checkbox" checked><span class="switch-ui"></span></label><label class="switch-row"><span data-i18n="anatomyLabels">برچسب‌ها</span><input id="toggle-labels" type="checkbox" checked><span class="switch-ui"></span></label></div></div>
           <div class="source-disclaimer"><span class="info-icon" aria-hidden="true">i</span><p><strong data-i18n="provenanceTitle">دربارهٔ این تصویر</strong><span data-i18n="provenanceText">این نمایش صرفاً شماتیک است؛ هنوز هیچ CT بیمار یا ماسک قطعه‌بندی بارگذاری نشده است. موقعیت‌ها برای آموزش مفهومی‌اند.</span></p></div>
         </section>
