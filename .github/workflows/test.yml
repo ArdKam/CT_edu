@@ -58,11 +58,16 @@ jobs:
           assert volume["sliceCount"] == 113, volume["sliceCount"]
           assert volume["dimensions"]["width"] == 256
           assert volume["dimensions"]["height"] == 256
-          for index in (0, 26, 112):
-              suffix = f"{index:03d}.png"
-              assert (root / "slices" / f"ct-{suffix}").is_file(), suffix
-              assert (root / "slices" / f"labels-{suffix}").is_file(), suffix
-          print(f"Validated {volume['sliceCount']} aligned CT/labelmap slices; matrix {volume['dimensions']['width']}x{volume['dimensions']['height']}; spacing {volume['spacingMm']}")
+          assert set(volume["planes"]) == {"axial", "coronal", "sagittal"}, volume["planes"].keys()
+          expected = {"axial": 113, "coronal": 256, "sagittal": 256}
+          for plane, count in expected.items():
+              meta = volume["planes"][plane]
+              assert meta["sliceCount"] == count, (plane, meta["sliceCount"])
+              for index in sorted({0, count // 2, count - 1}):
+                  suffix = f"{index:03d}.png"
+                  assert (root / meta["ctPattern"].replace("{index:03d}", suffix)).is_file(), (plane, suffix)
+                  assert (root / meta["labelsPattern"].replace("{index:03d}", suffix)).is_file(), (plane, suffix)
+          print(f"Validated CT/labelmap planes {expected}; axial source matrix {volume['dimensions']['width']}x{volume['dimensions']['height']}; voxel spacing {volume['spacingMm']}")
           PY
       - name: Upload CT volume review bundle
         uses: actions/upload-artifact@v4
