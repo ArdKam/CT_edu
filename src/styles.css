@@ -54,16 +54,20 @@
 .viewer-empty-state{
   position:absolute;
   z-index:2;
-  inset:14% 20%;
+  top:50%;
+  left:50%;
+  transform:translate(-50%,-50%);
+  width:min(72%,380px);
+  min-height:92px;
   display:grid;
   place-items:center;
-  padding:22px;
+  padding:18px 22px;
   border:1px dashed #52636f;
   border-radius:12px;
-  background:rgba(11,18,26,.94);
-  color:#c3d0d3;
+  background:rgba(11,18,26,.95);
+  color:#d4e0e2;
   font-size:12px;
-  line-height:1.8;
+  line-height:1.9;
   text-align:center;
   pointer-events:none;
 }
