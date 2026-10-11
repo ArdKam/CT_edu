@@ -13,7 +13,7 @@
   const el=function(id){return document.getElementById(id);};
   function safeGet(k){try{return localStorage.getItem(k);}catch(e){return null;}}
   function safeSet(k,v){try{localStorage.setItem(k,v);}catch(e){}}
-  const state={lang:safeGet('ctedu-lang')==='en'?'en':'fa',selectedId:'liver',plane:'axial',sliceIndex:26,panX:0,panY:0,windowLevelStatus:'note',overlaysOn:true,labelsOn:true,previousLabelsOn:true,zoom:100,level:'organs',query:'',quizMode:false,question:null,score:0,answered:0,lastQuestionId:null,answeredCurrent:false,visible:Object.fromEntries(DATA.items.map(function(i){return [i.id,true];}))};
+  const state={lang:safeGet('ctedu-lang')==='en'?'en':'fa',selectedId:'liver',plane:'axial',sliceIndex:26,panX:0,panY:0,windowLevelStatus:'note',pendingWindowLevel:null,windowLevelRequestId:0,overlaysOn:true,labelsOn:true,previousLabelsOn:true,zoom:100,level:'organs',query:'',quizMode:false,question:null,score:0,answered:0,lastQuestionId:null,answeredCurrent:false,visible:Object.fromEntries(DATA.items.map(function(i){return [i.id,true];}))};
   const langButton=el('language-toggle'),listEl=el('structure-list'),searchEl=el('structure-search'),canvasEl=el('ct-slice-canvas'),overlaysToggle=el('toggle-overlays'),labelsToggle=el('toggle-labels');
   function t(k){return (copy[state.lang]&&copy[state.lang][k])||copy.en[k]||k;}
   function displayName(item){return state.lang==='fa'?item.nameFa:item.nameEn;}
@@ -53,8 +53,9 @@
     const min=Number(range.min),max=Number(range.max),span=Math.max(1,max-min);
     widthInput.min='1';widthInput.max=String(Math.max(400,Math.ceil(span)));widthInput.step='10';
     levelInput.min=String(min);levelInput.max=String(max);levelInput.step='1';
-    if(document.activeElement!==widthInput)widthInput.value=String(info.width);
-    if(document.activeElement!==levelInput)levelInput.value=String(info.level);
+    const pending=state.windowLevelStatus==='loading'?state.pendingWindowLevel:null;
+    if(document.activeElement!==widthInput)widthInput.value=String(pending?pending.width:info.width);
+    if(document.activeElement!==levelInput)levelInput.value=String(pending?pending.level:info.level);
     el('window-width-value').textContent=number(Math.round(Number(widthInput.value)));
     el('window-level-value').textContent=number(Math.round(Number(levelInput.value)));
     widthInput.disabled=state.quizMode;levelInput.disabled=state.quizMode;
@@ -73,14 +74,20 @@
     el('window-width-value').textContent=number(Math.round(width));
     el('window-level-value').textContent=number(Math.round(level));
     if(windowLevelDebounce)window.clearTimeout(windowLevelDebounce);
+    const requestId=++state.windowLevelRequestId;
+    state.pendingWindowLevel={width:width,level:level};
     state.windowLevelStatus='loading';renderWindowLevelControls();
     windowLevelDebounce=window.setTimeout(function(){
       windowLevelDebounce=null;
       Viewer.setWindowLevel(width,level).then(function(ok){
+        if(requestId!==state.windowLevelRequestId)return;
+        state.pendingWindowLevel=null;
         state.windowLevelStatus=ok?'applied':'error';
         renderWindowLevelControls();
         if(ok)renderViewer();
       }).catch(function(){
+        if(requestId!==state.windowLevelRequestId)return;
+        state.pendingWindowLevel=null;
         state.windowLevelStatus='error';renderWindowLevelControls();
       });
     },90);
