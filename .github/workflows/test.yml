@@ -27,6 +27,7 @@ jobs:
         run: |
           node --check src/data/anatomy.js
           node --check src/viewer/schematic-viewer.js
+          node --check src/viewer/ct-slice-viewer.js
           node --check src/quiz/quiz-engine.js
           node --check src/app.js
       - name: Check archive inventory script syntax
