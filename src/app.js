@@ -4,16 +4,16 @@
   if(!DATA||!Viewer||!Quiz) return;
   const copy={
     fa:{
-      moduleCrumb:'آناتومی مقطعی',moduleName:'شکم · نمای محوری',educationalOnly:'صرفاً آموزشی',eyebrow:'FOUNDATIONS · NORMAL ANATOMY',pageTitle:'از برش تا شناخت ساختار',pageIntro:'ساختارهای طبیعی شکم را بشناس، لایه‌های رنگی را بررسی کن و بعد خودت را به چالش بکش.',pathLearn:'یادگیری',pathIdentify:'شناسایی',pathRecall:'یادآوری فعال',structuresLabel:'ساختار در این نما',sessionHint:'برش محوری واقعی برای شروع',libraryKicker:'ANATOMY LIBRARY',anatomyTitle:'ساختارها',hideAll:'مخفی‌کردن همه',showAll:'نمایش همه',searchPlaceholder:'جست‌وجوی ساختار…',selectStructure:'برای انتخاب، نام ساختار را بزن',colorNote:'شناسه‌ها از labelmap اطلس گرفته شده‌اند',viewerTitle:'نمای محوری شکم',viewerSubtitle:'اطلس SPL · برش آموزشی تک‌سطحی',learnMode:'مطالعه',quizMode:'تمرین',recallKicker:'ACTIVE RECALL',quizPrompt:'ساختار برجسته‌شده کدام است؟',sessionScore:'امتیاز این جلسه',sourceBadge:'SPL ATLAS · برش تک‌سطحی پردازش‌شده',quizCanvasLabel:'ناحیهٔ برجسته‌شده روی برش CT',ctCanvasLabel:'برش محوری CT شکم با لایهٔ قطعه‌بندی آموزشی',loadingCT:'در حال بارگذاری برش CT آموزشی…',loadCTError:'بارگذاری دادهٔ CT انجام نشد. وجود فایل‌های assets/spl-abdominal-demo را بررسی کن.',patientRight:'راست بیمار',patientLeft:'چپ بیمار',notToScale:'CT واقعی · لایهٔ آموزشی',viewPreset:'تأکید آموزشی',levelOrgans:'اندام‌ها',levelVessels:'عروق',levelPosterior:'رتروپریتوئن',colorOverlays:'رنگ‌بندی',anatomyLabels:'برچسب‌ها',provenanceTitle:'منبع و وضعیت تصویر',provenanceText:'یک برش پردازش‌شده از SPL Abdominal Atlas (2015) همراه با labelmap متناظر. پنجره و رنگ‌گذاری برای آموزش تغییر داده شده‌اند؛ برای تشخیص بالینی نیست.',inspectorKicker:'STRUCTURE INSPECTOR',detailTitle:'اطلاعات ساختار',selectedStructure:'ساختار انتخاب‌شده',demoStructure:'ساختار آموزشی نمونه',anatomicalNote:'نکتهٔ آناتومیک',orientationTitle:'جهت‌یابی',orientationNote:'سمت راست بیمار در سمت چپ تصویر نمایش داده می‌شود.',nextQuestion:'سؤال بعدی ←',resetQuiz:'شروع دوبارهٔ امتیاز',learnNudge:'یک ساختار را از فهرست انتخاب کن تا رنگ، نام و نکتهٔ آن را بررسی کنی.',footerDisclaimer:'مناسب یادگیری آناتومی؛ برای تشخیص یا تصمیم‌گیری بالینی استفاده نشود.',dataReviewLink:'وضعیت داده و مجوز',licenseNoticeLink:'متن مجوز اطلس',noResults:'ساختاری با این نام پیدا نشد.',quizCorrect:'درست بود. خوب شناسایی کردی.',quizWrong:'این پاسخ درست نیست. به نشانگرهای جهت و محل ساختار توجه کن.',optionsInstruction:'یک گزینه را انتخاب کن.',scoreReset:'امتیاز این جلسه پاک شد.',selected:'انتخاب شده',hidden:'مخفی',visible:'نمایان'
+      moduleCrumb:'آناتومی مقطعی',moduleName:'شکم · نمای محوری',educationalOnly:'صرفاً آموزشی',eyebrow:'FOUNDATIONS · NORMAL ANATOMY',pageTitle:'از برش تا شناخت ساختار',pageIntro:'ساختارهای طبیعی شکم را بشناس، لایه‌های رنگی را بررسی کن و بعد خودت را به چالش بکش.',pathLearn:'یادگیری',pathIdentify:'شناسایی',pathRecall:'یادآوری فعال',structuresLabel:'ساختار در این نما',sessionHint:'حجم محوری با ۱۱۳ برش',sliceNavLabel:'پیمایش برش‌ها',slicePrevious:'برش قبلی',sliceNext:'برش بعدی',sliceNavHint:'با لغزنده، چرخ ماوس روی تصویر یا کلیدهای بالا و پایین بین برش‌ها جابه‌جا شو.',sliceSingle:'نسخهٔ فعلی فقط یک برش دارد',libraryKicker:'ANATOMY LIBRARY',anatomyTitle:'ساختارها',hideAll:'مخفی‌کردن همه',showAll:'نمایش همه',searchPlaceholder:'جست‌وجوی ساختار…',selectStructure:'برای انتخاب، نام ساختار را بزن',colorNote:'شناسه‌ها از labelmap اطلس گرفته شده‌اند',viewerTitle:'نمای محوری شکم',viewerSubtitle:'اطلس SPL · پیمایش برش‌های محوری',learnMode:'مطالعه',quizMode:'تمرین',recallKicker:'ACTIVE RECALL',quizPrompt:'ساختار برجسته‌شده کدام است؟',sessionScore:'امتیاز این جلسه',sourceBadge:'SPL ATLAS · حجم محوری آموزشی',quizCanvasLabel:'ناحیهٔ برجسته‌شده روی برش CT',ctCanvasLabel:'برش محوری CT شکم با لایهٔ قطعه‌بندی آموزشی',loadingCT:'در حال بارگذاری برش CT آموزشی…',loadCTError:'بارگذاری دادهٔ CT انجام نشد. وجود فایل‌های assets/spl-abdominal-demo را بررسی کن.',patientRight:'راست بیمار',patientLeft:'چپ بیمار',notToScale:'CT واقعی · لایهٔ آموزشی',viewPreset:'تأکید آموزشی',levelOrgans:'اندام‌ها',levelVessels:'عروق',levelPosterior:'رتروپریتوئن',colorOverlays:'رنگ‌بندی',anatomyLabels:'برچسب‌ها',provenanceTitle:'منبع و وضعیت تصویر',provenanceText:'حجم محوری ۱۱۳‌برشی از SPL Abdominal Atlas (2015) همراه با labelmap متناظر. پنجره و رنگ‌گذاری برای آموزش تغییر داده شده‌اند؛ ماتریس هر برش ۲۵۶×۲۵۶ است و این ابزار برای تشخیص بالینی نیست.',inspectorKicker:'STRUCTURE INSPECTOR',detailTitle:'اطلاعات ساختار',selectedStructure:'ساختار انتخاب‌شده',demoStructure:'ساختار آموزشی نمونه',anatomicalNote:'نکتهٔ آناتومیک',orientationTitle:'جهت‌یابی',orientationNote:'سمت راست بیمار در سمت چپ تصویر نمایش داده می‌شود.',nextQuestion:'سؤال بعدی ←',resetQuiz:'شروع دوبارهٔ امتیاز',learnNudge:'یک ساختار را از فهرست انتخاب کن تا رنگ، نام و نکتهٔ آن را بررسی کنی.',footerDisclaimer:'مناسب یادگیری آناتومی؛ برای تشخیص یا تصمیم‌گیری بالینی استفاده نشود.',dataReviewLink:'وضعیت داده و مجوز',licenseNoticeLink:'متن مجوز اطلس',noResults:'ساختاری با این نام پیدا نشد.',quizCorrect:'درست بود. خوب شناسایی کردی.',quizWrong:'این پاسخ درست نیست. به نشانگرهای جهت و محل ساختار توجه کن.',optionsInstruction:'یک گزینه را انتخاب کن.',scoreReset:'امتیاز این جلسه پاک شد.',selected:'انتخاب شده',hidden:'مخفی',visible:'نمایان'
     },
     en:{
-      moduleCrumb:'Cross-sectional anatomy',moduleName:'Abdomen · Axial view',educationalOnly:'Educational only',eyebrow:'FOUNDATIONS · NORMAL ANATOMY',pageTitle:'From slice to structure',pageIntro:'Learn normal abdominal anatomy, explore color overlays, then challenge your recall.',pathLearn:'Learn',pathIdentify:'Identify',pathRecall:'Active recall',structuresLabel:'structures in this view',sessionHint:'A real axial slice to begin',libraryKicker:'ANATOMY LIBRARY',anatomyTitle:'Structures',hideAll:'Hide all',showAll:'Show all',searchPlaceholder:'Search structures…',selectStructure:'Select a name to inspect it',colorNote:'Structure IDs are mapped from the source labelmap',viewerTitle:'Axial abdomen',viewerSubtitle:'SPL atlas · one-slice teaching preview',learnMode:'Explore',quizMode:'Practice',recallKicker:'ACTIVE RECALL',quizPrompt:'Which structure is highlighted?',sessionScore:'Session score',sourceBadge:'SPL ATLAS · MODIFIED SINGLE SLICE',quizCanvasLabel:'Highlighted area on CT slice',ctCanvasLabel:'Axial abdominal CT with educational segmentation overlay',loadingCT:'Loading the CT teaching slice…',loadCTError:'The CT teaching assets did not load. Check that assets/spl-abdominal-demo exists.',patientRight:'Patient right',patientLeft:'Patient left',notToScale:'Real CT · teaching overlay',viewPreset:'Teaching emphasis',levelOrgans:'Organs',levelVessels:'Vessels',levelPosterior:'Retroperitoneum',colorOverlays:'Color overlays',anatomyLabels:'Labels',provenanceTitle:'Image source & status',provenanceText:'A modified single slice from the SPL Abdominal Atlas (2015), paired with its source labelmap. Display window and teaching colors are modified; this is not for clinical diagnosis.',inspectorKicker:'STRUCTURE INSPECTOR',detailTitle:'Structure details',selectedStructure:'SELECTED STRUCTURE',demoStructure:'Demonstration anatomy',anatomicalNote:'Anatomical note',orientationTitle:'Orientation',orientationNote:'Patient right is displayed on the viewer’s left.',nextQuestion:'Next question →',resetQuiz:'Reset score',learnNudge:'Choose a structure from the list to inspect its color, name, and note.',footerDisclaimer:'For anatomy learning only; not for diagnosis or clinical decisions.',dataReviewLink:'Data & license status',licenseNoticeLink:'Atlas license notice',noResults:'No structures match this search.',quizCorrect:'Correct. Well identified.',quizWrong:'Not quite. Check the orientation markers and anatomical position.',optionsInstruction:'Choose one option.',scoreReset:'Session score has been reset.',selected:'Selected',hidden:'Hidden',visible:'Visible'
+      moduleCrumb:'Cross-sectional anatomy',moduleName:'Abdomen · Axial view',educationalOnly:'Educational only',eyebrow:'FOUNDATIONS · NORMAL ANATOMY',pageTitle:'From slice to structure',pageIntro:'Learn normal abdominal anatomy, explore color overlays, then challenge your recall.',pathLearn:'Learn',pathIdentify:'Identify',pathRecall:'Active recall',structuresLabel:'structures in this view',sessionHint:'A navigable 113-slice axial volume',sliceNavLabel:'AXIAL SLICE POSITION',slicePrevious:'Previous slice',sliceNext:'Next slice',sliceNavHint:'Use the slider, mouse wheel over the image, or Up/Down keys to navigate.',sliceSingle:'Only one slice is available in this preview',libraryKicker:'ANATOMY LIBRARY',anatomyTitle:'Structures',hideAll:'Hide all',showAll:'Show all',searchPlaceholder:'Search structures…',selectStructure:'Select a name to inspect it',colorNote:'Structure IDs are mapped from the source labelmap',viewerTitle:'Axial abdomen',viewerSubtitle:'SPL atlas · navigable axial stack',learnMode:'Explore',quizMode:'Practice',recallKicker:'ACTIVE RECALL',quizPrompt:'Which structure is highlighted?',sessionScore:'Session score',sourceBadge:'SPL ATLAS · AXIAL VOLUME',quizCanvasLabel:'Highlighted area on CT slice',ctCanvasLabel:'Axial abdominal CT with educational segmentation overlay',loadingCT:'Loading the CT teaching slice…',loadCTError:'The CT teaching assets did not load. Check that assets/spl-abdominal-demo exists.',patientRight:'Patient right',patientLeft:'Patient left',notToScale:'Real CT · teaching overlay',viewPreset:'Teaching emphasis',levelOrgans:'Organs',levelVessels:'Vessels',levelPosterior:'Retroperitoneum',colorOverlays:'Color overlays',anatomyLabels:'Labels',provenanceTitle:'Image source & status',provenanceText:'A 113-slice axial volume from the SPL Abdominal Atlas (2015), paired with its source labelmap. The display window and teaching colors are modified; each slice remains 256×256 pixels. Not for clinical diagnosis.',inspectorKicker:'STRUCTURE INSPECTOR',detailTitle:'Structure details',selectedStructure:'SELECTED STRUCTURE',demoStructure:'Demonstration anatomy',anatomicalNote:'Anatomical note',orientationTitle:'Orientation',orientationNote:'Patient right is displayed on the viewer’s left.',nextQuestion:'Next question →',resetQuiz:'Reset score',learnNudge:'Choose a structure from the list to inspect its color, name, and note.',footerDisclaimer:'For anatomy learning only; not for diagnosis or clinical decisions.',dataReviewLink:'Data & license status',licenseNoticeLink:'Atlas license notice',noResults:'No structures match this search.',quizCorrect:'Correct. Well identified.',quizWrong:'Not quite. Check the orientation markers and anatomical position.',optionsInstruction:'Choose one option.',scoreReset:'Session score has been reset.',selected:'Selected',hidden:'Hidden',visible:'Visible'
     }
   };
   const el=function(id){return document.getElementById(id);};
   function safeGet(k){try{return localStorage.getItem(k);}catch(e){return null;}}
   function safeSet(k,v){try{localStorage.setItem(k,v);}catch(e){}}
-  const state={lang:safeGet('ctedu-lang')==='en'?'en':'fa',selectedId:'liver',overlaysOn:true,labelsOn:true,previousLabelsOn:true,zoom:100,level:'organs',query:'',quizMode:false,question:null,score:0,answered:0,lastQuestionId:null,answeredCurrent:false,visible:Object.fromEntries(DATA.items.map(function(i){return [i.id,true];}))};
+  const state={lang:safeGet('ctedu-lang')==='en'?'en':'fa',selectedId:'liver',sliceIndex:26,overlaysOn:true,labelsOn:true,previousLabelsOn:true,zoom:100,level:'organs',query:'',quizMode:false,question:null,score:0,answered:0,lastQuestionId:null,answeredCurrent:false,visible:Object.fromEntries(DATA.items.map(function(i){return [i.id,true];}))};
   const langButton=el('language-toggle'),listEl=el('structure-list'),searchEl=el('structure-search'),canvasEl=el('ct-slice-canvas'),overlaysToggle=el('toggle-overlays'),labelsToggle=el('toggle-labels');
   function t(k){return (copy[state.lang]&&copy[state.lang][k])||copy.en[k]||k;}
   function displayName(item){return state.lang==='fa'?item.nameFa:item.nameEn;}
@@ -40,17 +40,37 @@
     el('structure-count').textContent=number(DATA.items.length);el('visible-count').textContent=number(visible)+'/'+number(DATA.items.length);
     el('visibility-all').textContent=visible===DATA.items.length?t('hideAll'):t('showAll');
   }
+  function renderSliceNavigation(){
+    const info=Viewer.getVolumeInfo(),slider=el('slice-slider'),previous=el('slice-prev'),next=el('slice-next');
+    if(!slider||!previous||!next)return;
+    const isVolume=Boolean(info.isVolume),current=isVolume?state.sliceIndex:info.currentSliceIndex;
+    slider.min=String(isVolume?0:info.currentSliceIndex);
+    slider.max=String(isVolume?info.sliceCount-1:info.currentSliceIndex);
+    slider.value=String(current);slider.disabled=!isVolume;
+    previous.disabled=!isVolume||current<=0;next.disabled=!isVolume||current>=info.sliceCount-1;
+    previous.title=t('slicePrevious');previous.setAttribute('aria-label',t('slicePrevious'));
+    next.title=t('sliceNext');next.setAttribute('aria-label',t('sliceNext'));
+    slider.setAttribute('aria-label',t('sliceNavLabel'));
+    el('slice-position').textContent=isVolume
+      ?number(current+1)+' / '+number(info.sliceCount)+' · k='+number(current)
+      :t('sliceSingle')+' · k='+number(info.currentSliceIndex);
+  }
   function renderViewer(){
-    const status=Viewer.getStatus(),loadMessage=el('viewer-load-error');
-    if(status.state!=='ready'){
+    const status=Viewer.getStatus(),loadMessage=el('viewer-load-error'),hasFrame=canvasEl.dataset.hasRendered==='true';
+    if(status.state!=='ready'&&!hasFrame){
       canvasEl.hidden=true;loadMessage.hidden=false;loadMessage.textContent=status.state==='error'?t('loadCTError'):t('loadingCT');
     }else{
-      canvasEl.hidden=false;loadMessage.hidden=true;
+      canvasEl.hidden=false;loadMessage.hidden=status.state!=='error';
+      if(status.state==='error')loadMessage.textContent=t('loadCTError');
       canvasEl.style.transform='scale('+(state.zoom/100)+')';
-      Viewer.draw(canvasEl,{items:DATA.items,visible:state.visible,overlaysOn:state.overlaysOn,labelsOn:state.labelsOn&&!state.quizMode,selectedId:state.selectedId,quizId:state.quizMode&&state.question?state.question.id:null,language:state.lang,level:state.level});
+      if(status.state==='ready'){
+        const drawn=Viewer.draw(canvasEl,{items:DATA.items,visible:state.visible,overlaysOn:state.overlaysOn,labelsOn:state.labelsOn&&!state.quizMode,selectedId:state.selectedId,quizId:state.quizMode&&state.question?state.question.id:null,language:state.lang,level:state.level});
+        if(drawn)canvasEl.dataset.hasRendered='true';
+      }
     }
     el('zoom-value').textContent=number(state.zoom)+'%';overlaysToggle.checked=state.overlaysOn;labelsToggle.checked=state.labelsOn;
     document.querySelectorAll('.level-button').forEach(function(button){button.classList.toggle('active',button.dataset.level===state.level);});
+    renderSliceNavigation();
   }
   function renderDetails(){
     const target=state.quizMode&&state.question?DATA.byId(state.question.id):DATA.byId(state.selectedId),hidden=Boolean(state.quizMode&&!state.answeredCurrent);
@@ -118,6 +138,27 @@
   el('zoom-in').addEventListener('click',function(){state.zoom=Math.min(140,state.zoom+10);renderViewer();});
   el('zoom-out').addEventListener('click',function(){state.zoom=Math.max(70,state.zoom-10);renderViewer();});
   el('zoom-reset').addEventListener('click',function(){state.zoom=100;renderViewer();});
+  function goToSlice(index){
+    const info=Viewer.getVolumeInfo();
+    if(!info.isVolume)return;
+    state.sliceIndex=Math.max(0,Math.min(info.sliceCount-1,Math.trunc(Number(index)||0)));
+    renderSliceNavigation();
+    Viewer.loadSlice(state.sliceIndex);
+  }
+  el('slice-slider').addEventListener('input',function(){goToSlice(el('slice-slider').value);});
+  el('slice-prev').addEventListener('click',function(){goToSlice(state.sliceIndex-1);});
+  el('slice-next').addEventListener('click',function(){goToSlice(state.sliceIndex+1);});
+  canvasEl.addEventListener('keydown',function(event){
+    const delta=event.key==='ArrowDown'||event.key==='PageDown'?1:event.key==='ArrowUp'||event.key==='PageUp'?-1:0;
+    if(!delta)return;
+    event.preventDefault();goToSlice(state.sliceIndex+delta*(event.key==='PageUp'||event.key==='PageDown'?10:1));
+  });
+  el('schematic-canvas').addEventListener('wheel',function(event){
+    if(event.target.closest('button'))return;
+    const info=Viewer.getVolumeInfo();
+    if(!info.isVolume||Math.abs(event.deltaY)<6)return;
+    event.preventDefault();goToSlice(state.sliceIndex+(event.deltaY>0?1:-1));
+  },{passive:false});
   document.querySelectorAll('.level-button').forEach(function(button){button.addEventListener('click',function(){state.level=button.dataset.level;renderViewer();});});
   el('learn-mode').addEventListener('click',exitQuiz);
   el('quiz-mode').addEventListener('click',function(){if(DATA.items.filter(function(item){return state.visible[item.id];}).length<4)DATA.items.slice(0,4).forEach(function(item){state.visible[item.id]=true;});startQuiz();});
@@ -129,7 +170,7 @@
     const item=DATA.bySegmentId(segmentId);
     if(item&&state.visible[item.id]){state.selectedId=item.id;render();}
   });
-  window.addEventListener('ctedu:assets-ready',function(){renderViewer();});
+  window.addEventListener('ctedu:assets-ready',function(){const status=Viewer.getStatus();if(status.state==='ready')state.sliceIndex=status.sliceIndex;renderViewer();});
   document.addEventListener('keydown',function(event){if(event.key==='/'&&!['INPUT','TEXTAREA'].includes(document.activeElement.tagName)){event.preventDefault();searchEl.focus();}if(event.key==='Escape'&&state.quizMode)exitQuiz();});
   render();
 })();
