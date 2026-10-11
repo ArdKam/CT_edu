@@ -25,6 +25,20 @@ const { chromium } = require('playwright');
         window.CTEduSliceViewer.getVolumeInfo().availablePlanes.length === 3;
     }, null, { timeout: 30000 });
 
+    const csp = await page.evaluate(function () {
+      const meta = document.querySelector('meta[http-equiv="Content-Security-Policy"]');
+      return meta ? meta.content : null;
+    });
+    assert.ok(csp && csp.includes("default-src 'self'") && csp.includes("script-src 'self'"),
+      'the browser should receive the restrictive CSP before application scripts');
+    await page.locator('#structure-search').fill('</strong><svg id="xss-probe" onload="window.__xssProbe=1"></svg>');
+    const injectionCheck = await page.evaluate(function () {
+      return { nodeCreated: Boolean(document.querySelector('#xss-probe')), executed: window.__xssProbe === 1 };
+    });
+    assert.equal(injectionCheck.nodeCreated, false, 'search input must never be parsed as markup');
+    assert.equal(injectionCheck.executed, false, 'search input must not execute inline event code');
+    await page.locator('#structure-search').fill('');
+
     let status = await page.evaluate(function () {
       return { status: window.CTEduSliceViewer.getStatus(), info: window.CTEduSliceViewer.getVolumeInfo() };
     });
