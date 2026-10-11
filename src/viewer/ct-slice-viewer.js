@@ -198,7 +198,7 @@
       defaultLevel: Number(volumeManifest && volumeManifest.window && volumeManifest.window.level) || 1064,
       intensityRange: range,
       rawAvailable: Boolean(rawVoxelVolume),
-      loading: Boolean(rawVoxelPromise),
+      loading: Boolean(rawVoxelPromise) && !rawVoxelVolume,
       error: rawVoxelError,
       units: 'source stored intensity values; HU calibration not independently verified'
     };
