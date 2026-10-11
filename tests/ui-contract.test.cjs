@@ -36,6 +36,7 @@ test('UI contains expected controls, real-slice canvas and medical-use disclaime
   assert.match(viewer, /function getVolumeInfo\(planeName\)/);
   assert.match(viewer, /canvas\.style\.aspectRatio/);
   assert.match(viewer, /function setWindowLevel\(/);
+  assert.match(viewer, /const gray = sourceGray\\[i \\* 4\\]/);
   assert.match(builder, /ct-volume-int16\.bin\.gz/);
   assert.match(builder, /HU calibration has not been independently verified/);
 });
