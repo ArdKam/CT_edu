@@ -195,12 +195,12 @@ def main() -> int:
 
     # Store spatial metadata alongside the stack so the viewer can accurately report
     # the source matrix and voxel spacing without implying that this is clinical DICOM.
-    direction_vectors = re.findall(r"\\(([^)]+)\\)", image_header.get("space directions", ""))
+    direction_vectors = re.findall(r"\(([^)]+)\)", image_header.get("space directions", ""))
     spacing_mm = []
     for vector in direction_vectors:
         components = [float(value.strip()) for value in vector.split(",")]
         spacing_mm.append(round(float(np.linalg.norm(components)), 6))
-    origin_match = re.search(r"\\(([^)]+)\\)", image_header.get("space origin", ""))
+    origin_match = re.search(r"\(([^)]+)\)", image_header.get("space origin", ""))
     origin_lps = [float(value.strip()) for value in origin_match.group(1).split(",")] if origin_match else None
     volume_meta = {
         "schemaVersion": 1,
