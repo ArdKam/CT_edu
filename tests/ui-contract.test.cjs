@@ -114,7 +114,7 @@ test('release workflow deploys only main and viewer wording is not misleading', 
 
   const html = read('index.html');
   assert.doesNotMatch(html, /aria-label="Schematic teaching emphasis"/);
-  assert.match(html, /aria-label="Anatomy layer emphasis"/);
+  assert.match(html, /data-i18n-aria-label="anatomyLayerGroup"/);
 });
 
 test('tri-planar overview uses its own renderer and exposes synchronized crosshair state', function () {
