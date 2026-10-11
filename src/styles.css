@@ -133,3 +133,34 @@
 @media(max-width:420px){
   .plane-tab{font-size:8px;padding:7px 2px}
 }
+
+
+/* Source-intensity window/level: explicit numeric outputs keep the controls useful. */
+.window-level-controls{
+  margin:0 0 12px;
+  padding:14px 15px 12px;
+  border:1px solid #dfe7e5;
+  border-radius:12px;
+  background:#fff;
+  box-shadow:0 5px 14px rgba(25,42,55,.035);
+}
+.window-level-heading{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:12px}
+.window-level-heading strong{font-size:11px;font-weight:700;color:#354b50}
+.window-level-heading>span{font-size:9px;color:#98a4a1;white-space:nowrap}
+.window-level-fields{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr) auto;gap:15px;align-items:end}
+.window-level-field{display:grid;gap:7px;min-width:0}
+.window-level-field label{display:flex;justify-content:space-between;align-items:center;gap:8px;color:#768783;font-size:9px;font-weight:600}
+.window-level-field output{color:#263f45;font:600 10px 'DM Sans','Vazirmatn',sans-serif;font-variant-numeric:tabular-nums;white-space:nowrap}
+#window-width-slider,#window-level-slider{width:100%;min-width:0;margin:0;accent-color:#2c8985;direction:ltr;cursor:pointer}
+#window-width-slider:disabled,#window-level-slider:disabled{opacity:.45;cursor:not-allowed}
+.window-level-reset{height:29px;padding:0 11px;border:1px solid #dce7e5;border-radius:8px;background:#f7faf9;color:#397d77;font-size:9px;font-weight:700;cursor:pointer;white-space:nowrap}
+.window-level-reset:hover:not(:disabled){border-color:#a1cdc7;background:#edf7f4}
+.window-level-reset:disabled{opacity:.45;cursor:not-allowed}
+.window-level-status{margin:10px 0 0;padding-top:9px;border-top:1px solid #edf1ef;color:#8b9894;font-size:9px;line-height:1.65}
+@media(max-width:780px){
+  .window-level-controls{padding:12px 12px 10px}
+  .window-level-heading{align-items:flex-start;flex-direction:column;gap:4px;margin-bottom:10px}
+  .window-level-fields{grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px}
+  .window-level-reset{grid-column:1/-1;justify-self:start}
+  .window-level-status{font-size:8px}
+}
