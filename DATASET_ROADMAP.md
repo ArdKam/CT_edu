@@ -14,13 +14,13 @@ Purpose: identify candidate sources for a public educational CT web app. **No ca
 
 ## Candidates for additional regions
 
-### CT head — RSNA Intracranial Hemorrhage Detection (candidate; terms are non-commercial)
-- Official resource: [RSNA Medical Imaging Resource for AI (MIRA)](https://imaging.rsna.org/).
-- RSNA describes more than 25,000 brain CT studies, with 874,035 images and annotations for the major intracranial hemorrhage subtypes. The published terms permit academic research, education, and other non-commercial use only; redistribution requires attribution under those terms.
-- Potential use: a selected, expert-reviewed teaching set covering extra-axial and intraparenchymal hemorrhage, with diagnostic labels separated from the learner-facing explanation.
-- Constraints: do not treat the dataset as unrestricted/CC-BY; follow the exact [RSNA terms and attribution requirements](https://www.rsna.org/-/media/files/rsna/education/ai-resources-and-training/ai-image-challenge/rsna_ich_ai_challenge_2019_terms_of_use_and_attribution_final.pdf). It is not suitable for a monetized product unless a separate license permits that use. The full dataset is far too large to put in this repository or the Pages artifact.
+### CT head — RSNA Intracranial Hemorrhage Detection (candidate; current agreement must be reviewed)
+- Official resources: [RSNA Medical Imaging Resource for AI (MIRA)](https://imaging.rsna.org/) and the [RSNA-IHD data card](https://atlas.rsna.org/cards/bd41bbe2-f161-4c19-841c-85d8b645e306).
+- The current RSNA data card names the governing terms as the **RSNA MIRA Dataset Research Use Agreement**. MIRA describes its datasets as available at no cost for non-commercial research, but requires users to register and accept the applicable terms before download. Do not substitute an older 2019 challenge PDF for the agreement presented for the exact current dataset release.
+- Potential use: a selected, expert-reviewed teaching set covering intracranial hemorrhage subtypes, with dataset labels kept separate from the learner-facing reference interpretation.
+- **Redistribution gate:** the current agreement must explicitly permit the intended hosting, derived web-image generation, and public educational use before any source or derivative is put into this repository or the Pages artifact. Older RSNA challenge terms and mirrored registry descriptions are not fully consistent about sharing/re-distribution; this roadmap therefore does not assume redistribution is permitted. If the current agreement is ambiguous, obtain written clarification from RSNA and do not integrate the files meanwhile.
 - Research citation: Flanders et al., *Radiology: Artificial Intelligence* (2020), [DOI 10.1148/ryai.2020190211](https://doi.org/10.1148/ryai.2020190211).
-- Decision: promising for a free, non-commercial educational release after terms review, selected-case validation, and radiologist review; not approved yet.
+- Decision: candidate for a free, non-commercial teaching module only after current terms review, permitted-use confirmation, selected-case validation, and neuroradiologist review; **not approved for integration or redistribution yet**.
 
 ### CT chest — LIDC-IDRI (candidate; CC BY 3.0, large collection)
 - Official resource: [TCIA LIDC-IDRI collection](https://www.cancerimagingarchive.net/collection/lidc-idri/).
