@@ -123,6 +123,7 @@
     state.panY=Math.max(-maxY,Math.min(maxY,state.panY));
     canvasEl.style.transform='translate('+state.panX+'px, '+state.panY+'px) scale('+scale+')';
     canvasEl.style.cursor=(state.zoom>100||state.panX!==0||state.panY!==0)?'grab':'crosshair';
+    canvasEl.style.touchAction=state.zoom>100?'none':'pan-y';
   }
   function renderViewer(){
     const status=Viewer.getStatus(),loadMessage=el('viewer-load-error'),hasFrame=canvasEl.dataset.hasRendered==='true';
