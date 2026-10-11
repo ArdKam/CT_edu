@@ -12,7 +12,8 @@ test('UI contains expected controls, real-slice canvas and medical-use disclaime
     'language-toggle', 'structure-search', 'structure-list', 'toggle-overlays',
     'toggle-labels', 'zoom-in', 'zoom-out', 'zoom-reset', 'quiz-mode',
     'learn-mode', 'answer-options', 'next-question', 'reset-quiz', 'workspace',
-    'anatomy-panel', 'ct-slice-canvas', 'viewer-load-error'
+    'anatomy-panel', 'ct-slice-canvas', 'viewer-load-error', 'slice-navigation',
+    'slice-slider', 'slice-prev', 'slice-next', 'slice-position'
   ].forEach(function (id) {
     assert.ok(html.includes('id="' + id + '"') || html.includes("id='" + id + "'"), 'missing UI control: ' + id);
   });
@@ -21,6 +22,13 @@ test('UI contains expected controls, real-slice canvas and medical-use disclaime
   assert.match(app, /not for clinical diagnosis|برای تشخیص بالینی نیست/);
   assert.match(html, /href="data-license.html"/);
   assert.match(html, /src="src\/viewer\/ct-slice-viewer\.js"/);
+  const viewer = read('src/viewer/ct-slice-viewer.js');
+  const builder = read('scripts/build_demo_assets.py');
+  assert.match(viewer, /volume\.json/);
+  assert.match(viewer, /function loadSlice\(/);
+  assert.match(viewer, /function getVolumeInfo\(/);
+  assert.match(builder, /"sliceCount": int\(image_volume\.shape\[0\]\)/);
+  assert.match(builder, /for slice_index in range\(image_volume\.shape\[0\]\)/);
 });
 
 test('real CT slice and lossless segment-ID map are present', function () {
