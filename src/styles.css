@@ -32,3 +32,37 @@
   .workspace.quiz-active .viewer-column{order:0}
   .workspace.quiz-active .detail-panel{order:1;display:flex;grid-column:auto}
 }
+
+
+/* Pixel-based SPL atlas slice and its in-canvas label overlay. */
+.ct-slice-canvas{
+  display:block;
+  width:min(100%,520px);
+  height:auto;
+  max-width:calc(100% - 48px);
+  max-height:100%;
+  aspect-ratio:1 / 1;
+  background:#05090e;
+  border:1px solid rgba(176,194,209,.24);
+  box-shadow:0 12px 28px rgba(0,0,0,.18);
+  transform-origin:center center;
+  transition:transform .16s ease;
+  cursor:crosshair;
+  image-rendering:auto;
+}
+.ct-slice-canvas[hidden]{display:none}
+.viewer-load-error{
+  max-width:300px;
+  padding:18px;
+  margin:0 20px;
+  border:1px solid #485a69;
+  border-radius:10px;
+  color:#c8d3da;
+  background:#1a2733;
+  text-align:center;
+  font-size:11px;
+  line-height:1.8;
+}
+@media(max-width:780px){
+  .ct-slice-canvas{max-width:calc(100% - 54px);max-height:100%}
+}
