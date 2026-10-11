@@ -85,8 +85,19 @@ const { chromium } = require('playwright');
 
     await page.locator('#zoom-in').click();
     assert.match(await page.locator('#zoom-value').textContent(), /110|۱۱۰/);
+    await page.locator('#zoom-in').click();
+    const panBox = await page.locator('#ct-slice-canvas').boundingBox();
+    assert.ok(panBox && panBox.width > 0 && panBox.height > 0, 'zoomed canvas should remain visible');
+    await page.mouse.move(panBox.x + panBox.width / 2, panBox.y + panBox.height / 2);
+    await page.mouse.down();
+    await page.mouse.move(panBox.x + panBox.width / 2 + 35, panBox.y + panBox.height / 2 + 24, { steps: 4 });
+    await page.mouse.up();
+    const draggedTransform = await page.locator('#ct-slice-canvas').evaluate(function (canvas) { return canvas.style.transform; });
+    assert.match(draggedTransform, /translate\([^)]+\) scale\(1\.2\)/, 'dragging the enlarged CT should pan the image');
     await page.locator('#zoom-reset').click();
     assert.match(await page.locator('#zoom-value').textContent(), /100|۱۰۰/);
+    const resetTransform = await page.locator('#ct-slice-canvas').evaluate(function (canvas) { return canvas.style.transform; });
+    assert.match(resetTransform, /translate\(0px, 0px\) scale\(1\)/, 'reset should clear pan and zoom');
 
     const originalDisplaySignature = await page.locator('#ct-slice-canvas').evaluate(function (canvas) {
       const bytes = canvas.getContext('2d').getImageData(0, 0, canvas.width, canvas.height).data;
@@ -167,8 +178,45 @@ const { chromium } = require('playwright');
     await page.waitForFunction(function () { return document.querySelector('#app').dataset.mode !== 'quiz'; });
 
     await page.screenshot({ path: path.join(screenshotDir, 'ct-edu-browser-smoke.png'), fullPage: true });
+
+    const mobile = await browser.newPage({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 1, isMobile: true, hasTouch: true });
+    const mobileErrors = [];
+    mobile.on('pageerror', function (error) { mobileErrors.push(error.message); });
+    const mobileResponse = await mobile.goto('http://127.0.0.1:8765/', { waitUntil: 'domcontentloaded' });
+    assert.ok(mobileResponse && mobileResponse.ok(), 'mobile home page should return HTTP 200');
+    await mobile.waitForFunction(function () {
+      return window.CTEduSliceViewer && window.CTEduSliceViewer.getStatus().state === 'ready';
+    }, null, { timeout: 30000 });
+    assert.equal(await mobile.locator('#plane-axial').isVisible(), true);
+    assert.equal(await mobile.locator('#slice-slider').isVisible(), true);
+    assert.equal(await mobile.locator('#window-width-slider').isVisible(), true);
+    const mobileLayout = await mobile.evaluate(function () {
+      return {
+        width: window.innerWidth,
+        documentWidth: document.documentElement.scrollWidth,
+        bodyWidth: document.body.scrollWidth,
+        viewerWidth: document.querySelector('#schematic-canvas').getBoundingClientRect().width
+      };
+    });
+    assert.ok(mobileLayout.documentWidth <= mobileLayout.width + 1,
+      'mobile layout must not overflow horizontally: ' + JSON.stringify(mobileLayout));
+    await mobile.locator('#plane-coronal').tap();
+    await mobile.waitForFunction(function () {
+      const s = window.CTEduSliceViewer.getStatus();
+      return s.state === 'ready' && s.plane === 'coronal';
+    }, null, { timeout: 10000 });
+    const mobileCoronalLayout = await mobile.evaluate(function () {
+      return { width: window.innerWidth, documentWidth: document.documentElement.scrollWidth };
+    });
+    assert.ok(mobileCoronalLayout.documentWidth <= mobileCoronalLayout.width + 1,
+      'coronal mobile view must not overflow horizontally: ' + JSON.stringify(mobileCoronalLayout));
+    assert.deepEqual(mobileErrors, [], 'mobile browser should not emit uncaught JavaScript errors');
+    await mobile.close();
+
     assert.deepEqual(pageErrors, [], 'the browser should not emit uncaught JavaScript errors');
-    console.log('Browser smoke passed: axial slice navigation, orthogonal views, orientation, wheel, zoom and active recall.');
+    assert.deepEqual(browserConsoleErrors, [], 'the browser should not emit console errors');
+    assert.deepEqual(failedRequests, [], 'the browser should not have failed requests');
+    console.log('Browser smoke passed: desktop axial navigation, three planes, pan/zoom, raw window/level, recall and responsive mobile layout.');
   } finally {
     await browser.close();
   }
