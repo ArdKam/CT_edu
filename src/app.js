@@ -18,13 +18,16 @@
   function t(k){return (copy[state.lang]&&copy[state.lang][k])||copy.en[k]||k;}
   function displayName(item){return state.lang==='fa'?item.nameFa:item.nameEn;}
   function number(value){return state.lang==='fa'?String(value).replace(/[0-9]/g,function(d){return '۰۱۲۳۴۵۶۷۸۹'[Number(d)];}):String(value);}
-  function escapeHtml(value){return String(value).replace(/[&<>"']/g,function(c){return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c];});}
   function applyLanguage(){
     const fa=state.lang==='fa';document.documentElement.lang=state.lang;document.documentElement.dir=fa?'rtl':'ltr';document.body.classList.toggle('lang-fa',fa);document.body.classList.toggle('lang-en',!fa);
     document.querySelectorAll('[data-i18n]').forEach(function(node){const key=node.getAttribute('data-i18n');if(t(key))node.textContent=t(key);});
     document.querySelectorAll('[data-i18n-placeholder]').forEach(function(node){node.placeholder=t(node.getAttribute('data-i18n-placeholder'));});
     document.querySelectorAll('[data-i18n-aria-label]').forEach(function(node){node.setAttribute('aria-label',t(node.getAttribute('data-i18n-aria-label')));});
-    langButton.innerHTML=fa?'EN <span aria-hidden="true">↔</span> فا':'فا <span aria-hidden="true">↔</span> EN';
+    langButton.replaceChildren();
+    langButton.appendChild(document.createTextNode(fa?'EN ':'فا '));
+    const languageArrow=document.createElement('span');languageArrow.setAttribute('aria-hidden','true');languageArrow.textContent='↔';
+    langButton.appendChild(languageArrow);
+    langButton.appendChild(document.createTextNode(fa?' فا':' EN'));
     langButton.setAttribute('aria-label',fa?'Switch to English':'تغییر زبان به فارسی');
   }
   function getSliceItems(){
@@ -34,15 +37,21 @@
   }
   function renderList(){
     const available=getSliceItems(),availableIds=new Set(available.map(function(item){return item.id;}));
-    const matching=DATA.search(state.query).filter(function(item){return availableIds.has(item.id);});listEl.innerHTML='';
+    const matching=DATA.search(state.query).filter(function(item){return availableIds.has(item.id);});listEl.replaceChildren();
     matching.forEach(function(item){
       const li=document.createElement('li');li.className='structure-row'+(state.selectedId===item.id?' active':'');
       const select=document.createElement('button');select.type='button';select.className='structure-select';select.dataset.selectStructure=item.id;select.setAttribute('aria-pressed',String(state.selectedId===item.id));
-      select.innerHTML='<span class="structure-swatch" style="--swatch:'+item.color+'"></span><span class="structure-name"><strong>'+escapeHtml(displayName(item))+'</strong><small>'+escapeHtml(state.lang==='fa'?item.nameEn:item.nameFa)+'</small></span><span class="row-chevron" aria-hidden="true">'+(state.lang==='fa'?'‹':'›')+'</span>';
-      const eye=document.createElement('button');eye.type='button';eye.className='visibility-button'+(state.visible[item.id]?'':' is-off');eye.dataset.toggleStructure=item.id;eye.setAttribute('aria-label',(state.visible[item.id]?t('hidden'):t('visible'))+' · '+displayName(item));eye.setAttribute('aria-pressed',String(state.visible[item.id]));eye.innerHTML=state.visible[item.id]?'<span aria-hidden="true">◉</span>':'<span aria-hidden="true">○</span>';
+      const swatch=document.createElement('span');swatch.className='structure-swatch';swatch.style.setProperty('--swatch',item.color);
+      const structureName=document.createElement('span');structureName.className='structure-name';
+      const primaryName=document.createElement('strong');primaryName.textContent=displayName(item);
+      const secondaryName=document.createElement('small');secondaryName.textContent=state.lang==='fa'?item.nameEn:item.nameFa;
+      structureName.append(primaryName,secondaryName);
+      const chevron=document.createElement('span');chevron.className='row-chevron';chevron.setAttribute('aria-hidden','true');chevron.textContent=state.lang==='fa'?'‹':'›';
+      select.append(swatch,structureName,chevron);
+      const eye=document.createElement('button');eye.type='button';eye.className='visibility-button'+(state.visible[item.id]?'':' is-off');eye.dataset.toggleStructure=item.id;eye.setAttribute('aria-label',(state.visible[item.id]?t('hidden'):t('visible'))+' · '+displayName(item));eye.setAttribute('aria-pressed',String(state.visible[item.id]));const eyeIcon=document.createElement('span');eyeIcon.setAttribute('aria-hidden','true');eyeIcon.textContent=state.visible[item.id]?'◉':'○';eye.appendChild(eyeIcon);
       li.append(select,eye);listEl.appendChild(li);
     });
-    if(!matching.length)listEl.innerHTML='<li class="empty-results">'+t('noResults')+'</li>';
+    if(!matching.length){const empty=document.createElement('li');empty.className='empty-results';empty.textContent=t('noResults');listEl.appendChild(empty);}
     const visible=available.filter(function(item){return state.visible[item.id];}).length;
     el('structure-count').textContent=number(available.length);el('visible-count').textContent=number(visible)+'/'+number(available.length);
     el('visibility-all').textContent=available.length&&visible===available.length?t('hideAll'):t('showAll');
@@ -145,8 +154,14 @@
     el('orientation-label-left').textContent=t(sagittal?'patientAnterior':'patientRight');el('orientation-label-right').textContent=t(sagittal?'patientPosterior':'patientLeft');
     el('orientation-marker-left').setAttribute('aria-label',t(sagittal?'patientAnterior':'patientRight'));
     el('orientation-marker-right').setAttribute('aria-label',t(sagittal?'patientPosterior':'patientLeft'));
-    el('viewer-axis-labels').innerHTML=sagittal?'A <i>•</i> P':'R <i>•</i> L';
-    el('orientation-glyph').innerHTML=sagittal?'A <i>→</i> P':'R <i>→</i> L';
+    const axisLabels=el('viewer-axis-labels');axisLabels.replaceChildren();
+    axisLabels.appendChild(document.createTextNode(sagittal?'A ':'R '));
+    const axisSeparator=document.createElement('i');axisSeparator.textContent='•';
+    axisLabels.append(axisSeparator,document.createTextNode(sagittal?' P':' L'));
+    const orientationGlyph=el('orientation-glyph');orientationGlyph.replaceChildren();
+    orientationGlyph.appendChild(document.createTextNode(sagittal?'A ':'R '));
+    const orientationArrow=document.createElement('i');orientationArrow.textContent='→';
+    orientationGlyph.append(orientationArrow,document.createTextNode(sagittal?' P':' L'));
     el('orientation-note').textContent=t(sagittal?'sagittalOrientationNote':state.plane==='coronal'?'coronalOrientationNote':'orientationNote');
     if(status.state!=='ready'&&!hasFrame){
       canvasEl.hidden=true;loadMessage.hidden=false;loadMessage.textContent=status.state==='error'?t('loadCTError'):t('loadingCT');
@@ -194,10 +209,13 @@
     if(state.quizMode)renderAnswerOptions();
   }
   function renderAnswerOptions(){
-    const optionsEl=el('answer-options');optionsEl.innerHTML='';if(!state.question)return;
+    const optionsEl=el('answer-options');optionsEl.replaceChildren();if(!state.question)return;
     state.question.options.forEach(function(option,index){
       const item=DATA.byId(option.id),button=document.createElement('button');button.type='button';button.className='answer-option';button.disabled=state.answeredCurrent;button.dataset.answerId=option.id;
-      button.innerHTML='<span class="option-letter">'+('ABCD'[index])+'</span><span>'+escapeHtml(displayName(item))+'</span><span class="option-mark" aria-hidden="true"></span>';
+      const letter=document.createElement('span');letter.className='option-letter';letter.textContent='ABCD'[index];
+      const name=document.createElement('span');name.textContent=displayName(item);
+      const mark=document.createElement('span');mark.className='option-mark';mark.setAttribute('aria-hidden','true');
+      button.append(letter,name,mark);
       if(state.answeredCurrent&&option.id===state.question.id)button.classList.add('correct');
       if(state.answeredCurrent&&option.id===state.question.selectedId&&option.id!==state.question.id)button.classList.add('incorrect');
       button.addEventListener('click',function(){chooseAnswer(option.id);});optionsEl.appendChild(button);
