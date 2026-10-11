@@ -26,15 +26,15 @@ test('UI contains expected controls, real-slice canvas and medical-use disclaime
   const builder = read('scripts/build_demo_assets.py');
   assert.match(viewer, /volume\.json/);
   assert.match(viewer, /function loadSlice\(/);
-  assert.match(viewer, /function getVolumeInfo\(/);
+  assert.match(viewer, /function getVolumeInfo\(planeName\)/);
   assert.match(builder, /"sliceCount": int\(image_volume\.shape\[0\]\)/);
   assert.match(builder, /for slice_index in range\(image_volume\.shape\[0\]\)/);
-  assert.match(builder, /for plane_index in range\\(image_volume.shape\\[1\\]\\)/);
-  assert.match(builder, /for plane_index in range\\(image_volume.shape\\[2\\]\\)/);
+  assert.match(builder, /for plane_index in range\(image_volume.shape\[2\]\)/);
+  assert.match(builder, /for plane_index in range\(image_volume.shape\[2\]\)/);
   assert.match(builder, /"coronal"/);
   assert.match(builder, /"sagittal"/);
-  assert.match(viewer, /function getVolumeInfo\\(planeName\\)/);
-  assert.match(viewer, /canvas\\.style\\.aspectRatio/);
+  assert.match(viewer, /function getVolumeInfo\(planeName\)/);
+  assert.match(viewer, /canvas\.style\.aspectRatio/);
 });
 
 test('real CT slice and lossless segment-ID map are present', function () {
