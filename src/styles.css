@@ -164,3 +164,21 @@
   .window-level-reset{grid-column:1/-1;justify-self:start}
   .window-level-status{font-size:8px}
 }
+
+
+.volume-coordinate-readout{
+  margin:9px 0 0;
+  padding:7px 9px;
+  border:1px solid #e7eeeb;
+  border-radius:7px;
+  background:#f6f9f8;
+  color:#536b68;
+  font:600 10px 'DM Sans','Vazirmatn',sans-serif;
+  letter-spacing:.015em;
+  text-align:center;
+  direction:ltr;
+  font-variant-numeric:tabular-nums;
+}
+@media(max-width:780px){
+  .volume-coordinate-readout{margin-top:8px;padding:6px 8px;font-size:9px}
+}
