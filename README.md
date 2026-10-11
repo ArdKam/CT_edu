@@ -10,7 +10,7 @@ CT Edu is an early-stage bilingual educational web app for medical students. The
 - **Anatomy overlays:** source segment IDs are preserved losslessly as RGB with `id = R + 256 × G`. The structure list is scoped to segments actually present in the currently loaded plane/slice.
 - **Empty edge positions:** if a padded source slice contains no non-zero CT intensity, both the large viewer and synchronized overview identify it as having no image data instead of presenting an unexplained black rectangle.
 - **Inspection tools:** structure search/selection, visibility controls, overlay emphasis, zoom (70–220%) and pointer drag to pan.
-- **Local learning progress:** submitted active-recall answers are saved in this browser only, capped at 500 records, and summarized as attempts, accuracy, and distinct target structures. The user can clear the local history. There are no accounts, no server upload, and no cross-device sync.
+- **Local learning progress:** submitted active-recall answers are saved in this browser only, capped at 500 records, and summarized as attempts, accuracy, and distinct target structures. Users can clear the history or export/import a versioned JSON backup. Restore validates the schema and replaces the current local history only after confirmation. There are no accounts, no server upload, and no cross-device sync.
 - **Bilingual UI:** Persian RTL and English LTR.
 - **Static publication:** GitHub Pages build generates the plane image stack in CI; the original source ZIP files are not copied into the Pages artifact.
 - **Review and tests:** Node.js unit/UI contract tests, Python syntax and metadata checks, validation of generated CT/label pairs, and live HTTP probes for representative orthogonal planes.
