@@ -2,14 +2,26 @@
   'use strict';
   const WIDTH = 256;
   const HEIGHT = 256;
-  const CT_URL = 'assets/spl-abdominal-demo/ct-slice.png';
-  const LABEL_URL = 'assets/spl-abdominal-demo/label-ids-rgb.png';
+  const ASSET_BASE = 'assets/spl-abdominal-demo';
+  const VOLUME_URL = ASSET_BASE + '/volume.json';
+  const CT_URL = ASSET_BASE + '/ct-slice.png';
+  const LABEL_URL = ASSET_BASE + '/label-ids-rgb.png';
+  const DEFAULT_SLICE_INDEX = 26;
   let state = 'loading';
   let failure = null;
   let ctPixels = null;
   let segmentIds = null;
   let centroids = null;
   let sourceGray = null;
+  let loadRequestId = 0;
+  let volumeInfo = {
+    isVolume: false,
+    sliceCount: 1,
+    currentSliceIndex: DEFAULT_SLICE_INDEX,
+    defaultSliceIndex: DEFAULT_SLICE_INDEX,
+    spacingMm: { x: 0.9375, y: 0.9375, z: 1.5 },
+    dimensions: { width: WIDTH, height: HEIGHT, slices: 1 }
+  };
 
   function loadImage(url) {
     return new Promise(function (resolve, reject) {
@@ -58,35 +70,102 @@
     return summary;
   }
 
-  function initialize() {
-    if (typeof document === 'undefined' || typeof Image === 'undefined') return;
-    Promise.all([loadImage(CT_URL), loadImage(LABEL_URL)]).then(function (images) {
-      const ctData = readImagePixels(images[0]);
-      const labelData = readImagePixels(images[1]);
-      const pixelCount = WIDTH * HEIGHT;
-      ctPixels = new Uint8Array(pixelCount);
-      segmentIds = new Uint16Array(pixelCount);
-      for (let i = 0; i < pixelCount; i += 1) {
-        ctPixels[i] = ctData[i * 4];
-        // Exact 16-bit class ID is encoded in the label PNG as R + 256*G.
-        segmentIds[i] = decodeLabelId(labelData[i * 4], labelData[i * 4 + 1]);
-      }
-      sourceGray = new Uint8ClampedArray(pixelCount * 4);
-      for (let i = 0; i < pixelCount; i += 1) {
-        const v = ctPixels[i];
-        sourceGray[i * 4] = v;
-        sourceGray[i * 4 + 1] = v;
-        sourceGray[i * 4 + 2] = v;
-        sourceGray[i * 4 + 3] = 255;
-      }
-      centroids = buildCentroids(segmentIds);
-      state = 'ready';
+  function dispatchAssetsReady() {
+    if (typeof root.dispatchEvent === 'function' && typeof Event !== 'undefined') {
       root.dispatchEvent(new Event('ctedu:assets-ready'));
+    }
+  }
+
+  function commitSliceImages(images, sliceIndex, requestId) {
+    if (requestId !== loadRequestId) return false;
+    const ctData = readImagePixels(images[0]);
+    const labelData = readImagePixels(images[1]);
+    const pixelCount = WIDTH * HEIGHT;
+    ctPixels = new Uint8Array(pixelCount);
+    segmentIds = new Uint16Array(pixelCount);
+    for (let i = 0; i < pixelCount; i += 1) {
+      ctPixels[i] = ctData[i * 4];
+      // Exact 16-bit class ID is encoded in the label PNG as R + 256*G.
+      segmentIds[i] = decodeLabelId(labelData[i * 4], labelData[i * 4 + 1]);
+    }
+    sourceGray = new Uint8ClampedArray(pixelCount * 4);
+    for (let i = 0; i < pixelCount; i += 1) {
+      const v = ctPixels[i];
+      sourceGray[i * 4] = v;
+      sourceGray[i * 4 + 1] = v;
+      sourceGray[i * 4 + 2] = v;
+      sourceGray[i * 4 + 3] = 255;
+    }
+    centroids = buildCentroids(segmentIds);
+    volumeInfo.currentSliceIndex = sliceIndex;
+    failure = null;
+    state = 'ready';
+    dispatchAssetsReady();
+    return true;
+  }
+
+  function loadSlice(requestedIndex) {
+    if (typeof Image === 'undefined') return Promise.resolve(false);
+    const sourceIndex = volumeInfo.isVolume
+      ? Math.max(0, Math.min(volumeInfo.sliceCount - 1, Number(requestedIndex) || 0))
+      : DEFAULT_SLICE_INDEX;
+    if (state === 'ready' && sourceIndex === volumeInfo.currentSliceIndex) return Promise.resolve(true);
+    const requestId = ++loadRequestId;
+    state = 'loading';
+    failure = null;
+    dispatchAssetsReady();
+    const suffix = String(sourceIndex).padStart(3, '0');
+    const ctPath = volumeInfo.isVolume ? ASSET_BASE + '/slices/ct-' + suffix + '.png' : CT_URL;
+    const labelPath = volumeInfo.isVolume ? ASSET_BASE + '/slices/labels-' + suffix + '.png' : LABEL_URL;
+    return Promise.all([loadImage(ctPath), loadImage(labelPath)]).then(function (images) {
+      return commitSliceImages(images, sourceIndex, requestId);
     }).catch(function (error) {
+      if (requestId !== loadRequestId) return false;
       failure = error;
       state = 'error';
-      root.dispatchEvent(new Event('ctedu:assets-ready'));
+      dispatchAssetsReady();
+      return false;
     });
+  }
+
+  function initialize() {
+    if (typeof document === 'undefined' || typeof Image === 'undefined') return;
+    if (typeof root.fetch === 'function') {
+      root.fetch(VOLUME_URL).then(function (response) {
+        if (!response.ok) throw new Error('Volume manifest unavailable');
+        return response.json();
+      }).then(function (manifest) {
+        const count = Number(manifest && manifest.sliceCount);
+        const dimensions = manifest && manifest.dimensions;
+        if (!Number.isInteger(count) || count < 1 || !dimensions ||
+            Number(dimensions.width) !== WIDTH || Number(dimensions.height) !== HEIGHT) {
+          throw new Error('Invalid CT volume manifest');
+        }
+        volumeInfo = {
+          isVolume: count > 1,
+          sliceCount: count,
+          currentSliceIndex: 0,
+          defaultSliceIndex: Math.max(0, Math.min(count - 1, Number(manifest.defaultSliceIndex) || 0)),
+          spacingMm: manifest.spacingMm || null,
+          dimensions: dimensions,
+          coordinateSystem: manifest.coordinateSystem || 'unknown'
+        };
+        return loadSlice(volumeInfo.defaultSliceIndex);
+      }).catch(function () {
+        // Keep compatibility with the committed single-slice fallback for local/offline review.
+        volumeInfo = {
+          isVolume: false,
+          sliceCount: 1,
+          currentSliceIndex: DEFAULT_SLICE_INDEX,
+          defaultSliceIndex: DEFAULT_SLICE_INDEX,
+          spacingMm: { x: 0.9375, y: 0.9375, z: 1.5 },
+          dimensions: { width: WIDTH, height: HEIGHT, slices: 1 }
+        };
+        loadSlice(DEFAULT_SLICE_INDEX);
+      });
+      return;
+    }
+    loadSlice(DEFAULT_SLICE_INDEX);
   }
 
   function parseHex(hex) {
@@ -249,7 +328,27 @@
   }
 
   function getStatus() {
-    return { state: state, error: failure ? String(failure.message || failure) : null, width: WIDTH, height: HEIGHT };
+    return {
+      state: state,
+      error: failure ? String(failure.message || failure) : null,
+      width: WIDTH,
+      height: HEIGHT,
+      sliceIndex: volumeInfo.currentSliceIndex,
+      sliceCount: volumeInfo.sliceCount,
+      isVolume: volumeInfo.isVolume
+    };
+  }
+
+  function getVolumeInfo() {
+    return {
+      isVolume: volumeInfo.isVolume,
+      sliceCount: volumeInfo.sliceCount,
+      currentSliceIndex: volumeInfo.currentSliceIndex,
+      defaultSliceIndex: volumeInfo.defaultSliceIndex,
+      spacingMm: volumeInfo.spacingMm,
+      dimensions: volumeInfo.dimensions,
+      coordinateSystem: volumeInfo.coordinateSystem || 'unknown'
+    };
   }
 
   function accessibleLabel(args) {
@@ -265,6 +364,8 @@
     draw: draw,
     hitTest: hitTest,
     getStatus: getStatus,
+    getVolumeInfo: getVolumeInfo,
+    loadSlice: loadSlice,
     decodeLabelId: decodeLabelId,
     accessibleLabel: accessibleLabel,
     getImageSize: function () { return { width: WIDTH, height: HEIGHT }; }
