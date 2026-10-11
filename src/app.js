@@ -13,7 +13,7 @@
   const el=function(id){return document.getElementById(id);};
   function safeGet(k){try{return localStorage.getItem(k);}catch(e){return null;}}
   function safeSet(k,v){try{localStorage.setItem(k,v);}catch(e){}}
-  const state={lang:safeGet('ctedu-lang')==='en'?'en':'fa',selectedId:'liver',plane:'axial',displayMode:'single',sliceIndex:26,slicePositions:{i:128,j:128,k:26},panX:0,panY:0,windowLevelStatus:'note',pendingWindowLevel:null,windowLevelRequestId:0,overlaysOn:true,labelsOn:true,previousLabelsOn:true,zoom:100,level:'organs',query:'',quizMode:false,question:null,score:0,answered:0,lastQuestionId:null,answeredCurrent:false,visible:Object.fromEntries(DATA.items.map(function(i){return [i.id,true];}))};
+  const state={lang:safeGet('ctedu-lang')==='en'?'en':'fa',selectedId:'liver',plane:'axial',displayMode:'single',progressStorageAvailable:null,sliceIndex:26,slicePositions:{i:128,j:128,k:26},panX:0,panY:0,windowLevelStatus:'note',pendingWindowLevel:null,windowLevelRequestId:0,overlaysOn:true,labelsOn:true,previousLabelsOn:true,zoom:100,level:'organs',query:'',quizMode:false,question:null,score:0,answered:0,lastQuestionId:null,answeredCurrent:false,visible:Object.fromEntries(DATA.items.map(function(i){return [i.id,true];}))};
   const langButton=el('language-toggle'),listEl=el('structure-list'),searchEl=el('structure-search'),canvasEl=el('ct-slice-canvas'),overlaysToggle=el('toggle-overlays'),labelsToggle=el('toggle-labels');
   function t(k){return (copy[state.lang]&&copy[state.lang][k])||copy.en[k]||k;}
   function displayName(item){return state.lang==='fa'?item.nameFa:item.nameEn;}
@@ -206,7 +206,7 @@
     if(!state.quizMode||state.answeredCurrent||!state.question)return;
     const result=Quiz.evaluateAnswer(state.question,id);if(!result.accepted)return;
     state.question.selectedId=id;state.question.answered=true;state.answeredCurrent=true;state.answered+=1;if(result.correct)state.score+=1;
-    Progress.recordAttempt({
+    const progressResult=Progress.recordAttempt({
       caseId:'spl-abdomen-normal-atlas',
       region:'abdomen',
       skill:'structure-identification',
@@ -215,6 +215,7 @@
       isCorrect:result.correct,
       timestamp:Date.now()
     });
+    state.progressStorageAvailable=Boolean(progressResult.saved);
     renderViewer();renderDetails();renderProgress();
   }
   function startQuiz(){
@@ -303,7 +304,8 @@
     el('progress-attempts').textContent=number(summary.totalAttempts);
     el('progress-accuracy').textContent=summary.totalAttempts?number(summary.accuracy)+'%':'—';
     el('progress-structures').textContent=number(summary.distinctStructures);
-    el('progress-storage-note').textContent=t(summary.available?'progressLocalNote':'progressUnavailable');
+    const storageAvailable=state.progressStorageAvailable===null?summary.available:state.progressStorageAvailable;
+    el('progress-storage-note').textContent=t(storageAvailable?'progressLocalNote':'progressUnavailable');
     const feedback=el('progress-feedback');
     feedback.textContent=messageKey?t(messageKey):(summary.totalAttempts?'':t('progressEmpty'));
   }
@@ -383,6 +385,7 @@
   el('reset-quiz').addEventListener('click',function(){state.score=0;state.answered=0;state.answeredCurrent=false;if(state.quizMode)state.question=Quiz.createQuestion(getSliceItems().filter(function(item){return state.visible[item.id];}),null);render();el('answer-feedback').textContent=t('scoreReset');});
   el('reset-local-progress').addEventListener('click',function(){
     const cleared=Progress.clear();
+    state.progressStorageAvailable=Boolean(cleared);
     renderProgress(cleared?'progressSaved':'progressResetFailed');
   });
   canvasEl.addEventListener('pointerdown',function(event){
