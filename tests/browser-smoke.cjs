@@ -237,6 +237,9 @@ const { chromium } = require('playwright');
       'sagittal crosshair should use the 256-pixel j-axis for horizontal position');
     assert.equal(triStatus.status.indices.axial, 27);
     assert.equal(triStatus.status.indices.coronal, 140, 'tri-planar mode should preserve the selected coronal position when reopening');
+    assert.equal(triStatus.status.hasSignal.coronal, true, 'a tissue-bearing coronal slice should be recognized as image data');
+    assert.ok(triStatus.status.nonZeroIntensityPixels.coronal > 0);
+    assert.equal(await page.locator('#tri-coronal-empty-state').isHidden(), true);
     assert.ok(await page.locator('#tri-axial-canvas').isVisible());
     assert.ok(await page.locator('#tri-coronal-canvas').isVisible());
     assert.ok(await page.locator('#tri-sagittal-canvas').isVisible());
@@ -246,7 +249,7 @@ const { chromium } = require('playwright');
     });
     await page.waitForFunction(function () {
       const status = window.CTEduTriPlanarViewer.getStatus();
-      return status.ready && status.indices.coronal === 240;
+      return status.ready && status.indices.coronal === 240 && status.hasSignal.coronal === false;
     }, null, { timeout: 10000 });
     const sagittalLinkedCrosshair = await page.evaluate(function () {
       const status = window.CTEduTriPlanarViewer.getStatus();
@@ -258,6 +261,9 @@ const { chromium } = require('playwright');
       };
     });
     assert.equal(sagittalLinkedCrosshair.j, 240);
+    assert.equal(await page.locator('#tri-coronal-empty-state').isVisible(), true,
+      'an all-zero padded CT slice should display an explanatory empty-state overlay');
+    assert.match(await page.locator('#tri-coronal-empty-state').textContent(), /image data|No image|دادهٔ تصویری|خالی حجم/i);
     assert.deepEqual(sagittalLinkedCrosshair.point, { x: 15, y: 27 },
       'changing coronal position should move the linked sagittal crosshair');
     await page.screenshot({ path: path.join(screenshotDir, 'tri-planar.png'), fullPage: true });
