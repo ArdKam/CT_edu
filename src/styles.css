@@ -51,6 +51,23 @@
   image-rendering:auto;
 }
 .ct-slice-canvas[hidden]{display:none}
+.viewer-empty-state{
+  position:absolute;
+  z-index:2;
+  inset:14% 20%;
+  display:grid;
+  place-items:center;
+  padding:22px;
+  border:1px dashed #52636f;
+  border-radius:12px;
+  background:rgba(11,18,26,.94);
+  color:#c3d0d3;
+  font-size:12px;
+  line-height:1.8;
+  text-align:center;
+  pointer-events:none;
+}
+.viewer-empty-state[hidden]{display:none}
 .viewer-load-error{
   max-width:300px;
   padding:18px;
