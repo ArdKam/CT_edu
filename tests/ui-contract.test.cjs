@@ -70,3 +70,16 @@ test('quiz canvas accessibility label does not disclose the highlighted structur
   assert.equal(viewer.accessibleLabel({ quizId: 'spleen', language: 'fa' }), 'ناحیهٔ برجسته‌شده روی برش CT');
   assert.doesNotMatch(viewer.accessibleLabel({ quizId: 'liver', language: 'en' }), /liver/i);
 });
+
+test('release workflow deploys only main and viewer wording is not misleading', function () {
+  const workflow = read('.github/workflows/pages-deploy.yml');
+  assert.match(workflow, /branches:\s*\n\s*- main/);
+  assert.match(workflow, /if: github\.ref == 'refs\/heads\/main'/);
+  assert.doesNotMatch(workflow, /codex\/initial-anatomy-workspace/);
+  assert.doesNotMatch(workflow, /pull_request:/);
+  assert.match(workflow, /Unexpected source ZIP found in the public site bundle/);
+
+  const html = read('index.html');
+  assert.doesNotMatch(html, /aria-label="Schematic teaching emphasis"/);
+  assert.match(html, /aria-label="Anatomy layer emphasis"/);
+});
