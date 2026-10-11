@@ -30,6 +30,7 @@ jobs:
           node --check src/viewer/ct-slice-viewer.js
           node --check src/viewer/tri-planar-viewer.js
           node --check src/quiz/quiz-engine.js
+          node --check src/data/progress-store.js
           node --check src/app.js
       - name: Check archive inventory script syntax
         run: |
