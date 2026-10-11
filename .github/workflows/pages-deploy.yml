@@ -69,6 +69,7 @@ jobs:
           test -s _site/assets/spl-abdominal-demo/ct-slice.png
           test -s _site/assets/spl-abdominal-demo/label-ids-rgb.png
           test -s _site/assets/spl-abdominal-demo/volume.json
+          test -s _site/assets/spl-abdominal-demo/ct-volume-int16.bin.gz
           test -s _site/assets/spl-abdominal-demo/slices/ct-000.png
           test -s _site/assets/spl-abdominal-demo/slices/ct-112.png
           test -s _site/assets/spl-abdominal-demo/slices/labels-000.png
@@ -127,6 +128,12 @@ jobs:
           fetch_with_retry "$base/" 'ct-slice-viewer.js'
           fetch_with_retry "$base/src/viewer/ct-slice-viewer.js" 'label-ids-rgb.png'
           fetch_with_retry "$base/assets/spl-abdominal-demo/volume.json" '"sliceCount": 113'
+          fetch_with_retry "$base/assets/spl-abdominal-demo/volume.json" '"rawVoxelVolume"'
+          curl -fsS -L "$base/assets/spl-abdominal-demo/ct-volume-int16.bin.gz?probe=$GITHUB_RUN_ID" -o /tmp/ct-edu-raw-volume.bin.gz
+          gzip -t /tmp/ct-edu-raw-volume.bin.gz
+          raw_size="$(gzip -dc /tmp/ct-edu-raw-volume.bin.gz | wc -c)"
+          test "$raw_size" -eq 14811136
+          echo "RAW_CT_VOXEL_BYTES_VERIFIED=$raw_size"
           fetch_with_retry "$base/assets/spl-abdominal-demo/slices/ct-026.png" 'PNG'
           fetch_with_retry "$base/assets/spl-abdominal-demo/slices/labels-026.png" 'PNG'
           fetch_with_retry "$base/assets/spl-abdominal-demo/coronal/ct-128.png" 'PNG'
