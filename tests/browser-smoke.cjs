@@ -16,7 +16,7 @@ const { chromium } = require('playwright');
   page.on('requestfailed', function (request) { failedRequests.push(request.url() + ' :: ' + request.failure()?.errorText); });
 
   try {
-    await page.addInitScript(function () { localStorage.removeItem('ctedu-learning-progress-v1'); });
+    await page.addInitScript(function () { localStorage.removeItem('ctedu-learning-progress-v1'); localStorage.removeItem('ctedu-bookmarks-v1'); });
     const response = await page.goto('http://127.0.0.1:8765/', { waitUntil: 'domcontentloaded' });
     assert.ok(response && response.ok(), 'home page should return HTTP 200');
     await page.waitForFunction(function () {
@@ -47,6 +47,13 @@ const { chromium } = require('playwright');
     assert.equal(status.status.sliceIndex, 26);
     assert.deepEqual(status.info.availablePlanes.sort(), ['axial', 'coronal', 'sagittal']);
     await page.locator('#schematic-canvas').screenshot({ path: path.join(screenshotDir, 'axial.png') });
+    await page.locator('#bookmark-note-input').fill('Review this level <img id="bookmark-note-probe" src=x onerror="window.__bookmarkXss=1">');
+    await page.locator('#bookmark-save-current').click();
+    await page.waitForFunction(function () { return window.CTEduBookmarkStore && window.CTEduBookmarkStore.getState().count === 1; }, null, { timeout: 5000 });
+    assert.equal(await page.locator('#bookmark-list .bookmark-row').count(), 1, 'the selected slice should be saved locally');
+    assert.equal(await page.locator('#bookmark-note-probe').count(), 0, 'bookmark notes must render as plain text, never markup');
+    assert.match(await page.locator('#bookmark-list').textContent(), /Review this level/);
+    assert.equal(await page.evaluate(function () { return window.CTEduBookmarkStore.getState().bookmarks[0].coordinates.k; }), 26);
 
     await page.locator('#slice-slider').evaluate(function (slider) {
       slider.value = '27';
@@ -392,6 +399,19 @@ const { chromium } = require('playwright');
       return status.state === 'ready' && status.plane === 'sagittal' && status.sliceIndex === expectedIndex &&
         document.querySelector('#tri-planar-panel').hidden;
     }, expectedSagittalIndex, { timeout: 10000 });
+
+    await page.waitForFunction(function () { return document.querySelector('#bookmark-list [data-bookmark-open]') !== null; }, null, { timeout: 5000 });
+    await page.locator('#bookmark-list [data-bookmark-open]').first().click();
+    await page.waitForFunction(function () {
+      const status = window.CTEduSliceViewer.getStatus();
+      return status.state === 'ready' && status.plane === 'axial' && status.sliceIndex === 26 && document.querySelector('#tri-planar-panel').hidden;
+    }, null, { timeout: 10000 });
+    const [bookmarkDownload] = await Promise.all([page.waitForEvent('download'), page.locator('#bookmark-export').click()]);
+    assert.match(bookmarkDownload.suggestedFilename(), /^ct-edu-bookmarks-.*\.json$/);
+    const bookmarkBackup = JSON.parse(require('node:fs').readFileSync(await bookmarkDownload.path(), 'utf8'));
+    assert.equal(bookmarkBackup.app, 'ct-edu-bookmarks');
+    assert.equal(bookmarkBackup.version, 1);
+    assert.equal(bookmarkBackup.bookmarks.length, 1);
 
     const mobile = await browser.newPage({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 1, isMobile: true, hasTouch: true });
     const mobileErrors = [];

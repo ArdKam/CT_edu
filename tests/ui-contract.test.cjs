@@ -13,7 +13,7 @@ test('UI contains expected controls, real-slice canvas and medical-use disclaime
     'toggle-labels', 'zoom-in', 'zoom-out', 'zoom-reset', 'quiz-mode',
     'learn-mode', 'answer-options', 'next-question', 'reset-quiz', 'workspace',
     'anatomy-panel', 'ct-slice-canvas', 'viewer-load-error', 'slice-navigation', 'display-mode-controls', 'display-single', 'display-triplanar', 'tri-planar-panel', 'tri-axial-canvas', 'tri-coronal-canvas', 'tri-sagittal-canvas', 'tri-axial-slider', 'tri-coronal-slider', 'tri-sagittal-slider',
-    'slice-slider', 'slice-prev', 'slice-next', 'slice-position', 'plane-axial', 'plane-coronal', 'plane-sagittal', 'orientation-glyph', 'window-level-controls', 'window-width-slider', 'window-level-slider', 'window-level-reset', 'window-level-status', 'learning-progress', 'reset-local-progress', 'export-local-progress', 'restore-local-progress', 'restore-local-progress-file', 'progress-attempts', 'progress-accuracy', 'progress-structures', 'progress-storage-note', 'progress-feedback'
+    'slice-slider', 'slice-prev', 'slice-next', 'slice-position', 'plane-axial', 'plane-coronal', 'plane-sagittal', 'orientation-glyph', 'window-level-controls', 'window-width-slider', 'window-level-slider', 'window-level-reset', 'window-level-status', 'learning-progress', 'reset-local-progress', 'export-local-progress', 'restore-local-progress', 'restore-local-progress-file', 'progress-attempts', 'progress-accuracy', 'progress-structures', 'progress-storage-note', 'progress-feedback', 'bookmarks-panel', 'bookmark-count', 'bookmark-note-input', 'bookmark-save-current', 'bookmark-export', 'bookmark-restore', 'bookmark-restore-file', 'bookmark-list', 'bookmark-storage-note', 'bookmark-feedback'
   ].forEach(function (id) {
     assert.ok(html.includes('id="' + id + '"') || html.includes("id='" + id + "'"), 'missing UI control: ' + id);
   });
@@ -236,4 +236,20 @@ test('public privacy notice is linked, staged, and explicit about local data and
   assert.match(workflow, /cp index\.html data-license\.html privacy\.html DATA_LICENSE_REVIEW\.md _site\//);
   assert.match(workflow, /test -s _site\/privacy\.html/);
   assert.match(workflow, /fetch_with_retry "\$base\/privacy\.html" 'Privacy &amp; Local Data'/);
+});
+
+test('case manifest and bookmark store load before the main app and keep review gates closed', function () {
+  const html = read('index.html'), app = read('src/app.js');
+  const caseManifest = require('../src/data/case-manifest.js');
+  const bookmarks = require('../src/data/bookmark-store.js');
+  assert.ok(html.indexOf('src/data/case-manifest.js') < html.indexOf('src/app.js'));
+  assert.ok(html.indexOf('src/data/bookmark-store.js') < html.indexOf('src/app.js'));
+  assert.ok(app.includes('function renderBookmarks('));
+  assert.ok(app.includes('Bookmarks.add('));
+  assert.ok(app.includes('Bookmarks.exportData('));
+  assert.ok(app.includes('Bookmarks.importData('));
+  assert.equal(caseManifest.getById('spl-abdomen-normal-atlas').review.publicReleaseApproved, false);
+  assert.equal(bookmarks.maxBookmarks, 100);
+  assert.equal(bookmarks.maxNoteLength, 500);
+  assert.doesNotMatch(app, /\b(innerHTML|outerHTML|insertAdjacentHTML)\b/);
 });
