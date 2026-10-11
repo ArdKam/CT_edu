@@ -109,21 +109,28 @@
     return true;
   }
 
-  function drawCrosshair(context, data, indices) {
-    const width = data.width, height = data.height;
+  function getCrosshairPoint(plane, width, height, indices) {
     let x, y;
-    if (data.plane === 'axial') {
+    if (plane === 'axial') {
       x = Number(indices.i) || 0;
       y = height - 1 - (Number(indices.j) || 0);
-    } else if (data.plane === 'coronal') {
+    } else if (plane === 'coronal') {
       x = Number(indices.i) || 0;
       y = Number(indices.k) || 0;
     } else {
-      x = height - 1 - (Number(indices.j) || 0);
+      // Sagittal image columns run from anterior to posterior (reversed j axis);
+      // use the canvas width, not its much smaller axial-slice-count height.
+      x = width - 1 - (Number(indices.j) || 0);
       y = Number(indices.k) || 0;
     }
     x = Math.max(0, Math.min(width - 1, x));
     y = Math.max(0, Math.min(height - 1, y));
+    return { x: x, y: y };
+  }
+
+  function drawCrosshair(context, data, indices) {
+    const point = getCrosshairPoint(data.plane, data.width, data.height, indices);
+    const x = point.x, y = point.y, width = data.width, height = data.height;
     context.save();
     context.strokeStyle = '#79d4ca';
     context.fillStyle = '#79d4ca';
@@ -200,6 +207,7 @@
 
   const api = {
     render: render,
+    getCrosshairPoint: getCrosshairPoint,
     getStatus: function () {
       return {
         ready: planes.every(function (name) { return Boolean(currentData[name]); }),
