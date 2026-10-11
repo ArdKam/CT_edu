@@ -339,6 +339,14 @@
     };
   }
 
+  function getPresentSegmentIds(minPixels) {
+    const threshold = Number.isFinite(Number(minPixels)) ? Math.max(1, Number(minPixels)) : 8;
+    if (state !== 'ready' || !centroids) return [];
+    return Object.keys(centroids).filter(function (id) {
+      return centroids[id].count >= threshold;
+    }).map(function (id) { return Number(id); });
+  }
+
   function getVolumeInfo() {
     return {
       isVolume: volumeInfo.isVolume,
@@ -365,6 +373,7 @@
     hitTest: hitTest,
     getStatus: getStatus,
     getVolumeInfo: getVolumeInfo,
+    getPresentSegmentIds: getPresentSegmentIds,
     loadSlice: loadSlice,
     decodeLabelId: decodeLabelId,
     accessibleLabel: accessibleLabel,
