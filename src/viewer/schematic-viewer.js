@@ -35,7 +35,9 @@
       const pos=LABELS[item.id] || [350,280];
       const labelVisible=labelsOn && shown && !quizId;
       const shortLabel=label.length>19 ? label.slice(0,18)+'…' : label;
-      let result='<g class="anatomy-shape'+(selected?' is-selected':'')+'" data-structure="'+esc(item.id)+'" tabindex="0" role="button" aria-label="'+esc(label)+'" aria-pressed="'+String(selected)+'" style="opacity:'+opacity+';--structure-color:'+fill+'">';
+      const accessibleLabel=quizId?(selected?(isFa?'ساختار برجسته‌شده':'Highlighted structure'):(isFa?'ساختار آناتومیک':'Anatomical structure')):label;
+      const accessibility=quizId?' aria-label="'+esc(accessibleLabel)+'"':' tabindex="0" role="button" aria-label="'+esc(label)+'" aria-pressed="'+String(selected)+'"';
+      let result='<g class="anatomy-shape'+(selected?' is-selected':'')+'" data-structure="'+esc(item.id)+'"'+accessibility+' style="opacity:'+opacity+';--structure-color:'+fill+'">';
       result+='<g class="shape-fill" fill="'+fill+'" stroke="'+(selected?'#FFD18A':'#182432')+'" stroke-width="'+(selected?4:2)+'" stroke-linejoin="round">'+(SHAPES[item.shape]||'')+'</g>';
       if(labelVisible) result+='<text class="shape-label" x="'+pos[0]+'" y="'+pos[1]+'" text-anchor="middle">'+esc(shortLabel)+'</text>';
       if(selected) result+='<circle class="selection-ring" cx="'+pos[0]+'" cy="'+pos[1]+'" r="28" fill="none" stroke="#FFD18A" stroke-dasharray="4 6" stroke-width="2"/>';
