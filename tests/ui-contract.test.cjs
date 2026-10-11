@@ -39,6 +39,17 @@ test('UI contains expected controls, real-slice canvas and medical-use disclaime
   assert.match(app, /widthInput\.step='10'/);
   assert.match(app, /pendingWindowLevel/);
   assert.match(viewer, /function setWindowLevel\(/);
+  const triViewer = read('src/viewer/tri-planar-viewer.js');
+  assert.match(html, /src="src\/viewer\/tri-planar-viewer\.js"/);
+  for (const id of ['display-triplanar', 'tri-planar-panel', 'tri-axial-canvas', 'tri-coronal-canvas', 'tri-sagittal-canvas',
+    'tri-axial-slider', 'tri-coronal-slider', 'tri-sagittal-slider']) {
+    assert.ok(html.includes('id="' + id + '"'), 'missing tri-planar control: ' + id);
+  }
+  assert.match(app, /function renderTriPlanar\(/);
+  assert.match(app, /TriViewer\.render\(/);
+  assert.match(triViewer, /function getCrosshairPoint\(/);
+  assert.match(triViewer, /x = width - 1 - \(Number\(indices\.j\) \|\| 0\)/);
+
   assert.ok(viewer.includes('const gray = sourceGray[i * 4]'), 'overlay blending must read the grayscale channel, not the raw RGBA byte index');
   assert.match(builder, /ct-volume-int16\.bin\.gz/);
   assert.match(builder, /HU calibration has not been independently verified/);
