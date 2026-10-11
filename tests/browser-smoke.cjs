@@ -16,6 +16,7 @@ const { chromium } = require('playwright');
   page.on('requestfailed', function (request) { failedRequests.push(request.url() + ' :: ' + request.failure()?.errorText); });
 
   try {
+    await page.addInitScript(function () { localStorage.removeItem('ctedu-learning-progress-v1'); });
     const response = await page.goto('http://127.0.0.1:8765/', { waitUntil: 'domcontentloaded' });
     assert.ok(response && response.ok(), 'home page should return HTTP 200');
     await page.waitForFunction(function () {
@@ -177,8 +178,27 @@ const { chromium } = require('playwright');
     });
     assert.equal(await page.locator('#plane-coronal').isDisabled(), true, 'plane changes should be disabled during a quiz');
     assert.ok(await page.locator('#answer-options button').count() >= 4, 'active recall should offer four answer options');
+    await page.locator('#answer-options button').first().click();
+    await page.waitForFunction(function () {
+      const stored = JSON.parse(localStorage.getItem('ctedu-learning-progress-v1') || '{"attempts":[]}');
+      return stored.attempts && stored.attempts.length === 1;
+    }, null, { timeout: 5000 });
+    const localProgress = await page.evaluate(function () {
+      const stored = JSON.parse(localStorage.getItem('ctedu-learning-progress-v1'));
+      return { attempts: stored.attempts.length, hasIdentity: stored.attempts.some(function (item) { return 'userId' in item || 'email' in item; }) };
+    });
+    assert.equal(localProgress.attempts, 1, 'a submitted answer should be stored locally');
+    assert.equal(localProgress.hasIdentity, false, 'local progress should not collect identity fields');
+    assert.match(await page.locator('#progress-attempts').textContent(), /1|۱/);
+    assert.match(await page.locator('#progress-storage-note').textContent(), /مرورگر|browser/i);
     await page.locator('#learn-mode').click();
     await page.waitForFunction(function () { return document.querySelector('#app').dataset.mode !== 'quiz'; });
+    await page.locator('#reset-local-progress').click();
+    await page.waitForFunction(function () {
+      return document.querySelector('#progress-attempts').textContent().trim() === '۰' ||
+        document.querySelector('#progress-attempts').textContent().trim() === '0';
+    }, null, { timeout: 5000 });
+    assert.match(await page.locator('#progress-feedback').textContent(), /پاک شد|cleared/i);
 
     await page.locator('#display-triplanar').click();
     await page.waitForFunction(function () {
