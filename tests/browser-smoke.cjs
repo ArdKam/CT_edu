@@ -439,6 +439,30 @@ const { chromium } = require('playwright');
     assert.deepEqual(mobileErrors, [], 'mobile browser should not emit uncaught JavaScript errors');
     await mobile.close();
 
+    const privacyPage = await browser.newPage({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 1, isMobile: true, hasTouch: true });
+    const privacyErrors = [];
+    const privacyConsoleErrors = [];
+    const privacyFailedRequests = [];
+    privacyPage.on('pageerror', function (error) { privacyErrors.push(error.message); });
+    privacyPage.on('console', function (message) { if (message.type() === 'error') privacyConsoleErrors.push(message.text()); });
+    privacyPage.on('requestfailed', function (request) { privacyFailedRequests.push(request.url() + ' :: ' + request.failure()?.errorText); });
+    const privacyResponse = await privacyPage.goto('http://127.0.0.1:8765/privacy.html', { waitUntil: 'domcontentloaded' });
+    assert.ok(privacyResponse && privacyResponse.ok(), 'privacy notice should return HTTP 200');
+    await privacyPage.locator('#privacy-title').waitFor({ state: 'visible' });
+    assert.match(await privacyPage.locator('body').textContent(), /Google Fonts/);
+    assert.match(await privacyPage.locator('body').textContent(), /local history|local progress/i);
+    assert.equal(await privacyPage.locator('meta[http-equiv="Content-Security-Policy"]').count(), 1);
+    const privacyLayout = await privacyPage.evaluate(function () {
+      return { width: window.innerWidth, documentWidth: document.documentElement.scrollWidth };
+    });
+    assert.ok(privacyLayout.documentWidth <= privacyLayout.width + 1,
+      'privacy page must not overflow horizontally on a 390 px viewport: ' + JSON.stringify(privacyLayout));
+    await privacyPage.screenshot({ path: path.join(screenshotDir, 'privacy-mobile.png'), fullPage: true });
+    assert.deepEqual(privacyErrors, [], 'privacy page should not emit uncaught JavaScript errors');
+    assert.deepEqual(privacyConsoleErrors, [], 'privacy page should not emit console errors');
+    assert.deepEqual(privacyFailedRequests, [], 'privacy page should not have failed requests');
+    await privacyPage.close();
+
     assert.deepEqual(pageErrors, [], 'the browser should not emit uncaught JavaScript errors');
     assert.deepEqual(browserConsoleErrors, [], 'the browser should not emit console errors');
     assert.deepEqual(failedRequests, [], 'the browser should not have failed requests');
