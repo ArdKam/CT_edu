@@ -49,9 +49,9 @@
         <section class="viewer-column" aria-label="Anatomy viewer">
           <div class="viewer-topline"><div class="viewer-title-group"><span class="viewer-live-mark"></span><div><strong id="viewer-plane-title" data-i18n="viewAxial">نمای محوری</strong><small id="viewer-plane-subtitle" data-i18n="viewerSubtitle">اطلس SPL · پیمایش برش‌های محوری</small></div></div><div class="viewer-top-actions"><button class="mode-tab active" id="learn-mode" type="button" aria-pressed="true" data-i18n="learnMode">مطالعه</button><button class="mode-tab" id="quiz-mode" type="button" aria-pressed="false"><span class="mode-spark" aria-hidden="true">✳</span><span data-i18n="quizMode">تمرین</span></button></div></div>
           <div id="plane-tabs" class="plane-tabs" role="group" aria-label="CT viewing plane">
-            <button type="button" class="plane-tab active" data-plane="axial" aria-pressed="true" data-i18n="planeAxial">محوری · Axial</button>
-            <button type="button" class="plane-tab" data-plane="coronal" aria-pressed="false" data-i18n="planeCoronal">کرونال · Coronal</button>
-            <button type="button" class="plane-tab" data-plane="sagittal" aria-pressed="false" data-i18n="planeSagittal">ساژیتال · Sagittal</button>
+            <button type="button" id="plane-axial" class="plane-tab active" data-plane="axial" aria-pressed="true" data-i18n="planeAxial">محوری · Axial</button>
+            <button type="button" id="plane-coronal" class="plane-tab" data-plane="coronal" aria-pressed="false" data-i18n="planeCoronal">کرونال · Coronal</button>
+            <button type="button" id="plane-sagittal" class="plane-tab" data-plane="sagittal" aria-pressed="false" data-i18n="planeSagittal">ساژیتال · Sagittal</button>
           </div>
 
           <div id="quiz-banner" class="quiz-banner" hidden><div><span class="quiz-kicker" data-i18n="recallKicker">ACTIVE RECALL</span><strong data-i18n="quizPrompt">ساختار برجسته‌شده کدام است؟</strong></div><div class="score-box"><span data-i18n="sessionScore">امتیاز این جلسه</span><strong><b id="score">۰</b><i>/</i><span id="answered-count">۰</span></strong></div></div>
