@@ -15,6 +15,8 @@ This checklist separates code that exists from educational, legal, and release r
 - [x] CI compares the compressed int16 sidecar byte-for-byte with the source NRRD CT and verifies sampled CT/labelmap transforms pixel-by-pixel in all three planes. The Pages build also checks representative live assets and excludes source ZIPs from the public artifact.
 - [x] Main and synchronized viewers explain all-zero padded edge slices instead of disguising them as diagnostic black images; Chromium smoke covers this behavior in both layouts.
 - [x] Pages deployment workflow restricted to `main`; feature branches and PRs must not overwrite the single public Pages site.
+- [x] Pin GitHub Actions to full official release commit SHAs, annotate each with its release version, schedule weekly Dependabot action updates, and pin Playwright 1.63.0 for reproducible Chromium smoke runs.
+- [x] Add the public bilingual [privacy notice](privacy.html), link it in the app, and configure Pages staging/live probes for it; the feature-branch CI does not make this notice live until the branch is merged and deployed.
 - [x] Interface language clarifies that anatomy controls filter real image overlays rather than a schematic drawing.
 
 ## Dataset acquisition plan
