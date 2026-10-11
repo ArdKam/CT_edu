@@ -42,7 +42,7 @@ test('UI contains expected controls, real-slice canvas and medical-use disclaime
   const triViewer = read('src/viewer/tri-planar-viewer.js');
   assert.match(html, /src="src\/viewer\/tri-planar-viewer\.js"/);
   for (const id of ['display-triplanar', 'tri-planar-panel', 'tri-axial-canvas', 'tri-coronal-canvas', 'tri-sagittal-canvas',
-    'tri-axial-slider', 'tri-coronal-slider', 'tri-sagittal-slider', 'tri-axial-empty-state', 'tri-coronal-empty-state', 'tri-sagittal-empty-state']) {
+    'tri-axial-slider', 'tri-coronal-slider', 'tri-sagittal-slider', 'tri-axial-empty-state', 'tri-coronal-empty-state', 'tri-sagittal-empty-state', 'viewer-empty-state']) {
     assert.ok(html.includes('id="' + id + '"'), 'missing tri-planar control: ' + id);
   }
   assert.match(app, /function renderTriPlanar\(/);
