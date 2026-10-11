@@ -102,6 +102,7 @@ The product now has a code-level modality catalog. This does not change the appr
 - A browser-only 2D viewer handles local PNG/JPEG/WebP files with pan/zoom/fit, projection metadata, a 25 MB cap, and no upload. It does not parse DICOM, infer projection or provide diagnosis.
 - The [official NIH Chest X-ray page](https://docs.cloud.google.com/healthcare-api/docs/resources/public-datasets/nih-chest) states use of NIH Clinical Center images has no restrictions but requires attribution, a link to the original download and a CVPR 2017 citation. NIH ChestX-ray is the leading candidate for a small curated public teaching subset; verify image identifiers, attribution and educational labels before bundling.
 - [VinDr-CXR on PhysioNet](https://physionet.org/content/vindr-cxr/1.0.0/) requires credentialed access, training and a Data Use Agreement. Do **not** redistribute VinDr-CXR under its current terms.
+- Do **not** bundle VinDr-CXR images or derivatives into the public app under those terms. Use a source with explicit public redistribution permission or obtain written authorization.
 - Curated lessons must preserve resolution and specify PA/AP/lateral projection with expert-reviewed interpretations. The local viewer is not a substitute for those cases.
 
 ### Per-modality release gate
