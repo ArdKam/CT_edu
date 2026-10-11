@@ -1,0 +1,515 @@
+{
+  "kind": "review-only candidate slice; not yet integrated in app",
+  "source": "SPL Abdominal Atlas, September 2015",
+  "source_license": "3D Slicer License Part B (verify third-party components separately)",
+  "source_files": {
+    "atlasstructure.json": "abacktools-abdomen-2016-09-part1-of6.zip:abdomen-2016-09/atlasStructure.json",
+    "i.nrrd": "abacktools-abdomen-2016-09-part2-of6.zip:abdomen-2016-09/Data/I.nrrd",
+    "seg.nrrd": "abacktools-abdomen-2016-09-part4-of6.zip:abdomen-2016-09/Data/seg.nrrd"
+  },
+  "source_scene": "AbdominalAtlas-2015Sept-Slicer4-4Version.mrml",
+  "nrrd_geometry_matches": true,
+  "nrrd_header": {
+    "type": "short",
+    "dimension": "3",
+    "space": "left-posterior-superior",
+    "sizes": "256 256 113",
+    "space directions": "(0.93750000000000022,0,0) (0,-0.93750000000000022,0) (0,0,-1.5000000000000004)",
+    "space origin": "(-119.53000000000002,119.53000000000007,84.000000000000028)",
+    "encoding": "gzip"
+  },
+  "array_shape_zyx": [
+    113,
+    256,
+    256
+  ],
+  "slice_index_k_zero_based": 26,
+  "index_direction_note": "Preview reverses only the screen row order so anterior is displayed at the top; CT and segmentation use identical transform.",
+  "display_window": {
+    "width": 400,
+    "level": 1064
+  },
+  "visible_target_structures": [
+    {
+      "id": 3,
+      "name": "liver",
+      "color": [
+        147,
+        59,
+        0
+      ],
+      "pixels_on_slice": 5810
+    },
+    {
+      "id": 4,
+      "name": "spleen",
+      "color": [
+        140,
+        100,
+        160
+      ],
+      "pixels_on_slice": 801
+    },
+    {
+      "id": 51,
+      "name": "right kidney",
+      "color": [
+        219,
+        170,
+        119
+      ],
+      "pixels_on_slice": 380
+    },
+    {
+      "id": 52,
+      "name": "left kidney",
+      "color": [
+        219,
+        170,
+        119
+      ],
+      "pixels_on_slice": 618
+    },
+    {
+      "id": 7,
+      "name": "aorta",
+      "color": [
+        255,
+        49,
+        20
+      ],
+      "pixels_on_slice": 247
+    },
+    {
+      "id": 8,
+      "name": "inferior vena cava",
+      "color": [
+        49,
+        20,
+        255
+      ],
+      "pixels_on_slice": 218
+    },
+    {
+      "id": 6,
+      "name": "pancreas",
+      "color": [
+        156,
+        110,
+        54
+      ],
+      "pixels_on_slice": 394
+    },
+    {
+      "id": 13,
+      "name": "stomach and duodenum",
+      "color": [
+        209,
+        170,
+        160
+      ],
+      "pixels_on_slice": 2263
+    },
+    {
+      "id": 10,
+      "name": "gallbladder",
+      "color": [
+        0,
+        255,
+        126
+      ],
+      "pixels_on_slice": 61
+    }
+  ],
+  "candidate_slice_ranking": [
+    {
+      "slice_index": 26,
+      "score": 6900.10792,
+      "core_count": 6,
+      "target_count": 9,
+      "target_pixel_count": 10792,
+      "present": [
+        "liver",
+        "spleen",
+        "right kidney",
+        "left kidney",
+        "aorta",
+        "inferior vena cava",
+        "pancreas",
+        "stomach and duodenum",
+        "gallbladder"
+      ],
+      "pixel_counts": {
+        "liver": 5810,
+        "spleen": 801,
+        "right kidney": 380,
+        "left kidney": 618,
+        "aorta": 247,
+        "inferior vena cava": 218,
+        "pancreas": 394,
+        "stomach and duodenum": 2263,
+        "right psoas muscle": 0,
+        "left psoas muscle": 0,
+        "Lumbar4": 0,
+        "gallbladder": 61
+      }
+    },
+    {
+      "slice_index": 28,
+      "score": 6900.1037,
+      "core_count": 6,
+      "target_count": 9,
+      "target_pixel_count": 10370,
+      "present": [
+        "liver",
+        "spleen",
+        "right kidney",
+        "left kidney",
+        "aorta",
+        "inferior vena cava",
+        "pancreas",
+        "stomach and duodenum",
+        "gallbladder"
+      ],
+      "pixel_counts": {
+        "liver": 4509,
+        "spleen": 341,
+        "right kidney": 962,
+        "left kidney": 1214,
+        "aorta": 219,
+        "inferior vena cava": 272,
+        "pancreas": 547,
+        "stomach and duodenum": 2144,
+        "right psoas muscle": 0,
+        "left psoas muscle": 0,
+        "Lumbar4": 0,
+        "gallbladder": 162
+      }
+    },
+    {
+      "slice_index": 27,
+      "score": 6900.10136,
+      "core_count": 6,
+      "target_count": 9,
+      "target_pixel_count": 10136,
+      "present": [
+        "liver",
+        "spleen",
+        "right kidney",
+        "left kidney",
+        "aorta",
+        "inferior vena cava",
+        "pancreas",
+        "stomach and duodenum",
+        "gallbladder"
+      ],
+      "pixel_counts": {
+        "liver": 5098,
+        "spleen": 364,
+        "right kidney": 637,
+        "left kidney": 894,
+        "aorta": 237,
+        "inferior vena cava": 246,
+        "pancreas": 560,
+        "stomach and duodenum": 1981,
+        "right psoas muscle": 0,
+        "left psoas muscle": 0,
+        "Lumbar4": 0,
+        "gallbladder": 119
+      }
+    },
+    {
+      "slice_index": 29,
+      "score": 6900.10121,
+      "core_count": 6,
+      "target_count": 9,
+      "target_pixel_count": 10121,
+      "present": [
+        "liver",
+        "spleen",
+        "right kidney",
+        "left kidney",
+        "aorta",
+        "inferior vena cava",
+        "pancreas",
+        "stomach and duodenum",
+        "gallbladder"
+      ],
+      "pixel_counts": {
+        "liver": 4276,
+        "spleen": 225,
+        "right kidney": 1022,
+        "left kidney": 1252,
+        "aorta": 218,
+        "inferior vena cava": 259,
+        "pancreas": 479,
+        "stomach and duodenum": 2231,
+        "right psoas muscle": 0,
+        "left psoas muscle": 0,
+        "Lumbar4": 0,
+        "gallbladder": 159
+      }
+    },
+    {
+      "slice_index": 63,
+      "score": 6900.01742,
+      "core_count": 6,
+      "target_count": 9,
+      "target_pixel_count": 1742,
+      "present": [
+        "liver",
+        "right kidney",
+        "left kidney",
+        "aorta",
+        "inferior vena cava",
+        "stomach and duodenum",
+        "right psoas muscle",
+        "left psoas muscle",
+        "Lumbar4"
+      ],
+      "pixel_counts": {
+        "liver": 59,
+        "spleen": 0,
+        "right kidney": 218,
+        "left kidney": 98,
+        "aorta": 178,
+        "inferior vena cava": 136,
+        "pancreas": 0,
+        "stomach and duodenum": 89,
+        "right psoas muscle": 457,
+        "left psoas muscle": 459,
+        "Lumbar4": 48,
+        "gallbladder": 0
+      }
+    },
+    {
+      "slice_index": 25,
+      "score": 6700.11267,
+      "core_count": 6,
+      "target_count": 7,
+      "target_pixel_count": 11267,
+      "present": [
+        "liver",
+        "spleen",
+        "right kidney",
+        "left kidney",
+        "aorta",
+        "inferior vena cava",
+        "stomach and duodenum"
+      ],
+      "pixel_counts": {
+        "liver": 6538,
+        "spleen": 1169,
+        "right kidney": 198,
+        "left kidney": 383,
+        "aorta": 253,
+        "inferior vena cava": 231,
+        "pancreas": 0,
+        "stomach and duodenum": 2495,
+        "right psoas muscle": 0,
+        "left psoas muscle": 0,
+        "Lumbar4": 0,
+        "gallbladder": 0
+      }
+    },
+    {
+      "slice_index": 34,
+      "score": 6000.0846,
+      "core_count": 5,
+      "target_count": 10,
+      "target_pixel_count": 8460,
+      "present": [
+        "liver",
+        "right kidney",
+        "left kidney",
+        "aorta",
+        "inferior vena cava",
+        "pancreas",
+        "stomach and duodenum",
+        "right psoas muscle",
+        "left psoas muscle",
+        "gallbladder"
+      ],
+      "pixel_counts": {
+        "liver": 2746,
+        "spleen": 0,
+        "right kidney": 1170,
+        "left kidney": 1140,
+        "aorta": 193,
+        "inferior vena cava": 221,
+        "pancreas": 415,
+        "stomach and duodenum": 2041,
+        "right psoas muscle": 60,
+        "left psoas muscle": 129,
+        "Lumbar4": 0,
+        "gallbladder": 345
+      }
+    },
+    {
+      "slice_index": 37,
+      "score": 6000.08409,
+      "core_count": 5,
+      "target_count": 10,
+      "target_pixel_count": 8409,
+      "present": [
+        "liver",
+        "right kidney",
+        "left kidney",
+        "aorta",
+        "inferior vena cava",
+        "pancreas",
+        "stomach and duodenum",
+        "right psoas muscle",
+        "left psoas muscle",
+        "gallbladder"
+      ],
+      "pixel_counts": {
+        "liver": 2727,
+        "spleen": 0,
+        "right kidney": 1135,
+        "left kidney": 1123,
+        "aorta": 187,
+        "inferior vena cava": 200,
+        "pancreas": 410,
+        "stomach and duodenum": 1977,
+        "right psoas muscle": 117,
+        "left psoas muscle": 190,
+        "Lumbar4": 0,
+        "gallbladder": 343
+      }
+    },
+    {
+      "slice_index": 35,
+      "score": 6000.08281,
+      "core_count": 5,
+      "target_count": 10,
+      "target_pixel_count": 8281,
+      "present": [
+        "liver",
+        "right kidney",
+        "left kidney",
+        "aorta",
+        "inferior vena cava",
+        "pancreas",
+        "stomach and duodenum",
+        "right psoas muscle",
+        "left psoas muscle",
+        "gallbladder"
+      ],
+      "pixel_counts": {
+        "liver": 2730,
+        "spleen": 0,
+        "right kidney": 1145,
+        "left kidney": 1147,
+        "aorta": 181,
+        "inferior vena cava": 207,
+        "pancreas": 381,
+        "stomach and duodenum": 1968,
+        "right psoas muscle": 69,
+        "left psoas muscle": 94,
+        "Lumbar4": 0,
+        "gallbladder": 359
+      }
+    },
+    {
+      "slice_index": 36,
+      "score": 6000.08217,
+      "core_count": 5,
+      "target_count": 10,
+      "target_pixel_count": 8217,
+      "present": [
+        "liver",
+        "right kidney",
+        "left kidney",
+        "aorta",
+        "inferior vena cava",
+        "pancreas",
+        "stomach and duodenum",
+        "right psoas muscle",
+        "left psoas muscle",
+        "gallbladder"
+      ],
+      "pixel_counts": {
+        "liver": 2705,
+        "spleen": 0,
+        "right kidney": 1136,
+        "left kidney": 1148,
+        "aorta": 178,
+        "inferior vena cava": 196,
+        "pancreas": 431,
+        "stomach and duodenum": 1862,
+        "right psoas muscle": 102,
+        "left psoas muscle": 114,
+        "Lumbar4": 0,
+        "gallbladder": 345
+      }
+    },
+    {
+      "slice_index": 38,
+      "score": 6000.08185,
+      "core_count": 5,
+      "target_count": 10,
+      "target_pixel_count": 8185,
+      "present": [
+        "liver",
+        "right kidney",
+        "left kidney",
+        "aorta",
+        "inferior vena cava",
+        "pancreas",
+        "stomach and duodenum",
+        "right psoas muscle",
+        "left psoas muscle",
+        "gallbladder"
+      ],
+      "pixel_counts": {
+        "liver": 2626,
+        "spleen": 0,
+        "right kidney": 1070,
+        "left kidney": 1139,
+        "aorta": 177,
+        "inferior vena cava": 178,
+        "pancreas": 381,
+        "stomach and duodenum": 1916,
+        "right psoas muscle": 165,
+        "left psoas muscle": 150,
+        "Lumbar4": 0,
+        "gallbladder": 383
+      }
+    },
+    {
+      "slice_index": 40,
+      "score": 6000.08071,
+      "core_count": 5,
+      "target_count": 10,
+      "target_pixel_count": 8071,
+      "present": [
+        "liver",
+        "right kidney",
+        "left kidney",
+        "aorta",
+        "inferior vena cava",
+        "pancreas",
+        "stomach and duodenum",
+        "right psoas muscle",
+        "left psoas muscle",
+        "gallbladder"
+      ],
+      "pixel_counts": {
+        "liver": 2487,
+        "spleen": 0,
+        "right kidney": 1073,
+        "left kidney": 1015,
+        "aorta": 197,
+        "inferior vena cava": 151,
+        "pancreas": 322,
+        "stomach and duodenum": 2092,
+        "right psoas muscle": 163,
+        "left psoas muscle": 213,
+        "Lumbar4": 0,
+        "gallbladder": 358
+      }
+    }
+  ],
+  "label_png_encoding": "RGB: segment ID = R + 256*G; exact 16-bit label IDs survive 8-bit RGB PNG decoding"
+}
