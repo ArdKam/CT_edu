@@ -1,17 +1,9 @@
-name: Deploy CT Edu preview to GitHub Pages
+name: Deploy CT Edu to GitHub Pages
 
 on:
   push:
     branches:
       - main
-      - codex/initial-anatomy-workspace
-  pull_request:
-    branches:
-      - main
-    types:
-      - opened
-      - synchronize
-      - reopened
   workflow_dispatch:
 
 permissions:
@@ -25,18 +17,18 @@ concurrency:
 
 jobs:
   deploy:
-    # Publish the explicitly requested preview for PR #1; push deployments cover main and the feature branch.
-    if: github.event_name != 'pull_request' || github.event.pull_request.number == 1
+    # GitHub Pages is a single public site. Never let feature-branch or PR
+    # builds overwrite the deployment that should represent main.
+    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     environment:
-      # Use an unrestricted preview environment off main; reserve github-pages for main releases.
-      name: ${{ github.ref == 'refs/heads/main' && 'github-pages' || 'ct-edu-preview' }}
+      name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
-      - name: Check out the selected branch
+      - name: Check out the release branch
         uses: actions/checkout@v4
         with:
-          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          ref: main
 
       - name: Set up Python for the source-volume build
         uses: actions/setup-python@v5
@@ -72,6 +64,7 @@ jobs:
           test -s _site/assets/spl-abdominal-demo/ct-volume-int16.bin.gz
           test -s _site/assets/spl-abdominal-demo/slices/ct-000.png
           test -s _site/assets/spl-abdominal-demo/slices/ct-112.png
+          test -s _site/assets/spl-abdominal-demo/labels-000.png || test -s _site/assets/spl-abdominal-demo/slices/labels-000.png
           test -s _site/assets/spl-abdominal-demo/slices/labels-000.png
           test -s _site/assets/spl-abdominal-demo/slices/labels-112.png
           test -s _site/assets/spl-abdominal-demo/coronal/ct-000.png
@@ -99,7 +92,7 @@ jobs:
         id: deployment
         uses: actions/deploy-pages@v4
 
-      - name: Verify the deployed website
+      - name: Verify deployed site and representative CT assets
         shell: bash
         env:
           PAGE_URL: ${{ steps.deployment.outputs.page_url }}
