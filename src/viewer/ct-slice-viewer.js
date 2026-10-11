@@ -234,9 +234,7 @@
         drawCallout(ctx, item, args.language, summary);
       });
     }
-    canvas.setAttribute('aria-label', targetItem
-      ? (args.language === 'fa' ? 'ناحیهٔ برجسته‌شده روی برش CT' : 'Highlighted region on CT slice')
-      : (args.language === 'fa' ? 'برش محوری CT شکم با لایهٔ قطعه‌بندی آموزشی' : 'Axial abdominal CT with educational segmentation overlay'));
+    canvas.setAttribute('aria-label', accessibleLabel(args));
     return true;
   }
 
@@ -254,11 +252,21 @@
     return { state: state, error: failure ? String(failure.message || failure) : null, width: WIDTH, height: HEIGHT };
   }
 
+  function accessibleLabel(args) {
+    if (args && args.quizId) {
+      return args.language === 'fa' ? 'ناحیهٔ برجسته‌شده روی برش CT' : 'Highlighted region on CT slice';
+    }
+    return args && args.language === 'fa'
+      ? 'برش محوری CT شکم با لایهٔ قطعه‌بندی آموزشی'
+      : 'Axial abdominal CT with educational segmentation overlay';
+  }
+
   const api = {
     draw: draw,
     hitTest: hitTest,
     getStatus: getStatus,
     decodeLabelId: decodeLabelId,
+    accessibleLabel: accessibleLabel,
     getImageSize: function () { return { width: WIDTH, height: HEIGHT }; }
   };
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
