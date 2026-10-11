@@ -243,6 +243,7 @@
     suppressCanvasClick=pointerDrag.moved;
     pointerDrag=null;
     applyCanvasTransform();
+    if(suppressCanvasClick)window.setTimeout(function(){suppressCanvasClick=false;},120);
     try{canvasEl.releasePointerCapture(event.pointerId);}catch(error){}
   }
   canvasEl.addEventListener('pointerup',finishPointerDrag);
