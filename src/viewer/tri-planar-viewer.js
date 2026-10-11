@@ -71,8 +71,12 @@
       const count = ct.width * ct.height;
       const grayscale = new Uint8Array(count);
       const segmentIds = new Uint16Array(count);
+      let nonZeroIntensityPixels = 0, maximumIntensity = 0;
       for (let i = 0; i < count; i += 1) {
-        grayscale[i] = ct.data[i * 4];
+        const intensity = ct.data[i * 4];
+        grayscale[i] = intensity;
+        if (intensity > 0) nonZeroIntensityPixels += 1;
+        if (intensity > maximumIntensity) maximumIntensity = intensity;
         segmentIds[i] = labels.data[i * 4] + 256 * labels.data[i * 4 + 1];
       }
       return {
@@ -82,6 +86,9 @@
         height: ct.height,
         grayscale: grayscale,
         segmentIds: segmentIds,
+        nonZeroIntensityPixels: nonZeroIntensityPixels,
+        maximumIntensity: maximumIntensity,
+        hasSignal: maximumIntensity > 0,
         spacing: plane.pixelSpacingMm || { x: 1, y: 1 }
       };
     }).finally(function () {
@@ -214,6 +221,14 @@
         planes: planes.slice(),
         indices: planes.reduce(function (result, name) {
           result[name] = currentData[name] ? currentData[name].index : null;
+          return result;
+        }, {}),
+        hasSignal: planes.reduce(function (result, name) {
+          result[name] = currentData[name] ? currentData[name].hasSignal : null;
+          return result;
+        }, {}),
+        nonZeroIntensityPixels: planes.reduce(function (result, name) {
+          result[name] = currentData[name] ? currentData[name].nonZeroIntensityPixels : null;
           return result;
         }, {})
       };
