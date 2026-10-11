@@ -359,7 +359,7 @@ const { chromium } = require('playwright');
     assert.deepEqual(pageErrors, [], 'the browser should not emit uncaught JavaScript errors');
     assert.deepEqual(browserConsoleErrors, [], 'the browser should not emit console errors');
     assert.deepEqual(failedRequests, [], 'the browser should not have failed requests');
-    console.log('Browser smoke passed: axial navigation, tri-planar synchronized crosshairs, orthogonal planes, pan/zoom, raw window/level, recall and responsive mobile layout.');
+    console.log('Browser smoke passed: CT navigation, synchronized tri-planar review, recall, local progress capture/reset, and responsive mobile layout.');
   } finally {
     await browser.close();
   }
