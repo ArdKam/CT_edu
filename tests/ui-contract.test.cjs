@@ -147,3 +147,33 @@ test('local progress is loaded before app code and states that it never uploads 
   assert.match(app, /Saved only in this browser; never uploaded\./);
   assert.match(app, /فقط در همین مرورگر ذخیره می‌شود/);
 });
+
+test('dynamic UI uses DOM APIs and textContent instead of HTML injection sinks', function () {
+  const app = read('src/app.js');
+  const data = require('../src/data/anatomy.js');
+  assert.doesNotMatch(app, /\\b(?:innerHTML|outerHTML|insertAdjacentHTML)\\b/);
+  assert.doesNotMatch(app, /\\beval\\s*\\(|new Function\\s*\\(/);
+  data.items.forEach(function (item) {
+    assert.match(item.color, /^#[0-9a-f]{6}$/i, 'catalogue color must be a strict six-digit hex value: ' + item.id);
+  });
+});
+
+test('CSP limits executable content and keeps only the required font origins external', function () {
+  const html = read('index.html');
+  const policyMatch = html.match(/<meta http-equiv="Content-Security-Policy" content="([^"]+)"/i);
+  assert.ok(policyMatch, 'the public document must declare a Content Security Policy');
+  const policy = policyMatch[1];
+  assert.match(policy, /default-src 'self'/);
+  assert.match(policy, /script-src 'self'/);
+  assert.match(policy, /object-src 'none'/);
+  assert.match(policy, /base-uri 'self'/);
+  assert.match(policy, /connect-src 'self'/);
+  assert.doesNotMatch(policy, /unsafe-eval/);
+  assert.ok(html.indexOf('Content-Security-Policy') < html.indexOf('<script defer'),
+    'CSP must precede executable scripts');
+  const sources = Array.from(html.matchAll(/<script[^>]+src="([^"]+)"/gi), function (match) { return match[1]; });
+  assert.ok(sources.length > 0);
+  sources.forEach(function (src) {
+    assert.doesNotMatch(src, /^(?:https?:)?\\/\\//i, 'scripts must be served locally: ' + src);
+  });
+});
