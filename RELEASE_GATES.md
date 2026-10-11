@@ -41,7 +41,7 @@ See [DATASET_ROADMAP.md](DATASET_ROADMAP.md) for reviewed candidate sources and 
 
 - [ ] Implement case-level clinical context, structured systematic-review prompts, abnormal-finding capture, diagnosis/differential, and structured Findings/Impression writing.
 - [ ] Create reviewed cases with an explicit rubric, teaching rationale, key-finding annotations, accepted alternatives, and provenance.
-- [x] Record active-recall outcomes in a bounded (500-attempt) local-only browser history and show attempts, accuracy, and distinct structures, with a clear-history action. This is device/browser-local persistence only.
+- [x] Record active-recall outcomes in a bounded (500-attempt) local-only browser history, show attempts/accuracy/distinct structures, clear history, and export/import a validated versioned JSON backup (restore replaces history after confirmation). This is device/browser-local persistence only.
 - [ ] Add account-backed, cross-device sync and per-skill durable history only after a backend and a privacy/data-retention design are approved.
 - [ ] Separate normal-anatomy identification from pathology interpretation and report-writing assessments.
 - [ ] Run a learner pilot with pre/post cases and a transfer test; record usability issues separately from learning outcomes.
