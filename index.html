@@ -74,19 +74,19 @@
             <div class="tri-planar-grid">
               <article class="tri-plane-card" data-tri-plane="axial">
                 <header><div><h4 data-i18n="planeAxial">Axial</h4><p data-i18n="triAxialAxis">محور k · از پایین به بالا</p></div><output id="tri-axial-position">k=26 / 113</output></header>
-                <div class="tri-canvas-wrap"><canvas class="tri-canvas" id="tri-axial-canvas" width="256" height="256" tabindex="0" aria-label="Axial CT with synchronized crosshair"></canvas></div>
+                <div class="tri-canvas-wrap"><canvas class="tri-canvas" id="tri-axial-canvas" width="256" height="256" tabindex="0" aria-label="Axial CT with synchronized crosshair"></canvas><div id="tri-axial-empty-state" class="tri-empty-state" role="status" hidden data-i18n="triEmptySlice">دادهٔ تصویری در این موقعیت وجود ندارد؛ این برش در ناحیهٔ خالی حجم قرار دارد.</div></div>
                 <label class="tri-slider-row" for="tri-axial-slider"><span data-i18n="triSlicePosition">موقعیت برش</span><input id="tri-axial-slider" type="range" min="0" max="112" step="1" value="26"></label>
                 <button class="tri-open-button" type="button" data-open-plane="axial" data-i18n="openSinglePlane">بازکردن این نما</button>
               </article>
               <article class="tri-plane-card" data-tri-plane="coronal">
                 <header><div><h4 data-i18n="planeCoronal">Coronal</h4><p data-i18n="triCoronalAxis">محور j · قدامی به خلفی</p></div><output id="tri-coronal-position">j=128 / 256</output></header>
-                <div class="tri-canvas-wrap"><canvas class="tri-canvas" id="tri-coronal-canvas" width="256" height="113" tabindex="0" aria-label="Coronal CT with synchronized crosshair"></canvas></div>
+                <div class="tri-canvas-wrap"><canvas class="tri-canvas" id="tri-coronal-canvas" width="256" height="113" tabindex="0" aria-label="Coronal CT with synchronized crosshair"></canvas><div id="tri-coronal-empty-state" class="tri-empty-state" role="status" hidden data-i18n="triEmptySlice">دادهٔ تصویری در این موقعیت وجود ندارد؛ این برش در ناحیهٔ خالی حجم قرار دارد.</div></div>
                 <label class="tri-slider-row" for="tri-coronal-slider"><span data-i18n="triSlicePosition">موقعیت برش</span><input id="tri-coronal-slider" type="range" min="0" max="255" step="1" value="128"></label>
                 <button class="tri-open-button" type="button" data-open-plane="coronal" data-i18n="openSinglePlane">بازکردن این نما</button>
               </article>
               <article class="tri-plane-card" data-tri-plane="sagittal">
                 <header><div><h4 data-i18n="planeSagittal">Sagittal</h4><p data-i18n="triSagittalAxis">محور i · راست به چپ</p></div><output id="tri-sagittal-position">i=128 / 256</output></header>
-                <div class="tri-canvas-wrap"><canvas class="tri-canvas" id="tri-sagittal-canvas" width="256" height="113" tabindex="0" aria-label="Sagittal CT with synchronized crosshair"></canvas></div>
+                <div class="tri-canvas-wrap"><canvas class="tri-canvas" id="tri-sagittal-canvas" width="256" height="113" tabindex="0" aria-label="Sagittal CT with synchronized crosshair"></canvas><div id="tri-sagittal-empty-state" class="tri-empty-state" role="status" hidden data-i18n="triEmptySlice">دادهٔ تصویری در این موقعیت وجود ندارد؛ این برش در ناحیهٔ خالی حجم قرار دارد.</div></div>
                 <label class="tri-slider-row" for="tri-sagittal-slider"><span data-i18n="triSlicePosition">موقعیت برش</span><input id="tri-sagittal-slider" type="range" min="0" max="255" step="1" value="128"></label>
                 <button class="tri-open-button" type="button" data-open-plane="sagittal" data-i18n="openSinglePlane">بازکردن این نما</button>
               </article>
