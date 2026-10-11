@@ -54,6 +54,7 @@ const { chromium } = require('playwright');
     assert.equal(status.status.width, 256);
     assert.equal(status.status.height, 113);
     assert.equal(status.info.indexAxis, 'j');
+    assert.match(await page.locator('#volume-coordinate-readout').textContent(), /k=(27|۲۷)/, 'coronal view should retain the previously selected axial coordinate');
     assert.equal(await page.locator('#orientation-letter-left').textContent(), 'R');
     await page.locator('#schematic-canvas').screenshot({ path: path.join(screenshotDir, 'coronal.png') });
 
@@ -166,8 +167,8 @@ const { chromium } = require('playwright');
     await page.locator('#plane-axial').click();
     await page.waitForFunction(function () {
       const s = window.CTEduSliceViewer.getStatus();
-      return s.state === 'ready' && s.plane === 'axial';
-    });
+      return s.state === 'ready' && s.plane === 'axial' && s.sliceIndex === 27;
+    }, null, { timeout: 10000 });
     await page.locator('#quiz-mode').click();
     await page.waitForFunction(function () {
       return document.querySelector('#app').dataset.mode === 'quiz';
