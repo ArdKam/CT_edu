@@ -235,6 +235,19 @@ def main() -> int:
         spacing_mm.append(round(float(np.linalg.norm(components)), 6))
     origin_match = re.search(r"\(([^)]+)\)", image_header.get("space origin", ""))
     origin_lps = [float(value.strip()) for value in origin_match.group(1).split(",")] if origin_match else None
+    # Preserve original signed 16-bit source values for browser-side window/level.
+    # The source's stored intensities include an offset, so they are intentionally not
+    # labeled as HU until that transform is independently validated.
+    if np.min(image_volume) < -32768 or np.max(image_volume) > 32767:
+        raise SystemExit("CT voxel values do not fit signed 16-bit storage")
+    raw_volume_path = outdir / "ct-volume-int16.bin.gz"
+    with raw_volume_path.open("wb") as raw_file:
+        with gzip.GzipFile(fileobj=raw_file, mode="wb", compresslevel=9, mtime=0) as zipped:
+            zipped.write(np.asarray(image_volume, dtype="<i2", order="C").tobytes(order="C"))
+    intensity_range = {
+        "min": int(np.min(image_volume)),
+        "max": int(np.max(image_volume))
+    }
     volume_meta = {
         "schemaVersion": 1,
         "source": "SPL Abdominal Atlas, September 2015",
@@ -254,6 +267,15 @@ def main() -> int:
         },
         "originLpsMm": origin_lps,
         "window": {"width": args.window, "level": args.level},
+        "rawVoxelVolume": {
+            "path": "ct-volume-int16.bin.gz",
+            "encoding": "gzip",
+            "dtype": "int16-le",
+            "layout": "z,y,x in C-order",
+            "voxelCount": int(image_volume.size),
+            "intensityRange": intensity_range,
+            "valueSemantics": "SPL source stored intensity values; HU calibration has not been independently verified"
+        },
         "planes": {
             "axial": {
                 "sliceCount": int(image_volume.shape[0]),
@@ -355,6 +377,7 @@ def main() -> int:
         "coronal": int(image_volume.shape[1]),
         "sagittal": int(image_volume.shape[2])
     }))
+    print("raw voxel volume: %s bytes compressed; source intensity range: %s" % (raw_volume_path.stat().st_size, json.dumps(intensity_range)))
     print("source matrix (x,y,z): %s; voxel spacing (mm): %s" % (
         json.dumps([int(image_volume.shape[2]), int(image_volume.shape[1]), int(image_volume.shape[0])]),
         json.dumps(spacing_mm)))
