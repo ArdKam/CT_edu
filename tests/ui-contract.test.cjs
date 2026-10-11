@@ -29,7 +29,7 @@ test('UI contains expected controls, real-slice canvas and medical-use disclaime
   assert.match(viewer, /function getVolumeInfo\(planeName\)/);
   assert.match(builder, /"sliceCount": int\(image_volume\.shape\[0\]\)/);
   assert.match(builder, /for slice_index in range\(image_volume\.shape\[0\]\)/);
-  assert.match(builder, /for plane_index in range\(image_volume.shape\[2\]\)/);
+  assert.match(builder, /for plane_index in range\(image_volume.shape\[1\]\)/);
   assert.match(builder, /for plane_index in range\(image_volume.shape\[2\]\)/);
   assert.match(builder, /"coronal"/);
   assert.match(builder, /"sagittal"/);
