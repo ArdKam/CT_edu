@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#101923">
+  <meta name="description" content="CT Edu — interactive cross-sectional anatomy learning prototype for medical students.">
+  <title>CT Edu · Abdominal Anatomy Lab</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Vazirmatn:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="src/styles.css">
+  <script defer src="src/data/anatomy.js"></script>
+  <script defer src="src/viewer/schematic-viewer.js"></script>
+  <script defer src="src/quiz/quiz-engine.js"></script>
+  <script defer src="src/app.js"></script>
+</head>
+<body>
+  <div class="app-shell" id="app" data-mode="learn">
+    <header class="topbar">
+      <a class="brand" href="#top" aria-label="CT Edu home">
+        <span class="brand-mark" aria-hidden="true"><span></span><span></span><span></span></span>
+        <span class="brand-copy"><strong>CT <em>EDU</em></strong><small>ANATOMY LAB</small></span>
+      </a>
+      <div class="topbar-center"><span class="crumb-dot"></span><span data-i18n="moduleCrumb">آناتومی مقطعی</span><span class="crumb-slash">/</span><strong data-i18n="moduleName">شکم · نمای محوری</strong></div>
+      <div class="topbar-actions"><span class="educational-tag"><span class="status-dot"></span><span data-i18n="educationalOnly">صرفاً آموزشی</span></span><button id="language-toggle" class="language-toggle" type="button" aria-label="Switch language">EN ↔ فا</button></div>
+    </header>
+
+    <main id="top" class="main-wrap">
+      <section class="intro-row" aria-labelledby="page-title">
+        <div class="intro-copy">
+          <div class="eyebrow"><span class="eyebrow-line"></span><span data-i18n="eyebrow">FOUNDATIONS · NORMAL ANATOMY</span></div>
+          <h1 id="page-title" data-i18n="pageTitle">از برش تا شناخت ساختار</h1>
+          <p data-i18n="pageIntro">ساختارهای طبیعی شکم را بشناس، لایه‌های رنگی را بررسی کن و بعد خودت را به چالش بکش.</p>
+          <div class="learning-path" aria-label="Learning sequence"><span class="path-step active"><b>01</b><span data-i18n="pathLearn">یادگیری</span></span><span class="path-connector"></span><span class="path-step"><b>02</b><span data-i18n="pathIdentify">شناسایی</span></span><span class="path-connector"></span><span class="path-step"><b>03</b><span data-i18n="pathRecall">یادآوری فعال</span></span></div>
+        </div>
+        <div class="session-meta"><div class="meta-number"><strong id="structure-count">۱۰</strong><span data-i18n="structuresLabel">ساختار در این نما</span></div><span class="meta-divider"></span><div class="meta-note"><span class="meta-icon" aria-hidden="true">⌁</span><span data-i18n="sessionHint">یک نمای شماتیک برای شروع</span></div></div>
+      </section>
+
+      <section class="workspace" aria-label="CT anatomy learning workspace">
+        <aside class="panel anatomy-panel" aria-labelledby="anatomy-title">
+          <div class="panel-heading"><div><span class="panel-kicker" data-i18n="libraryKicker">ANATOMY LIBRARY</span><h2 id="anatomy-title" data-i18n="anatomyTitle">ساختارها</h2></div><button id="visibility-all" class="text-action" type="button" data-i18n="hideAll">مخفی‌کردن همه</button></div>
+          <label class="search-box"><span class="search-icon" aria-hidden="true">⌕</span><input id="structure-search" type="search" autocomplete="off" data-i18n-placeholder="searchPlaceholder" placeholder="جست‌وجوی ساختار…" aria-label="Search anatomy structures"><kbd>/</kbd></label>
+          <div class="filter-note"><span data-i18n="selectStructure">برای انتخاب، نام ساختار را بزن</span><span class="tiny-count" id="visible-count">۱۰/۱۰</span></div>
+          <ul id="structure-list" class="structure-list" aria-label="Anatomical structures"></ul>
+          <div class="panel-footnote"><span class="mini-legend-dot"></span><span data-i18n="colorNote">هر رنگ نمایندهٔ یک ساختار در نمونه است</span></div>
+        </aside>
+
+        <section class="viewer-column" aria-label="Anatomy viewer">
+          <div class="viewer-topline"><div class="viewer-title-group"><span class="viewer-live-mark"></span><div><strong data-i18n="viewerTitle">نمای محوری شکم</strong><small data-i18n="viewerSubtitle">پیکربندی آموزشی · غیرتشخیصی</small></div></div><div class="viewer-top-actions"><button class="mode-tab active" id="learn-mode" type="button" aria-pressed="true" data-i18n="learnMode">مطالعه</button><button class="mode-tab" id="quiz-mode" type="button" aria-pressed="false"><span class="mode-spark" aria-hidden="true">✳</span><span data-i18n="quizMode">تمرین</span></button></div></div>
+
+          <div id="quiz-banner" class="quiz-banner" hidden><div><span class="quiz-kicker" data-i18n="recallKicker">ACTIVE RECALL</span><strong data-i18n="quizPrompt">ساختار برجسته‌شده کدام است؟</strong></div><div class="score-box"><span data-i18n="sessionScore">امتیاز این جلسه</span><strong><b id="score">۰</b><i>/</i><span id="answered-count">۰</span></strong></div></div>
+
+          <div class="viewer-frame">
+            <div class="viewer-watermark"><span class="watermark-dot"></span><span data-i18n="schematicBadge">نمونهٔ شماتیک · CT واقعی نیست</span></div>
+            <div class="orientation-marker marker-left" aria-label="Patient right"><b>R</b><span data-i18n="patientRight">راست بیمار</span></div>
+            <div class="orientation-marker marker-right" aria-label="Patient left"><b>L</b><span data-i18n="patientLeft">چپ بیمار</span></div>
+            <div id="schematic-canvas" class="schematic-canvas" role="img" aria-label="Schematic axial abdomen, not a real CT scan"></div>
+            <div class="viewer-scale"><span data-i18n="notToScale">شماتیک · غیرمقیاس‌دار</span><span>R <i>•</i> L</span></div>
+            <div class="zoom-controls" aria-label="Viewer zoom controls"><button id="zoom-in" type="button" aria-label="Zoom in" title="Zoom in">+</button><span id="zoom-value">100%</span><button id="zoom-out" type="button" aria-label="Zoom out" title="Zoom out">−</button><span class="zoom-separator"></span><button id="zoom-reset" type="button" aria-label="Reset zoom" title="Reset zoom">↺</button></div>
+          </div>
+
+          <div class="viewer-toolbar"><div class="view-levels" aria-label="Schematic teaching emphasis"><span class="toolbar-label" data-i18n="viewPreset">تأکید آموزشی</span><button class="level-button active" type="button" data-level="organs"><b>01</b><span data-i18n="levelOrgans">اندام‌ها</span></button><button class="level-button" type="button" data-level="vessels"><b>02</b><span data-i18n="levelVessels">عروق</span></button><button class="level-button" type="button" data-level="posterior"><b>03</b><span data-i18n="levelPosterior">ساختارهای خلفی</span></button></div><div class="viewer-toggles"><label class="switch-row"><span data-i18n="colorOverlays">رنگ‌بندی</span><input id="toggle-overlays" type="checkbox" checked><span class="switch-ui"></span></label><label class="switch-row"><span data-i18n="anatomyLabels">برچسب‌ها</span><input id="toggle-labels" type="checkbox" checked><span class="switch-ui"></span></label></div></div>
+          <div class="source-disclaimer"><span class="info-icon" aria-hidden="true">i</span><p><strong data-i18n="provenanceTitle">دربارهٔ این تصویر</strong><span data-i18n="provenanceText">این نمایش صرفاً شماتیک است؛ هنوز هیچ CT بیمار یا ماسک قطعه‌بندی بارگذاری نشده است. موقعیت‌ها برای آموزش مفهومی‌اند.</span></p></div>
+        </section>
+
+        <aside class="panel detail-panel" aria-labelledby="detail-title">
+          <div class="panel-heading detail-heading"><div><span class="panel-kicker" data-i18n="inspectorKicker">STRUCTURE INSPECTOR</span><h2 id="detail-title" data-i18n="detailTitle">اطلاعات ساختار</h2></div><span class="detail-index" id="detail-index">01</span></div>
+          <div class="selected-structure"><div class="selected-color" id="selected-color"><span></span></div><span class="selected-overline" data-i18n="selectedStructure">ساختار انتخاب‌شده</span><h3 id="selected-name-fa">کبد</h3><p id="selected-name-en">Liver</p><div class="selected-meta"><span class="color-chip" id="selected-chip"></span><span id="selected-meta-text" data-i18n="demoStructure">ساختار آموزشی نمونه</span></div></div>
+          <div class="detail-divider"></div>
+          <div class="detail-section"><h4 data-i18n="anatomicalNote">نکتهٔ آناتومیک</h4><p id="selected-description">کبد در بخش عمده‌ای از ربع فوقانی راست شکم قرار دارد. در نمایش محوری رادیولوژیک، سمت راست بیمار در سمت چپ صفحه دیده می‌شود.</p></div>
+          <div class="detail-section detail-secondary"><h4 data-i18n="orientationTitle">جهت‌یابی</h4><div class="orientation-card"><span class="orientation-glyph" aria-hidden="true">R <i>→</i> L</span><p data-i18n="orientationNote">سمت راست بیمار در سمت چپ تصویر نمایش داده می‌شود.</p></div></div>
+          <div id="answer-panel" class="answer-panel" hidden><div class="answer-options" id="answer-options"></div><div id="answer-feedback" class="answer-feedback" aria-live="polite"></div><button id="next-question" class="primary-button" type="button" data-i18n="nextQuestion">سؤال بعدی <span aria-hidden="true">←</span></button><button id="reset-quiz" class="quiet-button" type="button" data-i18n="resetQuiz">شروع دوبارهٔ امتیاز</button></div>
+          <div id="learn-nudge" class="learn-nudge"><span class="nudge-icon" aria-hidden="true">↗</span><p data-i18n="learnNudge">یک ساختار را از فهرست انتخاب کن تا رنگ، نام و نکتهٔ آن را بررسی کنی.</p></div>
+        </aside>
+      </section>
+      <footer class="page-footer"><span>CT EDU <i>·</i> FOUNDATION MODULE</span><span data-i18n="footerDisclaimer">مناسب یادگیری آناتومی؛ برای تشخیص یا تصمیم‌گیری بالینی استفاده نشود.</span><a href="DATA_LICENSE_REVIEW.md" data-i18n="dataReviewLink">وضعیت داده و مجوز</a></footer>
+    </main>
+  </div>
+</body>
+</html>
