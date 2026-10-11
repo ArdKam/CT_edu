@@ -12,6 +12,7 @@ CT Edu is an early-stage bilingual educational web app for medical students. The
 - **Inspection tools:** structure search/selection, visibility controls, overlay emphasis, zoom (70–220%) and pointer drag to pan.
 - **Local learning progress:** submitted active-recall answers are saved in this browser only, capped at 500 records, and summarized as attempts, accuracy, and distinct target structures. Users can clear the history or export/import a versioned JSON backup. Restore validates the schema and replaces the current local history only after confirmation. There are no accounts, no server upload, and no cross-device sync.
 - **Bilingual UI:** Persian RTL and English LTR.
+- **Browser security baseline:** dynamic structure and answer-list UI is built with DOM APIs and `textContent`, not HTML string injection sinks. A document-level Content Security Policy restricts scripts and data connections to the same origin, blocks objects/frames, and allowlists only the Google Fonts CSS/font origins currently required by the UI. CSP and untrusted-search-input behavior are exercised in Chromium; this is not a substitute for a complete security review.
 - **Static publication:** GitHub Pages build generates the plane image stack in CI; the original source ZIP files are not copied into the Pages artifact.
 - **Review and tests:** Node.js unit/UI contract tests, Python syntax and metadata checks, validation of generated CT/label pairs, and live HTTP probes for representative orthogonal planes.
 
