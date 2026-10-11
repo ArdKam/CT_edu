@@ -16,6 +16,7 @@ This checklist separates code that exists from educational, legal, and release r
 - [x] Main and synchronized viewers explain all-zero padded edge slices instead of disguising them as diagnostic black images; Chromium smoke covers this behavior in both layouts.
 - [x] Pages deployment workflow restricted to `main`; feature branches and PRs must not overwrite the single public Pages site.
 - [x] Split Pages build from deployment: PRs and feature branches build and validate the complete `_site` artifact (including privacy page and orthogonal CT files), while the public deploy job is skipped unless the ref is `main`.
+- [x] Add a fail-closed public-release latch: Pages deploys only from `main` when the repository Actions variable `CT_EDU_PUBLIC_RELEASE_APPROVED` is explicitly set to `true`. Do not enable it until the independent medical, legal, privacy, and device-review gates are closed; the variable itself is not evidence that those reviews occurred.
 - [x] Pin GitHub Actions to full official release commit SHAs, annotate each with its release version, schedule weekly Dependabot action updates, and pin Playwright 1.63.0 for reproducible Chromium smoke runs.
 - [x] Add the public bilingual [privacy notice](privacy.html), link it in the app, and configure Pages staging/live probes for it; the feature-branch CI does not make this notice live until the branch is merged and deployed.
 - [x] Interface language clarifies that anatomy controls filter real image overlays rather than a schematic drawing.
@@ -29,7 +30,7 @@ See [DATASET_ROADMAP.md](DATASET_ROADMAP.md) for reviewed candidate sources and 
 ### Git / deployment
 
 - [ ] Review and merge [PR #1](https://github.com/ArdKam/CT_edu/pull/1) only after its required gates are reviewed. It is still a Draft PR; do not treat the live preview as proof that `main` contains the code.
-- [ ] After merge, confirm the resulting `main` SHA, Actions tests, Pages deploy, and live endpoint checks.
+- [ ] Keep `CT_EDU_PUBLIC_RELEASE_APPROVED` unset while any release blocker remains. Only after the medical, legal, privacy, accessibility, and device-review evidence is recorded should the maintainer set it to `true`; then confirm the resulting `main` SHA, Actions tests, Pages deploy, and live endpoint checks.
 - [ ] Review public repository contents: the source ZIP archives are present in the repository even though the Pages artifact excludes them. Decide whether their continued public distribution is permitted by the exact source and third-party licenses.
 
 ### Privacy, legal, and governance
@@ -60,7 +61,8 @@ See [DATASET_ROADMAP.md](DATASET_ROADMAP.md) for reviewed candidate sources and 
 ### Viewer, accessibility, and security
 
 - [x] Replace dynamic UI `innerHTML` construction with DOM APIs and `textContent`, validate anatomy palette values, add a restrictive CSP meta policy, and add tests for the HTML-sink contract and malicious search text. Chromium confirms the CSP is present and the injection probe creates no element and executes no code. This is a targeted client-side hardening baseline, not a complete security audit; the meta policy should be backed by deployment response headers when the hosting platform supports them.
-- [ ] Conduct a broader browser/device matrix, including iOS Safari and Android devices; the current Chromium mobile smoke test is not comprehensive touch QA.
+- [x] Add Playwright compatibility smoke checks for Chromium, Firefox, and Playwright WebKit at a 390px viewport; Chromium/WebKit also use touch/mobile emulation where supported. These checks validate basic cross-engine behavior, not certification on physical phones.
+- [ ] Conduct a real-device browser/device matrix, including Safari on iOS and Android Chrome on physical devices; Playwright WebKit and emulated mobile profiles do not replace this release gate.
 - [x] Add a synchronized side-by-side axial/coronal/sagittal overview with shared voxel-index crosshairs and separate i/j/k sliders. The overview does not claim patient-space coordinates or add oblique reconstruction; expert review of orientation and crosshair alignment remains open.
 - [ ] Define case/image loading, memory, and responsiveness budgets from representative large studies and test them on lower-powered devices.
 - [x] Targeted accessibility fixes: localize major landmarks and plane-specific slice-slider names; connect tri-planar sliders to their plane headings and coordinate outputs; expose passive tri-planar canvases as images and remove them from the tab order.

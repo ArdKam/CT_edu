@@ -89,8 +89,9 @@ jobs:
 
   deploy:
     needs: build
-    # GitHub Pages is a single public site. Only main may publish to it.
-    if: github.ref == 'refs/heads/main'
+    # Fail closed until a maintainer explicitly unlocks a release after all non-code gates pass.
+    # Set repository Actions variable CT_EDU_PUBLIC_RELEASE_APPROVED=true only after RELEASE_GATES.md is fully reviewed.
+    if: github.ref == 'refs/heads/main' && vars.CT_EDU_PUBLIC_RELEASE_APPROVED == 'true'
     runs-on: ubuntu-latest
     permissions:
       contents: read

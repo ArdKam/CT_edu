@@ -149,11 +149,11 @@ jobs:
               f"plane counts {expected_counts}, matrix 256x256x113, spacing {volume['spacingMm']}."
           )
           PY
-      - name: Install Playwright and Chromium for browser smoke tests
+      - name: Install Playwright and Chromium, Firefox, and WebKit for browser smoke tests
         run: |
           npm install --no-save --package-lock=false playwright@1.63.0
           node -p "'Playwright version: ' + require('./node_modules/playwright/package.json').version"
-          npx playwright install --with-deps chromium
+          npx playwright install --with-deps chromium firefox webkit
       - name: Stage generated orthogonal planes into the local test site
         run: cp -R build/ct-demo-volume/. assets/spl-abdominal-demo/
       - name: Run real Chromium viewer smoke test
@@ -167,6 +167,10 @@ jobs:
             sleep 1
           done
           node tests/browser-smoke.cjs
+          for engine in chromium firefox webkit; do
+            echo "Running cross-engine compatibility smoke: $engine"
+            BROWSER_ENGINE="$engine" node tests/browser-compat.cjs
+          done
       - name: Upload generated orthogonal CT review bundle
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
