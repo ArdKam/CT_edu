@@ -13,7 +13,7 @@ test('UI contains expected controls, real-slice canvas and medical-use disclaime
     'toggle-labels', 'zoom-in', 'zoom-out', 'zoom-reset', 'quiz-mode',
     'learn-mode', 'answer-options', 'next-question', 'reset-quiz', 'workspace',
     'anatomy-panel', 'ct-slice-canvas', 'viewer-load-error', 'slice-navigation', 'display-mode-controls', 'display-single', 'display-triplanar', 'tri-planar-panel', 'tri-axial-canvas', 'tri-coronal-canvas', 'tri-sagittal-canvas', 'tri-axial-slider', 'tri-coronal-slider', 'tri-sagittal-slider',
-    'slice-slider', 'slice-prev', 'slice-next', 'slice-position', 'plane-axial', 'plane-coronal', 'plane-sagittal', 'orientation-glyph', 'window-level-controls', 'window-width-slider', 'window-level-slider', 'window-level-reset', 'window-level-status'
+    'slice-slider', 'slice-prev', 'slice-next', 'slice-position', 'plane-axial', 'plane-coronal', 'plane-sagittal', 'orientation-glyph', 'window-level-controls', 'window-width-slider', 'window-level-slider', 'window-level-reset', 'window-level-status', 'learning-progress', 'reset-local-progress', 'progress-attempts', 'progress-accuracy', 'progress-structures', 'progress-storage-note', 'progress-feedback'
   ].forEach(function (id) {
     assert.ok(html.includes('id="' + id + '"') || html.includes("id='" + id + "'"), 'missing UI control: ' + id);
   });
@@ -118,4 +118,18 @@ test('tri-planar overview uses its own renderer and exposes synchronized crossha
   assert.ok(require('../src/viewer/tri-planar-viewer.js').getStatus().hasSignal.axial === null, 'signal state begins unknown before CT assets load');
   assert.deepEqual(viewer.getStatus().planes, ['axial', 'coronal', 'sagittal']);
   assert.equal(viewer.getStatus().ready, false, 'overview starts idle before browser assets load');
+});
+
+test('local progress is loaded before app code and states that it never uploads answers', function () {
+  const html = read('index.html');
+  const app = read('src/app.js');
+  const store = read('src/data/progress-store.js');
+  assert.ok(html.indexOf('src/data/progress-store.js') < html.indexOf('src/app.js'),
+    'progress store must load before the app binds to it');
+  assert.match(app, /Progress\.recordAttempt\(/);
+  assert.match(app, /Progress\.clear\(/);
+  assert.match(store, /ctedu-learning-progress-v1/);
+  assert.match(store, /MAX_ATTEMPTS = 500/);
+  assert.match(html, /Saved only in this browser; never uploaded\./);
+  assert.match(html, /فقط در همین مرورگر ذخیره می‌شود/);
 });
