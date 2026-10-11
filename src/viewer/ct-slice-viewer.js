@@ -454,7 +454,8 @@
       if (!args.overlaysOn && !activeHighlight) alpha = 0;
       if (alpha > 0) {
         const k = i * 4;
-        const mixed = mix([sourceGray[i], sourceGray[i], sourceGray[i]], color, alpha);
+        const gray = sourceGray[i * 4];
+        const mixed = mix([gray, gray, gray], color, alpha);
         imageData.data[k] = mixed[0];
         imageData.data[k + 1] = mixed[1];
         imageData.data[k + 2] = mixed[2];
