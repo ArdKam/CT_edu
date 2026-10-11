@@ -9,7 +9,7 @@ The app now includes a bilingual modality catalog for four learning paths: the c
 - **Abdominal CT:** the SPL-based teaching volume is available for prototype use; clinical/educational review and exact source-rights checks remain release gates.
 - **Brain CT:** candidate sources and curriculum are under review. Do not embed RSNA-IHD/MIRA source or derived images in the public site unless the applicable current terms clearly permit that use.
 - **Chest CT:** LIDC-IDRI is a potential source for a small, attributed, expert-reviewed teaching subset; its full collection is too large for GitHub Pages.
-- **Chest radiography:** the currently reviewed VinDr-CXR access terms prohibit redistribution. It is listed for source research only; a different dataset with public redistribution rights or explicit written permission is required before integration.
+- **Chest radiography:** a browser-only 2D viewer is implemented for local PNG/JPEG/WebP files (pan, zoom, fit, projection metadata; no upload). The official NIH Chest X-ray page states image use is unrestricted with attribution, making it the leading candidate for a curated public case subset. VinDr-CXR remains restricted and must not be redistributed.
 
 The catalog is **not** a claim that those three additional image modules are implemented. No extra patient images, labelmaps, or unreviewed clinical examples were bundled in this change. Per-modality data must pass the gates in [DATASET_ROADMAP.md](DATASET_ROADMAP.md) and [RELEASE_GATES.md](RELEASE_GATES.md) before the catalog marks a path available.
 
@@ -89,3 +89,8 @@ To generate a disposable review bundle instead of writing into the app assets:
 python3 scripts/build_demo_assets.py --output build/ct-demo-volume
 ~~~
 
+
+
+### Local chest radiograph viewer
+
+Choose an image from the Chest radiograph card. The viewer reads PNG/JPEG/WebP in the current browser only, supports fit/zoom/pan and optional PA/AP/lateral metadata, clears the file when closed, and caps files at 25 MB. It does not upload images, parse DICOM, detect projection, or provide diagnosis. Curated public cases and expert-reviewed labels remain separate work.

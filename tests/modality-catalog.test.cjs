@@ -26,8 +26,10 @@ test('future modalities expose rights and expert-review gates', function () {
   assert.match(chest.detailEn,/CC BY 3\.0/i);
   assert.match(chest.sourceUrl,/cancerimagingarchive\.net/);
   assert.equal(xray.contentAvailable,false);
-  assert.match(xray.detailEn,/do not permit sharing the dataset/i);
-  assert.match(xray.sourceUrl,/physionet\.org/);
+  assert.match(xray.detailEn,/must not be redistributed/i);
+  assert.match(xray.detailEn,/CVPR 2017/i);
+  assert.match(xray.sourceUrl,/docs\.cloud\.google\.com/);
+  assert.equal(xray.viewerAvailable,true);
   for (const entry of [brain,chest,xray]) {
     assert.ok(entry.gatesEn.length >= 3);
     assert.ok(entry.objectivesEn.length >= 3);

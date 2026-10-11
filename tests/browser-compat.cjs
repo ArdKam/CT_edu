@@ -81,6 +81,26 @@ if (!engine) {
         engineName + ': ' + plane + ' slice slider should be visible');
     }
 
+
+    assert.equal(await page.locator('#modality-catalog .modality-card').count(), 4, engineName + ': all four learning paths should render');
+    await page.locator('[data-modality-select="chest-xray"]').click();
+    await page.waitForFunction(() => window.CTEduRadiographViewer && !document.querySelector('#radiograph-workspace').hidden, null, {timeout:5000});
+    await page.locator('#radiograph-file-input').setInputFiles({
+      name:'local-smoke-image.png',mimeType:'image/png',
+      buffer:Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADUlEQVQImWNgYGD4DwABBAEAq/2AfQAAAABJRU5ErkJggg==','base64')
+    });
+    await page.waitForFunction(() => window.CTEduRadiographViewer && window.CTEduRadiographViewer.getStatus().loaded, null, {timeout:5000});
+    assert.match(await page.locator('#radiograph-image-status').innerText(), /local-smoke-image\.png/);
+    await page.locator('#radiograph-zoom-in').click();
+    assert.equal(await page.locator('#radiograph-zoom-value').innerText(), '110%', engineName + ': zoom works');
+    await page.locator('#radiograph-fit').click();
+    assert.equal(await page.locator('#radiograph-zoom-value').innerText(), '100%', engineName + ': fit restores initial scale');
+    const imageStatus = await page.evaluate(() => window.CTEduRadiographViewer.getStatus());
+    assert.equal(imageStatus.width, 1); assert.equal(imageStatus.height, 1);
+    await page.locator('#radiograph-close').click();
+    assert.equal(await page.locator('#radiograph-workspace').isVisible(), false);
+    assert.equal(await page.locator('#radiograph-canvas').getAttribute('data-image-loaded'), 'false');
+
     const widthMetrics = await page.evaluate(function () {
       return {
         viewport: window.innerWidth,

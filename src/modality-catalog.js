@@ -11,7 +11,7 @@
       kicker:'IMAGING LIBRARY',title:'مسیرهای یادگیری تصویربرداری',
       intro:'مسیر فعال با دادهٔ فعلی مشخص است؛ سه مسیر دیگر تا تأیید منبع، مجوز و بازبینی تخصصی در وضعیت انتظار می‌مانند.',
       status:{available:'نمونهٔ موجود',candidate:'کاندیدا · بازبینی لازم',blocked:'فعلاً مسدود'},
-      action:{available:'ورود به آزمایشگاه',candidate:'بررسی مسیر توسعه',blocked:'مشاهدهٔ موانع'},
+      action:{available:'ورود به آزمایشگاه',candidate:'بررسی مسیر توسعه',blocked:'مشاهدهٔ موانع',localViewer:'بازکردن نمایشگر محلی'},
       goals:'اهداف آموزشی پیشنهادی',gates:'پیش‌نیازهای ورود به محصول',source:'منبع برای بررسی',
       close:'بستن جزئیات',warning:'این مسیر هنوز تصویر آموزشیِ قابل‌انتشار ندارد. هیچ تصویر بیمار، دادهٔ مشتق‌شده یا برچسب تأییدنشده‌ای در این تغییر اضافه نشده است.',
       currentWarning:'این مسیر در نسخهٔ آزمایشی کار می‌کند، اما جایگزین آموزش بالینی، نظر رادیولوژیست یا سامانهٔ تشخیصی نیست.'
@@ -20,7 +20,7 @@
       kicker:'IMAGING LIBRARY',title:'Imaging learning paths',
       intro:'The active path uses the current teaching dataset. The other three remain gated until source, rights, and specialist review are complete.',
       status:{available:'Teaching demo available',candidate:'Candidate · review needed',blocked:'Blocked for now'},
-      action:{available:'Open learning lab',candidate:'Review expansion path',blocked:'View blockers'},
+      action:{available:'Open learning lab',candidate:'Review expansion path',blocked:'View blockers',localViewer:'Open local image viewer'},
       goals:'Proposed learning objectives',gates:'Requirements before release',source:'Source to review',
       close:'Close details',warning:'This path has no approved public teaching images yet. No patient images, derivatives, or unreviewed labels were added in this change.',
       currentWarning:'This path works as a prototype, but it is not a substitute for clinical teaching, radiologist judgment, or a diagnostic system.'
@@ -96,7 +96,7 @@
       card.appendChild(node('h3','',lang === 'fa' ? entry.titleFa : entry.titleEn));
       card.appendChild(node('p','modality-subtitle',lang === 'fa' ? entry.subtitleFa : entry.subtitleEn));
       card.appendChild(node('p','modality-summary',lang === 'fa' ? entry.summaryFa : entry.summaryEn));
-      const action = node('button','modality-card-action',strings.action[entry.status] || strings.action.blocked);
+      const action = node('button','modality-card-action',entry.viewerAvailable ? strings.action.localViewer : (strings.action[entry.status] || strings.action.blocked));
       action.type = 'button';
       action.dataset.modalitySelect = entry.id;
       action.setAttribute('aria-expanded',selectedId === entry.id ? 'true' : 'false');
@@ -128,6 +128,11 @@
     selectedId = entry.id;
     render();
     detail.scrollIntoView({behavior:'smooth',block:'nearest'});
+    if (entry.viewerAvailable && window.CTEduRadiographViewer) {
+      window.CTEduRadiographViewer.open();
+      const radioPanel = document.getElementById('radiograph-workspace');
+      if (radioPanel) radioPanel.scrollIntoView({behavior:'smooth',block:'start'});
+    }
   });
   detail.addEventListener('click',function (event) {
     if (!event.target.closest('[data-modality-close]')) return;

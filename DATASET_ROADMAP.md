@@ -86,20 +86,23 @@ The current source repositories are research datasets, not ready-made lessons. D
 
 The product now has a code-level modality catalog. This does not change the approved data scope: abdominal CT remains the only data-backed viewer in the current prototype. Brain CT, chest CT, and chest radiography remain gated until source rights, geometry, teaching labels, and specialist review are complete.
 
-### Brain CT — candidate source is not cleared for public image hosting
-- Candidate for curriculum and access review: [RSNA-IHD in the RSNA ATLAS data card](https://atlas.rsna.org/cards/bd41bbe2-f161-4c19-841c-85d8b645e306) / [MIRA](https://mira.rsna.org/dataset/1).
+### Brain CT — separate normal anatomy and pathology
+- The [SPL Head and Neck Atlas](https://www.openanatomy.org/atlas-pages/atlas-spl-head-and-neck.html) is a candidate for head/neck CT anatomy: reduced-resolution 256×256 CT with label maps under 3D Slicer License Part B. Its scope emphasizes skull, mandible, upper ribs/spine, and neck structures; **do not present it as a full brain-parenchyma or hemorrhage teaching set**.
+- For pathology curriculum and access review, see [RSNA-IHD in the RSNA ATLAS data card](https://atlas.rsna.org/cards/bd41bbe2-f161-4c19-841c-85d8b645e306) / [MIRA](https://mira.rsna.org/dataset/1).
 - The current data card identifies the RSNA MIRA Dataset Research Use Agreement. Do not assume that permission to download or use the data for non-commercial research/education also permits hosting DICOMs or derived images on a public website. Obtain a clear permitted-use decision for the exact release or select a source with suitable redistribution rights.
 - Future scope may include normal anatomy, ventricles/midline, acute hemorrhage patterns, mass effect, and hydrocephalus. These lessons require neuroradiology/anatomy review and are not complete yet.
 
-### Chest CT — select a small LIDC-IDRI subset
-- The [official LIDC-IDRI collection page](https://www.cancerimagingarchive.net/collection/lidc-idri/) lists CC BY 3.0 for collection image resources and describes a large DICOM collection.
+### Chest CT — separate anatomy and pathology sources
+- The [Mauritanian Anatomy Laboratory Thoracic Atlas](https://www.openanatomy.org/atlas-pages/atlas-mauritania-thorax.html) is a candidate for annotated thoracic anatomy. It derives from a high-quality CT with segmentation and cites 3D Slicer License Part B; exact package contents and third-party terms still need review.
+- For pulmonary-nodule pathology, the [official LIDC-IDRI collection page](https://www.cancerimagingarchive.net/collection/lidc-idri/) lists CC BY 3.0 for collection image resources and describes a large DICOM collection.
 - Do not copy the whole collection into the Pages bundle. Select a few complete, suitable CT series; retain source geometry; record required attribution and identifiers; review orientation, series completeness, annotations and quality; verify the exact files being redistributed before publishing derivatives.
 - Multi-reader pulmonary nodule annotations should be presented as reader assessments rather than a single unquestioned ground truth.
 
-### Chest radiography — current VinDr-CXR access is not a public redistribution route
-- [VinDr-CXR on PhysioNet](https://physionet.org/content/vindr-cxr/1.0.0/) currently requires credentialed access, specified training, and a Data Use Agreement. Its accompanying paper says users agree not to share the dataset.
-- Do **not** bundle VinDr-CXR images or derivatives into the public app under those terms. Find a separate source with explicit public redistribution permission or obtain written permission. Verify source, labels, and attribution for each selected image.
-- The eventual viewer should be two-dimensional with preserved aspect ratio, pan/zoom, fit-to-view and clear PA/AP/lateral projection metadata—not the CT volume controls.
+### Chest radiography — local viewer implemented; curate public cases separately
+- A browser-only 2D viewer handles local PNG/JPEG/WebP files with pan/zoom/fit, projection metadata, a 25 MB cap, and no upload. It does not parse DICOM, infer projection or provide diagnosis.
+- The [official NIH Chest X-ray page](https://docs.cloud.google.com/healthcare-api/docs/resources/public-datasets/nih-chest) states use of NIH Clinical Center images has no restrictions but requires attribution, a link to the original download and a CVPR 2017 citation. NIH ChestX-ray is the leading candidate for a small curated public teaching subset; verify image identifiers, attribution and educational labels before bundling.
+- [VinDr-CXR on PhysioNet](https://physionet.org/content/vindr-cxr/1.0.0/) requires credentialed access, training and a Data Use Agreement. Do **not** redistribute VinDr-CXR under its current terms.
+- Curated lessons must preserve resolution and specify PA/AP/lateral projection with expert-reviewed interpretations. The local viewer is not a substitute for those cases.
 
 ### Per-modality release gate
 1. Record exact source/version and confirm permission for the intended public hosting and derivatives.

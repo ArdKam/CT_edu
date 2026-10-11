@@ -53,19 +53,19 @@
       sourceNoteEn:'The collection-level license is not automatic clearance for every derivative or third-party file; exact files and attribution must be reviewed.'
     },
     {
-      id:'chest-xray',shortLabel:'2D',modality:'Radiograph',region:'chest',status:'blocked',contentAvailable:false,
-      titleFa:'گرافی قفسهٔ سینه',titleEn:'Chest radiograph',subtitleFa:'PA · AP · لترال',subtitleEn:'PA · AP · lateral',
-      summaryFa:'به نمایشگر دوبعدی مستقل نیاز دارد؛ شرایط فعلی VinDr-CXR مسیر بازنشر عمومی نیست.',
-      summaryEn:'Needs a dedicated 2D viewer; current VinDr-CXR terms are not a public redistribution route.',
-      detailFa:'دسترسی فعلی VinDr-CXR در PhysioNet مستلزم احراز شرایط، آموزش و توافق‌نامه است و شرایط استفاده، اشتراک‌گذاری مجموعه را مجاز نمی‌داند. برای نمونه‌های داخل سایت باید منبع دیگری با اجازهٔ روشن بازنشر عمومی پیدا شود یا مجوز کتبی گرفته شود.',
-      detailEn:'Current VinDr-CXR access on PhysioNet requires credentialing, training, and a data-use agreement; its terms do not permit sharing the dataset. Use a different source with explicit public redistribution permission or obtain written authorization before embedding examples.',
+      id:'chest-xray',shortLabel:'2D',modality:'Radiograph',region:'chest',status:'candidate',contentAvailable:false,viewerAvailable:true,
+      titleFa:'گرافی قفسهٔ سینه',titleEn:'Chest radiograph',subtitleFa:'نمایشگر دوبعدی · PA / AP / لترال',subtitleEn:'2D viewer · PA / AP / lateral',
+      summaryFa:'نمایشگر دوبعدی آزمایشی فایل PNG/JPEG/WebP را فقط در مرورگر باز می‌کند؛ کیس‌های آموزشی تأییدشده هنوز اضافه نشده‌اند.',
+      summaryEn:'A prototype 2D viewer opens a local PNG/JPEG/WebP in this browser only; reviewed teaching cases are not integrated yet.',
+      detailFa:'صفحهٔ رسمی NIH/Google دربارهٔ NIH Chest X-ray می‌گوید استفاده از تصاویر محدودیت عمومی ندارد، اما باید به NIH Clinical Center اعتبار داده شود، به صفحهٔ دانلود اصلی لینک داده شود و مقالهٔ CVPR 2017 ارجاع شود. VinDr-CXR تحت توافق‌نامهٔ محدودکننده است و نباید بازتوزیع شود. این مسیر فعلاً فقط نمایشگر محلی دارد؛ کیس، برچسب یا تفسیر بالینی آماده‌ای همراه آن نیست.',
+      detailEn:'The official NIH/Google page for NIH Chest X-ray says use of the images has no restrictions, but requires acknowledgement of the NIH Clinical Center, a link to the original download page, and the CVPR 2017 citation. VinDr-CXR remains under a restrictive data-use agreement and must not be redistributed. This path currently provides only a local viewer; no curated cases, labels, or clinical interpretations are bundled.',
       objectivesFa:['بررسی سیستماتیک تصویر و کیفیت تکنیکی','شناخت پلور، میدان‌های ریوی، قلب و مدیاستن','فهم تفاوت پروجکشن PA و AP و نمای لترال'],
       objectivesEn:['Apply a systematic review and assess technical quality','Inspect pleura, lung fields, heart, and mediastinum','Understand PA versus AP projection and the lateral view'],
       gatesFa:['انتخاب مجموعهٔ جایگزین با مجوز عمومی','ثبت پروجکشن و حفظ وضوح و نسبت ابعاد','تأیید متخصص برای یافته‌ها و توضیحات'],
       gatesEn:['Choose an alternative with public redistribution rights','Record projection and preserve resolution/aspect ratio','Obtain specialist review of findings and explanations'],
-      sourceName:'PhysioNet · VinDr-CXR (reference only)',sourceUrl:'https://physionet.org/content/vindr-cxr/1.0.0/',
-      sourceNoteFa:'به دلیل محدودیت اشتراک‌گذاری در توافق‌نامهٔ فعلی، تصاویر VinDr-CXR در وب‌اپ عمومی قرار نمی‌گیرند.',
-      sourceNoteEn:'Because the current data-use agreement restricts sharing, VinDr-CXR images must not be embedded in this public web app.'
+      sourceName:'NIH Chest X-ray (attribution required)',sourceUrl:'https://docs.cloud.google.com/healthcare-api/docs/resources/public-datasets/nih-chest',
+      sourceNoteFa:'منبع رسمی، ارجاع به مقالهٔ CVPR 2017 و ذکر NIH Clinical Center را لازم می‌داند. هر تصویر منتخب باید از نظر شناسهٔ سوخته‌شده و کیفیت آموزشی بررسی شود. VinDr-CXR برای بازنشر عمومی مناسب نیست.',
+      sourceNoteEn:'The official source requires a CVPR 2017 citation and acknowledgement of the NIH Clinical Center. Each selected image must be checked for burned-in identifiers and educational quality. VinDr-CXR is not suitable for public redistribution.'
     }
   ];
   const byId = Object.create(null);

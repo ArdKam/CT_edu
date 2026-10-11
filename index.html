@@ -18,6 +18,7 @@
   <script defer src="src/viewer/tri-planar-viewer.js"></script>
   <script defer src="src/quiz/quiz-engine.js"></script>
   <script defer src="src/data/progress-store.js"></script>
+  <script defer src="src/viewer/radiograph-viewer.js"></script>
   <script defer src="src/modality-catalog.js"></script>
   <script defer src="src/app.js"></script>
 </head>
@@ -46,6 +47,38 @@
       <section class="modality-catalog" id="modality-catalog" aria-labelledby="modality-catalog-title">
         <div id="modality-catalog-content"></div>
         <section class="modality-detail" id="modality-detail" aria-live="polite" hidden></section>
+      </section>
+
+      <section class="radiograph-workspace" id="radiograph-workspace" aria-labelledby="radiograph-title" hidden>
+        <div class="radiograph-heading">
+          <div>
+            <span class="modality-catalog-kicker">CHEST RADIOGRAPH · 2D VIEWER</span>
+            <h2 id="radiograph-title"><span class="rad-fa">نمایشگر گرافی قفسهٔ سینه</span><span class="rad-en">Chest radiograph viewer</span></h2>
+            <p><span class="rad-fa">فایل PNG، JPEG یا WebP را از دستگاه انتخاب کن. تصویر فقط در مرورگر فعلی خوانده می‌شود و به سرور ارسال نمی‌شود؛ این نسخه DICOM را پشتیبانی نمی‌کند.</span><span class="rad-en">Choose a local PNG, JPEG or WebP file. It is read in this browser only and is not uploaded; this prototype does not support DICOM.</span></p>
+          </div>
+          <button id="radiograph-close" class="radiograph-close" type="button"><span class="rad-fa">بستن نمایشگر</span><span class="rad-en">Close viewer</span></button>
+        </div>
+        <div class="radiograph-toolbar" role="group" aria-label="Radiograph viewer controls">
+          <label class="radiograph-file-label" for="radiograph-file-input"><span aria-hidden="true">＋</span><span class="rad-fa">انتخاب تصویر</span><span class="rad-en">Choose image</span></label>
+          <input id="radiograph-file-input" class="radiograph-file-input" type="file" accept="image/png,image/jpeg,image/webp">
+          <label class="radiograph-projection-label" for="radiograph-projection"><span class="rad-fa">نما</span><span class="rad-en">Projection</span></label>
+          <select id="radiograph-projection" aria-label="Radiograph projection"><option value="unspecified">Unknown / نامشخص</option><option value="PA">PA</option><option value="AP">AP</option><option value="lateral">Lateral / لترال</option></select>
+          <span class="radiograph-toolbar-spacer"></span>
+          <button id="radiograph-zoom-out" class="radiograph-tool-button" type="button" disabled aria-label="Zoom out">−</button>
+          <output id="radiograph-zoom-value" class="radiograph-zoom-value">100%</output>
+          <button id="radiograph-zoom-in" class="radiograph-tool-button" type="button" disabled aria-label="Zoom in">+</button>
+          <button id="radiograph-fit" class="radiograph-tool-button" type="button" disabled><span class="rad-fa">جا دادن</span><span class="rad-en">Fit</span></button>
+        </div>
+        <div class="radiograph-stage" id="radiograph-stage">
+          <canvas id="radiograph-canvas" width="1200" height="900" tabindex="0" role="img" aria-label="Local chest radiograph canvas" data-image-loaded="false"></canvas>
+          <div id="radiograph-empty-state" class="radiograph-empty-state" role="status">
+            <span class="radiograph-empty-mark" aria-hidden="true">2D</span>
+            <strong><span class="rad-fa">هنوز تصویری انتخاب نشده است</span><span class="rad-en">No image selected yet</span></strong>
+            <span><span class="rad-fa">تصویر را انتخاب کن یا آن را روی این ناحیه رها کن</span><span class="rad-en">Choose an image or drop it in this area</span></span>
+          </div>
+        </div>
+        <div class="radiograph-status-row"><p id="radiograph-image-status" role="status" aria-live="polite"><span class="rad-fa">فایلی بارگذاری نشده است.</span><span class="rad-en">No file loaded.</span></p><p id="radiograph-viewer-hint"><span class="rad-fa">کشیدن برای جابه‌جایی · چرخ ماوس برای بزرگ‌نمایی · کلیدهای + و −</span><span class="rad-en">Drag to pan · mouse wheel to zoom · + / − keys</span></p></div>
+        <p class="radiograph-disclaimer"><span class="rad-fa">این ابزار فقط فایل تصویری را نمایش می‌دهد؛ جهت پروجکشن را تشخیص نمی‌دهد و تفسیر بالینی تولید نمی‌کند.</span><span class="rad-en">This tool only displays an image; it does not infer projection or produce clinical interpretation.</span></p>
       </section>
 
       <section class="workspace" id="workspace" data-i18n-aria-label="workspaceLabel">
