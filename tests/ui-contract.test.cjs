@@ -57,7 +57,7 @@ test('UI contains expected controls, real-slice canvas and medical-use disclaime
 
 test('project-relative favicon resolves for GitHub Pages subpaths', function () {
   const html = read('index.html');
-  assert.match(html, /<link rel="icon" type="image\\/svg\\+xml" href="\\.\\/favicon\\.svg">/);
+  assert.ok(html.includes('<link rel="icon" type="image/svg+xml" href="./favicon.svg">'), "favicon should use a project-relative URL");
   const icon = read('favicon.svg');
   assert.match(icon, /<svg[^>]*viewBox="0 0 64 64"/);
   assert.match(icon, /fill="#101923"/);
