@@ -1,6 +1,6 @@
 # CT data provenance and license review
 
-**Status: the viewer supports a generated 113-slice axial stack from the source volume. This adds slice navigation, not higher in-plane resolution or multiplanar reconstruction. Source terms, third-party rights and independent anatomical review remain release gates.**
+**Status: the browser preview now exposes independently navigable axial (113), coronal (256) and sagittal (256) planes generated from the source CT and labelmap. This is orthogonal plane viewing, not synchronized tri-planar crosshairs, arbitrary oblique reconstruction or raw-voxel window/level. Source terms, third-party rights and independent anatomical review remain release gates.**
 
 ## Source and files
 
@@ -28,7 +28,7 @@ atlasStructure.json provides 94 Structure entries with authoritative LabelMapSel
 
 The first in-app position defaults to axial slice k=26 (zero-based) of a 113-slice volume. Every exported slice is 256 × 256 pixels. The grayscale display window and pixel row order are transformed for screen display; each corresponding labelmap receives the exact same row flip. The palette follows the atlas's segment colors. The matching CT/labelmap overlay preview for k=26 was visually inspected: major regions for liver, spleen, kidneys, aorta, IVC, pancreas, stomach/duodenum and gallbladder appear aligned on this candidate slice.
 
-The browser viewer can navigate the 113 axial slices, but it is **not yet a full multiplanar CT viewer**: coronal/sagittal MPR and adjustable raw-voxel window/level are not implemented. The source in-plane matrix is 256 × 256 (about 0.94 mm spacing in-plane) with 1.5 mm spacing between slices. Do not treat larger on-screen display dimensions as higher source resolution. Header geometry plus a visual contact-sheet check is not a substitute for an independent radiologist/anatomy educator review. Do not claim clinical validation. The source archives remain unmodified.
+The browser viewer now switches between axial, coronal and sagittal sampled planes, each with its own slider range. It does **not yet offer synchronized tri-planar crosshairs, arbitrary oblique reslicing, adjustable raw-voxel window/level or DICOM-series ingestion**. The source in-plane matrix is 256 × 256 (about 0.94 mm spacing in-plane) with 1.5 mm spacing between slices. The orthogonal views preserve physical pixel aspect ratio rather than assuming square pixels. Do not treat larger on-screen display dimensions as higher source resolution. Header geometry plus a visual contact-sheet check is not a substitute for an independent radiologist/anatomy educator review. Do not claim clinical validation. The source archives remain unmodified.
 
 To inspect/regenerate the volume assets:
 
@@ -55,10 +55,11 @@ The in-app notice attributes the SPL Abdominal Atlas and describes the web-displ
 
 ## Before broader release
 
-- Obtain independent review of left/right display, orientation and alignment across the axial stack, label names and teaching explanations.
+- Obtain independent review of orientation and segmentation alignment in all three planes, label names and teaching explanations.
 - Evaluate a higher-resolution, properly licensed CT source if the expected learning experience requires finer anatomical detail; do not synthesize or interpolate detail and present it as native resolution.
-- Add and validate coronal/sagittal MPR plus configurable window/level using raw voxel values before calling this a complete CT viewer.
-- If a volumetric viewer is added, verify axis ordering, spacing, origin and transforms against the full MRML scene; matching headers alone are insufficient.
+- Add synchronized crosshairs and validate shared physical coordinates if a tri-planar layout is introduced.
+- Add configurable window/level from verified raw voxel values; current PNGs only contain a fixed 8-bit presentation.
+- Re-validate axis ordering, spacing, origin and transforms against the full MRML scene before extending the views; matching headers alone are insufficient.
 - Check third-party notices for any additional scene/model/software components.
 - Keep the license notice with applicable dataset copies and documentation.
 - Never present the app as a diagnostic tool. Its purpose is educational anatomy practice, not diagnosis or clinical decisions.
