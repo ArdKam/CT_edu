@@ -99,9 +99,9 @@ test('tri-planar overview uses its own renderer and exposes synchronized crossha
   const html = read('index.html');
   const app = read('src/app.js');
   const viewer = require('../src/viewer/tri-planar-viewer.js');
-  assert.match(html, /src\\/viewer\\/tri-planar-viewer\\.js/);
-  assert.match(app, /function renderTriPlanar\\(/);
-  assert.match(app, /state\\.slicePositions\\[config\\.axis\\]/);
+  assert.ok(html.includes('src/viewer/tri-planar-viewer.js'));
+  assert.ok(app.includes('function renderTriPlanar('));
+  assert.ok(app.includes('state.slicePositions[config.axis]'));
   assert.deepEqual(viewer.getStatus().planes, ['axial', 'coronal', 'sagittal']);
   assert.equal(viewer.getStatus().ready, false, 'overview starts idle before browser assets load');
 });
