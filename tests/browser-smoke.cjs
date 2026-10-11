@@ -268,10 +268,26 @@ const { chromium } = require('playwright');
       'changing coronal position should move the linked sagittal crosshair');
     await page.screenshot({ path: path.join(screenshotDir, 'tri-planar.png'), fullPage: true });
     const expectedSagittalIndex = triStatus.status.indices.sagittal;
+    await page.locator('[data-open-plane="coronal"]').click();
+    await page.waitForFunction(function () {
+      const status = window.CTEduSliceViewer.getStatus();
+      return status.state === 'ready' && status.plane === 'coronal' && status.sliceIndex === 240 &&
+        document.querySelector('#tri-planar-panel').hidden;
+    }, null, { timeout: 10000 });
+    assert.equal(await page.locator('#viewer-empty-state').isVisible(), true,
+      'the single-plane viewer should explain when a selected edge slice has no CT signal');
+    assert.match(await page.locator('#viewer-empty-state').textContent(), /No image data|outside the acquired|دادهٔ تصویری|خالی حجم/i);
+    await page.screenshot({ path: path.join(screenshotDir, 'empty-edge-slice.png'), fullPage: true });
+    await page.locator('#display-triplanar').click();
+    await page.waitForFunction(function () {
+      return !document.querySelector('#tri-planar-panel').hidden &&
+        window.CTEduTriPlanarViewer.getStatus().ready;
+    }, null, { timeout: 10000 });
     await page.locator('[data-open-plane="sagittal"]').click();
     await page.waitForFunction(function (expectedIndex) {
       const status = window.CTEduSliceViewer.getStatus();
-      return status.state === 'ready' && status.plane === 'sagittal' && status.sliceIndex === expectedIndex;
+      return status.state === 'ready' && status.plane === 'sagittal' && status.sliceIndex === expectedIndex &&
+        document.querySelector('#tri-planar-panel').hidden;
     }, expectedSagittalIndex, { timeout: 10000 });
 
     const mobile = await browser.newPage({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 1, isMobile: true, hasTouch: true });
