@@ -27,7 +27,7 @@ CT Edu is an early-stage bilingual educational web app for medical students. The
 ## Known limitations and release gates
 
 - Plane selection and slice navigation work in axial, coronal and sagittal tabs. This is not yet a simultaneously visible synchronized three-panel viewer with shared crosshairs or arbitrary oblique reformatting.
-- The automated Chromium smoke test exercises navigation, orientation, wheel scrolling, zoom, raw-value window/level and the quiz. Mobile touch gestures and a wider browser/device matrix still require QA; DICOM-series import is not implemented.
+- The automated Chromium smoke test exercises desktop navigation, orientation, wheel scrolling, pan/zoom, raw-value window/level, the quiz, a 390 px mobile viewport, horizontal-overflow checks and a touch tap to switch planes. This is a useful smoke test, not a full device/browser matrix: multi-touch gestures, mobile pan/zoom ergonomics, Safari/iOS and Android-device QA remain open. DICOM-series import is not implemented.
 - A radiologist or anatomy educator must independently review orientation, segmentation alignment in all planes, structure naming and the learning explanations. The app is not clinically validated and must not be used for diagnosis or clinical decisions.
 - **License review is still open.** The repository root contains the source ZIP archives; do not assume that the license notice resolves all third-party rights. Before public distribution of source archives or derivative material, verify the exact licence conditions and third-party permissions.
 - The UI remains a prototype, not a clinical workstation or diagnostic viewer.
