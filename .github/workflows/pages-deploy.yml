@@ -73,6 +73,12 @@ jobs:
           test -s _site/assets/spl-abdominal-demo/slices/ct-112.png
           test -s _site/assets/spl-abdominal-demo/slices/labels-000.png
           test -s _site/assets/spl-abdominal-demo/slices/labels-112.png
+          test -s _site/assets/spl-abdominal-demo/coronal/ct-000.png
+          test -s _site/assets/spl-abdominal-demo/coronal/labels-128.png
+          test -s _site/assets/spl-abdominal-demo/coronal/ct-255.png
+          test -s _site/assets/spl-abdominal-demo/sagittal/ct-000.png
+          test -s _site/assets/spl-abdominal-demo/sagittal/labels-128.png
+          test -s _site/assets/spl-abdominal-demo/sagittal/ct-255.png
           test -s _site/data-license.html
           test -s _site/licenses/SPL-Abdominal-Atlas-LICENSE.txt
 
@@ -123,4 +129,8 @@ jobs:
           fetch_with_retry "$base/assets/spl-abdominal-demo/volume.json" '"sliceCount": 113'
           fetch_with_retry "$base/assets/spl-abdominal-demo/slices/ct-026.png" 'PNG'
           fetch_with_retry "$base/assets/spl-abdominal-demo/slices/labels-026.png" 'PNG'
-          echo "CT_EDU_AXIAL_VOLUME_LIVE_VERIFIED"
+          fetch_with_retry "$base/assets/spl-abdominal-demo/coronal/ct-128.png" 'PNG'
+          fetch_with_retry "$base/assets/spl-abdominal-demo/coronal/labels-128.png" 'PNG'
+          fetch_with_retry "$base/assets/spl-abdominal-demo/sagittal/ct-128.png" 'PNG'
+          fetch_with_retry "$base/assets/spl-abdominal-demo/sagittal/labels-128.png" 'PNG'
+          echo "CT_EDU_TRIPLANAR_VOLUME_LIVE_VERIFIED"
