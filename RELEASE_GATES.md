@@ -48,6 +48,7 @@ See [DATASET_ROADMAP.md](DATASET_ROADMAP.md) for reviewed candidate sources and 
 
 ### Viewer, accessibility, and security
 
+- [x] Replace dynamic UI `innerHTML` construction with DOM APIs and `textContent`, validate anatomy palette values, add a restrictive CSP meta policy, and add tests for the HTML-sink contract and malicious search text. Chromium confirms the CSP is present and the injection probe creates no element and executes no code. This is a targeted client-side hardening baseline, not a complete security audit; the meta policy should be backed by deployment response headers when the hosting platform supports them.
 - [ ] Conduct a broader browser/device matrix, including iOS Safari and Android devices; the current Chromium mobile smoke test is not comprehensive touch QA.
 - [x] Add a synchronized side-by-side axial/coronal/sagittal overview with shared voxel-index crosshairs and separate i/j/k sliders. The overview does not claim patient-space coordinates or add oblique reconstruction; expert review of orientation and crosshair alignment remains open.
 - [ ] Define case/image loading, memory, and responsiveness budgets from representative large studies and test them on lower-powered devices.
