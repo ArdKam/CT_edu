@@ -88,6 +88,12 @@ const { chromium } = require('playwright');
     await page.locator('#zoom-reset').click();
     assert.match(await page.locator('#zoom-value').textContent(), /100|۱۰۰/);
 
+    const originalDisplaySignature = await page.locator('#ct-slice-canvas').evaluate(function (canvas) {
+      const bytes = canvas.getContext('2d').getImageData(0, 0, canvas.width, canvas.height).data;
+      let signature = 0;
+      for (let i = 0; i < bytes.length; i += 4) signature = (signature + bytes[i] * 3 + bytes[i + 1] * 5 + bytes[i + 2] * 7) >>> 0;
+      return signature;
+    });
     const wInfo = await page.evaluate(function () { return window.CTEduSliceViewer.getWindowLevelInfo(); });
     const targetLevel = Math.floor((wInfo.intensityRange.min + wInfo.intensityRange.max) / 2);
     await page.locator('#window-width-slider').evaluate(function (slider) {
@@ -123,6 +129,13 @@ const { chromium } = require('playwright');
       throw error;
     }
     assert.match(await page.locator('#window-level-status').textContent(), /raw|intensity|شدت/i);
+    const adjustedDisplaySignature = await page.locator('#ct-slice-canvas').evaluate(function (canvas) {
+      const bytes = canvas.getContext('2d').getImageData(0, 0, canvas.width, canvas.height).data;
+      let signature = 0;
+      for (let i = 0; i < bytes.length; i += 4) signature = (signature + bytes[i] * 3 + bytes[i + 1] * 5 + bytes[i + 2] * 7) >>> 0;
+      return signature;
+    });
+    assert.notEqual(adjustedDisplaySignature, originalDisplaySignature, 'window/level must change the rendered CT pixels, not only the control value');
     await page.locator('#window-level-slider').evaluate(function (slider) {
       slider.focus();
       slider.value = '0';
