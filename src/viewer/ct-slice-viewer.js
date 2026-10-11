@@ -13,7 +13,11 @@
   let segmentIds = null;
   let centroids = null;
   let sourceGray = null;
+  let activeWidth = WIDTH;
+  let activeHeight = HEIGHT;
   let loadRequestId = 0;
+  let volumeManifest = null;
+  let activePlane = 'axial';
   let volumeInfo = {
     isVolume: false,
     sliceCount: 1,
@@ -33,27 +37,33 @@
   }
 
   function readImagePixels(img) {
+    const width = Number(img.naturalWidth || img.width || WIDTH);
+    const height = Number(img.naturalHeight || img.height || HEIGHT);
+    if (!width || !height) throw new Error('CT slice has invalid dimensions');
     const scratch = document.createElement('canvas');
-    scratch.width = WIDTH;
-    scratch.height = HEIGHT;
+    scratch.width = width;
+    scratch.height = height;
     const ctx = scratch.getContext('2d', { willReadFrequently: true });
-    ctx.drawImage(img, 0, 0, WIDTH, HEIGHT);
-    return ctx.getImageData(0, 0, WIDTH, HEIGHT).data;
+    if (!ctx) throw new Error('Canvas pixel access is unavailable');
+    ctx.drawImage(img, 0, 0, width, height);
+    return { width: width, height: height, data: ctx.getImageData(0, 0, width, height).data };
   }
 
   function decodeLabelId(lowByte, highByte) {
     return Number(lowByte) + 256 * Number(highByte);
   }
 
-  function buildCentroids(ids) {
+  function buildCentroids(ids, width, height) {
+    width = width || WIDTH;
+    height = height || HEIGHT;
     const summary = Object.create(null);
     for (let i = 0; i < ids.length; i += 1) {
       const id = ids[i];
       if (!id) continue;
       let item = summary[id];
-      if (!item) item = summary[id] = { count: 0, x: 0, y: 0, minX: WIDTH, minY: HEIGHT, maxX: 0, maxY: 0 };
-      const x = i % WIDTH;
-      const y = Math.floor(i / WIDTH);
+      if (!item) item = summary[id] = { count: 0, x: 0, y: 0, minX: width, minY: height, maxX: 0, maxY: 0 };
+      const x = i % width;
+      const y = Math.floor(i / width);
       item.count += 1;
       item.x += x;
       item.y += y;
@@ -76,17 +86,22 @@
     }
   }
 
-  function commitSliceImages(images, sliceIndex, requestId) {
+  function commitSliceImages(images, sliceIndex, planeName, requestId) {
     if (requestId !== loadRequestId) return false;
-    const ctData = readImagePixels(images[0]);
-    const labelData = readImagePixels(images[1]);
-    const pixelCount = WIDTH * HEIGHT;
+    const ct = readImagePixels(images[0]);
+    const label = readImagePixels(images[1]);
+    if (ct.width !== label.width || ct.height !== label.height) {
+      throw new Error('CT image and segmentation image dimensions differ');
+    }
+    activeWidth = ct.width;
+    activeHeight = ct.height;
+    const pixelCount = activeWidth * activeHeight;
     ctPixels = new Uint8Array(pixelCount);
     segmentIds = new Uint16Array(pixelCount);
     for (let i = 0; i < pixelCount; i += 1) {
-      ctPixels[i] = ctData[i * 4];
+      ctPixels[i] = ct.data[i * 4];
       // Exact 16-bit class ID is encoded in the label PNG as R + 256*G.
-      segmentIds[i] = decodeLabelId(labelData[i * 4], labelData[i * 4 + 1]);
+      segmentIds[i] = decodeLabelId(label.data[i * 4], label.data[i * 4 + 1]);
     }
     sourceGray = new Uint8ClampedArray(pixelCount * 4);
     for (let i = 0; i < pixelCount; i += 1) {
@@ -96,29 +111,62 @@
       sourceGray[i * 4 + 2] = v;
       sourceGray[i * 4 + 3] = 255;
     }
-    centroids = buildCentroids(segmentIds);
+    centroids = buildCentroids(segmentIds, activeWidth, activeHeight);
+    activePlane = planeName;
+    volumeInfo.activePlane = planeName;
     volumeInfo.currentSliceIndex = sliceIndex;
+    volumeInfo.dimensions = { width: activeWidth, height: activeHeight };
     failure = null;
     state = 'ready';
     dispatchAssetsReady();
     return true;
   }
 
-  function loadSlice(requestedIndex) {
+  function loadSlice(requestedIndex, requestedPlane) {
     if (typeof Image === 'undefined') return Promise.resolve(false);
-    const sourceIndex = volumeInfo.isVolume
-      ? Math.max(0, Math.min(volumeInfo.sliceCount - 1, Number(requestedIndex) || 0))
+    const planeName = requestedPlane || activePlane || 'axial';
+    const plane = volumeManifest && volumeManifest.planes && volumeManifest.planes[planeName];
+    if (volumeManifest && !plane) return Promise.resolve(false);
+    const isVolume = Boolean(plane);
+    const sliceCount = isVolume ? Number(plane.sliceCount) : 1;
+    const defaultIndex = isVolume ? Number(plane.defaultSliceIndex) || 0 : DEFAULT_SLICE_INDEX;
+    const requested = Number(requestedIndex);
+    const sourceIndex = isVolume
+      ? Math.max(0, Math.min(sliceCount - 1, Number.isFinite(requested) ? Math.trunc(requested) : defaultIndex))
       : DEFAULT_SLICE_INDEX;
-    if (state === 'ready' && sourceIndex === volumeInfo.currentSliceIndex) return Promise.resolve(true);
+    if (state === 'ready' && sourceIndex === volumeInfo.currentSliceIndex &&
+        planeName === activePlane) return Promise.resolve(true);
+
     const requestId = ++loadRequestId;
+    activePlane = planeName;
     state = 'loading';
     failure = null;
+    volumeInfo = {
+      isVolume: isVolume,
+      plane: planeName,
+      activePlane: planeName,
+      sliceCount: sliceCount,
+      currentSliceIndex: sourceIndex,
+      defaultSliceIndex: defaultIndex,
+      spacingMm: plane ? plane.pixelSpacingMm : { x: 0.9375, y: 0.9375, z: 1.5 },
+      sliceSpacingMm: plane ? plane.sliceSpacingMm : 1.5,
+      dimensions: plane ? plane.dimensions : { width: WIDTH, height: HEIGHT },
+      coordinateSystem: volumeManifest ? volumeManifest.coordinateSystem || 'unknown' : 'unknown',
+      indexAxis: plane ? plane.indexAxis : 'k',
+      planes: volumeManifest ? Object.keys(volumeManifest.planes || {}) : ['axial']
+    };
     dispatchAssetsReady();
     const suffix = String(sourceIndex).padStart(3, '0');
-    const ctPath = volumeInfo.isVolume ? ASSET_BASE + '/slices/ct-' + suffix + '.png' : CT_URL;
-    const labelPath = volumeInfo.isVolume ? ASSET_BASE + '/slices/labels-' + suffix + '.png' : LABEL_URL;
+    const ctPattern = plane && plane.ctPattern;
+    const labelPattern = plane && plane.labelsPattern;
+    const ctPath = isVolume
+      ? ASSET_BASE + '/' + ctPattern.replace('{index:03d}', suffix)
+      : CT_URL;
+    const labelPath = isVolume
+      ? ASSET_BASE + '/' + labelPattern.replace('{index:03d}', suffix)
+      : LABEL_URL;
     return Promise.all([loadImage(ctPath), loadImage(labelPath)]).then(function (images) {
-      return commitSliceImages(images, sourceIndex, requestId);
+      return commitSliceImages(images, sourceIndex, planeName, requestId);
     }).catch(function (error) {
       if (requestId !== loadRequestId) return false;
       failure = error;
@@ -135,37 +183,37 @@
         if (!response.ok) throw new Error('Volume manifest unavailable');
         return response.json();
       }).then(function (manifest) {
-        const count = Number(manifest && manifest.sliceCount);
-        const dimensions = manifest && manifest.dimensions;
-        if (!Number.isInteger(count) || count < 1 || !dimensions ||
-            Number(dimensions.width) !== WIDTH || Number(dimensions.height) !== HEIGHT) {
+        const planes = manifest && manifest.planes;
+        const axial = planes && planes.axial;
+        if (!axial || !Number.isInteger(Number(axial.sliceCount)) || Number(axial.sliceCount) < 1 ||
+            !axial.dimensions || Number(axial.dimensions.width) !== WIDTH ||
+            Number(axial.dimensions.height) !== HEIGHT ||
+            !planes.coronal || !planes.sagittal) {
           throw new Error('Invalid CT volume manifest');
         }
-        volumeInfo = {
-          isVolume: count > 1,
-          sliceCount: count,
-          currentSliceIndex: 0,
-          defaultSliceIndex: Math.max(0, Math.min(count - 1, Number(manifest.defaultSliceIndex) || 0)),
-          spacingMm: manifest.spacingMm || null,
-          dimensions: dimensions,
-          coordinateSystem: manifest.coordinateSystem || 'unknown'
-        };
-        return loadSlice(volumeInfo.defaultSliceIndex);
+        volumeManifest = manifest;
+        return loadSlice(Number(axial.defaultSliceIndex) || 0, 'axial');
       }).catch(function () {
         // Keep compatibility with the committed single-slice fallback for local/offline review.
+        volumeManifest = null;
         volumeInfo = {
           isVolume: false,
+          plane: 'axial',
+          activePlane: 'axial',
           sliceCount: 1,
           currentSliceIndex: DEFAULT_SLICE_INDEX,
           defaultSliceIndex: DEFAULT_SLICE_INDEX,
           spacingMm: { x: 0.9375, y: 0.9375, z: 1.5 },
-          dimensions: { width: WIDTH, height: HEIGHT, slices: 1 }
+          dimensions: { width: WIDTH, height: HEIGHT },
+          coordinateSystem: 'unknown',
+          indexAxis: 'k',
+          planes: ['axial']
         };
-        loadSlice(DEFAULT_SLICE_INDEX);
+        loadSlice(DEFAULT_SLICE_INDEX, 'axial');
       });
       return;
     }
-    loadSlice(DEFAULT_SLICE_INDEX);
+    loadSlice(DEFAULT_SLICE_INDEX, 'axial');
   }
 
   function parseHex(hex) {
