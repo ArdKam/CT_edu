@@ -8,7 +8,7 @@ CT Edu is an early-stage bilingual educational web app for medical students. The
 - **Slice navigation:** plane tabs, previous/next controls, slider, mouse wheel over the viewer, and Up/Down keys when the canvas is focused.
 - **Coordinate continuity:** the selected i/j/k voxel indices remain visible and each plane remembers its last slice when switching views. The UI displays voxel indices, not a claimed patient-space coordinate or verified DICOM world coordinate.
 - **Anatomy overlays:** source segment IDs are preserved losslessly as RGB with `id = R + 256 × G`. The structure list is scoped to segments actually present in the currently loaded plane/slice.
-- **Empty edge positions:** if a padded source slice contains no non-zero CT intensity, the synchronized overview identifies it as having no image data instead of presenting an unexplained black rectangle.
+- **Empty edge positions:** if a padded source slice contains no non-zero CT intensity, both the large viewer and synchronized overview identify it as having no image data instead of presenting an unexplained black rectangle.
 - **Inspection tools:** structure search/selection, visibility controls, overlay emphasis, zoom (70–220%) and pointer drag to pan.
 - **Bilingual UI:** Persian RTL and English LTR.
 - **Static publication:** GitHub Pages build generates the plane image stack in CI; the original source ZIP files are not copied into the Pages artifact.
