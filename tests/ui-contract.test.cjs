@@ -177,3 +177,10 @@ test('CSP limits executable content and keeps only the required font origins ext
     assert.equal(/^(?:https?:)?\/\//i.test(src), false, 'scripts must be served locally: ' + src);
   });
 });
+
+test('Chromium smoke dependency is pinned to a reproducible Playwright release', function () {
+  const workflow = read('.github/workflows/test.yml');
+  assert.match(workflow, /npm install --no-save --package-lock=false playwright@1\.63\.0/);
+  assert.match(workflow, /node -p .*Playwright version/);
+  assert.match(workflow, /npx playwright install --with-deps chromium/);
+});
