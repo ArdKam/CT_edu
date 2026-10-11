@@ -357,3 +357,34 @@
   .learning-progress-metrics strong{font-size:16px}
   .learning-progress-metrics span{font-size:8px}
 }
+
+.progress-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+.progress-reset:disabled {
+  opacity: .45;
+  cursor: not-allowed;
+}
+.progress-actions .progress-reset {
+  padding: 6px 7px;
+}
+@media (max-width: 420px) {
+  .learning-progress-heading {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+  .progress-actions {
+    width: 100%;
+    justify-content: stretch;
+  }
+  .progress-actions .progress-reset {
+    flex: 1 1 auto;
+    min-width: 0;
+    padding: 7px 5px;
+    font-size: 8px;
+  }
+}
