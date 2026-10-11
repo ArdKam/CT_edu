@@ -48,10 +48,12 @@ test('catalog UI is wired into the page and avoids HTML string sinks', function 
   assert.match(ui,/noopener noreferrer/);
 });
 
-test('roadmap explains that VinDr-CXR is not approved for public redistribution', function () {
+test('roadmap documents the NIH chest radiograph candidate and keeps VinDr-CXR redistribution blocked', function () {
   const roadmap = read('DATASET_ROADMAP.md'), readme = read('README.md');
+  assert.match(roadmap,/NIH Chest X-ray/);
+  assert.match(roadmap,/docs\.cloud\.google\.com\/healthcare-api\/docs\/resources\/public-datasets\/nih-chest/);
   assert.match(roadmap,/VinDr-CXR/);
-  assert.match(roadmap,/Do \*\*not\*\* bundle VinDr-CXR images/i);
+  assert.match(roadmap,/Do \*\*not\*\* redistribute VinDr-CXR under its current terms/i);
   assert.match(roadmap,/only after all relevant gates pass/i);
   assert.match(readme,/catalog is \*\*not\*\* a claim/i);
 });
