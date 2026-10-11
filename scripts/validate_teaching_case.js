@@ -15,6 +15,16 @@ function findSensitiveKeys(value, pointer, errors) {
   }
 }
 function isText(value) { return typeof value === 'string' && value.trim().length > 0; }
+function isResolvedText(value) {
+  if (!isText(value)) return false;
+  const normalized = value.trim().toLowerCase();
+  return !['replace', 'review-required', 'not-yet-verified', 'not verified', 'unverified', 'unknown', 'pending', 'todo'].some(token => normalized.includes(token));
+}
+function isIsoDate(value) {
+  if (typeof value !== 'string' || value.length !== 10 || value[4] !== '-' || value[7] !== '-') return false;
+  const date = new Date(value + 'T00:00:00Z');
+  return !Number.isNaN(date.getTime()) && date.toISOString().slice(0, 10) === value;
+}
 function reviewIsApproved(review) {
   return Boolean(review && review.status === 'approved' && isText(review.reviewerRole) &&
     isText(review.reviewerReference) && typeof review.reviewedAt === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(review.reviewedAt));
@@ -23,14 +33,15 @@ function publicationGatesPass(record) {
   if (!record || typeof record !== 'object') return false;
   const source=record.source||{}, study=record.study||{}, privacy=record.privacy||{}, publication=record.publication||{}, rubric=record.rubric||{};
   return record.status==='approved' && source.redistributionStatus==='verified-permitted' &&
-    isText(source.licenseReference) && isText(source.attribution) &&
+    ['id','name','version','sourceUrl','licenseReference','attribution'].every(key=>isResolvedText(source[key])) &&
+    typeof source.sourceUrl==='string' && source.sourceUrl.toLowerCase().startsWith('https://') &&
     study.seriesComplete===true && study.geometryValidated===true && study.orientationVerified===true &&
-    isText(study.intensitySemantics) && privacy.patientMetadataReviewed===true &&
+    isResolvedText(study.caseManifestId) && isResolvedText(study.sourceFormat) && isResolvedText(study.intensitySemantics) && privacy.patientMetadataReviewed===true &&
     privacy.burnedInIdentifiersReviewed===true && privacy.noPatientIdentifiers===true &&
     REVIEW_SECTIONS.every(key=>reviewIsApproved((record.review||{})[key])) &&
     Array.isArray(record.objectives) && record.objectives.length>0 &&
     Array.isArray(record.guidedSteps) && record.guidedSteps.length>0 &&
-    Array.isArray(rubric.criteria) && rubric.criteria.length>0 && publication.publicReleaseApproved===true;
+    Array.isArray(rubric.criteria) && rubric.criteria.length>0 && publication.publicReleaseApproved===true && isResolvedText(publication.approvedBy) && isIsoDate(publication.approvedAt);
 }
 function validateCaseRecord(record, options) {
   const opts=options||{}, errors=[];
@@ -50,6 +61,8 @@ function validateCaseRecord(record, options) {
     if(!['review-required','verified-permitted','restricted'].includes(source.redistributionStatus))errors.push('/source/redistributionStatus: invalid status');
     if(source.sourceUrl&&!/^https:\/\//i.test(source.sourceUrl))errors.push('/source/sourceUrl: must be an HTTPS URL');
   }
+  if(!isText(source && source.sourceUrl))errors.push('/source/sourceUrl: required');
+  else if(!source.sourceUrl.toLowerCase().startsWith('https://'))errors.push('/source/sourceUrl: must be an HTTPS URL');
   const study=record.study;
   if(!study||typeof study!=='object')errors.push('/study: required object');
   else{

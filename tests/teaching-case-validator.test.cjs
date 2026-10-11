@@ -39,3 +39,12 @@ test('CT intensity semantics and radiograph projection are explicit',function(){
  const ct=publishableFixture();ct.study.intensitySemantics='';assert.equal(validateCaseRecord(ct).valid,false);
  const x=publishableFixture();x.modality='Radiograph';x.study.projection='oblique';assert.equal(validateCaseRecord(x).valid,false);
 });
+
+test('publication readiness rejects missing source URL, unresolved placeholders, and missing approval record',function(){
+ const missing=publishableFixture();delete missing.source.sourceUrl;
+ assert.equal(validateCaseRecord(missing,{requirePublishable:true}).valid,false);
+ const placeholder=publishableFixture();placeholder.source.version='Replace with exact release/version';
+ assert.equal(validateCaseRecord(placeholder,{requirePublishable:true}).valid,false);
+ const noApproval=publishableFixture();noApproval.publication.approvedBy='';
+ assert.equal(validateCaseRecord(noApproval,{requirePublishable:true}).valid,false);
+});
