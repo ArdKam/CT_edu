@@ -55,6 +55,14 @@ test('UI contains expected controls, real-slice canvas and medical-use disclaime
   assert.match(builder, /HU calibration has not been independently verified/);
 });
 
+test('project-relative favicon resolves for GitHub Pages subpaths', function () {
+  const html = read('index.html');
+  assert.match(html, /<link rel="icon" type="image\\/svg\\+xml" href="\\.\\/favicon\\.svg">/);
+  const icon = read('favicon.svg');
+  assert.match(icon, /<svg[^>]*viewBox="0 0 64 64"/);
+  assert.match(icon, /fill="#101923"/);
+});
+
 test('real CT slice and lossless segment-ID map are present', function () {
   const ctPath = path.join(root, 'assets/spl-abdominal-demo/ct-slice.png');
   const labelPath = path.join(root, 'assets/spl-abdominal-demo/label-ids-rgb.png');
