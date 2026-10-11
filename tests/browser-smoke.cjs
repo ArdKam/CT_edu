@@ -236,7 +236,7 @@ const { chromium } = require('playwright');
     assert.deepEqual(triStatus.sagittalCrosshair, { x: 127, y: 27 },
       'sagittal crosshair should use the 256-pixel j-axis for horizontal position');
     assert.equal(triStatus.status.indices.axial, 27);
-    assert.equal(triStatus.status.indices.coronal, 128);
+    assert.equal(triStatus.status.indices.coronal, 140, 'tri-planar mode should preserve the selected coronal position when reopening');
     assert.ok(await page.locator('#tri-axial-canvas').isVisible());
     assert.ok(await page.locator('#tri-coronal-canvas').isVisible());
     assert.ok(await page.locator('#tri-sagittal-canvas').isVisible());
