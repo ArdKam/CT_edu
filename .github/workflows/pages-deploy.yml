@@ -50,12 +50,14 @@ jobs:
           rm -rf _site
           mkdir -p _site/assets _site/licenses
           cp index.html data-license.html DATA_LICENSE_REVIEW.md _site/
+          cp favicon.svg _site/
           cp -R src _site/src
           cp -R build/ct-demo-volume _site/assets/spl-abdominal-demo
           cp licenses/SPL-Abdominal-Atlas-LICENSE.txt _site/licenses/
           touch _site/.nojekyll
 
           test -s _site/index.html
+          test -s _site/favicon.svg
           test -s _site/src/styles.css
           test -s _site/src/viewer/ct-slice-viewer.js
           test -s _site/assets/spl-abdominal-demo/ct-slice.png
