@@ -64,7 +64,7 @@ jobs:
               meta = volume["planes"][plane]
               assert meta["sliceCount"] == count, (plane, meta["sliceCount"])
               for index in sorted({0, count // 2, count - 1}):
-                  suffix = f"{index:03d}.png"
+                  suffix = f"{index:03d}"
                   assert (root / meta["ctPattern"].replace("{index:03d}", suffix)).is_file(), (plane, suffix)
                   assert (root / meta["labelsPattern"].replace("{index:03d}", suffix)).is_file(), (plane, suffix)
           print(f"Validated CT/labelmap planes {expected}; axial source matrix {volume['dimensions']['width']}x{volume['dimensions']['height']}; voxel spacing {volume['spacingMm']}")
