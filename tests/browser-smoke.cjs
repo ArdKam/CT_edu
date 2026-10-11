@@ -191,6 +191,42 @@ const { chromium } = require('playwright');
     assert.equal(localProgress.hasIdentity, false, 'local progress should not collect identity fields');
     assert.match(await page.locator('#progress-attempts').textContent(), /1|۱/);
     assert.match(await page.locator('#progress-storage-note').textContent(), /مرورگر|browser/i);
+
+    const [backupDownload] = await Promise.all([
+      page.waitForEvent('download'),
+      page.locator('#export-local-progress').click()
+    ]);
+    assert.match(backupDownload.suggestedFilename(), /^ct-edu-progress-.*\.json$/);
+    const backupPath = await backupDownload.path();
+    const exportedBackup = JSON.parse(fs.readFileSync(backupPath, 'utf8'));
+    assert.equal(exportedBackup.app, 'ct-edu-local-progress');
+    assert.equal(exportedBackup.version, 1);
+    assert.equal(exportedBackup.attempts.length, 1);
+    assert.equal('email' in exportedBackup.attempts[0], false);
+
+    const restoreFixture = {
+      app: 'ct-edu-local-progress',
+      version: 1,
+      exportedAt: Date.now(),
+      attempts: [
+        { caseId: 'spl-abdomen-normal-atlas', region: 'abdomen', skill: 'structure-identification', targetId: 'liver', selectedId: 'liver', isCorrect: true, timestamp: 1700000000000 },
+        { caseId: 'spl-abdomen-normal-atlas', region: 'abdomen', skill: 'structure-identification', targetId: 'spleen', selectedId: 'aorta', isCorrect: false, timestamp: 1700000001000 }
+      ]
+    };
+    page.once('dialog', function (dialog) { dialog.accept(); });
+    await page.locator('#restore-local-progress-file').setInputFiles({
+      name: 'ct-edu-progress-backup.json',
+      mimeType: 'application/json',
+      buffer: Buffer.from(JSON.stringify(restoreFixture))
+    });
+    await page.waitForFunction(function () {
+      const stored = JSON.parse(localStorage.getItem('ctedu-learning-progress-v1') || '{"attempts":[]}');
+      return stored.attempts && stored.attempts.length === 2;
+    }, null, { timeout: 5000 });
+    assert.match(await page.locator('#progress-attempts').textContent(), /2|۲/);
+    assert.match(await page.locator('#progress-accuracy').textContent(), /50|۵۰/);
+    assert.match(await page.locator('#progress-feedback').textContent(), /بازیابی|restored/i);
+
     await page.locator('#learn-mode').click();
     await page.waitForFunction(function () { return document.querySelector('#app').dataset.mode !== 'quiz'; });
     await page.locator('#reset-local-progress').click();
