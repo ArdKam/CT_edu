@@ -52,6 +52,7 @@ See [DATASET_ROADMAP.md](DATASET_ROADMAP.md) for reviewed candidate sources and 
 ### Educational product completeness
 
 - [ ] Implement case-level clinical context, structured systematic-review prompts, abnormal-finding capture, diagnosis/differential, and structured Findings/Impression writing. Local bookmarking does not complete the guided-case workflow.
+- [x] Add a draft case-authoring template and validator that require provenance, image-integrity metadata, bilingual guided steps, rubric structure, independent review records, privacy checks, and explicit publication approval. The template is empty and is not an approved educational case.
 - [ ] Create reviewed cases with an explicit rubric, teaching rationale, key-finding annotations, accepted alternatives, and provenance.
 - [x] Record active-recall outcomes in a bounded (500-attempt) local-only browser history, show attempts/accuracy/distinct structures, clear history, and export/import a validated versioned JSON backup (restore replaces history after confirmation). This is device/browser-local persistence only.
 - [x] Add local slice bookmarks with stable case ID, plane/index, i/j/k coordinates, selected structure, optional plain-text note (maximum 500 characters), per-location de-duplication, a 100-bookmark cap, per-item deletion, and versioned export/restore with validation and a 1 MB input cap. Bookmarks and notes remain in local browser storage.

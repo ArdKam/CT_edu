@@ -1,0 +1,41 @@
+{
+  "schemaVersion": 1,
+  "id": "draft-case-replace-before-use",
+  "version": 1,
+  "status": "draft",
+  "region": "abdomen",
+  "modality": "CT",
+  "titleFa": "عنوان آموزشی بازبینی‌نشده",
+  "titleEn": "Unreviewed teaching case title",
+  "descriptionFa": "شرح کوتاه آموزشی را فقط پس از بازبینی محتوایی تکمیل کنید.",
+  "descriptionEn": "Complete the short teaching description only after content review.",
+  "source": {
+    "id": "replace-with-source-id",
+    "name": "Replace with exact source collection",
+    "version": "Replace with exact release/version",
+    "sourceUrl": "https://example.invalid/source-record",
+    "licenseReference": "review-required",
+    "attribution": "review-required",
+    "redistributionStatus": "review-required"
+  },
+  "study": {
+    "caseManifestId": "replace-with-versioned-study-id",
+    "sourceFormat": "NIfTI, NRRD, or approved derived image format",
+    "seriesComplete": false,
+    "geometryValidated": false,
+    "orientationVerified": false,
+    "intensitySemantics": "not-yet-verified",
+    "projection": "unknown"
+  },
+  "objectives": [],
+  "clinicalContext": { "summaryFa": "", "summaryEn": "", "questionFa": "", "questionEn": "" },
+  "guidedSteps": [],
+  "rubric": { "criteria": [], "referenceFindings": [], "referenceImpression": "", "acceptedAlternatives": [], "teachingRationaleFa": "", "teachingRationaleEn": "" },
+  "review": {
+    "medical": { "status": "pending", "reviewerRole": "", "reviewerReference": "", "reviewedAt": "" },
+    "technical": { "status": "pending", "reviewerRole": "", "reviewerReference": "", "reviewedAt": "" },
+    "educational": { "status": "pending", "reviewerRole": "", "reviewerReference": "", "reviewedAt": "" }
+  },
+  "privacy": { "patientMetadataReviewed": false, "burnedInIdentifiersReviewed": false, "noPatientIdentifiers": false },
+  "publication": { "publicReleaseApproved": false, "approvedBy": "", "approvedAt": "" }
+}

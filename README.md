@@ -60,6 +60,10 @@ The catalog is **not** a claim that those three additional image modules are imp
 
 **Educational use only. Not for diagnosis or clinical decisions.**
 
+## Guided-case authoring
+
+The repository now contains an empty, versioned authoring template and a validator for provenance, image integrity, bilingual steps, rubric structure, review gates and direct-identifier fields. This is authoring infrastructure only: no unreviewed clinical interpretation or answer key has been added to the published client. See [the authoring contract](docs/CASE_AUTHORING_TEMPLATE.md).
+
 ## Next product work
 
 - Complete independent medical-image orientation/label review, source redistribution review, public security/privacy checks, accessibility audit, and physical-device Safari/iOS and Android QA before enabling public release.

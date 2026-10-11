@@ -23,6 +23,8 @@ jobs:
           node-version: "20"
       - name: Run unit and UI contract tests
         run: npm test
+      - name: Validate draft guided-case template and keep publication gate closed
+        run: node scripts/validate_teaching_case.js cases/templates/teaching-case.template.json
       - name: Check JavaScript syntax
         run: |
           node --check src/data/anatomy.js
@@ -33,6 +35,7 @@ jobs:
           node --check src/data/progress-store.js
           node --check src/data/bookmark-store.js
           node --check src/data/case-manifest.js
+          node --check scripts/validate_teaching_case.js
           node --check src/app.js
       - name: Check archive inventory script syntax
         run: |
