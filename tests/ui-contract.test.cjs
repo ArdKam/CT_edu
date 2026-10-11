@@ -49,6 +49,16 @@ test('UI contains expected controls, real-slice canvas and medical-use disclaime
   assert.match(app, /TriViewer\.render\(/);
   assert.match(triViewer, /function getCrosshairPoint\(/);
   assert.match(triViewer, /x = width - 1 - \(Number\(indices\.j\) \|\| 0\)/);
+  for (const plane of ['axial', 'coronal', 'sagittal']) {
+    assert.match(html, new RegExp('id="tri-' + plane + '-canvas"[^>]*role="img"'));
+    assert.doesNotMatch(html, new RegExp('id="tri-' + plane + '-canvas"[^>]*tabindex='));
+    assert.match(html, new RegExp('id="tri-' + plane + '-slider"[^>]*aria-labelledby="tri-' + plane + '-title tri-' + plane + '-slider-label"'));
+    assert.match(html, new RegExp('id="tri-' + plane + '-slider"[^>]*aria-describedby="tri-' + plane + '-position"'));
+  }
+  assert.match(html, /data-i18n-aria-label="workspaceLabel"/);
+  assert.match(app, /querySelectorAll\('\[data-i18n-aria-label\]'\)/);
+  assert.match(app, /sliceSliderCoronal/);
+  assert.match(app, /sliceSliderSagittal/);
 
   assert.ok(viewer.includes('const gray = sourceGray[i * 4]'), 'overlay blending must read the grayscale channel, not the raw RGBA byte index');
   assert.match(builder, /ct-volume-int16\.bin\.gz/);
