@@ -7,8 +7,12 @@ const read = function (name) { return fs.readFileSync(path.join(root, name), 'ut
 
 test('UI contains expected controls and medical-use disclaimer', function () {
   const html = read('index.html');
-  ['language-toggle','structure-search','structure-list','toggle-overlays','toggle-labels','zoom-in','zoom-out','zoom-reset','quiz-mode','learn-mode','answer-options','next-question','reset-quiz'].forEach(function (id) {
-    assert.match(html, new RegExp('id=["\\x27]' + id + '["\\x27]'), 'missing UI control: ' + id);
+  [
+    'language-toggle', 'structure-search', 'structure-list', 'toggle-overlays',
+    'toggle-labels', 'zoom-in', 'zoom-out', 'zoom-reset', 'quiz-mode',
+    'learn-mode', 'answer-options', 'next-question', 'reset-quiz'
+  ].forEach(function (id) {
+    assert.ok(html.includes('id="' + id + '"') || html.includes("id='" + id + "'"), 'missing UI control: ' + id);
   });
   assert.match(html, /CT واقعی نیست|NOT A REAL CT/i);
   assert.match(html, /هیچ CT بیمار|No patient CT/i);
@@ -22,5 +26,5 @@ test('viewer and data catalogue remain decoupled', function () {
   assert.match(viewer, /شماتیک|SCHEMATIC/);
   assert.match(data, /descriptionFa/);
   assert.match(data, /shape: .liver./);
-  assert.doesNotMatch(viewer, /fetch\\(|XMLHttpRequest|DICOM parser|NIfTI parser/i);
+  assert.doesNotMatch(viewer, /fetch\(|XMLHttpRequest|DICOM parser|NIfTI parser/i);
 });
