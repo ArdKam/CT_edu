@@ -68,6 +68,18 @@
         lastAttemptAt: null
       };
     }
+    try {
+      store.getItem(STORAGE_KEY);
+    } catch (error) {
+      return {
+        available: false,
+        totalAttempts: 0,
+        correctAttempts: 0,
+        accuracy: 0,
+        distinctStructures: 0,
+        lastAttemptAt: null
+      };
+    }
     const attempts = readData(store).attempts;
     const correctAttempts = attempts.filter(function (attempt) { return attempt.isCorrect; }).length;
     const targets = new Set(attempts.map(function (attempt) { return attempt.targetId; }));
