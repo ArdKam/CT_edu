@@ -36,3 +36,13 @@ test('answer evaluation accepts one answer and blocks repeated answers', functio
 test('quiz refuses fewer than four structures', function () {
   assert.throws(function () { quiz.createQuestion(anatomy.items.slice(0, 3)); }, /at least four/);
 });
+
+
+test('atlas segment IDs are unique and map back to bilingual anatomy items', function () {
+  const segmentIds = anatomy.items.map(function (item) { return item.segmentId; });
+  assert.equal(new Set(segmentIds).size, segmentIds.length);
+  assert.ok(segmentIds.every(function (id) { return Number.isInteger(id) && id > 0; }));
+  assert.equal(anatomy.bySegmentId(3).nameEn, 'Liver');
+  assert.equal(anatomy.bySegmentId(51).nameFa, 'کلیهٔ راست');
+  assert.equal(anatomy.bySegmentId(9999), null);
+});
