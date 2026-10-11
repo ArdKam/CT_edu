@@ -397,15 +397,38 @@
     }).map(function (id) { return Number(id); });
   }
 
-  function getVolumeInfo() {
+  function getVolumeInfo(planeName) {
+    const name = planeName || activePlane;
+    const plane = volumeManifest && volumeManifest.planes && volumeManifest.planes[name];
+    if (plane) {
+      return {
+        isVolume: true,
+        plane: name,
+        activePlane: activePlane,
+        sliceCount: Number(plane.sliceCount),
+        currentSliceIndex: name === activePlane ? volumeInfo.currentSliceIndex : Number(plane.defaultSliceIndex) || 0,
+        defaultSliceIndex: Number(plane.defaultSliceIndex) || 0,
+        spacingMm: plane.pixelSpacingMm || null,
+        sliceSpacingMm: plane.sliceSpacingMm || null,
+        dimensions: plane.dimensions,
+        coordinateSystem: volumeManifest.coordinateSystem || 'unknown',
+        indexAxis: plane.indexAxis,
+        availablePlanes: Object.keys(volumeManifest.planes || {})
+      };
+    }
     return {
-      isVolume: volumeInfo.isVolume,
-      sliceCount: volumeInfo.sliceCount,
+      isVolume: false,
+      plane: 'axial',
+      activePlane: activePlane,
+      sliceCount: 1,
       currentSliceIndex: volumeInfo.currentSliceIndex,
-      defaultSliceIndex: volumeInfo.defaultSliceIndex,
+      defaultSliceIndex: DEFAULT_SLICE_INDEX,
       spacingMm: volumeInfo.spacingMm,
-      dimensions: volumeInfo.dimensions,
-      coordinateSystem: volumeInfo.coordinateSystem || 'unknown'
+      sliceSpacingMm: 1.5,
+      dimensions: { width: activeWidth, height: activeHeight },
+      coordinateSystem: volumeInfo.coordinateSystem || 'unknown',
+      indexAxis: 'k',
+      availablePlanes: ['axial']
     };
   }
 
@@ -413,9 +436,14 @@
     if (args && args.quizId) {
       return args.language === 'fa' ? 'ناحیهٔ برجسته‌شده روی برش CT' : 'Highlighted region on CT slice';
     }
-    return args && args.language === 'fa'
-      ? 'برش محوری CT شکم با لایهٔ قطعه‌بندی آموزشی'
-      : 'Axial abdominal CT with educational segmentation overlay';
+    const plane = args && args.plane || activePlane;
+    const planeLabels = {
+      axial: { fa: 'برش محوری CT شکم با لایهٔ قطعه‌بندی آموزشی', en: 'Axial abdominal CT with educational segmentation overlay' },
+      coronal: { fa: 'برش کرونال CT شکم با لایهٔ قطعه‌بندی آموزشی', en: 'Coronal abdominal CT with educational segmentation overlay' },
+      sagittal: { fa: 'برش ساژیتال CT شکم با لایهٔ قطعه‌بندی آموزشی', en: 'Sagittal abdominal CT with educational segmentation overlay' }
+    };
+    const labels = planeLabels[plane] || planeLabels.axial;
+    return args && args.language === 'fa' ? labels.fa : labels.en;
   }
 
   const api = {
