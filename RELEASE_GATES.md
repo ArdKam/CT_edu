@@ -27,7 +27,7 @@ See [DATASET_ROADMAP.md](DATASET_ROADMAP.md) for reviewed candidate sources and 
 
 ## Current verification snapshot — 2026-10-14 (updated after guided-case preview)
 
-- Current `main` head: `d0b1cb71cf80d3c1735b2b891ac2e50375434233`. The guided-case implementation was merged in [PR #2](https://github.com/ArdKam/CT_edu/pull/2); the later head adds a main-only preview publication workflow.
+- Base revision inspected for this status update: `main @ d0b1cb71cf80d3c1735b2b891ac2e50375434233`. The guided-case implementation was merged in [PR #2](https://github.com/ArdKam/CT_edu/pull/2); this revision adds the main-only preview publication workflow.
 - The full [CT Edu checks run](https://github.com/ArdKam/CT_edu/actions/runs/38543661457) reported success for the merged implementation: Node tests, source-volume/labelmap validation, and Chromium/Firefox/WebKit smoke checks. This is the run recorded for the feature merge; it should not be described as a fresh full-suite result for every later SHA.
 - The [guided-case preview deployment run](https://github.com/ArdKam/CT_edu/actions/runs/38545091431) completed both build and deploy jobs and passed live HTTP/content probes for the root navigation, preview page, case metadata, and guided-case script.
 - **Live preview:** https://ardkam.github.io/CT_edu/preview/cases.html. The root URL https://ardkam.github.io/CT_edu/ retains the `a54bc01` stable baseline feature set with an added preview link; the new guided-case workspace is served from `/preview/cases.html`. This is intentionally not represented as a full production release.
