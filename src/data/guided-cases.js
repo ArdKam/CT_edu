@@ -189,7 +189,7 @@
         title: 'Ascending colon lipoma',
         caseId: '2582',
         url: 'https://radiopaedia.org/cases/ascending-colon-lipoma?lang=us',
-        viewerUrl: 'https://radiopaedia.org/cases/2582/studies/6276?lang=us#t=im&v1i=478&v1z=1&v2i=931&v2z=1',
+        studyPageUrl: 'https://radiopaedia.org/cases/2582/studies/6276?lang=us#t=im&v1i=478&v1z=1&v2i=931&v2z=1',
         citation: 'Radiopaedia.org. Ascending colon lipoma. Case 2582.',
         articleUrl: 'https://radiopaedia.org/articles/gastrointestinal-tract-lipomas?lang=us',
         articleTitle: 'Gastrointestinal tract lipomas'
