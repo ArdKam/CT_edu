@@ -42,6 +42,14 @@ The catalog is **not** a claim that those three additional image modules are imp
 - A potential separately licensed source is [CT-ORG at TCIA](https://wiki.cancerimagingarchive.net/pages/viewpage.action?pageId=133072448): TCIA lists 140 NIfTI volumes with labels for lung, bones, liver, kidneys and bladder (brain on some scans) under CC BY 3.0 and says the stored CT values are HU. But cases vary in acquisition and pathology, some may be left-right flipped, and the labels do not cover most current normal-abdominal lesson targets. It is a candidate for a **separate, reviewed clinical-case mode**, not a drop-in replacement for the SPL atlas.
 - The current catalogue contains nine bilingual target structures. The atlas metadata lists more structures, but broad catalogue coverage needs educational review before adding them.
 
+## Guided case practice
+
+A separate [guided-case workspace](cases.html) now provides three abdominal CT practice paths linked to public Radiopaedia case pages. Learners can optionally request the source-hosted case page in an embedded frame; if Radiopaedia or the browser blocks framing, the original page remains available in a separate tab, where its image series can be scrolled. This is a direct browser request, not a Radiopaedia API integration or a local copy of its images/text.
+
+The Findings, optional differential, Impression, and self-review checklist are CT Edu-authored. Drafts are kept in the current browser only (up to 20 cases); there is no account, upload, automated grading, or secure exam mode. Do not enter real patient details. The external source may disclose request metadata to Radiopaedia when the learner chooses to load it.
+
+These are educational prototype exercises, not reviewed or approved clinical cases. The self-review checklist is not an automatically graded or independently validated reference interpretation. The Radiopaedia media and exact item rights are not re-hosted by CT Edu; see [data and licence review](DATA_LICENSE_REVIEW.md). Do not mark the public-release gate complete until source-data redistribution, independent clinical review, legal/privacy review, and device/accessibility review have documented evidence.
+
 ## Dataset and release planning
 
 - [Dataset selection roadmap](DATASET_ROADMAP.md) tracks candidate CT sources for head, chest and abdomen, including exact licensing and validation gates. Candidate collections are not treated as approved teaching cases until reviewed.
