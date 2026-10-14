@@ -9,7 +9,7 @@ assert.match(page, /id="guided-case-rubric-progress"[^>]*role="status"[^>]*aria-
 assert.match(app, /items reviewed/);
 assert.match(app, /مورد بررسی شده/);
 assert.equal(cases.schemaVersion, 2);
-assert.equal(entries.length, 49, 'the four pre-existing cases and 45 new intake candidates should be present');
+assert.equal(entries.length, 52, 'the four pre-existing cases and 48 new intake candidates should be present');
 assert.equal(new Set(entries.map(item => item.id)).size, entries.length);
 
 for (const item of entries) {
@@ -53,7 +53,9 @@ assert.equal(cases.getById('abd-hbp-002').source.viewerUrl, 'https://radiopaedia
 assert.equal(cases.getById('abd-hbp-005').source.viewerUrl, 'https://radiopaedia.org/cases/35234/studies/36772?lang=us');
 assert.equal(cases.getById('abd-gi-010').source.url, 'https://radiopaedia.org/cases/61116?lang=us');
 assert.equal(cases.getById('abd-ru-007').source.url, 'https://radiopaedia.org/cases/147902?lang=us');
-assert.equal(cases.intake.addedCount, 45);
+assert.equal(cases.getById('abd-ru-008').source.url, 'https://radiopaedia.org/cases/78376?lang=us');
+assert.equal(cases.getById('abd-prv-008').source.url, 'https://radiopaedia.org/cases/215044?lang=us');
+assert.equal(cases.intake.addedCount, 48);
 assert.ok(app.includes('function getFilteredCases()'));
 assert.ok(app.includes('exclude source titles, citations, IDs and direct URLs from'));
 assert.ok(page.includes('id="guided-system-filter"'));
