@@ -550,6 +550,10 @@
 .guided-active-header h2 { margin:.35rem 0; }
 .guided-case-summary { margin:.4rem 0 0; max-width:76ch; color:var(--muted, #64748b); line-height:1.7; }
 .guided-case-level { flex-shrink:0; padding:.35rem .65rem; border:1px solid var(--line, #e1e6e7); border-radius:999px; color:var(--muted, #64748b); font-size:.78rem; }
+.guided-case-context-block { padding:1rem; border:1px solid var(--line, #e1e6e7); border-radius:14px; background:var(--paper, #f4f5f3); }
+.guided-case-context-block h3 { margin:0 0 .5rem; }
+.guided-case-context-block p { margin:0 0 .45rem; line-height:1.75; color:var(--ink, #172431); }
+.guided-case-context-block small { display:block; color:var(--muted, #71808d); line-height:1.6; }
 .guided-case-objective-block h3,
 .radiopaedia-reference h3,
 .guided-form-heading h3 { margin:0 0 .6rem; }
