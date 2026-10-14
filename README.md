@@ -44,7 +44,7 @@ The catalog is **not** a claim that those three additional image modules are imp
 
 ## Guided case practice
 
-A separate [guided-case workspace](cases.html) now provides three abdominal CT practice paths linked to public Radiopaedia case pages. Learners can optionally request the source-hosted case page in an embedded frame; if Radiopaedia or the browser blocks framing, the original page remains available in a separate tab, where its image series can be scrolled. This is a direct browser request, not a Radiopaedia API integration or a local copy of its images/text.
+A separate [guided-case workspace](cases.html) now provides three abdominal CT practice paths linked to public Radiopaedia case pages. Each pathway has a CT Edu-authored teaching context, a structured Findings/differential/Impression workflow, and a local self-review rubric. Learners can request the source-hosted case page in an embedded frame; if Radiopaedia or the browser blocks framing, the original page remains available in a separate tab, where its image series can be scrolled. Source pages may reveal the diagnosis, so this is not a blinded exam. This is a direct browser request, not a Radiopaedia API integration or a local copy of its images/text.
 
 The Findings, optional differential, Impression, and self-review checklist are CT Edu-authored. Drafts are kept in the current browser only (up to 20 cases); there is no account, upload, automated grading, or secure exam mode. Do not enter real patient details. The external source may disclose request metadata to Radiopaedia when the learner chooses to load it.
 
