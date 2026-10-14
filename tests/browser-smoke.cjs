@@ -472,8 +472,37 @@ const { chromium } = require('playwright');
     const guidedResponse = await guidedPage.goto('http://127.0.0.1:8765/cases.html', { waitUntil: 'domcontentloaded' });
     assert.ok(guidedResponse && guidedResponse.ok(), 'guided case workspace should return HTTP 200');
     await guidedPage.locator('#guided-case-list .guided-case-card').first().waitFor({ state: 'visible' });
+    assert.equal(await guidedPage.locator('#guided-case-list .guided-case-card').count(), 56,
+      'the existing four and 52 intake candidates should be listed');
+    assert.equal(await guidedPage.locator('#guided-case-count').textContent(), '56 از 56 کیس',
+      'the case count should reflect the full catalog in Persian');
+    await guidedPage.locator('#guided-system-filter').selectOption('renal-urinary');
+    assert.equal(await guidedPage.locator('#guided-case-list .guided-case-card').count(), 9,
+      'the renal/urinary filter should narrow the displayed case collection');
+    assert.equal(await guidedPage.locator('#guided-case-list .guided-case-card[data-case-category="renal-urinary"]').count(), 9,
+      'all visible results must belong to the selected primary category');
+    await guidedPage.locator('#guided-system-filter').selectOption('gastrointestinal');
+    await guidedPage.locator('#guided-case-search').fill('pneumobilia');
+    assert.equal(await guidedPage.locator('#guided-case-list .guided-case-card').count(), 1,
+      'text search and primary-system filters should intersect rather than override each other');
+    assert.equal(await guidedPage.locator('#guided-case-list .guided-case-card').first().getAttribute('data-case-id'), 'abd-gi-006',
+      'combined search should return the matching candidate only');
+    await guidedPage.locator('#guided-case-search').fill('');
+    await guidedPage.locator('#guided-system-filter').selectOption('');
+    await guidedPage.locator('#guided-level-filter').selectOption('foundations');
     assert.equal(await guidedPage.locator('#guided-case-list .guided-case-card').count(), 4,
-      'four source-referenced cases should be listed');
+      'the foundations difficulty filter should narrow cases independently of organ system');
+    await guidedPage.locator('#guided-level-filter').selectOption('');
+    await guidedPage.locator('#guided-case-search').fill('zz-no-such-teaching-topic-zz');
+    assert.equal(await guidedPage.locator('#guided-case-list .guided-case-card').count(), 0,
+      'an unmatched search should produce no cards');
+    assert.equal(await guidedPage.locator('#guided-case-empty').isVisible(), true,
+      'an unmatched search should announce an empty state');
+    assert.equal(await guidedPage.locator('#guided-active-case-panel').isVisible(), false,
+      'an empty result should not leave a stale active case displayed');
+    await guidedPage.locator('#guided-case-search').fill('');
+    assert.equal(await guidedPage.locator('#guided-case-list .guided-case-card').count(), 56,
+      'clearing search should restore the full collection');
     assert.equal(await guidedPage.locator('#radiopaedia-frame').getAttribute('src'), null,
       'the external source must not be requested before learner opt-in');
     const directViewerUrl = 'https://radiopaedia.org/cases/2582/studies/6276?lang=us#t=im&v1i=478&v1z=1&v2i=931&v2z=1';
@@ -490,6 +519,10 @@ const { chromium } = require('playwright');
     assert.equal(await guidedPage.locator('#radiopaedia-frame').getAttribute('src'), directViewerUrl,
       'the embedded viewer should load the exact study URL, including its selected-image fragment');
     await guidedPage.locator('#guided-case-list .guided-case-card').first().click();
+    assert.equal(await guidedPage.locator('#source-open-viewer-link').isVisible(), false,
+      'cases without a dedicated study URL should not show a direct-viewer action');
+    assert.equal(await guidedPage.locator('#source-open-link').getAttribute('href'), 'https://radiopaedia.org/cases/closed-loop-small-bowel-obstruction-5?lang=us',
+      'the original case page should remain available when no direct viewer URL exists');
     await guidedPage.locator('#learner-findings').fill('Dilated small bowel with a suspected transition point.');
     await guidedPage.locator('#learner-impression').fill('Small bowel obstruction; assess for closed-loop features and ischaemia.');
     await guidedPage.locator('#guided-case-form button[type="submit"]').click();
@@ -529,8 +562,38 @@ const { chromium } = require('playwright');
     await guidedPage.locator('#guided-case-list .guided-case-card').first().waitFor({ state: 'visible' });
     assert.match(await guidedPage.locator('#learner-findings').inputValue(), /Dilated small bowel/,
       'guided-case drafts should persist locally across reload');
+    await guidedPage.locator('#guided-case-list .guided-case-card[data-case-id="abd-hbp-002"]').click();
+    assert.equal(await guidedPage.locator('#source-case-title').textContent(), 'منبع تصویربرداری خارجی',
+      'a newly added case must not reveal its source diagnosis before report submission');
+    assert.equal(await guidedPage.locator('#source-article-link').isVisible(), false,
+      'unsubmitted source article details must remain hidden');
+    assert.equal(await guidedPage.locator('#source-open-link').getAttribute('href'), 'https://radiopaedia.org/cases/164871?lang=us',
+      'the original source page must remain accessible');
+    assert.equal(await guidedPage.locator('#source-open-viewer-link').getAttribute('href'), 'https://radiopaedia.org/cases/164871/studies/134067?lang=us',
+      'the extracted study URL must be used for the new case');
+    assert.equal(await guidedPage.locator('#radiopaedia-frame').getAttribute('src'), null,
+      'selecting another case must not load its external viewer before opt-in');
     assert.deepEqual(guidedErrors, [], 'guided case page should not emit uncaught JavaScript errors');
     await guidedPage.close();
+
+    const guidedDesktop = await browser.newPage({ viewport: { width: 1440, height: 1000 } });
+    const guidedDesktopErrors = [];
+    guidedDesktop.on('pageerror', function (error) { guidedDesktopErrors.push(error.message); });
+    const guidedDesktopResponse = await guidedDesktop.goto('http://127.0.0.1:8765/cases.html', { waitUntil: 'domcontentloaded' });
+    assert.ok(guidedDesktopResponse && guidedDesktopResponse.ok(), 'desktop guided case workspace should return HTTP 200');
+    await guidedDesktop.locator('#guided-case-list .guided-case-card').first().waitFor({ state: 'visible' });
+    assert.equal(await guidedDesktop.locator('#guided-case-list .guided-case-card').count(), 56,
+      'desktop catalog should expose the full case collection');
+    await guidedDesktop.locator('#guided-system-filter').selectOption('adrenal-endocrine');
+    assert.equal(await guidedDesktop.locator('#guided-case-list .guided-case-card').count(), 3,
+      'desktop system filtering should update case results');
+    const desktopLayout = await guidedDesktop.evaluate(function () {
+      return { width: window.innerWidth, documentWidth: document.documentElement.scrollWidth };
+    });
+    assert.ok(desktopLayout.documentWidth <= desktopLayout.width + 1,
+      'desktop guided case page must not overflow horizontally: ' + JSON.stringify(desktopLayout));
+    assert.deepEqual(guidedDesktopErrors, [], 'desktop guided case page should not emit uncaught JavaScript errors');
+    await guidedDesktop.close();
 
     const privacyPage = await browser.newPage({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 1, isMobile: true, hasTouch: true });
     const privacyErrors = [];

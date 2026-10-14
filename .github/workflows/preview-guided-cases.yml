@@ -58,6 +58,7 @@ jobs:
           cp src/styles.css "$preview/src/styles.css"
           cp src/guided-cases.js "$preview/src/guided-cases.js"
           cp src/data/guided-cases.js "$preview/src/data/guided-cases.js"
+          cp src/data/radiopaedia-abdominal-cases.js "$preview/src/data/radiopaedia-abdominal-cases.js"
 
           python - <<'PY'
           from pathlib import Path
@@ -90,6 +91,7 @@ jobs:
           test -s "$GITHUB_WORKSPACE/_site/preview/cases.html"
           test -s "$GITHUB_WORKSPACE/_site/preview/src/guided-cases.js"
           test -s "$GITHUB_WORKSPACE/_site/preview/src/data/guided-cases.js"
+          test -s "$GITHUB_WORKSPACE/_site/preview/src/data/radiopaedia-abdominal-cases.js"
           grep -q './preview/cases.html' "$GITHUB_WORKSPACE/_site/index.html"
           grep -q 'Guided cases preview' "$GITHUB_WORKSPACE/_site/index.html"
           ! find "$GITHUB_WORKSPACE/_site" -type f -name '*.zip' | grep -q .
@@ -141,4 +143,5 @@ jobs:
           fetch_with_retry "$base/" 'preview/cases.html'
           fetch_with_retry "$base/preview/cases.html" 'Guided cases'
           fetch_with_retry "$base/preview/src/data/guided-cases.js" 'rID-59227'
+          fetch_with_retry "$base/preview/src/data/radiopaedia-abdominal-cases.js" 'abd-frp-007'
           fetch_with_retry "$base/preview/src/guided-cases.js" 'Load the Radiopaedia-hosted content only when ready'

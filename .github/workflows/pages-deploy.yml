@@ -54,6 +54,8 @@ jobs:
           test -s _site/cases.html
           test -s _site/src/guided-cases.js
           test -s _site/src/data/guided-cases.js
+          test -s _site/src/data/radiopaedia-abdominal-cases.js
+          grep -q "abd-frp-007" _site/src/data/radiopaedia-abdominal-cases.js
           test -s _site/privacy.html
           test -s _site/favicon.svg
           test -s _site/src/styles.css
