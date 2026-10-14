@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#101923">
+  <meta name="description" content="CT Edu guided radiology case practice with a local reporting workflow and optional Radiopaedia source viewer.">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'self'; object-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: blob:; connect-src 'self'; form-action 'self'; frame-src https://radiopaedia.org https://www.radiopaedia.org">
+  <link rel="icon" type="image/svg+xml" href="./favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Vazirmatn:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./src/styles.css">
+  <title>Guided cases · CT Edu</title>
+</head>
+<body class="guided-cases-page">
+  <div class="app-shell guided-case-shell">
+    <header class="topbar">
+      <a class="brand" href="./index.html" aria-label="CT Edu home">
+        <span class="brand-mark" aria-hidden="true"><span></span><span></span><span></span></span>
+        <span class="brand-copy"><strong>CT <em>EDU</em></strong><small>ANATOMY LAB</small></span>
+      </a>
+      <div class="topbar-center"><span class="crumb-dot"></span><span data-fa="آموزش تصویربرداری" data-en="Imaging education">آموزش تصویربرداری</span><span class="crumb-slash">/</span><strong data-fa="کیس‌های هدایت‌شده" data-en="Guided cases">کیس‌های هدایت‌شده</strong></div>
+      <div class="topbar-actions">
+        <a class="case-library-home" href="./index.html" data-fa="بازگشت به آناتومی" data-en="Back to anatomy">بازگشت به آناتومی</a>
+        <button id="language-toggle" class="language-toggle" type="button" aria-label="Switch language">EN</button>
+      </div>
+    </header>
+
+    <main id="guided-case-app" class="main-wrap guided-case-main">
+      <section class="guided-case-intro" aria-labelledby="guided-case-page-title">
+        <div class="eyebrow"><span class="eyebrow-line"></span><span>CASE-BASED LEARNING · DRAFT REVIEW</span></div>
+        <h1 id="guided-case-page-title" data-fa="از تصویر تا گزارش" data-en="From images to a structured report">از تصویر تا گزارش</h1>
+        <p data-fa="یک کیس را انتخاب کن، سری تصاویر منبع را مرور کن و قبل از دیدن پاسخ منبع، Findings، تشخیص افتراقی و Impression خودت را بنویس. پاسخ و یادداشت‌ها فقط در همین مرورگر ذخیره می‌شوند." data-en="Choose a case, review its source image series, and draft your own Findings, differential, and Impression before reading the source discussion. Your work stays in this browser.">یک کیس را انتخاب کن، سری تصاویر منبع را مرور کن و قبل از دیدن پاسخ منبع، Findings، تشخیص افتراقی و Impression خودت را بنویس. پاسخ و یادداشت‌ها فقط در همین مرورگر ذخیره می‌شوند.</p>
+        <div class="guided-case-notice" role="note">
+          <strong data-fa="نسخهٔ آموزشی آزمایشی" data-en="Educational prototype">نسخهٔ آموزشی آزمایشی</strong>
+          <span data-fa="این تمرین‌ها ابزار تشخیص یا ارزیابی بالینی نیستند. توضیحات و چک‌لیست‌های CT Edu مستقل نوشته شده‌اند و تفسیر تأییدشدهٔ بیمار منبع محسوب نمی‌شوند." data-en="These exercises are not a diagnostic or clinical assessment tool. CT Edu prompts are independently authored and are not validated interpretations of the source patients.">این تمرین‌ها ابزار تشخیص یا ارزیابی بالینی نیستند. توضیحات و چک‌لیست‌های CT Edu مستقل نوشته شده‌اند و تفسیر تأییدشدهٔ بیمار منبع محسوب نمی‌شوند.</span>
+        </div>
+      </section>
+
+      <section class="guided-case-grid" aria-label="Guided case workspace">
+        <aside class="guided-case-sidebar panel" aria-labelledby="guided-case-list-title">
+          <div class="panel-heading">
+            <div><span class="panel-kicker">CASE LIBRARY</span><h2 id="guided-case-list-title" data-fa="انتخاب کیس" data-en="Choose a case">انتخاب کیس</h2></div>
+          </div>
+          <div id="guided-case-list" class="guided-case-list"></div>
+          <p class="guided-local-note" data-fa="حداکثر ۲۰ پیش‌نویس اخیر در فضای محلی این مرورگر نگه‌داری می‌شود. اطلاعات بیمار واقعی را وارد نکن." data-en="Up to 20 recent drafts are stored locally in this browser. Do not enter real patient information.">حداکثر ۲۰ پیش‌نویس اخیر در فضای محلی این مرورگر نگه‌داری می‌شود. اطلاعات بیمار واقعی را وارد نکن.</p>
+        </aside>
+
+        <div class="guided-case-workspace">
+          <section class="guided-active-case panel" aria-labelledby="guided-case-title">
+            <div class="guided-active-header">
+              <div>
+                <span class="panel-kicker" data-fa="تمرین ساختاریافته" data-en="STRUCTURED PRACTICE">تمرین ساختاریافته</span>
+                <h2 id="guided-case-title" tabindex="-1">درد شکم · مرور CT</h2>
+                <p id="guided-case-summary" class="guided-case-summary"></p>
+              </div>
+              <span id="guided-case-level" class="guided-case-level"></span>
+            </div>
+            <div class="guided-case-objective-block">
+              <h3 data-fa="هدف‌های مرور" data-en="Review objectives">هدف‌های مرور</h3>
+              <ul id="guided-case-objectives"></ul>
+            </div>
+
+            <section class="radiopaedia-reference" aria-labelledby="radiopaedia-source-heading">
+              <div class="radiopaedia-reference-heading">
+                <div>
+                  <span class="panel-kicker">EXTERNAL SOURCE · RADIOPAEDIA.ORG</span>
+                  <h3 id="radiopaedia-source-heading" data-fa="سری تصاویر منبع" data-en="Source image series">سری تصاویر منبع</h3>
+                  <p id="source-case-title">Closed loop small bowel obstruction</p>
+                  <p id="source-case-attribution" class="guided-source-attribution"></p>
+                </div>
+                <a id="source-open-link" class="guided-source-link" href="https://radiopaedia.org/" target="_blank" rel="noopener noreferrer">بازکردن کیس اصلی در Radiopaedia ↗</a>
+              </div>
+              <p class="guided-source-note" data-fa="نمایش در قاب داخلی ممکن است به‌وسیلهٔ Radiopaedia یا مرورگر مسدود شود. در آن حالت پیوند بالا را باز کن؛ پیمایش سری تصاویر در سایت اصلی انجام می‌شود. بارگذاری قاب فقط پس از انتخاب تو آغاز می‌شود." data-en="Radiopaedia or your browser may block embedded display. If so, open the original-case link above; scroll the series on the source site. The embedded request begins only after you choose to load it.">نمایش در قاب داخلی ممکن است به‌وسیلهٔ Radiopaedia یا مرورگر مسدود شود. در آن حالت پیوند بالا را باز کن؛ پیمایش سری تصاویر در سایت اصلی انجام می‌شود. بارگذاری قاب فقط پس از انتخاب تو آغاز می‌شود.</p>
+              <button id="source-load-button" class="guided-primary-button" type="button" data-fa="بارگذاری viewer خارجی" data-en="Load external viewer">بارگذاری viewer خارجی</button>
+              <p id="source-load-status" class="guided-source-status" role="status" aria-live="polite"></p>
+              <div id="radiopaedia-frame-wrap" class="radiopaedia-frame-wrap" hidden>
+                <iframe id="radiopaedia-frame" title="Externally hosted Radiopaedia case viewer" loading="lazy" referrerpolicy="no-referrer" sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox allow-presentation" allow="fullscreen"></iframe>
+              </div>
+              <div class="guided-source-footer">
+                <a id="source-article-link" href="https://radiopaedia.org/articles/small-bowel-obstruction?lang=us" target="_blank" rel="noopener noreferrer">مقالهٔ مرتبط ↗</a>
+                <span id="source-citation"></span>
+              </div>
+            </section>
+
+            <form id="guided-case-form" class="guided-case-form">
+              <div class="guided-form-heading">
+                <h3 data-fa="گزارش خودت را بنویس" data-en="Write your own report">گزارش خودت را بنویس</h3>
+                <p data-fa="ابتدا تصویر و زمینهٔ بالینی را مرور کن. یافته‌ها را توصیف کن و نتیجه را متناسب با شواهد بنویس." data-en="Review the images and clinical context first. Describe the findings and keep the impression proportionate to the evidence.">ابتدا تصویر و زمینهٔ بالینی را مرور کن. یافته‌ها را توصیف کن و نتیجه را متناسب با شواهد بنویس.</p>
+              </div>
+              <label for="learner-findings"><span data-fa="Findings · یافته‌ها" data-en="Findings">Findings · یافته‌ها</span><textarea id="learner-findings" maxlength="4000" rows="5" required placeholder="..." data-fa-placeholder="یافته‌های تصویر را به ترتیب سیستماتیک ثبت کن…" data-en-placeholder="Record the imaging findings systematically…"></textarea></label>
+              <label for="learner-differential"><span data-fa="Differential · تشخیص‌های افتراقی (اختیاری)" data-en="Differential diagnosis (optional)">Differential · تشخیص‌های افتراقی (اختیاری)</span><textarea id="learner-differential" maxlength="4000" rows="3" placeholder="..." data-fa-placeholder="تشخیص‌های جایگزین و شواهد هر کدام…" data-en-placeholder="Alternatives and evidence for each…"></textarea></label>
+              <label for="learner-impression"><span data-fa="Impression · جمع‌بندی" data-en="Impression">Impression · جمع‌بندی</span><textarea id="learner-impression" maxlength="4000" rows="3" required placeholder="..." data-fa-placeholder="نتیجهٔ اصلی، شدت و عوارض مهم…" data-en-placeholder="Primary conclusion, severity, and key complications…"></textarea></label>
+              <div class="guided-form-actions">
+                <button class="guided-primary-button" type="submit" data-fa="ثبت و مرور چک‌لیست" data-en="Submit and review checklist">ثبت و مرور چک‌لیست</button>
+                <button class="guided-secondary-button" id="clear-case-draft" type="button" data-fa="حذف پیش‌نویس" data-en="Delete draft">حذف پیش‌نویس</button>
+                <span id="draft-status" role="status" aria-live="polite"></span>
+              </div>
+              <p id="guided-case-submit-status" class="guided-submit-status" role="status" aria-live="polite"></p>
+            </form>
+
+            <section id="guided-case-rubric-section" class="guided-case-rubric-section" aria-labelledby="guided-case-rubric-title" hidden>
+              <div class="guided-form-heading">
+                <span class="panel-kicker" data-fa="خودارزیابی · بدون نمرهٔ خودکار" data-en="SELF-REVIEW · NO AUTOMATIC SCORE">خودارزیابی · بدون نمرهٔ خودکار</span>
+                <h3 id="guided-case-rubric-title" data-fa="پیش از پایان، این موارد را بررسی کن" data-en="Review these items before finishing">پیش از پایان، این موارد را بررسی کن</h3>
+                <p data-fa="تیک‌زدن یعنی خودت بررسی کرده‌ای؛ صحت گزارش از روی متن به‌صورت خودکار تأیید نمی‌شود." data-en="Checking an item records your own review; the app does not automatically validate your report.">تیک‌زدن یعنی خودت بررسی کرده‌ای؛ صحت گزارش از روی متن به‌صورت خودکار تأیید نمی‌شود.</p>
+              </div>
+              <div id="guided-case-rubric" class="guided-case-rubric"></div>
+              <p id="guided-case-disclaimer" class="guided-case-disclaimer"></p>
+            </section>
+          </section>
+        </div>
+      </section>
+
+      <footer class="page-footer guided-case-footer">
+        <span>CT EDU <i>·</i> GUIDED CASES</span>
+        <a href="./privacy.html" data-fa="حریم خصوصی" data-en="Privacy">حریم خصوصی</a>
+        <a href="./DATA_LICENSE_REVIEW.md" data-fa="بررسی مجوز داده‌ها" data-en="Data license review">بررسی مجوز داده‌ها</a>
+        <a href="./index.html" data-fa="بازگشت به CT Edu" data-en="Back to CT Edu">بازگشت به CT Edu</a>
+      </footer>
+    </main>
+  </div>
+  <script defer src="./src/data/guided-cases.js"></script>
+  <script defer src="./src/guided-cases.js"></script>
+</body>
+</html>
