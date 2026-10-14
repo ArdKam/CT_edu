@@ -524,6 +524,10 @@ const { chromium } = require('playwright');
       'the lipoma source should load its recorded study-page URL, not the generic case page');
     assert.equal(await guidedPage.locator('#radiopaedia-frame-wrap').isVisible(), true,
       'the frame should appear after explicit opt-in');
+    await guidedPage.frameLocator('#radiopaedia-frame').locator('#mock-source-series').waitFor({ state: 'visible' });
+    assert.equal(await guidedPage.frameLocator('#radiopaedia-frame').locator('#mock-source-series').textContent(),
+      'Mock external Radiopaedia series',
+      'the previously working study route should render embedded frame content, not just update an href');
 
     await guidedPage.locator('#guided-case-list .guided-case-card').first().click();
     assert.equal(await guidedPage.locator('#source-open-study-link').isVisible(), false,
@@ -538,6 +542,10 @@ const { chromium } = require('playwright');
     assert.equal(await guidedPage.locator('#radiopaedia-frame').getAttribute('src'), 'https://radiopaedia.org/cases/closed-loop-small-bowel-obstruction-5?lang=us',
       'the original hand-curated case should retain its prior source route');
     assert.equal(await guidedPage.locator('#radiopaedia-frame-wrap').isVisible(), true);
+    await guidedPage.frameLocator('#radiopaedia-frame').locator('#mock-source-series').waitFor({ state: 'visible' });
+    assert.equal(await guidedPage.frameLocator('#radiopaedia-frame').locator('#mock-source-series').textContent(),
+      'Mock external Radiopaedia series',
+      'the prior legacy source route should also render frame content after user opt-in');
 
     await guidedPage.locator('#learner-findings').fill('Dilated small bowel with a suspected transition point.');
     await guidedPage.locator('#learner-impression').fill('Small bowel obstruction; assess for closed-loop features and ischaemia.');
