@@ -170,6 +170,60 @@
         fa: 'این چک‌لیست مستقل و آموزشی است؛ تفسیر تأییدشدهٔ بیمار منبع نیست.',
         en: 'This independent teaching checklist is not a validated interpretation of the source patient.'
       }
+    },
+    {
+      id: 'ascending-colon-lipoma-ct',
+      level: 'intermediate',
+      clinicalContext: {
+        fa: 'زمینهٔ آموزشی: یک ضایعهٔ داخل‌لومنی در کولون صعودی در CT بررسی می‌شود. ابتدا ویژگی‌های قابل مشاهده را مستقل توصیف کن؛ سپس ترکیب ضایعه و عوارض احتمالی را ارزیابی کن.',
+        en: 'Teaching context: an intraluminal lesion in the ascending colon is being assessed on CT. Describe the observable imaging features independently, then assess composition and potential complications.'
+      },
+      modality: 'CT',
+      region: 'abdomen',
+      title: { fa: 'ضایعهٔ کولون صعودی · CT', en: 'Ascending colon lesion · CT' },
+      summary: {
+        fa: 'محل و شکل ضایعه، دانسیته و ارتباط آن با دیوارهٔ کولون را ارزیابی کن؛ سپس عوارض احتمالی را بررسی کن.',
+        en: 'Assess location, morphology, attenuation, and relationship to the colonic wall, then look for complications.'
+      },
+      source: {
+        title: 'Ascending colon lipoma',
+        caseId: '2582',
+        url: 'https://radiopaedia.org/cases/ascending-colon-lipoma?lang=us',
+        viewerUrl: 'https://radiopaedia.org/cases/2582/studies/6276?lang=us#t=im&v1i=478&v1z=1&v2i=931&v2z=1',
+        citation: 'Radiopaedia.org. Ascending colon lipoma. Case 2582.',
+        articleUrl: 'https://radiopaedia.org/articles/gastrointestinal-tract-lipomas?lang=us',
+        articleTitle: 'Gastrointestinal tract lipomas'
+      },
+      objectives: {
+        fa: ['محل، اندازه، شکل و رابطهٔ ضایعه با لومن و دیواره را مشخص کن.', 'دانسیته را در صورت امکان با اندازه‌گیری HU توصیف کن و وجود چربی را از سایر ترکیب‌ها تفکیک کن.', 'انسداد، انواژیناسیون، التهاب یا سایر عوارض قابل مشاهده را بررسی کن.'],
+        en: ['Localise the lesion and describe size, shape, and relationship to the lumen and bowel wall.', 'Characterise attenuation, using HU measurements where feasible, and distinguish fat from other tissue components.', 'Assess for obstruction, intussusception, inflammation, or other visible complications.']
+      },
+      rubric: [
+        {
+          id: 'lesion-location',
+          title: { fa: 'محل و مورفولوژی ضایعه', en: 'Lesion location and morphology' },
+          cue: { fa: 'بخش درگیر کولون، شکل، حدود، اندازه و جهت رشد داخل‌لومنی را توصیف کن.', en: 'Describe the colonic segment, shape, margins, size, and intraluminal growth pattern.' }
+        },
+        {
+          id: 'attenuation',
+          title: { fa: 'دانسیته و ترکیب بافتی', en: 'Attenuation and tissue composition' },
+          cue: { fa: 'در صورت امکان ROI مناسب بگذار؛ دانسیتهٔ چربی، یکنواختی و هر جزء غیرچربی را بررسی کن.', en: 'Use an appropriate ROI if feasible; assess fat attenuation, homogeneity, and any non-fat component.' }
+        },
+        {
+          id: 'differential',
+          title: { fa: 'تشخیص افتراقی متناسب با تصویر', en: 'Imaging-based differential diagnosis' },
+          cue: { fa: 'ویژگی‌های مؤید ضایعهٔ چربی‌دار را با پولیپ، تودهٔ نئوپلاستیک یا محتویات داخل لومن مقایسه کن.', en: 'Compare features of a fat-containing lesion with a polyp, neoplastic mass, or intraluminal contents.' }
+        },
+        {
+          id: 'complications',
+          title: { fa: 'عوارض و جمع‌بندی', en: 'Complications and impression' },
+          cue: { fa: 'اتساع پروگزیمال، محل انسداد، انواژیناسیون و تغییرات اطراف را بررسی کن و میزان قطعیت را با شواهد تطبیق بده.', en: 'Check for proximal dilatation, obstruction, intussusception, and surrounding changes; keep certainty proportionate to the evidence.' }
+        }
+      ],
+      disclaimer: {
+        fa: 'این چک‌لیست مستقل و آموزشی است؛ تفسیر تأییدشدهٔ بیمار منبع نیست.',
+        en: 'This independent teaching checklist is not a validated interpretation of the source patient.'
+      }
     }
   ];
 

@@ -472,15 +472,31 @@ const { chromium } = require('playwright');
     const guidedResponse = await guidedPage.goto('http://127.0.0.1:8765/cases.html', { waitUntil: 'domcontentloaded' });
     assert.ok(guidedResponse && guidedResponse.ok(), 'guided case workspace should return HTTP 200');
     await guidedPage.locator('#guided-case-list .guided-case-card').first().waitFor({ state: 'visible' });
-    assert.equal(await guidedPage.locator('#guided-case-list .guided-case-card').count(), 3,
-      'three source-referenced cases should be listed');
+    assert.equal(await guidedPage.locator('#guided-case-list .guided-case-card').count(), 4,
+      'four source-referenced cases should be listed');
     assert.equal(await guidedPage.locator('#radiopaedia-frame').getAttribute('src'), null,
       'the external source must not be requested before learner opt-in');
+    const directViewerUrl = 'https://radiopaedia.org/cases/2582/studies/6276?lang=us#t=im&v1i=478&v1z=1&v2i=931&v2z=1';
+    await guidedPage.locator('#guided-case-list .guided-case-card').nth(3).click();
+    assert.equal((await guidedPage.locator('#source-case-title').textContent()).toLowerCase().includes('lipoma'), false,
+      'the local source title should not reveal the diagnosis before the learner submits a report');
+    assert.equal(await guidedPage.locator('#source-article-link').isVisible(), false,
+      'the related article should stay hidden before the learner submits a report');
+    assert.equal(await guidedPage.locator('#source-open-viewer-link').getAttribute('href'), directViewerUrl,
+      'the lipoma case should expose its dedicated viewer URL');
+    assert.equal(await guidedPage.locator('#source-open-viewer-link').isVisible(), true,
+      'the direct viewer link should be visible when a study URL exists');
+    await guidedPage.locator('#source-load-button').click();
+    assert.equal(await guidedPage.locator('#radiopaedia-frame').getAttribute('src'), directViewerUrl,
+      'the embedded viewer should load the exact study URL, including its selected-image fragment');
+    await guidedPage.locator('#guided-case-list .guided-case-card').first().click();
     await guidedPage.locator('#learner-findings').fill('Dilated small bowel with a suspected transition point.');
     await guidedPage.locator('#learner-impression').fill('Small bowel obstruction; assess for closed-loop features and ischaemia.');
     await guidedPage.locator('#guided-case-form button[type="submit"]').click();
     assert.equal(await guidedPage.locator('#guided-case-rubric-section').isVisible(), true,
       'submitting findings and impression should reveal the self-review rubric');
+    assert.equal(await guidedPage.locator('#source-article-link').isVisible(), true,
+      'source details should become available after the learner submits a report');
     assert.equal(await guidedPage.locator('#guided-case-rubric .guided-rubric-item').count(), 4,
       'case-specific rubric should be displayed');
     assert.equal(await guidedPage.locator('#guided-case-rubric-progress').getAttribute('aria-live'), 'polite',

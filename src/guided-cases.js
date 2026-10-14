@@ -137,7 +137,8 @@
   function renderSource(item) {
     const frame = el('radiopaedia-frame');
     const frameWrap = el('radiopaedia-frame-wrap');
-    const sameSourceAlreadyLoaded = frame.getAttribute('src') === item.source.url;
+    const viewerUrl = item.source.viewerUrl || item.source.url;
+    const sameSourceAlreadyLoaded = frame.getAttribute('src') === viewerUrl;
     if (!sameSourceAlreadyLoaded) {
       frameWrap.hidden = true;
       frame.removeAttribute('src');
@@ -151,15 +152,27 @@
       state.iframeLoaded = true;
       el('source-load-button').disabled = true;
       el('source-load-status').textContent = lang() === 'fa'
-        ? 'درخواست viewer خارجی ارسال شده است؛ اگر قاب نمایش داده نشد، از پیوند کیس اصلی استفاده کن.'
-        : 'External viewer requested. If the frame is blocked, use the original-case link.';
+        ? 'درخواست Viewer خارجی ارسال شده است؛ اگر قاب نمایش داده نشد، Viewer را در تب جدید باز کن. پیوند کیس اصلی هم در دسترس است.'
+        : 'External viewer requested. If framing is blocked, open the viewer in a new tab. The original-case link is also available.';
     }
-    el('source-case-title').textContent = item.source.title;
-    el('source-case-attribution').textContent = (lang() === 'fa' ? 'مشارکت‌کننده: ' : 'Contributed by: ') + item.source.contributor + ' · ' + item.source.rid;
+    const sourceDetailsRevealed = Boolean(getDraft(item.id).submitted);
+    el('source-case-title').textContent = sourceDetailsRevealed
+      ? item.source.title
+      : (lang() === 'fa' ? 'منبع تصویربرداری خارجی' : 'External imaging source');
+    const attribution = item.source.contributor
+      ? (lang() === 'fa' ? 'مشارکت‌کننده: ' : 'Contributed by: ') + item.source.contributor + (item.source.rid ? ' · ' + item.source.rid : '')
+      : (lang() === 'fa' ? 'شناسهٔ کیس: ' : 'Case ID: ') + (item.source.caseId || item.source.rid || '');
+    el('source-case-attribution').textContent = attribution;
     el('source-open-link').href = item.source.url;
+    const viewerLink = el('source-open-viewer-link');
+    viewerLink.hidden = !item.source.viewerUrl;
+    viewerLink.href = viewerUrl;
+    viewerLink.textContent = lang() === 'fa' ? 'بازکردن Viewer در تب جدید ↗' : 'Open viewer in new tab ↗';
     el('source-open-link').textContent = lang() === 'fa' ? 'بازکردن کیس اصلی در Radiopaedia ↗' : 'Open original Radiopaedia case ↗';
     el('source-article-link').href = item.source.articleUrl;
+    el('source-article-link').hidden = !sourceDetailsRevealed;
     el('source-article-link').textContent = (lang() === 'fa' ? 'مقالهٔ مرتبط: ' : 'Related article: ') + item.source.articleTitle;
+    el('source-citation').hidden = !sourceDetailsRevealed;
     el('source-citation').textContent = item.source.citation;
   }
 
@@ -200,16 +213,17 @@
     if (!item) return;
     const frame = el('radiopaedia-frame');
     const wrap = el('radiopaedia-frame-wrap');
+    const viewerUrl = item.source.viewerUrl || item.source.url;
     frame.title = lang() === 'fa'
       ? 'نمای میزبان‌شدهٔ کیس در Radiopaedia؛ قاب خارجی و مستقل'
       : 'Externally hosted Radiopaedia case viewer';
-    frame.src = item.source.url;
+    frame.src = viewerUrl;
     wrap.hidden = false;
     state.iframeLoaded = true;
     el('source-load-button').disabled = true;
     el('source-load-status').textContent = lang() === 'fa'
-      ? 'اگر قاب خالی ماند یا خطای دسترسی دیدی، از پیوند «بازکردن کیس اصلی» استفاده کن؛ سری تصاویر در سایت اصلی پیمایش می‌شود.'
-      : 'If the frame is blank or blocked, use “Open original Radiopaedia case”; scrollable image series remain on the original site.';
+      ? 'اگر قاب خالی ماند یا خطای دسترسی دیدی، Viewer را در تب جدید باز کن؛ پیوند کیس اصلی نیز در دسترس است.'
+      : 'If the frame is blank or blocked, open the viewer in a new tab; the original-case link remains available.';
   }
 
   function submitDraft(event) {
@@ -232,6 +246,7 @@
     draft.submitted = true;
     draft.savedAt = Date.now();
     persistDrafts();
+    renderSource(item);
     renderRubric(item, draft);
     el('guided-case-rubric-section').hidden = false;
     el('guided-case-submit-status').textContent = lang() === 'fa'
