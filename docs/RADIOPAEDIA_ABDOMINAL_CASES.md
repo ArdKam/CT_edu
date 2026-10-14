@@ -10,14 +10,14 @@
 |---|---:|---:|---:|
 | Gastrointestinal | 4 | 10 | 14 |
 | Hepatobiliary & pancreas | 0 | 11 | 11 |
-| Renal & urinary | 0 | 7 | 7 |
+| Renal & urinary | 0 | 9 | 9 |
 | Adrenal & endocrine | 0 | 3 | 3 |
 | Female reproductive & pelvis | 0 | 4 | 4 |
 | Male genitourinary | 0 | 3 | 3 |
-| Peritoneum, retroperitoneum & vessels | 0 | 7 | 7 |
-| **Total** | **4** | **45** | **49** |
+| Peritoneum, retroperitoneum & vessels | 0 | 8 | 8 |
+| **Total** | **4** | **48** | **52** |
 
-The new 45 records are additional candidates discovered through targeted organ-system searches. They are not the result of an exhaustive survey of Radiopaedia. The requested ceiling of 20 cases per category is a maximum, not an instruction to pad categories. Current overall catalogue counts remain below 20 in each system: gastrointestinal 14 (6 below 20), hepatobiliary/pancreas 11 (9 below), renal/urinary 7 (13 below), adrenal/endocrine 3 (17 below), female reproductive/pelvic 4 (16 below), male genitourinary 3 (17 below), and peritoneal/retroperitoneal/vascular 7 (13 below). These are candidate counts, not fully verified counts. Since live CT images/viewers could not be checked, the strict live-verification count is 0 in every category and the verification shortfall remains unresolved.
+The new 48 records are additional candidates discovered through targeted organ-system searches. They are not the result of an exhaustive survey of Radiopaedia. The requested ceiling of 20 cases per category is a maximum, not an instruction to pad categories. Current overall catalogue counts are gastrointestinal 14 (10 new candidates; 10 short of the 20-new-case aim), hepatobiliary/pancreas 11 (11 new; 9 short), renal/urinary 9 (9 new; 11 short), adrenal/endocrine 3 (3 new; 17 short), female reproductive/pelvic 4 (4 new; 16 short), male genitourinary 3 (3 new; 17 short), and peritoneal/retroperitoneal/vascular 8 (8 new; 12 short). These are candidate counts, not verified CT-image counts. Since live CT images/viewers could not be checked, the strict live-verification count is 0 in every category and the verification shortfall remains unresolved.
 
 ## Selection order and interpretation of status
 
@@ -65,6 +65,8 @@ All source-page links use numeric Radiopaedia case permalinks. The UI shows non-
 | 5 | Renal & urinary | `abd-ru-005` | [Case 240187](https://radiopaedia.org/cases/240187?lang=us) | Not extracted | `partially_verified` — CT urography describes obstructing ureteric stone and delayed nephrogram; live images not checked |
 | 6 | Renal & urinary | `abd-ru-006` | [Case 147046](https://radiopaedia.org/cases/147046?lang=us) | Not extracted | `partially_verified` — non-contrast MDCT with ureteric calculus and upstream hydroureteronephrosis described; live viewer not checked |
 | 7 | Renal & urinary | `abd-ru-007` | [Case 147902](https://radiopaedia.org/cases/147902?lang=us) | Not extracted | `partially_verified` — CT with renal enlargement, obstructing calculi and perinephric change described; live image loading not checked |
+| 8 | Renal & urinary | `abd-ru-008` | [Case 78376](https://radiopaedia.org/cases/78376?lang=us) | Not extracted | `partially_verified` — indexed CT describes large renal mass with renal-vein tumour thrombus near the IVC; live image loading not checked |
+| 9 | Renal & urinary | `abd-ru-009` | [Case 100139](https://radiopaedia.org/cases/100139?lang=us) | Not extracted | `partially_verified` — indexed CT stack describes contrast-enhanced renal mass and perirenal/sinus involvement; live viewer not checked |
 | 1 | Adrenal & endocrine | `abd-ae-001` | [Case 83258](https://radiopaedia.org/cases/83258?lang=us) | Not extracted | `partially_verified` — CT described in indexed content; no live image check |
 | 2 | Adrenal & endocrine | `abd-ae-002` | [Case 33078](https://radiopaedia.org/cases/33078?lang=us) | Not extracted | `partially_verified` — non-contrast/arterial/delayed CT described; viewer not opened |
 | 3 | Adrenal & endocrine | `abd-ae-003` | [Case 87281](https://radiopaedia.org/cases/87281?lang=us) | Not extracted | `partially_verified` — non-contrast, arterial, portal-venous, delayed and sagittal CT stacks described; live images not checked |
@@ -82,6 +84,7 @@ All source-page links use numeric Radiopaedia case permalinks. The UI shows non-
 | 5 | Peritoneum, retroperitoneum & vessels | `abd-prv-005` | [Case 55326](https://radiopaedia.org/cases/55326?lang=us) | Not extracted | `partially_verified` — indexed case discussion describes mesenteric venous thrombosis with small-bowel ischaemia; live viewer not checked |
 | 6 | Peritoneum, retroperitoneum & vessels | `abd-prv-006` | [Case 28571](https://radiopaedia.org/cases/28571?lang=us) | Not extracted | `partially_verified` — initial/delayed CT stacks after blunt trauma are indexed; live images not checked |
 | 7 | Peritoneum, retroperitoneum & vessels | `abd-prv-007` | [Case 59801](https://radiopaedia.org/cases/59801?lang=us) | Not extracted | `partially_verified` — CT stack described for bowel obstruction secondary to peritoneal disease; live viewer not checked |
+| 8 | Peritoneum, retroperitoneum & vessels | `abd-prv-008` | [Case 215044](https://radiopaedia.org/cases/215044?lang=us) | Not extracted | `partially_verified` — indexed case reports extensive bowel ischaemia, pneumatosis and portal venous gas on CT; live stack not checked |
 
 ## Preserved records
 
