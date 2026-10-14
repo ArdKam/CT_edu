@@ -67,7 +67,7 @@ The in-app notice attributes the SPL Abdominal Atlas and describes the web-displ
 
 ## External Radiopaedia references — added 14 October 2026
 
-CT Edu now provides three guided case exercises that link to public Radiopaedia case pages. The case metadata records the displayed case title, contributor, rID, source URL, and related article URL. The exercise prompts and self-review rubric are authored for CT Edu; the repository does not copy Radiopaedia case descriptions, answer text, series images, image URLs, or patient metadata into the local catalogue.
+CT Edu now provides four guided case exercises that link to public Radiopaedia case pages. The case metadata records the displayed case title, contributor, rID, source URL, and related article URL. The exercise prompts and self-review rubric are authored for CT Edu; the repository does not copy Radiopaedia case descriptions, answer text, series images, image URLs, or patient metadata into the local catalogue.
 
 The case page offers an explicit, user-initiated iframe request to the original Radiopaedia case page. Radiopaedia or the browser may refuse framing; the supported fallback is to open the original case page in a separate tab and scroll the series on that site. This is not an API client, scraper, proxy, or local mirror. No guarantee is made that third-party framing is available, permitted for every case, or stable over time.
 
