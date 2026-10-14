@@ -25,19 +25,21 @@ This checklist separates code that exists from educational, legal, and release r
 
 See [DATASET_ROADMAP.md](DATASET_ROADMAP.md) for reviewed candidate sources and their exact access/redistribution caveats. Do not mark head/chest coverage complete merely because candidate datasets have been identified.
 
-## Current verification snapshot — 2026-10-14
+## Current verification snapshot — 2026-10-14 (updated after guided-case preview)
 
-- Base inspected: `main @ a54bc01bdbda0ae2509f1e44a9f50d14c0371676`.
-- The merged main CI run reported 65 Node tests passing, source-volume and labelmap checks passing, plus Chromium, Firefox, and WebKit automated smoke checks passing on emulated viewport profiles.
-- The Pages build artifact was created successfully; the public deploy job was skipped by the fail-closed release latch. The current public URL has not been proven to serve this revision.
-- The guided-case workspace is being added on a feature branch. Radiopaedia pages are references loaded only by explicit learner action; no Radiopaedia text or images are bundled. Embedded rendering is best-effort and must retain the external-link fallback.
-- This snapshot is technical evidence only. It is not an expert sign-off or a legal determination.
-
+- Current `main` head: `d0b1cb71cf80d3c1735b2b891ac2e50375434233`. The guided-case implementation was merged in [PR #2](https://github.com/ArdKam/CT_edu/pull/2); the later head adds a main-only preview publication workflow.
+- The full [CT Edu checks run](https://github.com/ArdKam/CT_edu/actions/runs/38543661457) reported success for the merged implementation: Node tests, source-volume/labelmap validation, and Chromium/Firefox/WebKit smoke checks. This is the run recorded for the feature merge; it should not be described as a fresh full-suite result for every later SHA.
+- The [guided-case preview deployment run](https://github.com/ArdKam/CT_edu/actions/runs/38545091431) completed both build and deploy jobs and passed live HTTP/content probes for the root navigation, preview page, case metadata, and guided-case script.
+- **Live preview:** https://ardkam.github.io/CT_edu/preview/cases.html. The root URL https://ardkam.github.io/CT_edu/ retains the `a54bc01` stable baseline feature set with an added preview link; the new guided-case workspace is served from `/preview/cases.html`. This is intentionally not represented as a full production release.
+- Automated checks establish technical behavior only. No radiologist/anatomy-educator approval, Radiopaedia item-specific permission determination, source ZIP redistribution clearance, jurisdiction-specific legal review, physical-device sign-off, or full accessibility review has been recorded here.
 ## Release blockers
 
 ### Git / deployment
 
 - [x] PR #1 is merged into `main` at the current baseline (`a54bc01` at the time of this review). The prior Draft-PR status was stale. This does not close any medical, rights, privacy, device, or release-deployment gate.
+- [x] Guided-case workspace and its local-draft/self-review workflow are merged into `main` (PR #2); the dedicated preview route has been published and checked by [workflow run 38545091431](https://github.com/ArdKam/CT_edu/actions/runs/38545091431).
+- [x] Keep the stable root app distinct from the preview until release gates pass. The preview workflow rebuilds the `a54bc01` baseline and adds a link to `/preview/cases.html`; it does not promote all current `main` code to the root URL.
+- [ ] Promote the guided-case workspace to the root production experience only after required medical, legal, privacy, accessibility and device evidence is recorded.
 - [ ] Keep `CT_EDU_PUBLIC_RELEASE_APPROVED` unset while any release blocker remains. Only after the medical, legal, privacy, accessibility, and device-review evidence is recorded should the maintainer set it to `true`; then confirm the resulting `main` SHA, Actions tests, Pages deploy, and live endpoint checks.
 - [ ] Review public repository contents: the source ZIP archives are present in the repository even though the Pages artifact excludes them. Decide whether their continued public distribution is permitted by the exact source and third-party licenses.
 
@@ -60,7 +62,7 @@ See [DATASET_ROADMAP.md](DATASET_ROADMAP.md) for reviewed candidate sources and 
 
 ### Educational product completeness
 
-- [ ] Implement case-level clinical context, structured systematic-review prompts, abnormal-finding capture, diagnosis/differential, and structured Findings/Impression writing. Local bookmarking does not complete the guided-case workflow.
+- [x] Implement the guided-case workflow scaffold: bilingual teaching context, systematic-review objectives, Findings/differential/Impression fields, local drafts, and self-review checklist. This records learner self-attestation only; it does not provide a reviewed reference interpretation or automatic grading.
 - [x] Add a bilingual guided-case workspace with structured Findings/differential/Impression fields, locally saved drafts, self-review checklists, Radiopaedia source references, explicit user opt-in before requesting an embedded external page, and an external-link fallback. This is workflow scaffolding only; the prompts are not validated interpretations and must not be treated as approved cases.
 - [x] Add a draft case-authoring template and validator that require provenance, image-integrity metadata, bilingual guided steps, rubric structure, independent review records, privacy checks, and explicit publication approval. The template is empty and is not an approved educational case.
 - [ ] Create reviewed cases with an explicit rubric, teaching rationale, key-finding annotations, accepted alternatives, and provenance.
