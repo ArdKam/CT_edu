@@ -474,7 +474,7 @@ const { chromium } = require('playwright');
     await guidedPage.locator('#guided-case-list .guided-case-card').first().waitFor({ state: 'visible' });
     assert.equal(await guidedPage.locator('#guided-case-list .guided-case-card').count(), 26,
       'the existing four and 22 intake cases should be listed');
-    assert.equal(await guidedPage.locator('#guided-case-count').textContent(), '25 از 25 کیس',
+    assert.equal(await guidedPage.locator('#guided-case-count').textContent(), '26 از 26 کیس',
       'the case count should reflect the full catalog in Persian');
     await guidedPage.locator('#guided-system-filter').selectOption('renal-urinary');
     assert.equal(await guidedPage.locator('#guided-case-list .guided-case-card').count(), 4,
