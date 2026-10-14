@@ -155,7 +155,10 @@
         ? 'درخواست Viewer خارجی ارسال شده است؛ اگر قاب نمایش داده نشد، Viewer را در تب جدید باز کن. پیوند کیس اصلی هم در دسترس است.'
         : 'External viewer requested. If framing is blocked, open the viewer in a new tab. The original-case link is also available.';
     }
-    el('source-case-title').textContent = item.source.title;
+    const sourceDetailsRevealed = Boolean(getDraft(item.id).submitted);
+    el('source-case-title').textContent = sourceDetailsRevealed
+      ? item.source.title
+      : (lang() === 'fa' ? 'منبع تصویربرداری خارجی' : 'External imaging source');
     const attribution = item.source.contributor
       ? (lang() === 'fa' ? 'مشارکت‌کننده: ' : 'Contributed by: ') + item.source.contributor + (item.source.rid ? ' · ' + item.source.rid : '')
       : (lang() === 'fa' ? 'شناسهٔ کیس: ' : 'Case ID: ') + (item.source.caseId || item.source.rid || '');
@@ -167,7 +170,9 @@
     viewerLink.textContent = lang() === 'fa' ? 'بازکردن Viewer در تب جدید ↗' : 'Open viewer in new tab ↗';
     el('source-open-link').textContent = lang() === 'fa' ? 'بازکردن کیس اصلی در Radiopaedia ↗' : 'Open original Radiopaedia case ↗';
     el('source-article-link').href = item.source.articleUrl;
+    el('source-article-link').hidden = !sourceDetailsRevealed;
     el('source-article-link').textContent = (lang() === 'fa' ? 'مقالهٔ مرتبط: ' : 'Related article: ') + item.source.articleTitle;
+    el('source-citation').hidden = !sourceDetailsRevealed;
     el('source-citation').textContent = item.source.citation;
   }
 
@@ -241,6 +246,7 @@
     draft.submitted = true;
     draft.savedAt = Date.now();
     persistDrafts();
+    renderSource(item);
     renderRubric(item, draft);
     el('guided-case-rubric-section').hidden = false;
     el('guided-case-submit-status').textContent = lang() === 'fa'
