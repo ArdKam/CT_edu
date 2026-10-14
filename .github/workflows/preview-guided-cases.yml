@@ -144,4 +144,4 @@ jobs:
           fetch_with_retry "$base/preview/cases.html" 'Guided cases'
           fetch_with_retry "$base/preview/src/data/guided-cases.js" 'rID-59227'
           fetch_with_retry "$base/preview/src/data/radiopaedia-abdominal-cases.js" 'abd-frp-007'
-          fetch_with_retry "$base/preview/src/guided-cases.js" 'A standalone, verified in-app viewer is not available in CT Edu yet.'
+          fetch_with_retry "$base/preview/src/guided-cases.js" 'function getEmbeddableSourceUrl(item)'
