@@ -618,3 +618,7 @@
   .guided-case-shell * { scroll-behavior:auto !important; animation-duration:.01ms !important; transition-duration:.01ms !important; }
 }
 
+
+.case-library-link { color:var(--accent-strong, #405c80); text-decoration:underline; text-underline-offset:3px; font-weight:650; font-size:.85rem; white-space:nowrap; }
+.case-library-link:focus-visible, .case-library-home:focus-visible { outline:3px solid var(--focus, #7399cb); outline-offset:3px; border-radius:4px; }
+@media (max-width:640px) { .case-library-link { font-size:.76rem; } .topbar-actions { gap:.4rem; } }
