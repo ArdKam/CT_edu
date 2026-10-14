@@ -472,15 +472,22 @@ const { chromium } = require('playwright');
     const guidedResponse = await guidedPage.goto('http://127.0.0.1:8765/cases.html', { waitUntil: 'domcontentloaded' });
     assert.ok(guidedResponse && guidedResponse.ok(), 'guided case workspace should return HTTP 200');
     await guidedPage.locator('#guided-case-list .guided-case-card').first().waitFor({ state: 'visible' });
-    assert.equal(await guidedPage.locator('#guided-case-list .guided-case-card').count(), 44,
-      'the existing four and 40 intake candidates should be listed');
-    assert.equal(await guidedPage.locator('#guided-case-count').textContent(), '44 از 44 کیس',
+    assert.equal(await guidedPage.locator('#guided-case-list .guided-case-card').count(), 49,
+      'the existing four and 45 intake candidates should be listed');
+    assert.equal(await guidedPage.locator('#guided-case-count').textContent(), '49 از 49 کیس',
       'the case count should reflect the full catalog in Persian');
     await guidedPage.locator('#guided-system-filter').selectOption('renal-urinary');
-    assert.equal(await guidedPage.locator('#guided-case-list .guided-case-card').count(), 6,
+    assert.equal(await guidedPage.locator('#guided-case-list .guided-case-card').count(), 7,
       'the renal/urinary filter should narrow the displayed case collection');
-    assert.equal(await guidedPage.locator('#guided-case-list .guided-case-card[data-case-category="renal-urinary"]').count(), 6,
+    assert.equal(await guidedPage.locator('#guided-case-list .guided-case-card[data-case-category="renal-urinary"]').count(), 7,
       'all visible results must belong to the selected primary category');
+    await guidedPage.locator('#guided-system-filter').selectOption('gastrointestinal');
+    await guidedPage.locator('#guided-case-search').fill('pneumobilia');
+    assert.equal(await guidedPage.locator('#guided-case-list .guided-case-card').count(), 1,
+      'text search and primary-system filters should intersect rather than override each other');
+    assert.equal(await guidedPage.locator('#guided-case-list .guided-case-card').first().getAttribute('data-case-id'), 'abd-gi-006',
+      'combined search should return the matching candidate only');
+    await guidedPage.locator('#guided-case-search').fill('');
     await guidedPage.locator('#guided-system-filter').selectOption('');
     await guidedPage.locator('#guided-level-filter').selectOption('foundations');
     assert.equal(await guidedPage.locator('#guided-case-list .guided-case-card').count(), 4,
@@ -494,7 +501,7 @@ const { chromium } = require('playwright');
     assert.equal(await guidedPage.locator('#guided-active-case-panel').isVisible(), false,
       'an empty result should not leave a stale active case displayed');
     await guidedPage.locator('#guided-case-search').fill('');
-    assert.equal(await guidedPage.locator('#guided-case-list .guided-case-card').count(), 44,
+    assert.equal(await guidedPage.locator('#guided-case-list .guided-case-card').count(), 49,
       'clearing search should restore the full collection');
     assert.equal(await guidedPage.locator('#radiopaedia-frame').getAttribute('src'), null,
       'the external source must not be requested before learner opt-in');
@@ -512,6 +519,10 @@ const { chromium } = require('playwright');
     assert.equal(await guidedPage.locator('#radiopaedia-frame').getAttribute('src'), directViewerUrl,
       'the embedded viewer should load the exact study URL, including its selected-image fragment');
     await guidedPage.locator('#guided-case-list .guided-case-card').first().click();
+    assert.equal(await guidedPage.locator('#source-open-viewer-link').isVisible(), false,
+      'cases without a dedicated study URL should not show a direct-viewer action');
+    assert.equal(await guidedPage.locator('#source-open-link').getAttribute('href'), 'https://radiopaedia.org/cases/closed-loop-small-bowel-obstruction-5?lang=us',
+      'the original case page should remain available when no direct viewer URL exists');
     await guidedPage.locator('#learner-findings').fill('Dilated small bowel with a suspected transition point.');
     await guidedPage.locator('#learner-impression').fill('Small bowel obstruction; assess for closed-loop features and ischaemia.');
     await guidedPage.locator('#guided-case-form button[type="submit"]').click();
@@ -571,7 +582,7 @@ const { chromium } = require('playwright');
     const guidedDesktopResponse = await guidedDesktop.goto('http://127.0.0.1:8765/cases.html', { waitUntil: 'domcontentloaded' });
     assert.ok(guidedDesktopResponse && guidedDesktopResponse.ok(), 'desktop guided case workspace should return HTTP 200');
     await guidedDesktop.locator('#guided-case-list .guided-case-card').first().waitFor({ state: 'visible' });
-    assert.equal(await guidedDesktop.locator('#guided-case-list .guided-case-card').count(), 44,
+    assert.equal(await guidedDesktop.locator('#guided-case-list .guided-case-card').count(), 49,
       'desktop catalog should expose the full case collection');
     await guidedDesktop.locator('#guided-system-filter').selectOption('adrenal-endocrine');
     assert.equal(await guidedDesktop.locator('#guided-case-list .guided-case-card').count(), 3,
