@@ -503,26 +503,27 @@ const { chromium } = require('playwright');
     await guidedPage.locator('#guided-case-search').fill('');
     assert.equal(await guidedPage.locator('#guided-case-list .guided-case-card').count(), 56,
       'clearing search should restore the full collection');
-    assert.equal(await guidedPage.locator('#radiopaedia-frame').getAttribute('src'), null,
-      'the external source must not be requested before learner opt-in');
-    const directViewerUrl = 'https://radiopaedia.org/cases/2582/studies/6276?lang=us#t=im&v1i=478&v1z=1&v2i=931&v2z=1';
+    assert.equal(await guidedPage.locator('#radiopaedia-frame').count(), 0,
+      'CT Edu must not embed a Radiopaedia case page and mislabel it as an in-app viewer');
+    assert.equal(await guidedPage.locator('#source-load-button').count(), 0,
+      'the UI must not offer an unsupported in-app viewer load action');
+    const studyPageUrl = 'https://radiopaedia.org/cases/2582/studies/6276?lang=us#t=im&v1i=478&v1z=1&v2i=931&v2z=1';
     await guidedPage.locator('#guided-case-list .guided-case-card').nth(3).click();
     assert.equal((await guidedPage.locator('#source-case-title').textContent()).toLowerCase().includes('lipoma'), false,
       'the local source title should not reveal the diagnosis before the learner submits a report');
     assert.equal(await guidedPage.locator('#source-article-link').isVisible(), false,
       'the related article should stay hidden before the learner submits a report');
-    assert.equal(await guidedPage.locator('#source-open-viewer-link').getAttribute('href'), directViewerUrl,
-      'the lipoma case should expose its dedicated viewer URL');
-    assert.equal(await guidedPage.locator('#source-open-viewer-link').isVisible(), true,
-      'the direct viewer link should be visible when a study URL exists');
-    await guidedPage.locator('#source-load-button').click();
-    assert.equal(await guidedPage.locator('#radiopaedia-frame').getAttribute('src'), directViewerUrl,
-      'the embedded viewer should load the exact study URL, including its selected-image fragment');
+    assert.equal(await guidedPage.locator('#source-open-study-link').getAttribute('href'), studyPageUrl,
+      'the source study URL should be labelled as an external study page, not a standalone viewer');
+    assert.equal(await guidedPage.locator('#source-open-study-link').isVisible(), true,
+      'the external study-page link should be visible when a study-page URL exists');
+    assert.match(await guidedPage.locator('#source-load-status').textContent(), /standalone, verified in-app viewer is not available|Viewer مستقل و قابل‌تأیید داخل CT Edu در دسترس نیست/,
+      'the app must state clearly that an in-app viewer is not implemented');
     await guidedPage.locator('#guided-case-list .guided-case-card').first().click();
-    assert.equal(await guidedPage.locator('#source-open-viewer-link').isVisible(), false,
-      'cases without a dedicated study URL should not show a direct-viewer action');
+    assert.equal(await guidedPage.locator('#source-open-study-link').isVisible(), false,
+      'cases without a study-page URL should not show a study-page link');
     assert.equal(await guidedPage.locator('#source-open-link').getAttribute('href'), 'https://radiopaedia.org/cases/closed-loop-small-bowel-obstruction-5?lang=us',
-      'the original case page should remain available when no direct viewer URL exists');
+      'the source page remains available only as an explicitly labelled external reference');
     await guidedPage.locator('#learner-findings').fill('Dilated small bowel with a suspected transition point.');
     await guidedPage.locator('#learner-impression').fill('Small bowel obstruction; assess for closed-loop features and ischaemia.');
     await guidedPage.locator('#guided-case-form button[type="submit"]').click();
@@ -548,8 +549,8 @@ const { chromium } = require('playwright');
       'checklist progress should follow the selected language');
     assert.equal(await guidedPage.locator('#learner-findings').getAttribute('placeholder'),
       'Record the imaging findings systematically…', 'guided case placeholders should be translated');
-    assert.equal(await guidedPage.locator('#radiopaedia-frame-wrap').isVisible(), true,
-      'language switch should preserve an already requested source viewer');
+    assert.equal(await guidedPage.locator('#radiopaedia-frame').count(), 0,
+      'language switching must not create an external iframe or imply an in-app viewer');
     await guidedPage.waitForFunction(function () {
       return document.documentElement.scrollWidth <= window.innerWidth + 1;
     });
@@ -569,7 +570,7 @@ const { chromium } = require('playwright');
       'unsubmitted source article details must remain hidden');
     assert.equal(await guidedPage.locator('#source-open-link').getAttribute('href'), 'https://radiopaedia.org/cases/164871?lang=us',
       'the original source page must remain accessible');
-    assert.equal(await guidedPage.locator('#source-open-viewer-link').getAttribute('href'), 'https://radiopaedia.org/cases/164871/studies/134067?lang=us',
+    assert.equal(await guidedPage.locator('#source-open-study-link').getAttribute('href'), 'https://radiopaedia.org/cases/164871/studies/134067?lang=us',
       'the extracted study URL must be used for the new case');
     assert.equal(await guidedPage.locator('#radiopaedia-frame').getAttribute('src'), null,
       'selecting another case must not load its external viewer before opt-in');
