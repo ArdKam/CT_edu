@@ -217,7 +217,8 @@
     viewerLink.href = viewerUrl;
     viewerLink.textContent = lang() === 'fa' ? 'بازکردن Viewer در تب جدید ↗' : 'Open viewer in new tab ↗';
     el('source-open-link').textContent = lang() === 'fa' ? 'بازکردن کیس اصلی در Radiopaedia ↗' : 'Open original Radiopaedia case ↗';
-    el('source-article-link').href = item.source.articleUrl;
+    if (item.source.articleUrl) el('source-article-link').href = item.source.articleUrl;
+    else el('source-article-link').removeAttribute('href');
     el('source-article-link').hidden = !sourceDetailsRevealed || !item.source.articleUrl;
     el('source-article-link').textContent = (lang() === 'fa' ? 'مقالهٔ مرتبط: ' : 'Related article: ') + (item.source.articleTitle || '');
     el('source-citation').hidden = !sourceDetailsRevealed;
