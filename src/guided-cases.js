@@ -137,7 +137,8 @@
   function renderSource(item) {
     const frame = el('radiopaedia-frame');
     const frameWrap = el('radiopaedia-frame-wrap');
-    const sameSourceAlreadyLoaded = frame.getAttribute('src') === item.source.url;
+    const viewerUrl = item.source.viewerUrl || item.source.url;
+    const sameSourceAlreadyLoaded = frame.getAttribute('src') === viewerUrl;
     if (!sameSourceAlreadyLoaded) {
       frameWrap.hidden = true;
       frame.removeAttribute('src');
@@ -155,8 +156,14 @@
         : 'External viewer requested. If the frame is blocked, use the original-case link.';
     }
     el('source-case-title').textContent = item.source.title;
-    el('source-case-attribution').textContent = (lang() === 'fa' ? 'مشارکت‌کننده: ' : 'Contributed by: ') + item.source.contributor + ' · ' + item.source.rid;
+    const attribution = item.source.contributor
+      ? (lang() === 'fa' ? 'مشارکت‌کننده: ' : 'Contributed by: ') + item.source.contributor + (item.source.rid ? ' · ' + item.source.rid : '')
+      : (lang() === 'fa' ? 'شناسهٔ کیس: ' : 'Case ID: ') + (item.source.caseId || item.source.rid || '');
+    el('source-case-attribution').textContent = attribution;
     el('source-open-link').href = item.source.url;
+    const viewerLink = el('source-open-viewer-link');
+    viewerLink.href = viewerUrl;
+    viewerLink.textContent = lang() === 'fa' ? 'بازکردن Viewer در تب جدید ↗' : 'Open viewer in new tab ↗';
     el('source-open-link').textContent = lang() === 'fa' ? 'بازکردن کیس اصلی در Radiopaedia ↗' : 'Open original Radiopaedia case ↗';
     el('source-article-link').href = item.source.articleUrl;
     el('source-article-link').textContent = (lang() === 'fa' ? 'مقالهٔ مرتبط: ' : 'Related article: ') + item.source.articleTitle;
@@ -203,7 +210,7 @@
     frame.title = lang() === 'fa'
       ? 'نمای میزبان‌شدهٔ کیس در Radiopaedia؛ قاب خارجی و مستقل'
       : 'Externally hosted Radiopaedia case viewer';
-    frame.src = item.source.url;
+    frame.src = viewerUrl;
     wrap.hidden = false;
     state.iframeLoaded = true;
     el('source-load-button').disabled = true;
