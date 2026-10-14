@@ -13,11 +13,11 @@
 | Renal & urinary | 0 | 9 | 9 |
 | Adrenal & endocrine | 0 | 3 | 3 |
 | Female reproductive & pelvis | 0 | 4 | 4 |
-| Male genitourinary | 0 | 3 | 3 |
+| Male genitourinary | 0 | 4 | 4 |
 | Peritoneum, retroperitoneum & vessels | 0 | 8 | 8 |
-| **Total** | **4** | **48** | **52** |
+| **Total** | **4** | **49** | **53** |
 
-The new 48 records are additional candidates discovered through targeted organ-system searches. They are not the result of an exhaustive survey of Radiopaedia. The requested ceiling of 20 cases per category is a maximum, not an instruction to pad categories. Current overall catalogue counts are gastrointestinal 14 (10 new candidates; 10 short of the 20-new-case aim), hepatobiliary/pancreas 11 (11 new; 9 short), renal/urinary 9 (9 new; 11 short), adrenal/endocrine 3 (3 new; 17 short), female reproductive/pelvic 4 (4 new; 16 short), male genitourinary 3 (3 new; 17 short), and peritoneal/retroperitoneal/vascular 8 (8 new; 12 short). These are candidate counts, not verified CT-image counts. Since live CT images/viewers could not be checked, the strict live-verification count is 0 in every category and the verification shortfall remains unresolved.
+The new 49 records are additional candidates discovered through targeted organ-system searches. They are not the result of an exhaustive survey of Radiopaedia. The requested ceiling of 20 cases per category is a maximum, not an instruction to pad categories. Current overall catalogue counts are gastrointestinal 14 (10 new candidates; 10 short of the 20-new-case aim), hepatobiliary/pancreas 11 (11 new; 9 short), renal/urinary 9 (9 new; 11 short), adrenal/endocrine 3 (3 new; 17 short), female reproductive/pelvic 4 (4 new; 16 short), male genitourinary 4 (4 new; 16 short), and peritoneal/retroperitoneal/vascular 8 (8 new; 12 short). These are candidate counts, not verified CT-image counts. Since live CT images/viewers could not be checked, the strict live-verification count is 0 in every category and the verification shortfall remains unresolved.
 
 ## Selection order and interpretation of status
 
@@ -77,6 +77,7 @@ All source-page links use numeric Radiopaedia case permalinks. The UI shows non-
 | 1 | Male genitourinary | `abd-mgu-001` | [Case 191413](https://radiopaedia.org/cases/191413?lang=us) | Not extracted | `partially_verified` — both CT and MRI are described; CT cannot settle every ductal relationship |
 | 2 | Male genitourinary | `abd-mgu-002` | [Case 77724](https://radiopaedia.org/cases/77724?lang=us) | Not extracted | `partially_verified` — CT bone-window images described; live viewer not checked |
 | 3 | Male genitourinary | `abd-mgu-003` | [Case 87645](https://radiopaedia.org/cases/87645?lang=us) | Not extracted | `partially_verified` — unenhanced axial/coronal CT and MPR described; source diagnosis is probable, not pathology-proven |
+| 4 | Male genitourinary | `abd-mgu-004` | [Case 150292](https://radiopaedia.org/cases/150292?lang=us) | Not extracted | `partially_verified` — indexed case includes CT staging findings in retroperitoneal nodes; ultrasound is the primary testicular modality; live CT stack not checked |
 | 1 | Peritoneum, retroperitoneum & vessels | `abd-prv-001` | [Case 7627](https://radiopaedia.org/cases/7627?lang=us) | Not extracted | `partially_verified` — CT shows peritoneal disease/ascites in indexed content; primary ovary was not directly seen in that description |
 | 2 | Peritoneum, retroperitoneum & vessels | `abd-prv-002` | [Case 221525](https://radiopaedia.org/cases/221525?lang=us) | Not extracted | `partially_verified` — CT aneurysm/thrombus description; live viewer not checked |
 | 3 | Peritoneum, retroperitoneum & vessels | `abd-prv-003` | [Case 54671](https://radiopaedia.org/cases/54671?lang=us) | Not extracted | `partially_verified` — CT urography and delayed contrast extravasation/urinoma described; live viewer not checked |
