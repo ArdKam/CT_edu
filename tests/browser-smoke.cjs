@@ -547,6 +547,17 @@ const { chromium } = require('playwright');
     await guidedPage.locator('#guided-case-list .guided-case-card').first().waitFor({ state: 'visible' });
     assert.match(await guidedPage.locator('#learner-findings').inputValue(), /Dilated small bowel/,
       'guided-case drafts should persist locally across reload');
+    await guidedPage.locator('#guided-case-list .guided-case-card[data-case-id="pancreatic-mass-infiltrative-164871"]').click();
+    assert.equal(await guidedPage.locator('#source-case-title').textContent(), 'External imaging source',
+      'a newly added case must not reveal its source diagnosis before report submission');
+    assert.equal(await guidedPage.locator('#source-article-link').isVisible(), false,
+      'unsubmitted source article details must remain hidden');
+    assert.equal(await guidedPage.locator('#source-open-link').getAttribute('href'), 'https://radiopaedia.org/cases/164871?lang=us',
+      'the original source page must remain accessible');
+    assert.equal(await guidedPage.locator('#source-open-viewer-link').getAttribute('href'), 'https://radiopaedia.org/cases/164871/studies/134067?lang=us',
+      'the extracted study URL must be used for the new case');
+    assert.equal(await guidedPage.locator('#radiopaedia-frame').getAttribute('src'), null,
+      'selecting another case must not load its external viewer before opt-in');
     assert.deepEqual(guidedErrors, [], 'guided case page should not emit uncaught JavaScript errors');
     await guidedPage.close();
 
