@@ -538,10 +538,8 @@ const { chromium } = require('playwright');
     await guidedPage.locator('#guided-case-rubric input[type="checkbox"]').first().check();
     assert.match(await guidedPage.locator('#guided-case-rubric-progress').textContent(), /1 از 4/,
       'self-review should show the number of criteria checked');
-    await guidedPage.locator('#source-load-button').click();
-    assert.match(await guidedPage.locator('#radiopaedia-frame').getAttribute('src'),
-      /^https:\/\/radiopaedia\.org\/cases\//, 'explicit source-viewer request should target the cited original case');
-    assert.equal(await guidedPage.locator('#radiopaedia-frame-wrap').isVisible(), true);
+    assert.equal(await guidedPage.locator('#radiopaedia-frame').count(), 0,
+      'source self-review must not invoke an unsupported external iframe');
     await guidedPage.locator('#language-toggle').click();
     assert.equal(await guidedPage.locator('html').getAttribute('lang'), 'en',
       'guided case workspace should switch language');
