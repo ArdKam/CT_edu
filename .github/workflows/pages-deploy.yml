@@ -43,7 +43,7 @@ jobs:
           set -euo pipefail
           rm -rf _site
           mkdir -p _site/assets _site/licenses
-          cp index.html data-license.html privacy.html DATA_LICENSE_REVIEW.md _site/
+          cp index.html cases.html data-license.html privacy.html DATA_LICENSE_REVIEW.md _site/
           cp favicon.svg _site/
           cp -R src _site/src
           cp -R build/ct-demo-volume _site/assets/spl-abdominal-demo
@@ -51,6 +51,9 @@ jobs:
           touch _site/.nojekyll
 
           test -s _site/index.html
+          test -s _site/cases.html
+          test -s _site/src/guided-cases.js
+          test -s _site/src/data/guided-cases.js
           test -s _site/privacy.html
           test -s _site/favicon.svg
           test -s _site/src/styles.css
@@ -135,6 +138,9 @@ jobs:
           }
 
           fetch_with_retry "$base/" 'ct-slice-viewer.js'
+          fetch_with_retry "$base/cases.html" 'guided-cases.js'
+          fetch_with_retry "$base/src/guided-cases.js" 'Load external viewer'
+          fetch_with_retry "$base/src/data/guided-cases.js" 'rID-59227'
           fetch_with_retry "$base/favicon.svg" '<svg xmlns='
           fetch_with_retry "$base/privacy.html" 'Privacy &amp; Local Data'
           fetch_with_retry "$base/src/viewer/ct-slice-viewer.js" 'label-ids-rgb.png'
