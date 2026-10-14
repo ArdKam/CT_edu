@@ -103,7 +103,7 @@
         caseId: row.caseId,
         url: 'https://radiopaedia.org/cases/' + encodeURIComponent(row.caseId) + '?lang=us',
         ...(viewerUrl ? { viewerUrl: viewerUrl } : {}),
-        citation: 'Radiopaedia.org. ' + row.sourceTitle + '. Case ' + row.caseId + '. Accessed 14 October 2026.'
+        citation: 'Radiopaedia.org. ' + row.sourceTitle + '. Case ' + row.caseId + '. Indexed metadata reviewed 14 October 2026; live page not opened in this intake.'
       }, article),
       objectives: {
         en: [
