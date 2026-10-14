@@ -103,6 +103,8 @@ Direct viewer links are stored for **four** cases in the combined library. Three
 
 ## Excluded candidates
 
+**Four individually identified exclusions are documented below.** During discovery, additional search hits that did not establish a suitable CT examination/stack were not admitted to the guided collection. Because a separate tally and stable source URL were not retained for every non-qualifying search hit, the total number of all rejected search results cannot be reported defensibly. The count of individually documented exclusions is four; do not interpret it as the total volume of rejected search hits.
+
 The intake intentionally excluded modality-mismatched candidates from this CT-only guided collection:
 - **Polycystic ovarian morphology** — ultrasound-only material identified; no CT case was established.
 - **Early intrauterine pregnancy and haemorrhagic corpus luteum** — ultrasound is the relevant examination for the described findings; no suitable CT series was established.
