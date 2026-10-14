@@ -183,26 +183,7 @@
   }
 
   function renderSource(item) {
-    const frame = el('radiopaedia-frame');
-    const frameWrap = el('radiopaedia-frame-wrap');
-    const viewerUrl = item.source.viewerUrl || item.source.url;
-    const sameSourceAlreadyLoaded = frame.getAttribute('src') === viewerUrl;
-    if (!sameSourceAlreadyLoaded) {
-      frameWrap.hidden = true;
-      frame.removeAttribute('src');
-      state.iframeLoaded = false;
-      el('source-load-button').disabled = false;
-      el('source-load-status').textContent = lang() === 'fa'
-        ? 'برای بارگذاری محتوای میزبان‌شده توسط Radiopaedia، دکمه را بزن. ممکن است سیاست آن سایت نمایش در قاب داخلی را مسدود کند.'
-        : 'Load the Radiopaedia-hosted content only when ready. The source site may block embedded display.';
-    } else {
-      frameWrap.hidden = false;
-      state.iframeLoaded = true;
-      el('source-load-button').disabled = true;
-      el('source-load-status').textContent = lang() === 'fa'
-        ? 'درخواست Viewer خارجی ارسال شده است؛ اگر قاب نمایش داده نشد، Viewer را در تب جدید باز کن. پیوند کیس اصلی هم در دسترس است.'
-        : 'External viewer requested. If framing is blocked, open the viewer in a new tab. The original-case link is also available.';
-    }
+    const studyPageUrl = item.source.studyPageUrl || '';
     const sourceDetailsRevealed = Boolean(getDraft(item.id).submitted);
     el('source-case-title').textContent = sourceDetailsRevealed
       ? item.source.title
@@ -211,12 +192,21 @@
       ? (lang() === 'fa' ? 'مشارکت‌کننده: ' : 'Contributed by: ') + item.source.contributor + (item.source.rid ? ' · ' + item.source.rid : '')
       : (lang() === 'fa' ? 'شناسهٔ کیس: ' : 'Case ID: ') + (item.source.caseId || item.source.rid || '');
     el('source-case-attribution').textContent = attribution;
-    el('source-open-link').href = item.source.url;
-    const viewerLink = el('source-open-viewer-link');
-    viewerLink.hidden = !item.source.viewerUrl;
-    viewerLink.href = viewerUrl;
-    viewerLink.textContent = lang() === 'fa' ? 'بازکردن Viewer در تب جدید ↗' : 'Open viewer in new tab ↗';
-    el('source-open-link').textContent = lang() === 'fa' ? 'بازکردن کیس اصلی در Radiopaedia ↗' : 'Open original Radiopaedia case ↗';
+    const sourceLink = el('source-open-link');
+    sourceLink.href = item.source.url;
+    sourceLink.textContent = lang() === 'fa'
+      ? 'بازکردن صفحهٔ کیس منبع در Radiopaedia ↗'
+      : 'Open source case page on Radiopaedia ↗';
+    const studyLink = el('source-open-study-link');
+    studyLink.hidden = !studyPageUrl;
+    if (studyPageUrl) studyLink.href = studyPageUrl;
+    else studyLink.removeAttribute('href');
+    studyLink.textContent = lang() === 'fa'
+      ? 'بازکردن صفحهٔ مطالعه در Radiopaedia ↗'
+      : 'Open study page on Radiopaedia ↗';
+    el('source-load-status').textContent = lang() === 'fa'
+      ? 'Viewer مستقل و قابل‌تأیید داخل CT Edu در دسترس نیست. این پیوندها فقط صفحهٔ کیس/مطالعه را در Radiopaedia باز می‌کنند؛ برای نمایش تصویر داخل برنامه به روش رسمی embed یا تصاویر دارای مجوز و منبع قابل‌استفاده نیاز است.'
+      : 'A standalone, verified in-app viewer is not available in CT Edu yet. These links open the case/study page on Radiopaedia. An in-app viewer needs an officially supported embed method or image files with confirmed reuse rights.';
     if (item.source.articleUrl) el('source-article-link').href = item.source.articleUrl;
     else el('source-article-link').removeAttribute('href');
     el('source-article-link').hidden = !sourceDetailsRevealed || !item.source.articleUrl;
@@ -230,11 +220,6 @@
     const activePanel = el('guided-active-case-panel');
     if (!item) {
       if (activePanel) activePanel.hidden = true;
-      const frame = el('radiopaedia-frame');
-      if (frame) frame.removeAttribute('src');
-      const frameWrap = el('radiopaedia-frame-wrap');
-      if (frameWrap) frameWrap.hidden = true;
-      state.iframeLoaded = false;
       return;
     }
     if (activePanel) activePanel.hidden = false;
@@ -265,24 +250,6 @@
     renderCards();
     renderActive();
     el('guided-case-title').focus({ preventScroll: true });
-  }
-
-  function loadSourceViewer() {
-    const item = getActive();
-    if (!item) return;
-    const frame = el('radiopaedia-frame');
-    const wrap = el('radiopaedia-frame-wrap');
-    const viewerUrl = item.source.viewerUrl || item.source.url;
-    frame.title = lang() === 'fa'
-      ? 'نمای میزبان‌شدهٔ کیس در Radiopaedia؛ قاب خارجی و مستقل'
-      : 'Externally hosted Radiopaedia case viewer';
-    frame.src = viewerUrl;
-    wrap.hidden = false;
-    state.iframeLoaded = true;
-    el('source-load-button').disabled = true;
-    el('source-load-status').textContent = lang() === 'fa'
-      ? 'اگر قاب خالی ماند یا خطای دسترسی دیدی، Viewer را در تب جدید باز کن؛ پیوند کیس اصلی نیز در دسترس است.'
-      : 'If the frame is blank or blocked, open the viewer in a new tab; the original-case link remains available.';
   }
 
   function submitDraft(event) {
@@ -363,7 +330,6 @@
       renderActive();
     });
   });
-  el('source-load-button').addEventListener('click', loadSourceViewer);
   el('guided-case-form').addEventListener('submit', submitDraft);
   el('clear-case-draft').addEventListener('click', clearDraft);
   el('language-toggle').addEventListener('click', function () { setLanguage(lang() === 'fa' ? 'en' : 'fa'); });
