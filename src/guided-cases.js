@@ -162,6 +162,7 @@
     el('source-case-attribution').textContent = attribution;
     el('source-open-link').href = item.source.url;
     const viewerLink = el('source-open-viewer-link');
+    viewerLink.hidden = !item.source.viewerUrl;
     viewerLink.href = viewerUrl;
     viewerLink.textContent = lang() === 'fa' ? 'بازکردن Viewer در تب جدید ↗' : 'Open viewer in new tab ↗';
     el('source-open-link').textContent = lang() === 'fa' ? 'بازکردن کیس اصلی در Radiopaedia ↗' : 'Open original Radiopaedia case ↗';
