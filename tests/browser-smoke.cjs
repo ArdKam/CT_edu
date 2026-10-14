@@ -551,7 +551,7 @@ const { chromium } = require('playwright');
     await guidedPage.locator('#guided-case-list .guided-case-card').first().waitFor({ state: 'visible' });
     assert.match(await guidedPage.locator('#learner-findings').inputValue(), /Dilated small bowel/,
       'guided-case drafts should persist locally across reload');
-    await guidedPage.locator('#guided-case-list .guided-case-card[data-case-id="pancreatic-mass-infiltrative-164871"]').click();
+    await guidedPage.locator('#guided-case-list .guided-case-card[data-case-id="abd-hbp-002"]').click();
     assert.equal(await guidedPage.locator('#source-case-title').textContent(), 'منبع تصویربرداری خارجی',
       'a newly added case must not reveal its source diagnosis before report submission');
     assert.equal(await guidedPage.locator('#source-article-link').isVisible(), false,
