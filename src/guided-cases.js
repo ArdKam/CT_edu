@@ -7,7 +7,7 @@
   const STORAGE_KEY = 'ctedu-guided-case-drafts-v1';
   const MAX_DRAFTS = 20;
   const MAX_FIELD = 4000;
-  const state = { activeId: data.list()[0] ? data.list()[0].id : null, drafts: readDrafts(), iframeLoaded: false };
+  const state = { activeId: data.list()[0] ? data.list()[0].id : null, drafts: readDrafts() };
   const el = function (id) { return document.getElementById(id); };
   const lang = function () { return document.documentElement.lang === 'en' ? 'en' : 'fa'; };
   const text = function (value) { return value && value[lang()] ? value[lang()] : ''; };
@@ -333,10 +333,6 @@
   el('guided-case-form').addEventListener('submit', submitDraft);
   el('clear-case-draft').addEventListener('click', clearDraft);
   el('language-toggle').addEventListener('click', function () { setLanguage(lang() === 'fa' ? 'en' : 'fa'); });
-  el('guided-case-list').addEventListener('keydown', function (event) {
-    if (event.key !== 'Escape') return;
-    el('source-load-button').focus();
-  });
   if (typeof MutationObserver !== 'undefined') {
     new MutationObserver(function () { renderCards(); renderActive(); }).observe(document.documentElement, { attributes: true, attributeFilter: ['lang'] });
   }
