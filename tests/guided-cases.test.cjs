@@ -52,7 +52,7 @@ assert.equal(cases.getById('appendicitis-postoperative-ileus-99249').source.view
 assert.equal(cases.getById('pancreatic-mass-infiltrative-164871').source.viewerUrl, 'https://radiopaedia.org/cases/164871/studies/134067?lang=us');
 assert.equal(cases.intake.addedCount, 21);
 assert.ok(app.includes('function getFilteredCases()'));
-assert.ok(app.includes('source title, citations, IDs and direct URLs from'));
+assert.ok(app.includes('exclude source titles, citations, IDs and direct URLs from'));
 assert.ok(page.includes('id="guided-system-filter"'));
 assert.ok(page.includes('id="guided-case-search"'));
 assert.ok(page.includes('src="./src/data/radiopaedia-abdominal-cases.js"'));
