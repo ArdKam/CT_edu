@@ -197,7 +197,7 @@
         sourcePage: 'Existing source-page URL preserved; not live-tested in this change.',
         ctImages: 'The existing exercise is designated CT; source image loading was not rechecked during this intake.',
         studyPageLink: item.source.studyPageUrl
-          ? 'Existing study-page link retained; it opens Radiopaedia\\'s own page and was not validated as an embeddable viewer.'
+          ? 'Existing study-page link retained; it opens Radiopaedia\'s own page and was not validated as an embeddable viewer.'
           : 'No separate study-page link is stored in the existing record; original source page link retained.',
         imagesLoaded: 'not_checked_in_live_browser',
         categorization: 'Assigned to the gastrointestinal system from the existing case description.',
