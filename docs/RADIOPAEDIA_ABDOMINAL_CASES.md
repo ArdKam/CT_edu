@@ -24,29 +24,29 @@ The new 52 records are additional candidates discovered through targeted organ-s
 `searchOrder` in the data is 1-based within the category-specific intake pass, in the order shown in the table below. The passes used targeted Radiopaedia case-title and modality searches for gastrointestinal, hepatobiliary/pancreatic, renal/urinary, adrenal, female pelvic, male genitourinary and peritoneal/vascular CT. The order is a reproducible record of this intake, not a claim that Radiopaedia search results are stable over time or that all cases were reviewed.
 
 Status values:
-- `verified`: source page, actual CT images, intended direct viewer and image loading were individually checked.
+- `verified`: source page, actual CT images, a supported image-viewing mechanism and image loading were individually checked.
 - `partially_verified`: some metadata or CT modality evidence was found, but one or more required live checks remains open.
 - `unavailable`: the case or required images/viewer could not be accessed.
 - `excluded`: unsuitable for this CT collection, with a reason recorded.
 
-**No added case is marked `verified`.** The browsing interface could not open Radiopaedia's live case pages in this run. The case metadata and CT descriptions were available through indexed case content, but this is not equivalent to opening the original page or seeing the images load. The actual live-image verification count for this change is therefore **0**. All added cases retain a separate `sourcePage`, `ctImages`, `directViewer`, `imagesLoaded`, `categorization`, and `attributionAndRights` check in the case record. Do not upgrade a status merely because a URL is syntactically valid.
+**No added case is marked `verified`.** The browsing interface could not open Radiopaedia's live case pages in this run. The case metadata and CT descriptions were available through indexed case content, but this is not equivalent to opening the original page or seeing the images load. The actual live-image verification count for this change is therefore **0**. All added cases retain a separate `sourcePage`, `ctImages`, `studyPageLink`, `imagesLoaded`, `categorization`, and `attributionAndRights` check in the case record. Do not upgrade a status merely because a URL is syntactically valid.
 
 ## New case audit
 
 All source-page links use numeric Radiopaedia case permalinks. The UI shows non-diagnostic learning labels and does not search source titles, citations, case IDs or URLs before report submission. Source titles, related articles and citations stay hidden until submission under the existing learner workflow.
 
-| # in category | System | Internal ID | Radiopaedia source case | Direct study viewer | Status and key limitation |
+| # in category | System | Internal ID | Radiopaedia source case | External study-page URL (not a standalone viewer) | Status and key limitation |
 |---:|---|---|---|---|---|
 | 1 | Gastrointestinal | `abd-gi-001` | [Case 198206](https://radiopaedia.org/cases/198206?lang=us) | Not extracted | `partially_verified` — indexed CT description; live series not checked |
 | 2 | Gastrointestinal | `abd-gi-002` | [Case 74870](https://radiopaedia.org/cases/74870?lang=us) | Not extracted | `partially_verified` — indexed axial/coronal/sagittal CT stack description; no live image check |
 | 3 | Gastrointestinal | `abd-gi-003` | [Case 25921](https://radiopaedia.org/cases/25921?lang=us) | Not extracted | `partially_verified` — CT mentioned in indexed content; live page not checked |
 | 4 | Gastrointestinal | `abd-gi-004` | [Case 99249](https://radiopaedia.org/cases/99249?lang=us) | [Study 120709](https://radiopaedia.org/cases/99249/studies/120709?lang=us) | `partially_verified` — CT study ID found in indexed metadata; URL/image load not live-tested. Study 120710 was described as radiography and was not used |
 | 5 | Gastrointestinal | `abd-gi-005` | [Case 177978](https://radiopaedia.org/cases/177978?lang=us) | Not extracted | `partially_verified` — case has CT material in indexed content; live stack not checked |
-| 6 | Gastrointestinal | `abd-gi-006` | [Case 83859](https://radiopaedia.org/cases/83859?lang=us) | Not extracted | `partially_verified` — indexed case states CT abdomen/pelvis with IV/oral contrast and a portal-venous CT stack; live viewer not checked |
+| 6 | Gastrointestinal | `abd-gi-006` | [Case 83859](https://radiopaedia.org/cases/83859?lang=us) | Not extracted | `partially_verified` — indexed case states CT abdomen/pelvis with IV/oral contrast and a portal-venous CT stack; live image loading not checked; no in-app viewer is implemented |
 | 7 | Gastrointestinal | `abd-gi-007` | [Case 31252](https://radiopaedia.org/cases/31252?lang=us) | Not extracted | `partially_verified` — contrast-enhanced CT and coronal reconstruction described; images not live-loaded |
-| 8 | Gastrointestinal | `abd-gi-008` | [Case 40732](https://radiopaedia.org/cases/40732?lang=us) | Not extracted | `partially_verified` — CT abdomen/pelvis with non-contrast and portal-venous axial/coronal/sagittal stacks in indexed content; direct viewer not extracted |
+| 8 | Gastrointestinal | `abd-gi-008` | [Case 40732](https://radiopaedia.org/cases/40732?lang=us) | Not extracted | `partially_verified` — CT abdomen/pelvis with non-contrast and portal-venous axial/coronal/sagittal stacks in indexed content; study-page link not extracted |
 | 9 | Gastrointestinal | `abd-gi-009` | [Case 148532](https://radiopaedia.org/cases/148532?lang=us) | Not extracted | `partially_verified` — indexed CT section describes two transition points and mesenteric rotation; live image loading not checked |
-| 10 | Gastrointestinal | `abd-gi-010` | [Case 61116](https://radiopaedia.org/cases/61116?lang=us) | Not extracted | `partially_verified` — urgent contrast CT stacks in axial, coronal and sagittal planes are described; live viewer/image loading not checked |
+| 10 | Gastrointestinal | `abd-gi-010` | [Case 61116](https://radiopaedia.org/cases/61116?lang=us) | Not extracted | `partially_verified` — urgent contrast CT stacks in axial, coronal and sagittal planes are described; live image loading not checked; no in-app viewer is implemented |
 | 1 | Hepatobiliary & pancreas | `abd-hbp-001` | [Case 11083](https://radiopaedia.org/cases/11083?lang=us) | Not extracted | `partially_verified` — CT identified in indexed content; images not loaded |
 | 2 | Hepatobiliary & pancreas | `abd-hbp-002` | [Case 164871](https://radiopaedia.org/cases/164871?lang=us) | [Study 134067](https://radiopaedia.org/cases/164871/studies/134067?lang=us) | `partially_verified` — study ID found in indexed metadata; live viewer/image load not tested |
 | 3 | Hepatobiliary & pancreas | `abd-hbp-003` | [Case 47865](https://radiopaedia.org/cases/47865?lang=us) | Not extracted | `partially_verified` — CT at presentation/follow-up described; images not loaded |
@@ -68,7 +68,7 @@ All source-page links use numeric Radiopaedia case permalinks. The UI shows non-
 | 8 | Renal & urinary | `abd-ru-008` | [Case 78376](https://radiopaedia.org/cases/78376?lang=us) | Not extracted | `partially_verified` — indexed CT describes large renal mass with renal-vein tumour thrombus near the IVC; live image loading not checked |
 | 9 | Renal & urinary | `abd-ru-009` | [Case 100139](https://radiopaedia.org/cases/100139?lang=us) | Not extracted | `partially_verified` — indexed CT stack describes contrast-enhanced renal mass and perirenal/sinus involvement; live viewer not checked |
 | 1 | Adrenal & endocrine | `abd-ae-001` | [Case 83258](https://radiopaedia.org/cases/83258?lang=us) | Not extracted | `partially_verified` — CT described in indexed content; no live image check |
-| 2 | Adrenal & endocrine | `abd-ae-002` | [Case 33078](https://radiopaedia.org/cases/33078?lang=us) | Not extracted | `partially_verified` — non-contrast/arterial/delayed CT described; viewer not opened |
+| 2 | Adrenal & endocrine | `abd-ae-002` | [Case 33078](https://radiopaedia.org/cases/33078?lang=us) | Not extracted | `partially_verified` — non-contrast/arterial/delayed CT described; study page not opened; no in-app viewer is implemented |
 | 3 | Adrenal & endocrine | `abd-ae-003` | [Case 87281](https://radiopaedia.org/cases/87281?lang=us) | Not extracted | `partially_verified` — non-contrast, arterial, portal-venous, delayed and sagittal CT stacks described; live images not checked |
 | 1 | Female reproductive & pelvis | `abd-frp-001` | [Case 9862](https://radiopaedia.org/cases/9862?lang=us) | Not extracted | `partially_verified` — CT attenuation described; no live image check |
 | 2 | Female reproductive & pelvis | `abd-frp-002` | [Case 232293](https://radiopaedia.org/cases/232293?lang=us) | Not extracted | `partially_verified` — sagittal portal-venous CT described; live stack not checked |
@@ -92,14 +92,14 @@ All source-page links use numeric Radiopaedia case permalinks. The UI shows non-
 
 ## Preserved records
 
-| Internal ID | Original case link | Direct viewer link | Outcome |
+| Internal ID | Original case link | Study-page link | Outcome |
 |---|---|---|---|
 | `acute-abdominal-pain-ct` | [Closed-loop small bowel obstruction](https://radiopaedia.org/cases/closed-loop-small-bowel-obstruction-5?lang=us) | Not stored | Preserved; `partially_verified` |
 | `closed-loop-pattern-ct` | [Closed-loop small bowel obstruction](https://radiopaedia.org/cases/closed-loop-small-bowel-obstruction-4?lang=us) | Not stored | Preserved; `partially_verified` |
 | `bowel-viability-ct` | [Closed-loop obstruction due to adhesive band](https://radiopaedia.org/cases/closed-loop-obstruction-due-to-adhesive-band-resulting-in-small-bowel-ischemia-and-resection?lang=us) | Not stored | Preserved; `partially_verified` |
 | `ascending-colon-lipoma-ct` | [Ascending colon lipoma](https://radiopaedia.org/cases/ascending-colon-lipoma?lang=us) | [Existing study link](https://radiopaedia.org/cases/2582/studies/6276?lang=us#t=im&v1i=478&v1z=1&v2i=931&v2z=1) | Preserved; previously documented as the working example, but not re-tested in this change |
 
-Direct viewer links are stored for **four** cases in the combined library. Three were added in this intake and one was already present. **Zero** direct viewer URLs were successfully live-opened and image-load-checked by this change. URL construction is based on identifiers found in indexed source metadata; it is not a report that the URL works.
+Study-page link links are stored for **four** cases in the combined library. Three were added in this intake and one was already present. **Zero** direct viewer URLs were successfully live-opened and image-load-checked by this change. URL construction is based on identifiers found in indexed source metadata; it is not a report that the URL works.
 
 ## Excluded candidates
 
@@ -114,9 +114,9 @@ The intake intentionally excluded modality-mismatched candidates from this CT-on
 
 No case was duplicated across systems. Cross-system anatomy is represented as secondary tags; each record has exactly one primary category. Category-level counts in this file describe the current intake, not the number of all suitable Radiopaedia cases.
 
-## Case schema and viewer behavior
+## Case schema and source-page behavior
 
-Each record has a stable internal `id`, bilingual neutral catalogue title/summary, `category`, `tags`, CT `modality`, `source.url`, source citation, and a `verification` object. The `level` is an editorial CT Edu learning-path assignment, not a Radiopaedia-supplied difficulty rating. When an actual study identifier was found, `source.viewerUrl` stores the direct Radiopaedia study URL; the source page remains the canonical fallback. The embedded request still starts only after a user clicks the existing load button. The visible **Open viewer in new tab** link appears only when a direct URL is stored. A blocked or blank iframe is not treated as a successful image load.
+Each record has a stable internal `id`, bilingual neutral catalogue title/summary, `category`, `tags`, CT `modality`, `source.url`, source citation, and a `verification` object. The `level` is an editorial CT Edu learning-path assignment, not a Radiopaedia-supplied difficulty rating. When an actual study identifier was found, `source.studyPageUrl` stores an external Radiopaedia study-page URL. It does not isolate the image viewer. The source page remains the canonical external reference. The former iframe/load-button behavior has been removed because it displayed a Radiopaedia page rather than a standalone in-app viewer. The interface now labels this limitation explicitly. A true in-app viewer remains an open requirement and must not be considered complete.
 
 Before report submission, the UI does not display the source diagnosis, source title, citation or related-article title. Catalogue filtering deliberately searches neutral titles, summaries, organ-system labels and general anatomical tags—not source diagnosis, citation, source IDs or URLs. This does not make the exercise a fully blinded examination: opening the external Radiopaedia source may reveal its diagnosis.
 

@@ -4,8 +4,8 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#101923">
-  <meta name="description" content="CT Edu guided radiology case practice with a local reporting workflow and optional Radiopaedia source viewer.">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'self'; object-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: blob:; connect-src 'self'; form-action 'self'; frame-src https://radiopaedia.org https://www.radiopaedia.org">
+  <meta name="description" content="CT Edu guided radiology case practice with a local reporting workflow and optional Radiopaedia source references.">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'self'; object-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: blob:; connect-src 'self'; form-action 'self'">
   <link rel="icon" type="image/svg+xml" href="./favicon.svg">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -103,13 +103,9 @@
                 </div>
                 <a id="source-open-link" class="guided-source-link" href="https://radiopaedia.org/" target="_blank" rel="noopener noreferrer">بازکردن کیس اصلی در Radiopaedia ↗</a>
               </div>
-              <p class="guided-source-note" data-fa="نمایش در قاب داخلی ممکن است به‌وسیلهٔ Radiopaedia یا مرورگر مسدود شود. در آن حالت پیوند بالا را باز کن؛ پیمایش سری تصاویر در سایت اصلی انجام می‌شود. بارگذاری قاب فقط پس از انتخاب تو آغاز می‌شود." data-en="Radiopaedia or your browser may block embedded display. If so, open the original-case link above; scroll the series on the source site. The embedded request begins only after you choose to load it.">نمایش در قاب داخلی ممکن است به‌وسیلهٔ Radiopaedia یا مرورگر مسدود شود. در آن حالت پیوند بالا را باز کن؛ پیمایش سری تصاویر در سایت اصلی انجام می‌شود. بارگذاری قاب فقط پس از انتخاب تو آغاز می‌شود.</p>
-              <button id="source-load-button" class="guided-primary-button" type="button" data-fa="بارگذاری viewer خارجی" data-en="Load external viewer">بارگذاری viewer خارجی</button>
-              <a id="source-open-viewer-link" class="guided-source-link" href="https://radiopaedia.org/cases/closed-loop-small-bowel-obstruction-5?lang=us" target="_blank" rel="noopener noreferrer" hidden>بازکردن Viewer در تب جدید ↗</a>
+              <p class="guided-source-note" data-fa="این نسخه Viewer واقعی را داخل CT Edu نمایش نمی‌دهد. لینک منبع صفحهٔ کیس را در Radiopaedia باز می‌کند؛ لینک مطالعه نیز فقط صفحهٔ مطالعهٔ همان سایت است، نه Viewer مستقل. برای نمایش تصویر داخل برنامه باید روش رسمی embed یا فایل‌های تصویری با مجوز روشن فراهم شود." data-en="This version does not display a true viewer inside CT Edu. The source link opens the case page on Radiopaedia; the study link is also a Radiopaedia page, not a standalone viewer. Showing images in-app requires an officially supported embed method or image files with confirmed reuse rights.">این نسخه Viewer واقعی را داخل CT Edu نمایش نمی‌دهد. لینک منبع صفحهٔ کیس را در Radiopaedia باز می‌کند؛ لینک مطالعه نیز فقط صفحهٔ مطالعهٔ همان سایت است، نه Viewer مستقل. برای نمایش تصویر داخل برنامه باید روش رسمی embed یا فایل‌های تصویری با مجوز روشن فراهم شود.</p>
+              <a id="source-open-study-link" class="guided-source-link" href="https://radiopaedia.org/cases/2582/studies/6276?lang=us#t=im&v1i=478&v1z=1&v2i=931&v2z=1" target="_blank" rel="noopener noreferrer" hidden>بازکردن صفحهٔ مطالعه در Radiopaedia ↗</a>
               <p id="source-load-status" class="guided-source-status" role="status" aria-live="polite"></p>
-              <div id="radiopaedia-frame-wrap" class="radiopaedia-frame-wrap" hidden>
-                <iframe id="radiopaedia-frame" title="Externally hosted Radiopaedia case viewer" loading="lazy" referrerpolicy="no-referrer" sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox allow-presentation" allow="fullscreen"></iframe>
-              </div>
               <div class="guided-source-footer">
                 <a id="source-article-link" href="https://radiopaedia.org/articles/small-bowel-obstruction?lang=us" target="_blank" rel="noopener noreferrer">مقالهٔ مرتبط ↗</a>
                 <span id="source-citation"></span>

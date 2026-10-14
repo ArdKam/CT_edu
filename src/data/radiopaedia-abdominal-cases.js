@@ -92,9 +92,9 @@
       checks: {
         sourcePage: 'Indexed case-page metadata located; live page could not be opened in this run.',
         ctImages: 'CT modality or CT image series is described in indexed case content; actual images were not loaded in a live viewer.',
-        directViewer: row.studyId
-          ? 'Numeric case and CT study identifiers were found in indexed case metadata; the generated direct URL was not live-tested.'
-          : 'No suitable study identifier was extracted during this intake pass; retain the original-case link fallback.',
+        studyPageLink: row.studyId
+          ? 'Numeric case and CT study identifiers were found in indexed metadata; the generated study-page link was not live-tested and is not a standalone viewer URL.'
+          : 'No study identifier was extracted during this intake pass; retain the original-case page link.',
         imagesLoaded: 'not_checked_in_live_browser',
         categorization: 'Primary system chosen from the reported CT anatomy; secondary tags record related anatomy/topics.',
         attributionAndRights: 'Original case link and source attribution retained; current terms and item-specific rights review remain open.'
@@ -106,7 +106,7 @@
   function makeCase(row) {
     const category = CATEGORY[row.category];
     const article = row.articleUrl ? { articleUrl: row.articleUrl, articleTitle: row.articleTitle } : {};
-    const viewerUrl = row.studyId
+    const studyPageUrl = row.studyId
       ? 'https://radiopaedia.org/cases/' + encodeURIComponent(row.caseId) + '/studies/' + encodeURIComponent(row.studyId) + '?lang=us'
       : undefined;
     const focus = row.focusEn;
@@ -132,7 +132,7 @@
         title: row.sourceTitle,
         caseId: row.caseId,
         url: 'https://radiopaedia.org/cases/' + encodeURIComponent(row.caseId) + '?lang=us',
-        ...(viewerUrl ? { viewerUrl: viewerUrl } : {}),
+        ...(studyPageUrl ? { studyPageUrl: studyPageUrl } : {}),
         citation: 'Radiopaedia.org. ' + row.sourceTitle + '. Case ' + row.caseId + '. Indexed metadata reviewed 14 October 2026; live page not opened in this intake.'
       }, article),
       objectives: {
@@ -196,16 +196,16 @@
       checks: {
         sourcePage: 'Existing source-page URL preserved; not live-tested in this change.',
         ctImages: 'The existing exercise is designated CT; source image loading was not rechecked during this intake.',
-        directViewer: item.source.viewerUrl
-          ? 'Existing direct viewer reference retained; not re-tested against the live Radiopaedia viewer.'
-          : 'No direct study identifier is stored in the existing record; original source page fallback retained.',
+        studyPageLink: item.source.studyPageUrl
+          ? 'Existing study-page link retained; it opens Radiopaedia\'s own page and was not validated as an embeddable viewer.'
+          : 'No separate study-page link is stored in the existing record; original source page link retained.',
         imagesLoaded: 'not_checked_in_live_browser',
         categorization: 'Assigned to the gastrointestinal system from the existing case description.',
         attributionAndRights: 'Existing source citation preserved; current terms and item-specific rights review remain open.'
       },
-      notes: item.source.viewerUrl
-        ? 'Existing working-example URL is retained but was not independently image-load-tested in this change.'
-        : 'Original reference case retained; a direct viewer identifier was not added without evidence.'
+      notes: item.source.studyPageUrl
+        ? 'Existing Radiopaedia study-page URL is retained as an external link; it is not a verified embedded viewer.'
+        : 'Original reference case retained; no standalone viewer endpoint was verified.'
     };
     return copy;
   }
