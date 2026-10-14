@@ -124,13 +124,23 @@
   function renderSource(item) {
     const frame = el('radiopaedia-frame');
     const frameWrap = el('radiopaedia-frame-wrap');
-    frameWrap.hidden = true;
-    frame.removeAttribute('src');
-    state.iframeLoaded = false;
-    el('source-load-button').disabled = false;
-    el('source-load-status').textContent = lang() === 'fa'
-      ? 'برای بارگذاری محتوای میزبان‌شده توسط Radiopaedia، دکمه را بزن. ممکن است سیاست آن سایت نمایش در قاب داخلی را مسدود کند.'
-      : 'Load the Radiopaedia-hosted content only when ready. The source site may block embedded display.';
+    const sameSourceAlreadyLoaded = frame.getAttribute('src') === item.source.url;
+    if (!sameSourceAlreadyLoaded) {
+      frameWrap.hidden = true;
+      frame.removeAttribute('src');
+      state.iframeLoaded = false;
+      el('source-load-button').disabled = false;
+      el('source-load-status').textContent = lang() === 'fa'
+        ? 'برای بارگذاری محتوای میزبان‌شده توسط Radiopaedia، دکمه را بزن. ممکن است سیاست آن سایت نمایش در قاب داخلی را مسدود کند.'
+        : 'Load the Radiopaedia-hosted content only when ready. The source site may block embedded display.';
+    } else {
+      frameWrap.hidden = false;
+      state.iframeLoaded = true;
+      el('source-load-button').disabled = true;
+      el('source-load-status').textContent = lang() === 'fa'
+        ? 'درخواست viewer خارجی ارسال شده است؛ اگر قاب نمایش داده نشد، از پیوند کیس اصلی استفاده کن.'
+        : 'External viewer requested. If the frame is blocked, use the original-case link.';
+    }
     el('source-case-title').textContent = item.source.title;
     el('source-case-attribution').textContent = (lang() === 'fa' ? 'مشارکت‌کننده: ' : 'Contributed by: ') + item.source.contributor + ' · ' + item.source.rid;
     el('source-open-link').href = item.source.url;
@@ -235,6 +245,9 @@
     document.documentElement.dir = next === 'fa' ? 'rtl' : 'ltr';
     document.querySelectorAll('[data-fa][data-en]').forEach(function (node) {
       node.textContent = node.dataset[next];
+    });
+    document.querySelectorAll('[data-fa-placeholder][data-en-placeholder]').forEach(function (node) {
+      node.placeholder = next === 'fa' ? node.dataset.faPlaceholder : node.dataset.enPlaceholder;
     });
     el('language-toggle').textContent = next === 'fa' ? 'EN' : 'فا';
     renderCards();
