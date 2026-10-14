@@ -23,14 +23,14 @@ for (const item of entries) {
   assert.ok(item.source.url.startsWith('https://radiopaedia.org/cases/'));
   if (item.source.articleUrl) assert.ok(item.source.articleUrl.startsWith('https://radiopaedia.org/articles/'));
   assert.equal(new URL(item.source.url).hostname, 'radiopaedia.org');
-  if (item.source.viewerUrl) {
-    const direct = new URL(item.source.viewerUrl);
+  if (item.source.studyPageUrl) {
+    const direct = new URL(item.source.studyPageUrl);
     assert.equal(direct.hostname, 'radiopaedia.org');
-    assert.match(direct.pathname, /^\/cases\/\d+\/studies\/\d+$/, 'direct viewer path must use numeric case and study IDs');
+    assert.match(direct.pathname, /^\/cases\/\d+\/studies\/\d+$/, 'study-page path must use numeric case and study IDs');
   }
   assert.ok((item.source.contributor && item.source.rid) || item.source.caseId, 'each source needs contributor metadata or a stable case ID');
   assert.ok(item.source.citation);
-  if (item.source.viewerUrl) assert.ok(item.source.viewerUrl.includes('/studies/'), 'dedicated viewer URLs must point to a study');
+  if (item.source.studyPageUrl) assert.ok(item.source.studyPageUrl.includes('/studies/'), 'external study-page URLs must point to a study');
   assert.ok(item.clinicalContext.fa && item.clinicalContext.en, 'each exercise needs a bilingual teaching context');
   assert.ok(Array.isArray(item.objectives.fa) && item.objectives.fa.length >= 3);
   assert.ok(Array.isArray(item.objectives.en) && item.objectives.en.length >= 3);
@@ -47,10 +47,10 @@ assert.deepEqual(new Set(entries.map(item => item.category)), new Set(Object.key
 assert.equal(entries.filter(item => item.verification.status === 'verified').length, 0, 'do not claim live image-load verification that was not completed');
 const lipoma = cases.getById('ascending-colon-lipoma-ct');
 assert.equal(lipoma.source.url, 'https://radiopaedia.org/cases/ascending-colon-lipoma?lang=us');
-assert.equal(lipoma.source.viewerUrl, 'https://radiopaedia.org/cases/2582/studies/6276?lang=us#t=im&v1i=478&v1z=1&v2i=931&v2z=1');
-assert.equal(cases.getById('abd-gi-004').source.viewerUrl, 'https://radiopaedia.org/cases/99249/studies/120709?lang=us');
-assert.equal(cases.getById('abd-hbp-002').source.viewerUrl, 'https://radiopaedia.org/cases/164871/studies/134067?lang=us');
-assert.equal(cases.getById('abd-hbp-005').source.viewerUrl, 'https://radiopaedia.org/cases/35234/studies/36772?lang=us');
+assert.equal(lipoma.source.studyPageUrl, 'https://radiopaedia.org/cases/2582/studies/6276?lang=us#t=im&v1i=478&v1z=1&v2i=931&v2z=1');
+assert.equal(cases.getById('abd-gi-004').source.studyPageUrl, 'https://radiopaedia.org/cases/99249/studies/120709?lang=us');
+assert.equal(cases.getById('abd-hbp-002').source.studyPageUrl, 'https://radiopaedia.org/cases/164871/studies/134067?lang=us');
+assert.equal(cases.getById('abd-hbp-005').source.studyPageUrl, 'https://radiopaedia.org/cases/35234/studies/36772?lang=us');
 assert.equal(cases.getById('abd-gi-010').source.url, 'https://radiopaedia.org/cases/61116?lang=us');
 assert.equal(cases.getById('abd-ru-007').source.url, 'https://radiopaedia.org/cases/147902?lang=us');
 assert.equal(cases.getById('abd-ru-008').source.url, 'https://radiopaedia.org/cases/78376?lang=us');
@@ -65,8 +65,14 @@ assert.ok(app.includes('exclude source titles, citations, IDs and direct URLs fr
 assert.ok(page.includes('id="guided-system-filter"'));
 assert.ok(page.includes('id="guided-case-search"'));
 assert.ok(page.includes('src="./src/data/radiopaedia-abdominal-cases.js"'));
-assert.ok(page.includes('id="source-open-viewer-link"'));
-assert.ok(app.includes('frame.src = viewerUrl;'));
-assert.ok(app.includes('viewerLink.hidden = !item.source.viewerUrl;'));
-assert.ok(app.includes("function loadSourceViewer() {\n    const item = getActive();\n    if (!item) return;\n    const frame = el('radiopaedia-frame');\n    const wrap = el('radiopaedia-frame-wrap');\n    const viewerUrl = item.source.viewerUrl || item.source.url;"));
+assert.ok(page.includes('id="source-open-study-link"'));
+assert.ok(app.includes('frame.src = studyPageUrl;'));
+assert.ok(app.includes('viewerLink.hidden = !item.source.studyPageUrl;'));
+assert.ok(page.includes('id="source-open-study-link"'));
+assert.ok(page.includes('does not display a true viewer inside CT Edu'));
+assert.ok(!page.includes('id="radiopaedia-frame"'), 'no Radiopaedia case page should be embedded as a supposed viewer');
+assert.ok(!app.includes('function loadSourceViewer()'));
+assert.ok(!app.includes('frame.src ='));
+assert.ok(!app.includes('item.source.studyPageUrl || item.source.url'));
+
 console.log('Guided cases: bilingual metadata, source links, and self-review rubrics validated.');
