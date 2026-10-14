@@ -43,12 +43,38 @@
           <div class="panel-heading">
             <div><span class="panel-kicker">CASE LIBRARY</span><h2 id="guided-case-list-title" data-fa="انتخاب کیس" data-en="Choose a case">انتخاب کیس</h2></div>
           </div>
+          <div class="guided-case-filters" aria-label="Case library filters">
+            <label for="guided-case-search" data-fa="جست‌وجوی کیس‌ها" data-en="Search cases">جست‌وجوی کیس‌ها</label>
+            <input id="guided-case-search" type="search" autocomplete="off" placeholder="..." data-fa-placeholder="ساختار، یافته یا موضوع بالینی" data-en-placeholder="Anatomy, finding or clinical topic">
+            <div class="guided-case-filter-row">
+              <label for="guided-system-filter" data-fa="سیستم اندامی" data-en="Organ system">سیستم اندامی</label>
+              <select id="guided-system-filter">
+                <option value="" data-fa="همهٔ سیستم‌ها" data-en="All systems">همهٔ سیستم‌ها</option>
+                <option value="gastrointestinal" data-fa="گوارش" data-en="Gastrointestinal">گوارش</option>
+                <option value="hepatobiliary-pancreatic" data-fa="کبد، صفرا و پانکراس" data-en="Hepatobiliary & pancreas">کبد، صفرا و پانکراس</option>
+                <option value="renal-urinary" data-fa="کلیه و مجاری ادراری" data-en="Renal & urinary">کلیه و مجاری ادراری</option>
+                <option value="adrenal-endocrine" data-fa="آدرنال و غدد درون‌ریز" data-en="Adrenal & endocrine">آدرنال و غدد درون‌ریز</option>
+                <option value="female-reproductive-pelvic" data-fa="تولیدمثل زنان و لگن" data-en="Female reproductive & pelvis">تولیدمثل زنان و لگن</option>
+                <option value="male-genitourinary" data-fa="دستگاه ادراری‌ـ‌تناسلی مردان" data-en="Male genitourinary">دستگاه ادراری‌ـ‌تناسلی مردان</option>
+                <option value="peritoneal-retroperitoneal-vascular" data-fa="صفاق، رتروپریتوئن و عروق" data-en="Peritoneum, retroperitoneum & vessels">صفاق، رتروپریتوئن و عروق</option>
+              </select>
+              <label for="guided-level-filter" data-fa="سطح" data-en="Level">سطح</label>
+              <select id="guided-level-filter">
+                <option value="" data-fa="همهٔ سطوح" data-en="All levels">همهٔ سطوح</option>
+                <option value="foundations" data-fa="پایه" data-en="Foundations">پایه</option>
+                <option value="intermediate" data-fa="متوسط" data-en="Intermediate">متوسط</option>
+                <option value="advanced" data-fa="پیشرفته" data-en="Advanced">پیشرفته</option>
+              </select>
+            </div>
+            <p id="guided-case-count" class="guided-case-count" role="status" aria-live="polite"></p>
+            <p id="guided-case-empty" class="guided-case-empty" role="status" aria-live="polite" hidden data-fa="کیسی با این جست‌وجو و فیلترها پیدا نشد." data-en="No cases match this search and filter combination.">کیسی با این جست‌وجو و فیلترها پیدا نشد.</p>
+          </div>
           <div id="guided-case-list" class="guided-case-list"></div>
           <p class="guided-local-note" data-fa="حداکثر ۲۰ پیش‌نویس اخیر در فضای محلی این مرورگر نگه‌داری می‌شود. اطلاعات بیمار واقعی را وارد نکن." data-en="Up to 20 recent drafts are stored locally in this browser. Do not enter real patient information.">حداکثر ۲۰ پیش‌نویس اخیر در فضای محلی این مرورگر نگه‌داری می‌شود. اطلاعات بیمار واقعی را وارد نکن.</p>
         </aside>
 
         <div class="guided-case-workspace">
-          <section class="guided-active-case panel" aria-labelledby="guided-case-title">
+          <section id="guided-active-case-panel" class="guided-active-case panel" aria-labelledby="guided-case-title">
             <div class="guided-active-header">
               <div>
                 <span class="panel-kicker" data-fa="تمرین ساختاریافته" data-en="STRUCTURED PRACTICE">تمرین ساختاریافته</span>
@@ -129,6 +155,7 @@
     </main>
   </div>
   <script defer src="./src/data/guided-cases.js"></script>
+  <script defer src="./src/data/radiopaedia-abdominal-cases.js"></script>
   <script defer src="./src/guided-cases.js"></script>
 </body>
 </html>
