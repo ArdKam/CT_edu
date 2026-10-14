@@ -1,7 +1,13 @@
 const assert = require('node:assert/strict');
 const cases = require('../src/data/guided-cases.js');
 
+const fs = require('node:fs');
+const page = fs.readFileSync(require('node:path').join(__dirname, '..', 'cases.html'), 'utf8');
+const app = fs.readFileSync(require('node:path').join(__dirname, '..', 'src', 'guided-cases.js'), 'utf8');
 const entries = cases.list();
+assert.match(page, /id="guided-case-rubric-progress"[^>]*role="status"[^>]*aria-live="polite"/);
+assert.match(app, /items reviewed/);
+assert.match(app, /مورد بررسی شده/);
 assert.equal(cases.schemaVersion, 1);
 assert.equal(entries.length, 3);
 assert.equal(new Set(entries.map(item => item.id)).size, entries.length);

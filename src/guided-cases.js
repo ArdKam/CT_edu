@@ -100,6 +100,17 @@
   function renderRubric(item, draft) {
     const container = el('guided-case-rubric');
     container.replaceChildren();
+    const progress = el('guided-case-rubric-progress');
+    const updateProgress = function () {
+      if (!progress) return;
+      const checked = container.querySelectorAll('input[type=checkbox]:checked').length;
+      const total = item.rubric.length;
+      progress.textContent = lang() === 'fa'
+        ? checked + ' از ' + total + ' مورد بررسی شده'
+        : checked + ' of ' + total + ' items reviewed';
+      progress.dataset.reviewed = String(checked);
+      progress.dataset.total = String(total);
+    };
     item.rubric.forEach(function (criterion) {
       const label = make('label', 'guided-rubric-item');
       const input = document.createElement('input');
@@ -111,6 +122,7 @@
         current.checklist = Array.from(container.querySelectorAll('input[type=checkbox]:checked')).map(function (box) { return box.value; });
         current.savedAt = Date.now();
         persistDrafts();
+        updateProgress();
       });
       const copy = make('span', 'guided-rubric-copy');
       appendText(copy, 'strong', '', text(criterion.title));
@@ -119,6 +131,7 @@
       label.appendChild(copy);
       container.appendChild(label);
     });
+    updateProgress();
   }
 
   function renderSource(item) {

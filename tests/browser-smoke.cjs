@@ -483,7 +483,11 @@ const { chromium } = require('playwright');
       'submitting findings and impression should reveal the self-review rubric');
     assert.equal(await guidedPage.locator('#guided-case-rubric .guided-rubric-item').count(), 4,
       'case-specific rubric should be displayed');
+    assert.equal(await guidedPage.locator('#guided-case-rubric-progress').getAttribute('aria-live'), 'polite',
+      'self-review progress should be announced accessibly');
     await guidedPage.locator('#guided-case-rubric input[type="checkbox"]').first().check();
+    assert.match(await guidedPage.locator('#guided-case-rubric-progress').textContent(), /1 از 4/,
+      'self-review should show the number of criteria checked');
     await guidedPage.locator('#source-load-button').click();
     assert.match(await guidedPage.locator('#radiopaedia-frame').getAttribute('src'),
       /^https:\/\/radiopaedia\.org\/cases\//, 'explicit source-viewer request should target the cited original case');
@@ -491,6 +495,8 @@ const { chromium } = require('playwright');
     await guidedPage.locator('#language-toggle').click();
     assert.equal(await guidedPage.locator('html').getAttribute('lang'), 'en',
       'guided case workspace should switch language');
+    assert.match(await guidedPage.locator('#guided-case-rubric-progress').textContent(), /1 of 4 items reviewed/,
+      'checklist progress should follow the selected language');
     assert.equal(await guidedPage.locator('#learner-findings').getAttribute('placeholder'),
       'Record the imaging findings systematically…', 'guided case placeholders should be translated');
     assert.equal(await guidedPage.locator('#radiopaedia-frame-wrap').isVisible(), true,

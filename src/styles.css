@@ -594,6 +594,7 @@
 .guided-submit-status { margin:0; color:var(--muted, #64748b); line-height:1.65; }
 .guided-case-rubric-section { padding-top:1rem; border-top:1px solid var(--line, #e1e6e7); }
 .guided-case-rubric { display:grid; gap:.55rem; margin-top:.85rem; }
+.guided-rubric-progress { margin:.75rem 0 0; color:var(--teal, #2c8985); font-size:.9rem; font-weight:650; line-height:1.5; }
 .guided-rubric-item { display:flex; align-items:flex-start; gap:.75rem; padding:.85rem; border:1px solid var(--line, #e1e6e7); border-radius:12px; background:var(--surface, #fff); cursor:pointer; }
 .guided-rubric-item input { flex:0 0 auto; margin-top:.35rem; width:1.05rem; height:1.05rem; accent-color:var(--teal, #2c8985); }
 .guided-rubric-copy { display:grid; gap:.25rem; line-height:1.6; }
