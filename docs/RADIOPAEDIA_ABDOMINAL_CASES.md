@@ -9,15 +9,15 @@
 | Primary category | Existing cases retained | New records | Total |
 |---|---:|---:|---:|
 | Gastrointestinal | 4 | 5 | 9 |
-| Hepatobiliary & pancreas | 0 | 4 | 4 |
+| Hepatobiliary & pancreas | 0 | 5 | 5 |
 | Renal & urinary | 0 | 4 | 4 |
 | Adrenal & endocrine | 0 | 2 | 2 |
 | Female reproductive & pelvis | 0 | 2 | 2 |
 | Male genitourinary | 0 | 2 | 2 |
 | Peritoneum, retroperitoneum & vessels | 0 | 2 | 2 |
-| **Total** | **4** | **21** | **25** |
+| **Total** | **4** | **22** | **26** |
 
-The new 21 records are additional candidates discovered through targeted organ-system searches. They are not the result of an exhaustive survey of Radiopaedia. The requested ceiling of 20 cases per category is a maximum, not an instruction to pad categories: each category remains below that ceiling because this intake did not verify 20 eligible cases per category.
+The new 22 records are additional candidates discovered through targeted organ-system searches. They are not the result of an exhaustive survey of Radiopaedia. The requested ceiling of 20 cases per category is a maximum, not an instruction to pad categories: each category remains below that ceiling because this intake did not verify 20 eligible cases per category.
 
 ## Selection order and interpretation of status
 
@@ -46,6 +46,7 @@ All source-page links use numeric Radiopaedia case permalinks. The UI shows non-
 | 2 | Hepatobiliary & pancreas | `pancreatic-mass-infiltrative-164871` | [Case 164871](https://radiopaedia.org/cases/164871?lang=us) | [Study 134067](https://radiopaedia.org/cases/164871/studies/134067?lang=us) | `partially_verified` — study ID found in indexed metadata; live viewer/image load not tested |
 | 3 | Hepatobiliary & pancreas | `hepatic-abscess-47865` | [Case 47865](https://radiopaedia.org/cases/47865?lang=us) | Not extracted | `partially_verified` — CT at presentation/follow-up described; images not loaded |
 | 4 | Hepatobiliary & pancreas | `hepatic-abscess-171645` | [Case 171645](https://radiopaedia.org/cases/171645?lang=us) | Not extracted | `partially_verified` — indexed case describes CT follow-up; live stack not checked |
+| 5 | Hepatobiliary & pancreas | `cholecystoduodenal-fistula-35234` | [Case 35234](https://radiopaedia.org/cases/35234?lang=us) | [Study 36772](https://radiopaedia.org/cases/35234/studies/36772?lang=us) | `partially_verified` — indexed Radiopaedia case identifies CT abdomen and study 36772; live viewer/image loading not re-tested |
 | 1 | Renal & urinary | `renal-cell-carcinoma-cystic-191505` | [Case 191505](https://radiopaedia.org/cases/191505?lang=us) | Not extracted | `partially_verified` — CT identified in indexed content; no live image check |
 | 2 | Renal & urinary | `renal-abscess-79763` | [Case 79763](https://radiopaedia.org/cases/79763?lang=us) | Not extracted | `partially_verified` — CT described; direct study ID not extracted |
 | 3 | Renal & urinary | `pyelonephritis-renal-perinephric-abscess-151692` | [Case 151692](https://radiopaedia.org/cases/151692?lang=us) | Not extracted | `partially_verified` — CT described in indexed page; images not loaded |
@@ -68,7 +69,7 @@ All source-page links use numeric Radiopaedia case permalinks. The UI shows non-
 | `bowel-viability-ct` | [Closed-loop obstruction due to adhesive band](https://radiopaedia.org/cases/closed-loop-obstruction-due-to-adhesive-band-resulting-in-small-bowel-ischemia-and-resection?lang=us) | Not stored | Preserved; `partially_verified` |
 | `ascending-colon-lipoma-ct` | [Ascending colon lipoma](https://radiopaedia.org/cases/ascending-colon-lipoma?lang=us) | [Existing study link](https://radiopaedia.org/cases/2582/studies/6276?lang=us#t=im&v1i=478&v1z=1&v2i=931&v2z=1) | Preserved; previously documented as the working example, but not re-tested in this change |
 
-Direct viewer links are stored for **three** cases in the combined library. Two were added in this intake and one was already present. **Zero** direct viewer URLs were successfully live-opened and image-load-checked by this change. URL construction is based on identifiers found in indexed source metadata; it is not a report that the URL works.
+Direct viewer links are stored for **four** cases in the combined library. Three were added in this intake and one was already present. **Zero** direct viewer URLs were successfully live-opened and image-load-checked by this change. URL construction is based on identifiers found in indexed source metadata; it is not a report that the URL works.
 
 ## Excluded candidates
 
