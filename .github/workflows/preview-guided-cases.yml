@@ -1,0 +1,144 @@
+name: Publish CT Edu guided-case preview
+
+on:
+  push:
+    branches:
+      - "codex/stage1-2-guided-cases"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: github-pages-guided-case-preview
+  cancel-in-progress: true
+
+jobs:
+  build-preview:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Check out preview revision and history
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: "3.12"
+
+      - name: Rebuild the currently deployed baseline without changing its feature set
+        shell: bash
+        env:
+          BASE_SHA: a54bc01bdbda0ae2509f1e44a9f50d14c0371676
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/ct-edu-baseline
+          git archive "$BASE_SHA" | tar -x -C /tmp/ct-edu-baseline
+          cd /tmp/ct-edu-baseline
+          python -m pip install --disable-pip-version-check numpy pillow
+          python scripts/build_demo_assets.py --output build/ct-demo-volume
+          mkdir -p "$GITHUB_WORKSPACE/_site/assets" "$GITHUB_WORKSPACE/_site/licenses"
+          cp index.html data-license.html privacy.html DATA_LICENSE_REVIEW.md "$GITHUB_WORKSPACE/_site/"
+          cp favicon.svg "$GITHUB_WORKSPACE/_site/"
+          cp -R src "$GITHUB_WORKSPACE/_site/src"
+          cp -R build/ct-demo-volume "$GITHUB_WORKSPACE/_site/assets/spl-abdominal-demo"
+          cp licenses/SPL-Abdominal-Atlas-LICENSE.txt "$GITHUB_WORKSPACE/_site/licenses/"
+          touch "$GITHUB_WORKSPACE/_site/.nojekyll"
+
+      - name: Add a clearly marked preview route without overwriting the stable homepage
+        shell: bash
+        run: |
+          set -euo pipefail
+          preview="$GITHUB_WORKSPACE/_site/preview"
+          mkdir -p "$preview/src/data"
+          cp cases.html "$preview/cases.html"
+          cp favicon.svg "$preview/favicon.svg"
+          cp src/styles.css "$preview/src/styles.css"
+          cp src/guided-cases.js "$preview/src/guided-cases.js"
+          cp src/data/guided-cases.js "$preview/src/data/guided-cases.js"
+
+          python - <<'PY'
+          from pathlib import Path
+          page = Path("_site/preview/cases.html")
+          html = page.read_text()
+          for old, new in [
+              ('href="./index.html"', 'href="../index.html"'),
+              ('href="./privacy.html"', 'href="../privacy.html"'),
+              ('href="./DATA_LICENSE_REVIEW.md"', 'href="../DATA_LICENSE_REVIEW.md"'),
+              ('href="./data-license.html"', 'href="../data-license.html"'),
+          ]:
+              html = html.replace(old, new)
+          page.write_text(html)
+
+          homepage = Path("_site/index.html")
+          html = homepage.read_text()
+          anchor = '<div class="topbar-actions"><span class="educational-tag">'
+          link = '<div class="topbar-actions"><a class="case-preview-link" href="./preview/cases.html"><span class="rad-fa">پیش‌نمایش کیس‌ها</span><span class="rad-en">Guided cases preview</span></a><span class="educational-tag">'
+          if anchor not in html:
+              raise SystemExit("Could not find the stable-homepage navigation insertion point")
+          homepage.write_text(html.replace(anchor, link, 1))
+
+          css = Path("_site/src/styles.css")
+          styles = css.read_text()
+          styles += '\n.case-preview-link{color:var(--teal);font-weight:650;font-size:11px;text-decoration:underline;text-underline-offset:3px;white-space:nowrap}.case-preview-link:focus-visible{outline:3px solid #56a9a2;outline-offset:3px;border-radius:4px}@media(max-width:640px){.case-preview-link{font-size:10px}.topbar-actions{gap:8px}}\n'
+          css.write_text(styles)
+          PY
+
+          test -s "$GITHUB_WORKSPACE/_site/index.html"
+          test -s "$GITHUB_WORKSPACE/_site/preview/cases.html"
+          test -s "$GITHUB_WORKSPACE/_site/preview/src/guided-cases.js"
+          test -s "$GITHUB_WORKSPACE/_site/preview/src/data/guided-cases.js"
+          grep -q './preview/cases.html' "$GITHUB_WORKSPACE/_site/index.html"
+          grep -q 'Guided cases preview' "$GITHUB_WORKSPACE/_site/index.html"
+          ! find "$GITHUB_WORKSPACE/_site" -type f -name '*.zip' | grep -q .
+          echo "Preview staged at /preview/cases.html; stable home retains the previous baseline UI apart from the explicit preview link."
+
+      - name: Upload preview Pages artifact
+        uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0
+        with:
+          path: _site
+
+  deploy-preview:
+    needs: build-preview
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@45bfe0192ca1faeb007ade9deae92b16b8254a0d # v6.0.0
+
+      - name: Deploy preview and stable baseline
+        id: deployment
+        uses: actions/deploy-pages@368f82528645a54fb793d4d04e342629a3f51346 # v5.0.1
+
+      - name: Verify the live preview route and source metadata
+        env:
+          PAGE_URL: ${{ steps.deployment.outputs.page_url }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          base="${PAGE_URL%/}"
+          fetch_with_retry() {
+            local url="$1"
+            local expected="$2"
+            local attempt status
+            for attempt in $(seq 1 25); do
+              status="$(curl -sS -L -o /tmp/ct-edu-preview-check -w '%{http_code}' "$url?preview=$GITHUB_RUN_ID-$attempt" || true)"
+              echo "LIVE_PREVIEW_CHECK status=$status url=$url"
+              if [ "$status" = "200" ] && grep -q "$expected" /tmp/ct-edu-preview-check; then return 0; fi
+              sleep 2
+            done
+            echo "Preview verification failed: $url"
+            head -c 300 /tmp/ct-edu-preview-check || true
+            return 1
+          }
+          fetch_with_retry "$base/" 'preview/cases.html'
+          fetch_with_retry "$base/preview/cases.html" 'Guided cases'
+          fetch_with_retry "$base/preview/src/data/guided-cases.js" 'rID-59227'
+          fetch_with_retry "$base/preview/src/guided-cases.js" 'Load the Radiopaedia-hosted content only when ready'
