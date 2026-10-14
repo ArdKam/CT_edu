@@ -75,7 +75,8 @@ See [DATASET_ROADMAP.md](DATASET_ROADMAP.md) for reviewed candidate sources and 
 
 ### Viewer, accessibility, and security
 
-- [ ] Implement and validate a true in-app case image viewer. Do not treat `https://radiopaedia.org/cases/{id}/studies/{id}` as a standalone endpoint. Proceed only with an officially supported embedding/API path or explicitly cleared, attributable image assets.
+- [x] Restore opt-in external source-frame support for the four pre-existing guided cases and records with a specifically recorded `studyPageUrl`; new candidates without a study URL do not fall back to embedding the generic case page. Automated checks cover routing and opt-in, not successful third-party image load.
+- [ ] Validate live image loading for each enabled case and implement a genuine in-app CT stack viewer if the product requirement is to browse slices natively inside CT Edu. A URL shaped like `https://radiopaedia.org/cases/{id}/studies/{id}` remains a Radiopaedia page, not proof of a standalone embeddable endpoint.
 
 - [x] Replace dynamic UI `innerHTML` construction with DOM APIs and `textContent`, validate anatomy palette values, add a restrictive CSP meta policy, and add tests for the HTML-sink contract and malicious search text. Chromium confirms the CSP is present and the injection probe creates no element and executes no code. This is a targeted client-side hardening baseline, not a complete security audit; the meta policy should be backed by deployment response headers when the hosting platform supports them.
 - [x] Add Playwright compatibility smoke checks for Chromium, Firefox, and Playwright WebKit at a 390px viewport; Chromium/WebKit also use touch/mobile emulation where supported. These checks validate basic cross-engine behavior, not certification on physical phones.

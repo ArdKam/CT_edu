@@ -141,7 +141,7 @@ jobs:
 
           fetch_with_retry "$base/" 'ct-slice-viewer.js'
           fetch_with_retry "$base/cases.html" 'guided-cases.js'
-          fetch_with_retry "$base/src/guided-cases.js" 'A standalone, verified in-app viewer is not available in CT Edu yet.'
+          fetch_with_retry "$base/src/guided-cases.js" 'function getEmbeddableSourceUrl(item)'
           fetch_with_retry "$base/src/data/guided-cases.js" 'rID-59227'
           fetch_with_retry "$base/favicon.svg" '<svg xmlns='
           fetch_with_retry "$base/privacy.html" 'Privacy &amp; Local Data'
