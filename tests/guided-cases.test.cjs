@@ -9,7 +9,7 @@ assert.match(page, /id="guided-case-rubric-progress"[^>]*role="status"[^>]*aria-
 assert.match(app, /items reviewed/);
 assert.match(app, /مورد بررسی شده/);
 assert.equal(cases.schemaVersion, 2);
-assert.equal(entries.length, 25, 'the four pre-existing cases and 21 new intake cases should be present');
+assert.equal(entries.length, 26, 'the four pre-existing cases and 22 new intake cases should be present');
 assert.equal(new Set(entries.map(item => item.id)).size, entries.length);
 
 for (const item of entries) {
@@ -50,7 +50,8 @@ assert.equal(lipoma.source.url, 'https://radiopaedia.org/cases/ascending-colon-l
 assert.equal(lipoma.source.viewerUrl, 'https://radiopaedia.org/cases/2582/studies/6276?lang=us#t=im&v1i=478&v1z=1&v2i=931&v2z=1');
 assert.equal(cases.getById('appendicitis-postoperative-ileus-99249').source.viewerUrl, 'https://radiopaedia.org/cases/99249/studies/120709?lang=us');
 assert.equal(cases.getById('pancreatic-mass-infiltrative-164871').source.viewerUrl, 'https://radiopaedia.org/cases/164871/studies/134067?lang=us');
-assert.equal(cases.intake.addedCount, 21);
+assert.equal(cases.getById('cholecystoduodenal-fistula-35234').source.viewerUrl, 'https://radiopaedia.org/cases/35234/studies/36772?lang=us');
+assert.equal(cases.intake.addedCount, 22);
 assert.ok(app.includes('function getFilteredCases()'));
 assert.ok(app.includes('exclude source titles, citations, IDs and direct URLs from'));
 assert.ok(page.includes('id="guided-system-filter"'));
