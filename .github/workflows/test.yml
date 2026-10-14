@@ -37,6 +37,8 @@ jobs:
           node --check src/data/case-manifest.js
           node --check scripts/validate_teaching_case.js
           node --check src/app.js
+          node --check src/data/guided-cases.js
+          node --check src/guided-cases.js
       - name: Check archive inventory script syntax
         run: |
           python3 -m py_compile scripts/inspect_archives.py
