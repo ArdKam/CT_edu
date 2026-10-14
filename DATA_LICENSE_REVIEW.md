@@ -64,3 +64,13 @@ The in-app notice attributes the SPL Abdominal Atlas and describes the web-displ
 - Check third-party notices for any additional scene/model/software components.
 - Keep the license notice with applicable dataset copies and documentation.
 - Never present the app as a diagnostic tool. Its purpose is educational anatomy practice, not diagnosis or clinical decisions.
+
+## External Radiopaedia references — added 14 October 2026
+
+CT Edu now provides three guided case exercises that link to public Radiopaedia case pages. The case metadata records the displayed case title, contributor, rID, source URL, and related article URL. The exercise prompts and self-review rubric are authored for CT Edu; the repository does not copy Radiopaedia case descriptions, answer text, series images, image URLs, or patient metadata into the local catalogue.
+
+The case page offers an explicit, user-initiated iframe request to the original Radiopaedia case page. Radiopaedia or the browser may refuse framing; the supported fallback is to open the original case page in a separate tab and scroll the series on that site. This is not an API client, scraper, proxy, or local mirror. No guarantee is made that third-party framing is available, permitted for every case, or stable over time.
+
+Radiopaedia describes its content as being provided under a modified Creative Commons licence; source terms and third-party image rights may differ by item. Linking to a case is not equivalent to independently clearing rights to republish its text or image. The current implementation does not redistribute Radiopaedia media locally. Review the current Terms of Use and the exact case/item rights before adding any downloaded, modified, cached, or bundled content. The source-hosted viewer is loaded only after the learner clicks the load button; the privacy notice explains this third-party request.
+
+The original SPL archive redistribution review remains open. The repository still contains the six source ZIP archives in Git history and the current default branch. Do not mark the legal release gate closed based only on the included license notice or the existence of this review document.
