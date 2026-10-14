@@ -1,0 +1,269 @@
+(function () {
+  'use strict';
+  const data = window.CTEduGuidedCases;
+  const root = document.getElementById('guided-case-app');
+  if (!data || !root) return;
+
+  const STORAGE_KEY = 'ctedu-guided-case-drafts-v1';
+  const MAX_DRAFTS = 20;
+  const MAX_FIELD = 4000;
+  const state = { activeId: data.list()[0] ? data.list()[0].id : null, drafts: readDrafts(), iframeLoaded: false };
+  const el = function (id) { return document.getElementById(id); };
+  const lang = function () { return document.documentElement.lang === 'en' ? 'en' : 'fa'; };
+  const text = function (value) { return value && value[lang()] ? value[lang()] : ''; };
+
+  function readDrafts() {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) return {};
+      const parsed = JSON.parse(raw);
+      if (!parsed || parsed.version !== 1 || !parsed.drafts || typeof parsed.drafts !== 'object') return {};
+      const out = {};
+      data.list().forEach(function (item) {
+        const row = parsed.drafts[item.id];
+        if (!row || typeof row !== 'object') return;
+        out[item.id] = {
+          findings: typeof row.findings === 'string' ? row.findings.slice(0, MAX_FIELD) : '',
+          differential: typeof row.differential === 'string' ? row.differential.slice(0, MAX_FIELD) : '',
+          impression: typeof row.impression === 'string' ? row.impression.slice(0, MAX_FIELD) : '',
+          submitted: row.submitted === true,
+          savedAt: Number.isFinite(Number(row.savedAt)) ? Number(row.savedAt) : 0,
+          checklist: Array.isArray(row.checklist) ? row.checklist.filter(function (id) { return typeof id === 'string'; }).slice(0, 10) : []
+        };
+      });
+      return out;
+    } catch (_) { return {}; }
+  }
+
+  function persistDrafts() {
+    try {
+      const ids = Object.keys(state.drafts).sort(function (a, b) {
+        return Number(state.drafts[b].savedAt || 0) - Number(state.drafts[a].savedAt || 0);
+      }).slice(0, MAX_DRAFTS);
+      const bounded = {};
+      ids.forEach(function (id) { bounded[id] = state.drafts[id]; });
+      state.drafts = bounded;
+      localStorage.setItem(STORAGE_KEY, JSON.stringify({ version: 1, drafts: bounded }));
+      const status = el('draft-status');
+      if (status) status.textContent = lang() === 'fa' ? 'پیش‌نویس در همین مرورگر ذخیره شد.' : 'Draft saved in this browser.';
+    } catch (_) {
+      const status = el('draft-status');
+      if (status) status.textContent = lang() === 'fa' ? 'ذخیره‌سازی در این مرورگر در دسترس نیست؛ متن را جداگانه نگه دار.' : 'Local storage is unavailable; keep a separate copy of your work.';
+    }
+  }
+
+  function getActive() { return data.getById(state.activeId); }
+  function getDraft(id) {
+    if (!state.drafts[id]) state.drafts[id] = { findings: '', differential: '', impression: '', submitted: false, savedAt: 0, checklist: [] };
+    return state.drafts[id];
+  }
+
+  function make(tag, className, value) {
+    const node = document.createElement(tag);
+    if (className) node.className = className;
+    if (value !== undefined) node.textContent = value;
+    return node;
+  }
+
+  function appendText(parent, tag, className, value) {
+    const node = make(tag, className, value);
+    parent.appendChild(node);
+    return node;
+  }
+
+  function link(url, label, className) {
+    const node = make('a', className, label);
+    node.href = url;
+    node.target = '_blank';
+    node.rel = 'noopener noreferrer';
+    return node;
+  }
+
+  function renderCards() {
+    const container = el('guided-case-list');
+    container.replaceChildren();
+    data.list().forEach(function (item, index) {
+      const button = make('button', 'guided-case-card' + (item.id === state.activeId ? ' active' : ''));
+      button.type = 'button';
+      button.dataset.caseId = item.id;
+      button.setAttribute('aria-pressed', item.id === state.activeId ? 'true' : 'false');
+      appendText(button, 'span', 'guided-case-number', String(index + 1).padStart(2, '0'));
+      appendText(button, 'strong', 'guided-case-card-title', text(item.title));
+      appendText(button, 'span', 'guided-case-card-summary', text(item.summary));
+      const meta = make('span', 'guided-case-card-meta', lang() === 'fa' ? 'CT شکم · کیس مرجع بیرونی' : 'Abdominal CT · External reference case');
+      button.appendChild(meta);
+      button.addEventListener('click', function () { selectCase(item.id); });
+      container.appendChild(button);
+    });
+  }
+
+  function renderRubric(item, draft) {
+    const container = el('guided-case-rubric');
+    container.replaceChildren();
+    item.rubric.forEach(function (criterion) {
+      const label = make('label', 'guided-rubric-item');
+      const input = document.createElement('input');
+      input.type = 'checkbox';
+      input.value = criterion.id;
+      input.checked = draft.checklist.indexOf(criterion.id) !== -1;
+      input.addEventListener('change', function () {
+        const current = getDraft(item.id);
+        current.checklist = Array.from(container.querySelectorAll('input[type=checkbox]:checked')).map(function (box) { return box.value; });
+        current.savedAt = Date.now();
+        persistDrafts();
+      });
+      const copy = make('span', 'guided-rubric-copy');
+      appendText(copy, 'strong', '', text(criterion.title));
+      appendText(copy, 'span', '', text(criterion.cue));
+      label.appendChild(input);
+      label.appendChild(copy);
+      container.appendChild(label);
+    });
+  }
+
+  function renderSource(item) {
+    const frame = el('radiopaedia-frame');
+    const frameWrap = el('radiopaedia-frame-wrap');
+    frameWrap.hidden = true;
+    frame.removeAttribute('src');
+    state.iframeLoaded = false;
+    el('source-load-button').disabled = false;
+    el('source-load-status').textContent = lang() === 'fa'
+      ? 'برای بارگذاری محتوای میزبان‌شده توسط Radiopaedia، دکمه را بزن. ممکن است سیاست آن سایت نمایش در قاب داخلی را مسدود کند.'
+      : 'Load the Radiopaedia-hosted content only when ready. The source site may block embedded display.';
+    el('source-case-title').textContent = item.source.title;
+    el('source-case-attribution').textContent = (lang() === 'fa' ? 'مشارکت‌کننده: ' : 'Contributed by: ') + item.source.contributor + ' · ' + item.source.rid;
+    el('source-open-link').href = item.source.url;
+    el('source-open-link').textContent = lang() === 'fa' ? 'بازکردن کیس اصلی در Radiopaedia ↗' : 'Open original Radiopaedia case ↗';
+    el('source-article-link').href = item.source.articleUrl;
+    el('source-article-link').textContent = (lang() === 'fa' ? 'مقالهٔ مرتبط: ' : 'Related article: ') + item.source.articleTitle;
+    el('source-citation').textContent = item.source.citation;
+  }
+
+  function renderActive() {
+    const item = getActive();
+    if (!item) return;
+    const draft = getDraft(item.id);
+    el('guided-case-title').textContent = text(item.title);
+    el('guided-case-summary').textContent = text(item.summary);
+    el('guided-case-level').textContent = (lang() === 'fa' ? 'سطح: ' : 'Level: ') + ({foundations: lang() === 'fa' ? 'پایه' : 'Foundations', intermediate: lang() === 'fa' ? 'متوسط' : 'Intermediate', advanced: lang() === 'fa' ? 'پیشرفته' : 'Advanced'}[item.level] || item.level);
+    el('guided-case-disclaimer').textContent = text(item.disclaimer);
+    const goals = el('guided-case-objectives');
+    goals.replaceChildren();
+    item.objectives[lang()].forEach(function (goal) { appendText(goals, 'li', '', goal); });
+
+    el('learner-findings').value = draft.findings;
+    el('learner-differential').value = draft.differential;
+    el('learner-impression').value = draft.impression;
+    el('guided-case-rubric-section').hidden = !draft.submitted;
+    el('guided-case-submit-status').textContent = draft.submitted
+      ? (lang() === 'fa' ? 'پاسخ ذخیره‌شده است. این مرحله نمره‌گذاری خودکار ندارد؛ موارد را با چک‌لیست مرور کن.' : 'Your draft is submitted locally. There is no automatic grading; review the checklist.')
+      : '';
+    renderRubric(item, draft);
+    renderSource(item);
+  }
+
+  function selectCase(id) {
+    if (!data.getById(id)) return;
+    state.activeId = id;
+    renderCards();
+    renderActive();
+    el('guided-case-title').focus({ preventScroll: true });
+  }
+
+  function loadSourceViewer() {
+    const item = getActive();
+    if (!item) return;
+    const frame = el('radiopaedia-frame');
+    const wrap = el('radiopaedia-frame-wrap');
+    frame.title = lang() === 'fa'
+      ? 'نمای میزبان‌شدهٔ کیس در Radiopaedia؛ قاب خارجی و مستقل'
+      : 'Externally hosted Radiopaedia case viewer';
+    frame.src = item.source.url;
+    wrap.hidden = false;
+    state.iframeLoaded = true;
+    el('source-load-button').disabled = true;
+    el('source-load-status').textContent = lang() === 'fa'
+      ? 'اگر قاب خالی ماند یا خطای دسترسی دیدی، از پیوند «بازکردن کیس اصلی» استفاده کن؛ سری تصاویر در سایت اصلی پیمایش می‌شود.'
+      : 'If the frame is blank or blocked, use “Open original Radiopaedia case”; scrollable image series remain on the original site.';
+  }
+
+  function submitDraft(event) {
+    event.preventDefault();
+    const item = getActive();
+    if (!item) return;
+    const findings = el('learner-findings').value.trim();
+    const impression = el('learner-impression').value.trim();
+    if (!findings || !impression) {
+      el('guided-case-submit-status').textContent = lang() === 'fa'
+        ? 'برای ثبت خودارزیابی، Findings و Impression را پر کن.'
+        : 'Enter both Findings and Impression before submitting your self-review.';
+      (!findings ? el('learner-findings') : el('learner-impression')).focus();
+      return;
+    }
+    const draft = getDraft(item.id);
+    draft.findings = findings.slice(0, MAX_FIELD);
+    draft.differential = el('learner-differential').value.slice(0, MAX_FIELD);
+    draft.impression = impression.slice(0, MAX_FIELD);
+    draft.submitted = true;
+    draft.savedAt = Date.now();
+    persistDrafts();
+    renderRubric(item, draft);
+    el('guided-case-rubric-section').hidden = false;
+    el('guided-case-submit-status').textContent = lang() === 'fa'
+      ? 'پاسخ در همین مرورگر ذخیره شد. نمرهٔ خودکار یا تفسیر تأییدشده ارائه نمی‌شود؛ چک‌لیست زیر را برای خودارزیابی به کار ببر.'
+      : 'Saved in this browser. No automated score or validated interpretation is provided; use the checklist for self-review.';
+    el('guided-case-rubric-section').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  function clearDraft() {
+    const item = getActive();
+    if (!item) return;
+    if (!window.confirm(lang() === 'fa' ? 'پیش‌نویس این کیس از همین مرورگر حذف شود؟' : 'Delete this case draft from this browser?')) return;
+    delete state.drafts[item.id];
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify({ version: 1, drafts: state.drafts })); } catch (_) {}
+    el('learner-findings').value = '';
+    el('learner-differential').value = '';
+    el('learner-impression').value = '';
+    el('guided-case-rubric-section').hidden = true;
+    el('guided-case-submit-status').textContent = lang() === 'fa' ? 'پیش‌نویس حذف شد.' : 'Draft deleted.';
+    persistDrafts();
+  }
+
+  function setLanguage(next) {
+    document.documentElement.lang = next;
+    document.documentElement.dir = next === 'fa' ? 'rtl' : 'ltr';
+    document.querySelectorAll('[data-fa][data-en]').forEach(function (node) {
+      node.textContent = node.dataset[next];
+    });
+    el('language-toggle').textContent = next === 'fa' ? 'EN' : 'فا';
+    renderCards();
+    renderActive();
+  }
+
+  ['learner-findings', 'learner-differential', 'learner-impression'].forEach(function (id) {
+    el(id).addEventListener('input', function () {
+      const item = getActive();
+      if (!item) return;
+      const draft = getDraft(item.id);
+      draft[id === 'learner-findings' ? 'findings' : id === 'learner-differential' ? 'differential' : 'impression'] = el(id).value.slice(0, MAX_FIELD);
+      draft.savedAt = Date.now();
+      persistDrafts();
+    });
+  });
+
+  el('source-load-button').addEventListener('click', loadSourceViewer);
+  el('guided-case-form').addEventListener('submit', submitDraft);
+  el('clear-case-draft').addEventListener('click', clearDraft);
+  el('language-toggle').addEventListener('click', function () { setLanguage(lang() === 'fa' ? 'en' : 'fa'); });
+  el('guided-case-list').addEventListener('keydown', function (event) {
+    if (event.key !== 'Escape') return;
+    el('source-load-button').focus();
+  });
+  if (typeof MutationObserver !== 'undefined') {
+    new MutationObserver(function () { renderCards(); renderActive(); }).observe(document.documentElement, { attributes: true, attributeFilter: ['lang'] });
+  }
+  renderCards();
+  renderActive();
+  setLanguage('fa');
+}());
