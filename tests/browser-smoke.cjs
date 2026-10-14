@@ -570,8 +570,8 @@ const { chromium } = require('playwright');
       'the original source page must remain accessible');
     assert.equal(await guidedPage.locator('#source-open-study-link').getAttribute('href'), 'https://radiopaedia.org/cases/164871/studies/134067?lang=us',
       'the extracted study URL must be used for the new case');
-    assert.equal(await guidedPage.locator('#radiopaedia-frame').getAttribute('src'), null,
-      'selecting another case must not load its external viewer before opt-in');
+    assert.equal(await guidedPage.locator('#radiopaedia-frame').count(), 0,
+      'selecting a case must not create an iframe that displays the Radiopaedia case page');
     assert.deepEqual(guidedErrors, [], 'guided case page should not emit uncaught JavaScript errors');
     await guidedPage.close();
 
