@@ -243,6 +243,8 @@
   function setLanguage(next) {
     document.documentElement.lang = next;
     document.documentElement.dir = next === 'fa' ? 'rtl' : 'ltr';
+    document.body.classList.toggle('lang-fa', next === 'fa');
+    document.body.classList.toggle('lang-en', next === 'en');
     document.querySelectorAll('[data-fa][data-en]').forEach(function (node) {
       node.textContent = node.dataset[next];
     });
