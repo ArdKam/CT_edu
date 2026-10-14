@@ -156,6 +156,7 @@
     const draft = getDraft(item.id);
     el('guided-case-title').textContent = text(item.title);
     el('guided-case-summary').textContent = text(item.summary);
+    el('guided-case-context').textContent = text(item.clinicalContext);
     el('guided-case-level').textContent = (lang() === 'fa' ? 'سطح: ' : 'Level: ') + ({foundations: lang() === 'fa' ? 'پایه' : 'Foundations', intermediate: lang() === 'fa' ? 'متوسط' : 'Intermediate', advanced: lang() === 'fa' ? 'پیشرفته' : 'Advanced'}[item.level] || item.level);
     el('guided-case-disclaimer').textContent = text(item.disclaimer);
     const goals = el('guided-case-objectives');
