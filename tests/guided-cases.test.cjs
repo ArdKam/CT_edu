@@ -13,6 +13,7 @@ for (const item of entries) {
   assert.ok(item.source.url.startsWith('https://radiopaedia.org/cases/'));
   assert.ok(item.source.articleUrl.startsWith('https://radiopaedia.org/articles/'));
   assert.ok(item.source.contributor && item.source.rid && item.source.citation);
+  assert.ok(item.clinicalContext.fa && item.clinicalContext.en, 'each exercise needs a bilingual teaching context');
   assert.ok(Array.isArray(item.objectives.fa) && item.objectives.fa.length >= 3);
   assert.ok(Array.isArray(item.objectives.en) && item.objectives.en.length >= 3);
   assert.ok(Array.isArray(item.rubric) && item.rubric.length >= 3);
