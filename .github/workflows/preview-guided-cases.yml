@@ -143,5 +143,5 @@ jobs:
           fetch_with_retry "$base/" 'preview/cases.html'
           fetch_with_retry "$base/preview/cases.html" 'Guided cases'
           fetch_with_retry "$base/preview/src/data/guided-cases.js" 'rID-59227'
-          fetch_with_retry "$base/preview/src/data/radiopaedia-abdominal-cases.js" 'abd-prv-007'
+          fetch_with_retry "$base/preview/src/data/radiopaedia-abdominal-cases.js" 'abd-prv-008'
           fetch_with_retry "$base/preview/src/guided-cases.js" 'Load the Radiopaedia-hosted content only when ready'
