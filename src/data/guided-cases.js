@@ -12,6 +12,10 @@
     {
       id: 'acute-abdominal-pain-ct',
       level: 'foundations',
+      clinicalContext: {
+        fa: 'زمینهٔ آموزشی: بیماری با درد شکم، استفراغ و کاهش دفع گاز/مدفوع مراجعه کرده است. CT شکم برای بررسی الگوی انسداد و عوارض احتمالی درخواست شده است.',
+        en: 'Teaching context: a patient presents with abdominal pain, vomiting, and reduced passage of stool or flatus. CT is requested to assess for obstruction and complications.'
+      },
       modality: 'CT',
       region: 'abdomen',
       title: { fa: 'درد شکم · مرور CT', en: 'Abdominal pain · CT review' },
@@ -62,6 +66,10 @@
     {
       id: 'closed-loop-pattern-ct',
       level: 'intermediate',
+      clinicalContext: {
+        fa: 'زمینهٔ آموزشی: درد شکم و استفراغ در بیماری با سابقهٔ جراحی شکم وجود دارد. CT با کنتراست برای بررسی محل انسداد و شکل حلقه‌های روده انجام شده است.',
+        en: 'Teaching context: abdominal pain and vomiting occur in a patient with previous abdominal surgery. Contrast-enhanced CT is obtained to assess the level of obstruction and bowel-loop configuration.'
+      },
       modality: 'CT',
       region: 'abdomen',
       title: { fa: 'انسداد حلقه‌بسته · CT', en: 'Closed-loop pattern · CT' },
@@ -112,6 +120,10 @@
     {
       id: 'bowel-viability-ct',
       level: 'advanced',
+      clinicalContext: {
+        fa: 'زمینهٔ آموزشی: درد شدید شکم و نگرانی بالینی از آسیب روده وجود دارد. هدف مرور، ارزیابی CT با کنتراست برای انسداد و نشانه‌های احتمالی اختلال پرفیوژن است.',
+        en: 'Teaching context: severe abdominal pain raises concern for bowel injury. The task is to review contrast-enhanced CT for obstruction and possible impaired bowel perfusion.'
+      },
       modality: 'CT',
       region: 'abdomen',
       title: { fa: 'ایسکمی روده · ارزیابی CT', en: 'Bowel viability · CT review' },
