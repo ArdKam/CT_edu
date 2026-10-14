@@ -152,8 +152,8 @@
       state.iframeLoaded = true;
       el('source-load-button').disabled = true;
       el('source-load-status').textContent = lang() === 'fa'
-        ? 'درخواست viewer خارجی ارسال شده است؛ اگر قاب نمایش داده نشد، از پیوند کیس اصلی استفاده کن.'
-        : 'External viewer requested. If the frame is blocked, use the original-case link.';
+        ? 'درخواست Viewer خارجی ارسال شده است؛ اگر قاب نمایش داده نشد، Viewer را در تب جدید باز کن. پیوند کیس اصلی هم در دسترس است.'
+        : 'External viewer requested. If framing is blocked, open the viewer in a new tab. The original-case link is also available.';
     }
     el('source-case-title').textContent = item.source.title;
     const attribution = item.source.contributor
@@ -216,8 +216,8 @@
     state.iframeLoaded = true;
     el('source-load-button').disabled = true;
     el('source-load-status').textContent = lang() === 'fa'
-      ? 'اگر قاب خالی ماند یا خطای دسترسی دیدی، از پیوند «بازکردن کیس اصلی» استفاده کن؛ سری تصاویر در سایت اصلی پیمایش می‌شود.'
-      : 'If the frame is blank or blocked, use “Open original Radiopaedia case”; scrollable image series remain on the original site.';
+      ? 'اگر قاب خالی ماند یا خطای دسترسی دیدی، Viewer را در تب جدید باز کن؛ پیوند کیس اصلی نیز در دسترس است.'
+      : 'If the frame is blank or blocked, open the viewer in a new tab; the original-case link remains available.';
   }
 
   function submitDraft(event) {
