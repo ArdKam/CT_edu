@@ -49,7 +49,7 @@ See [DATASET_ROADMAP.md](DATASET_ROADMAP.md) for reviewed candidate sources and 
 - [ ] Verify GitHub private vulnerability reporting is enabled for this repository; confirm a private fallback contact method before broader public release.
 - [x] Add a bilingual, public [privacy notice](privacy.html) linked from the app, covering local-only progress, clear/export/restore behavior, no app-account upload, and the current Google Fonts third-party request.
 - [ ] Complete the legal/privacy review of Google Fonts and static-hosting request logs; decide whether fonts should be self-hosted before a broader public release. The notice is transparent but is not a substitute for jurisdiction-specific legal advice.
-- [ ] Review the current Radiopaedia Terms of Use and the exact referenced case/item rights. The app makes no local copy of the images or discussion; embedded rendering is user-initiated and best-effort, with a direct source-link fallback. Confirm that this presentation mode is acceptable before public release.
+- [ ] Review the current Radiopaedia Terms of Use and the exact referenced case/item rights. Current links open source pages; an in-app Radiopaedia viewer is not implemented. Do not claim embedded image viewing until the source provides a supported embed mechanism or image assets have confirmed reuse rights.
 - [ ] Confirm exact source and derivative redistribution permissions before publication; see [DATA_LICENSE_REVIEW.md](DATA_LICENSE_REVIEW.md) and [DATASET_ROADMAP.md](DATASET_ROADMAP.md).
 
 ### Medical image correctness and data
@@ -63,7 +63,7 @@ See [DATASET_ROADMAP.md](DATASET_ROADMAP.md) for reviewed candidate sources and 
 ### Educational product completeness
 
 - [x] Implement the guided-case workflow scaffold: bilingual teaching context, systematic-review objectives, Findings/differential/Impression fields, local drafts, and self-review checklist. This records learner self-attestation only; it does not provide a reviewed reference interpretation or automatic grading.
-- [x] Add a bilingual guided-case workspace with structured Findings/differential/Impression fields, locally saved drafts, self-review checklists, Radiopaedia source references, explicit user opt-in before requesting an embedded external page, and an external-link fallback. This is workflow scaffolding only; the prompts are not validated interpretations and must not be treated as approved cases.
+- [x] Add a bilingual guided-case workspace with structured Findings/differential/Impression fields, locally saved drafts, self-review checklists and explicit external Radiopaedia source-page links. The source links are not an embedded viewer. This is workflow scaffolding only; the prompts are not validated interpretations and must not be treated as approved cases.
 - [x] Add a draft case-authoring template and validator that require provenance, image-integrity metadata, bilingual guided steps, rubric structure, independent review records, privacy checks, and explicit publication approval. The template is empty and is not an approved educational case.
 - [ ] Create reviewed cases with an explicit rubric, teaching rationale, key-finding annotations, accepted alternatives, and provenance.
 - [x] Record active-recall outcomes in a bounded (500-attempt) local-only browser history, show attempts/accuracy/distinct structures, clear history, and export/import a validated versioned JSON backup (restore replaces history after confirmation). This is device/browser-local persistence only.
@@ -74,6 +74,8 @@ See [DATASET_ROADMAP.md](DATASET_ROADMAP.md) for reviewed candidate sources and 
 - [ ] Run a learner pilot with pre/post cases and a transfer test; record usability issues separately from learning outcomes.
 
 ### Viewer, accessibility, and security
+
+- [ ] Implement and validate a true in-app case image viewer. Do not treat `https://radiopaedia.org/cases/{id}/studies/{id}` as a standalone endpoint. Proceed only with an officially supported embedding/API path or explicitly cleared, attributable image assets.
 
 - [x] Replace dynamic UI `innerHTML` construction with DOM APIs and `textContent`, validate anatomy palette values, add a restrictive CSP meta policy, and add tests for the HTML-sink contract and malicious search text. Chromium confirms the CSP is present and the injection probe creates no element and executes no code. This is a targeted client-side hardening baseline, not a complete security audit; the meta policy should be backed by deployment response headers when the hosting platform supports them.
 - [x] Add Playwright compatibility smoke checks for Chromium, Firefox, and Playwright WebKit at a 390px viewport; Chromium/WebKit also use touch/mobile emulation where supported. These checks validate basic cross-engine behavior, not certification on physical phones.
