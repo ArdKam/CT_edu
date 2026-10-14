@@ -207,6 +207,7 @@
     if (!item) return;
     const frame = el('radiopaedia-frame');
     const wrap = el('radiopaedia-frame-wrap');
+    const viewerUrl = item.source.viewerUrl || item.source.url;
     frame.title = lang() === 'fa'
       ? 'نمای میزبان‌شدهٔ کیس در Radiopaedia؛ قاب خارجی و مستقل'
       : 'Externally hosted Radiopaedia case viewer';
