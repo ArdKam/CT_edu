@@ -472,8 +472,26 @@ const { chromium } = require('playwright');
     const guidedResponse = await guidedPage.goto('http://127.0.0.1:8765/cases.html', { waitUntil: 'domcontentloaded' });
     assert.ok(guidedResponse && guidedResponse.ok(), 'guided case workspace should return HTTP 200');
     await guidedPage.locator('#guided-case-list .guided-case-card').first().waitFor({ state: 'visible' });
+    assert.equal(await guidedPage.locator('#guided-case-list .guided-case-card').count(), 25,
+      'the existing four and 21 intake cases should be listed');
+    assert.equal(await guidedPage.locator('#guided-case-count').textContent(), '25 از 25 کیس',
+      'the case count should reflect the full catalog in Persian');
+    await guidedPage.locator('#guided-system-filter').selectOption('renal-urinary');
     assert.equal(await guidedPage.locator('#guided-case-list .guided-case-card').count(), 4,
-      'four source-referenced cases should be listed');
+      'the renal/urinary filter should narrow the displayed case collection');
+    assert.equal(await guidedPage.locator('#guided-case-list .guided-case-card[data-case-category="renal-urinary"]').count(), 4,
+      'all visible results must belong to the selected primary category');
+    await guidedPage.locator('#guided-system-filter').selectOption('');
+    await guidedPage.locator('#guided-case-search').fill('zz-no-such-teaching-topic-zz');
+    assert.equal(await guidedPage.locator('#guided-case-list .guided-case-card').count(), 0,
+      'an unmatched search should produce no cards');
+    assert.equal(await guidedPage.locator('#guided-case-empty').isVisible(), true,
+      'an unmatched search should announce an empty state');
+    assert.equal(await guidedPage.locator('#guided-active-case-panel').isVisible(), false,
+      'an empty result should not leave a stale active case displayed');
+    await guidedPage.locator('#guided-case-search').fill('');
+    assert.equal(await guidedPage.locator('#guided-case-list .guided-case-card').count(), 25,
+      'clearing search should restore the full collection');
     assert.equal(await guidedPage.locator('#radiopaedia-frame').getAttribute('src'), null,
       'the external source must not be requested before learner opt-in');
     const directViewerUrl = 'https://radiopaedia.org/cases/2582/studies/6276?lang=us#t=im&v1i=478&v1z=1&v2i=931&v2z=1';
@@ -531,6 +549,25 @@ const { chromium } = require('playwright');
       'guided-case drafts should persist locally across reload');
     assert.deepEqual(guidedErrors, [], 'guided case page should not emit uncaught JavaScript errors');
     await guidedPage.close();
+
+    const guidedDesktop = await browser.newPage({ viewport: { width: 1440, height: 1000 } });
+    const guidedDesktopErrors = [];
+    guidedDesktop.on('pageerror', function (error) { guidedDesktopErrors.push(error.message); });
+    const guidedDesktopResponse = await guidedDesktop.goto('http://127.0.0.1:8765/cases.html', { waitUntil: 'domcontentloaded' });
+    assert.ok(guidedDesktopResponse && guidedDesktopResponse.ok(), 'desktop guided case workspace should return HTTP 200');
+    await guidedDesktop.locator('#guided-case-list .guided-case-card').first().waitFor({ state: 'visible' });
+    assert.equal(await guidedDesktop.locator('#guided-case-list .guided-case-card').count(), 25,
+      'desktop catalog should expose the full case collection');
+    await guidedDesktop.locator('#guided-system-filter').selectOption('adrenal-endocrine');
+    assert.equal(await guidedDesktop.locator('#guided-case-list .guided-case-card').count(), 2,
+      'desktop system filtering should update case results');
+    const desktopLayout = await guidedDesktop.evaluate(function () {
+      return { width: window.innerWidth, documentWidth: document.documentElement.scrollWidth };
+    });
+    assert.ok(desktopLayout.documentWidth <= desktopLayout.width + 1,
+      'desktop guided case page must not overflow horizontally: ' + JSON.stringify(desktopLayout));
+    assert.deepEqual(guidedDesktopErrors, [], 'desktop guided case page should not emit uncaught JavaScript errors');
+    await guidedDesktop.close();
 
     const privacyPage = await browser.newPage({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 1, isMobile: true, hasTouch: true });
     const privacyErrors = [];
