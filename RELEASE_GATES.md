@@ -25,11 +25,19 @@ This checklist separates code that exists from educational, legal, and release r
 
 See [DATASET_ROADMAP.md](DATASET_ROADMAP.md) for reviewed candidate sources and their exact access/redistribution caveats. Do not mark head/chest coverage complete merely because candidate datasets have been identified.
 
+## Current verification snapshot — 2026-10-14
+
+- Base inspected: `main @ a54bc01bdbda0ae2509f1e44a9f50d14c0371676`.
+- The merged main CI run reported 65 Node tests passing, source-volume and labelmap checks passing, plus Chromium, Firefox, and WebKit automated smoke checks passing on emulated viewport profiles.
+- The Pages build artifact was created successfully; the public deploy job was skipped by the fail-closed release latch. The current public URL has not been proven to serve this revision.
+- The guided-case workspace is being added on a feature branch. Radiopaedia pages are references loaded only by explicit learner action; no Radiopaedia text or images are bundled. Embedded rendering is best-effort and must retain the external-link fallback.
+- This snapshot is technical evidence only. It is not an expert sign-off or a legal determination.
+
 ## Release blockers
 
 ### Git / deployment
 
-- [ ] Review and merge [PR #1](https://github.com/ArdKam/CT_edu/pull/1) only after its required gates are reviewed. It is still a Draft PR; do not treat the live preview as proof that `main` contains the code.
+- [x] PR #1 is merged into `main` at the current baseline (`a54bc01` at the time of this review). The prior Draft-PR status was stale. This does not close any medical, rights, privacy, device, or release-deployment gate.
 - [ ] Keep `CT_EDU_PUBLIC_RELEASE_APPROVED` unset while any release blocker remains. Only after the medical, legal, privacy, accessibility, and device-review evidence is recorded should the maintainer set it to `true`; then confirm the resulting `main` SHA, Actions tests, Pages deploy, and live endpoint checks.
 - [ ] Review public repository contents: the source ZIP archives are present in the repository even though the Pages artifact excludes them. Decide whether their continued public distribution is permitted by the exact source and third-party licenses.
 
