@@ -37,4 +37,5 @@ assert.equal(lipoma.source.url, 'https://radiopaedia.org/cases/ascending-colon-l
 assert.equal(lipoma.source.viewerUrl, 'https://radiopaedia.org/cases/2582/studies/6276?lang=us#t=im&v1i=478&v1z=1&v2i=931&v2z=1');
 assert.ok(page.includes('id="source-open-viewer-link"'));
 assert.ok(app.includes('frame.src = viewerUrl;'));
+assert.ok(app.includes("function loadSourceViewer() {\n    const item = getActive();\n    if (!item) return;\n    const frame = el('radiopaedia-frame');\n    const wrap = el('radiopaedia-frame-wrap');\n    const viewerUrl = item.source.viewerUrl || item.source.url;"));
 console.log('Guided cases: bilingual metadata, source links, and self-review rubrics validated.');
