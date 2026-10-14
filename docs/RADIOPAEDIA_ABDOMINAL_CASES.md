@@ -8,16 +8,16 @@
 
 | Primary category | Existing cases retained | New records | Total |
 |---|---:|---:|---:|
-| Gastrointestinal | 4 | 5 | 9 |
-| Hepatobiliary & pancreas | 0 | 5 | 5 |
-| Renal & urinary | 0 | 4 | 4 |
-| Adrenal & endocrine | 0 | 2 | 2 |
-| Female reproductive & pelvis | 0 | 2 | 2 |
-| Male genitourinary | 0 | 2 | 2 |
-| Peritoneum, retroperitoneum & vessels | 0 | 2 | 2 |
-| **Total** | **4** | **22** | **26** |
+| Gastrointestinal | 4 | 9 | 13 |
+| Hepatobiliary & pancreas | 0 | 10 | 10 |
+| Renal & urinary | 0 | 6 | 6 |
+| Adrenal & endocrine | 0 | 3 | 3 |
+| Female reproductive & pelvis | 0 | 4 | 4 |
+| Male genitourinary | 0 | 3 | 3 |
+| Peritoneum, retroperitoneum & vessels | 0 | 5 | 5 |
+| **Total** | **4** | **40** | **44** |
 
-The new 22 records are additional candidates discovered through targeted organ-system searches. They are not the result of an exhaustive survey of Radiopaedia. The requested ceiling of 20 cases per category is a maximum, not an instruction to pad categories: each category remains below that ceiling because this intake did not verify 20 eligible cases per category.
+The new 40 records are additional candidates discovered through targeted organ-system searches. They are not the result of an exhaustive survey of Radiopaedia. The requested ceiling of 20 cases per category is a maximum, not an instruction to pad categories: the current candidate counts remain below that ceiling. Further systematic searches and live image verification are still needed before calling these categories complete.
 
 ## Selection order and interpretation of status
 
@@ -42,23 +42,41 @@ All source-page links use numeric Radiopaedia case permalinks. The UI shows non-
 | 3 | Gastrointestinal | `abd-gi-003` | [Case 25921](https://radiopaedia.org/cases/25921?lang=us) | Not extracted | `partially_verified` — CT mentioned in indexed content; live page not checked |
 | 4 | Gastrointestinal | `abd-gi-004` | [Case 99249](https://radiopaedia.org/cases/99249?lang=us) | [Study 120709](https://radiopaedia.org/cases/99249/studies/120709?lang=us) | `partially_verified` — CT study ID found in indexed metadata; URL/image load not live-tested. Study 120710 was described as radiography and was not used |
 | 5 | Gastrointestinal | `abd-gi-005` | [Case 177978](https://radiopaedia.org/cases/177978?lang=us) | Not extracted | `partially_verified` — case has CT material in indexed content; live stack not checked |
+| 6 | Gastrointestinal | `abd-gi-006` | [Case 83859](https://radiopaedia.org/cases/83859?lang=us) | Not extracted | `partially_verified` — indexed case states CT abdomen/pelvis with IV/oral contrast and a portal-venous CT stack; live viewer not checked |
+| 7 | Gastrointestinal | `abd-gi-007` | [Case 31252](https://radiopaedia.org/cases/31252?lang=us) | Not extracted | `partially_verified` — contrast-enhanced CT and coronal reconstruction described; images not live-loaded |
+| 8 | Gastrointestinal | `abd-gi-008` | [Case 40732](https://radiopaedia.org/cases/40732?lang=us) | Not extracted | `partially_verified` — CT abdomen/pelvis with non-contrast and portal-venous axial/coronal/sagittal stacks in indexed content; direct viewer not extracted |
+| 9 | Gastrointestinal | `abd-gi-009` | [Case 148532](https://radiopaedia.org/cases/148532?lang=us) | Not extracted | `partially_verified` — indexed CT section describes two transition points and mesenteric rotation; live image loading not checked |
 | 1 | Hepatobiliary & pancreas | `abd-hbp-001` | [Case 11083](https://radiopaedia.org/cases/11083?lang=us) | Not extracted | `partially_verified` — CT identified in indexed content; images not loaded |
 | 2 | Hepatobiliary & pancreas | `abd-hbp-002` | [Case 164871](https://radiopaedia.org/cases/164871?lang=us) | [Study 134067](https://radiopaedia.org/cases/164871/studies/134067?lang=us) | `partially_verified` — study ID found in indexed metadata; live viewer/image load not tested |
 | 3 | Hepatobiliary & pancreas | `abd-hbp-003` | [Case 47865](https://radiopaedia.org/cases/47865?lang=us) | Not extracted | `partially_verified` — CT at presentation/follow-up described; images not loaded |
 | 4 | Hepatobiliary & pancreas | `abd-hbp-004` | [Case 171645](https://radiopaedia.org/cases/171645?lang=us) | Not extracted | `partially_verified` — indexed case describes CT follow-up; live stack not checked |
 | 5 | Hepatobiliary & pancreas | `abd-hbp-005` | [Case 35234](https://radiopaedia.org/cases/35234?lang=us) | [Study 36772](https://radiopaedia.org/cases/35234/studies/36772?lang=us) | `partially_verified` — indexed Radiopaedia case identifies CT abdomen and study 36772; live viewer/image loading not re-tested |
+| 6 | Hepatobiliary & pancreas | `abd-hbp-006` | [Case 152397](https://radiopaedia.org/cases/152397?lang=us) | Not extracted | `partially_verified` — CT with arterial enhancement and delayed washout described; live viewer not checked |
+| 7 | Hepatobiliary & pancreas | `abd-hbp-007` | [Case 9940](https://radiopaedia.org/cases/9940?lang=us) | Not extracted | `partially_verified` — post-TACE portal-venous axial/coronal CT stacks described; pre-treatment CT was unavailable |
+| 8 | Hepatobiliary & pancreas | `abd-hbp-008` | [Case 172109](https://radiopaedia.org/cases/172109?lang=us) | Not extracted | `partially_verified` — arterial and portal-venous CT abdomen/pelvis described; live viewer not checked |
+| 9 | Hepatobiliary & pancreas | `abd-hbp-009` | [Case 227574](https://radiopaedia.org/cases/227574?lang=us) | Not extracted | `partially_verified` — case page indexed with CT stack; images not live-loaded |
+| 10 | Hepatobiliary & pancreas | `abd-hbp-010` | [Case 157852](https://radiopaedia.org/cases/157852?lang=us) | Not extracted | `partially_verified` — CT-specific cholecystitis findings discussed alongside ultrasound; live viewer not checked |
 | 1 | Renal & urinary | `abd-ru-001` | [Case 191505](https://radiopaedia.org/cases/191505?lang=us) | Not extracted | `partially_verified` — CT identified in indexed content; no live image check |
 | 2 | Renal & urinary | `abd-ru-002` | [Case 79763](https://radiopaedia.org/cases/79763?lang=us) | Not extracted | `partially_verified` — CT described; direct study ID not extracted |
 | 3 | Renal & urinary | `abd-ru-003` | [Case 151692](https://radiopaedia.org/cases/151692?lang=us) | Not extracted | `partially_verified` — CT described in indexed page; images not loaded |
 | 4 | Renal & urinary | `abd-ru-004` | [Case 99963](https://radiopaedia.org/cases/99963?lang=us) | Not extracted | `partially_verified` — multiphase CT described; live examination not checked |
+| 5 | Renal & urinary | `abd-ru-005` | [Case 240187](https://radiopaedia.org/cases/240187?lang=us) | Not extracted | `partially_verified` — CT urography describes obstructing ureteric stone and delayed nephrogram; live images not checked |
+| 6 | Renal & urinary | `abd-ru-006` | [Case 147046](https://radiopaedia.org/cases/147046?lang=us) | Not extracted | `partially_verified` — non-contrast MDCT with ureteric calculus and upstream hydroureteronephrosis described; live viewer not checked |
 | 1 | Adrenal & endocrine | `abd-ae-001` | [Case 83258](https://radiopaedia.org/cases/83258?lang=us) | Not extracted | `partially_verified` — CT described in indexed content; no live image check |
 | 2 | Adrenal & endocrine | `abd-ae-002` | [Case 33078](https://radiopaedia.org/cases/33078?lang=us) | Not extracted | `partially_verified` — non-contrast/arterial/delayed CT described; viewer not opened |
+| 3 | Adrenal & endocrine | `abd-ae-003` | [Case 87281](https://radiopaedia.org/cases/87281?lang=us) | Not extracted | `partially_verified` — non-contrast, arterial, portal-venous, delayed and sagittal CT stacks described; live images not checked |
 | 1 | Female reproductive & pelvis | `abd-frp-001` | [Case 9862](https://radiopaedia.org/cases/9862?lang=us) | Not extracted | `partially_verified` — CT attenuation described; no live image check |
 | 2 | Female reproductive & pelvis | `abd-frp-002` | [Case 232293](https://radiopaedia.org/cases/232293?lang=us) | Not extracted | `partially_verified` — sagittal portal-venous CT described; live stack not checked |
+| 3 | Female reproductive & pelvis | `abd-frp-003` | [Case 50469](https://radiopaedia.org/cases/50469?lang=us) | Not extracted | `partially_verified` — case discussion describes CT signs in surgically proven torsion; CT study was not live-opened |
+| 4 | Female reproductive & pelvis | `abd-frp-004` | [Case 98221](https://radiopaedia.org/cases/98221?lang=us) | Not extracted | `partially_verified` — contrast-enhanced CT abdomen/pelvis with fat/debris ovarian lesion described; live image loading not checked |
 | 1 | Male genitourinary | `abd-mgu-001` | [Case 191413](https://radiopaedia.org/cases/191413?lang=us) | Not extracted | `partially_verified` — both CT and MRI are described; CT cannot settle every ductal relationship |
 | 2 | Male genitourinary | `abd-mgu-002` | [Case 77724](https://radiopaedia.org/cases/77724?lang=us) | Not extracted | `partially_verified` — CT bone-window images described; live viewer not checked |
+| 3 | Male genitourinary | `abd-mgu-003` | [Case 87645](https://radiopaedia.org/cases/87645?lang=us) | Not extracted | `partially_verified` — unenhanced axial/coronal CT and MPR described; source diagnosis is probable, not pathology-proven |
 | 1 | Peritoneum, retroperitoneum & vessels | `abd-prv-001` | [Case 7627](https://radiopaedia.org/cases/7627?lang=us) | Not extracted | `partially_verified` — CT shows peritoneal disease/ascites in indexed content; primary ovary was not directly seen in that description |
 | 2 | Peritoneum, retroperitoneum & vessels | `abd-prv-002` | [Case 221525](https://radiopaedia.org/cases/221525?lang=us) | Not extracted | `partially_verified` — CT aneurysm/thrombus description; live viewer not checked |
+| 3 | Peritoneum, retroperitoneum & vessels | `abd-prv-003` | [Case 54671](https://radiopaedia.org/cases/54671?lang=us) | Not extracted | `partially_verified` — CT urography and delayed contrast extravasation/urinoma described; live viewer not checked |
+| 4 | Peritoneum, retroperitoneum & vessels | `abd-prv-004` | [Case 239658](https://radiopaedia.org/cases/239658?lang=us) | Not extracted | `partially_verified` — indexed CT discussion describes superior mesenteric vein thrombosis; source study page not live-opened |
+| 5 | Peritoneum, retroperitoneum & vessels | `abd-prv-005` | [Case 55326](https://radiopaedia.org/cases/55326?lang=us) | Not extracted | `partially_verified` — indexed case discussion describes mesenteric venous thrombosis with small-bowel ischaemia; live viewer not checked |
 
 ## Preserved records
 
