@@ -1,6 +1,6 @@
 # CT Edu — release gates and implementation status
 
-Last reviewed: 2026-10-11
+Last reviewed: 2026-10-14
 Scope: educational CT web app for clinical-year medical students.
 
 This checklist separates code that exists from educational, legal, and release requirements that still need independent evidence. Passing software tests does not establish medical validity.
@@ -25,11 +25,19 @@ This checklist separates code that exists from educational, legal, and release r
 
 See [DATASET_ROADMAP.md](DATASET_ROADMAP.md) for reviewed candidate sources and their exact access/redistribution caveats. Do not mark head/chest coverage complete merely because candidate datasets have been identified.
 
+## Current verification snapshot — 2026-10-14
+
+- Base inspected: `main @ a54bc01bdbda0ae2509f1e44a9f50d14c0371676`.
+- The merged main CI run reported 65 Node tests passing, source-volume and labelmap checks passing, plus Chromium, Firefox, and WebKit automated smoke checks passing on emulated viewport profiles.
+- The Pages build artifact was created successfully; the public deploy job was skipped by the fail-closed release latch. The current public URL has not been proven to serve this revision.
+- The guided-case workspace is being added on a feature branch. Radiopaedia pages are references loaded only by explicit learner action; no Radiopaedia text or images are bundled. Embedded rendering is best-effort and must retain the external-link fallback.
+- This snapshot is technical evidence only. It is not an expert sign-off or a legal determination.
+
 ## Release blockers
 
 ### Git / deployment
 
-- [ ] Review and merge [PR #1](https://github.com/ArdKam/CT_edu/pull/1) only after its required gates are reviewed. It is still a Draft PR; do not treat the live preview as proof that `main` contains the code.
+- [x] PR #1 is merged into `main` at the current baseline (`a54bc01` at the time of this review). The prior Draft-PR status was stale. This does not close any medical, rights, privacy, device, or release-deployment gate.
 - [ ] Keep `CT_EDU_PUBLIC_RELEASE_APPROVED` unset while any release blocker remains. Only after the medical, legal, privacy, accessibility, and device-review evidence is recorded should the maintainer set it to `true`; then confirm the resulting `main` SHA, Actions tests, Pages deploy, and live endpoint checks.
 - [ ] Review public repository contents: the source ZIP archives are present in the repository even though the Pages artifact excludes them. Decide whether their continued public distribution is permitted by the exact source and third-party licenses.
 
@@ -39,6 +47,7 @@ See [DATASET_ROADMAP.md](DATASET_ROADMAP.md) for reviewed candidate sources and 
 - [ ] Verify GitHub private vulnerability reporting is enabled for this repository; confirm a private fallback contact method before broader public release.
 - [x] Add a bilingual, public [privacy notice](privacy.html) linked from the app, covering local-only progress, clear/export/restore behavior, no app-account upload, and the current Google Fonts third-party request.
 - [ ] Complete the legal/privacy review of Google Fonts and static-hosting request logs; decide whether fonts should be self-hosted before a broader public release. The notice is transparent but is not a substitute for jurisdiction-specific legal advice.
+- [ ] Review the current Radiopaedia Terms of Use and the exact referenced case/item rights. The app makes no local copy of the images or discussion; embedded rendering is user-initiated and best-effort, with a direct source-link fallback. Confirm that this presentation mode is acceptable before public release.
 - [ ] Confirm exact source and derivative redistribution permissions before publication; see [DATA_LICENSE_REVIEW.md](DATA_LICENSE_REVIEW.md) and [DATASET_ROADMAP.md](DATASET_ROADMAP.md).
 
 ### Medical image correctness and data
@@ -52,6 +61,7 @@ See [DATASET_ROADMAP.md](DATASET_ROADMAP.md) for reviewed candidate sources and 
 ### Educational product completeness
 
 - [ ] Implement case-level clinical context, structured systematic-review prompts, abnormal-finding capture, diagnosis/differential, and structured Findings/Impression writing. Local bookmarking does not complete the guided-case workflow.
+- [x] Add a bilingual guided-case workspace with structured Findings/differential/Impression fields, locally saved drafts, self-review checklists, Radiopaedia source references, explicit user opt-in before requesting an embedded external page, and an external-link fallback. This is workflow scaffolding only; the prompts are not validated interpretations and must not be treated as approved cases.
 - [x] Add a draft case-authoring template and validator that require provenance, image-integrity metadata, bilingual guided steps, rubric structure, independent review records, privacy checks, and explicit publication approval. The template is empty and is not an approved educational case.
 - [ ] Create reviewed cases with an explicit rubric, teaching rationale, key-finding annotations, accepted alternatives, and provenance.
 - [x] Record active-recall outcomes in a bounded (500-attempt) local-only browser history, show attempts/accuracy/distinct structures, clear history, and export/import a validated versioned JSON backup (restore replaces history after confirmation). This is device/browser-local persistence only.

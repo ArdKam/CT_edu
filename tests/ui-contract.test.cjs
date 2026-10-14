@@ -233,7 +233,7 @@ test('public privacy notice is linked, staged, and explicit about local data and
   assert.match(privacy, /IP address/);
   assert.match(privacy, /1 MB/);
   assert.match(privacy, /no account system or cloud sync/);
-  assert.match(workflow, /cp index\.html data-license\.html privacy\.html DATA_LICENSE_REVIEW\.md _site\//);
+  assert.match(workflow, /cp index\.html (?:cases\.html )?data-license\.html privacy\.html DATA_LICENSE_REVIEW\.md _site\//);
   assert.match(workflow, /test -s _site\/privacy\.html/);
   assert.match(workflow, /fetch_with_retry "\$base\/privacy\.html" 'Privacy &amp; Local Data'/);
 });

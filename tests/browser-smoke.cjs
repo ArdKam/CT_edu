@@ -459,6 +459,57 @@ const { chromium } = require('playwright');
     assert.deepEqual(mobileErrors, [], 'mobile browser should not emit uncaught JavaScript errors');
     await mobile.close();
 
+    const guidedPage = await browser.newPage({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 1, isMobile: true, hasTouch: true });
+    const guidedErrors = [];
+    guidedPage.on('pageerror', function (error) { guidedErrors.push(error.message); });
+    await guidedPage.route('https://radiopaedia.org/**', function (route) {
+      return route.fulfill({
+        status: 200,
+        contentType: 'text/html; charset=utf-8',
+        body: '<!doctype html><html><body><main id="mock-source-series">Mock external Radiopaedia series</main></body></html>'
+      });
+    });
+    const guidedResponse = await guidedPage.goto('http://127.0.0.1:8765/cases.html', { waitUntil: 'domcontentloaded' });
+    assert.ok(guidedResponse && guidedResponse.ok(), 'guided case workspace should return HTTP 200');
+    await guidedPage.locator('#guided-case-list .guided-case-card').first().waitFor({ state: 'visible' });
+    assert.equal(await guidedPage.locator('#guided-case-list .guided-case-card').count(), 3,
+      'three source-referenced cases should be listed');
+    assert.equal(await guidedPage.locator('#radiopaedia-frame').getAttribute('src'), null,
+      'the external source must not be requested before learner opt-in');
+    await guidedPage.locator('#learner-findings').fill('Dilated small bowel with a suspected transition point.');
+    await guidedPage.locator('#learner-impression').fill('Small bowel obstruction; assess for closed-loop features and ischaemia.');
+    await guidedPage.locator('#guided-case-form button[type="submit"]').click();
+    assert.equal(await guidedPage.locator('#guided-case-rubric-section').isVisible(), true,
+      'submitting findings and impression should reveal the self-review rubric');
+    assert.equal(await guidedPage.locator('#guided-case-rubric .guided-rubric-item').count(), 4,
+      'case-specific rubric should be displayed');
+    await guidedPage.locator('#guided-case-rubric input[type="checkbox"]').first().check();
+    await guidedPage.locator('#source-load-button').click();
+    assert.match(await guidedPage.locator('#radiopaedia-frame').getAttribute('src'),
+      /^https:\/\/radiopaedia\.org\/cases\//, 'explicit source-viewer request should target the cited original case');
+    assert.equal(await guidedPage.locator('#radiopaedia-frame-wrap').isVisible(), true);
+    await guidedPage.locator('#language-toggle').click();
+    assert.equal(await guidedPage.locator('html').getAttribute('lang'), 'en',
+      'guided case workspace should switch language');
+    assert.equal(await guidedPage.locator('#learner-findings').getAttribute('placeholder'),
+      'Record the imaging findings systematically…', 'guided case placeholders should be translated');
+    assert.equal(await guidedPage.locator('#radiopaedia-frame-wrap').isVisible(), true,
+      'language switch should preserve an already requested source viewer');
+    await guidedPage.waitForFunction(function () {
+      return document.documentElement.scrollWidth <= window.innerWidth + 1;
+    });
+    const guidedLayout = await guidedPage.evaluate(function () {
+      return { width: window.innerWidth, documentWidth: document.documentElement.scrollWidth };
+    });
+    assert.ok(guidedLayout.documentWidth <= guidedLayout.width + 1,
+      'guided case page must not overflow horizontally at 390px: ' + JSON.stringify(guidedLayout));
+    await guidedPage.reload({ waitUntil: 'domcontentloaded' });
+    await guidedPage.locator('#guided-case-list .guided-case-card').first().waitFor({ state: 'visible' });
+    assert.match(await guidedPage.locator('#learner-findings').inputValue(), /Dilated small bowel/,
+      'guided-case drafts should persist locally across reload');
+    assert.deepEqual(guidedErrors, [], 'guided case page should not emit uncaught JavaScript errors');
+    await guidedPage.close();
+
     const privacyPage = await browser.newPage({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 1, isMobile: true, hasTouch: true });
     const privacyErrors = [];
     const privacyConsoleErrors = [];
