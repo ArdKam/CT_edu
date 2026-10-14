@@ -482,6 +482,10 @@ const { chromium } = require('playwright');
     assert.equal(await guidedPage.locator('#guided-case-list .guided-case-card[data-case-category="renal-urinary"]').count(), 4,
       'all visible results must belong to the selected primary category');
     await guidedPage.locator('#guided-system-filter').selectOption('');
+    await guidedPage.locator('#guided-level-filter').selectOption('foundations');
+    assert.equal(await guidedPage.locator('#guided-case-list .guided-case-card').count(), 4,
+      'the foundations difficulty filter should narrow cases independently of organ system');
+    await guidedPage.locator('#guided-level-filter').selectOption('');
     await guidedPage.locator('#guided-case-search').fill('zz-no-such-teaching-topic-zz');
     assert.equal(await guidedPage.locator('#guided-case-list .guided-case-card').count(), 0,
       'an unmatched search should produce no cards');
