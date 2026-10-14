@@ -472,9 +472,9 @@ const { chromium } = require('playwright');
     const guidedResponse = await guidedPage.goto('http://127.0.0.1:8765/cases.html', { waitUntil: 'domcontentloaded' });
     assert.ok(guidedResponse && guidedResponse.ok(), 'guided case workspace should return HTTP 200');
     await guidedPage.locator('#guided-case-list .guided-case-card').first().waitFor({ state: 'visible' });
-    assert.equal(await guidedPage.locator('#guided-case-list .guided-case-card').count(), 53,
-      'the existing four and 49 intake candidates should be listed');
-    assert.equal(await guidedPage.locator('#guided-case-count').textContent(), '53 از 53 کیس',
+    assert.equal(await guidedPage.locator('#guided-case-list .guided-case-card').count(), 56,
+      'the existing four and 52 intake candidates should be listed');
+    assert.equal(await guidedPage.locator('#guided-case-count').textContent(), '56 از 56 کیس',
       'the case count should reflect the full catalog in Persian');
     await guidedPage.locator('#guided-system-filter').selectOption('renal-urinary');
     assert.equal(await guidedPage.locator('#guided-case-list .guided-case-card').count(), 9,
@@ -501,7 +501,7 @@ const { chromium } = require('playwright');
     assert.equal(await guidedPage.locator('#guided-active-case-panel').isVisible(), false,
       'an empty result should not leave a stale active case displayed');
     await guidedPage.locator('#guided-case-search').fill('');
-    assert.equal(await guidedPage.locator('#guided-case-list .guided-case-card').count(), 53,
+    assert.equal(await guidedPage.locator('#guided-case-list .guided-case-card').count(), 56,
       'clearing search should restore the full collection');
     assert.equal(await guidedPage.locator('#radiopaedia-frame').getAttribute('src'), null,
       'the external source must not be requested before learner opt-in');
@@ -582,7 +582,7 @@ const { chromium } = require('playwright');
     const guidedDesktopResponse = await guidedDesktop.goto('http://127.0.0.1:8765/cases.html', { waitUntil: 'domcontentloaded' });
     assert.ok(guidedDesktopResponse && guidedDesktopResponse.ok(), 'desktop guided case workspace should return HTTP 200');
     await guidedDesktop.locator('#guided-case-list .guided-case-card').first().waitFor({ state: 'visible' });
-    assert.equal(await guidedDesktop.locator('#guided-case-list .guided-case-card').count(), 53,
+    assert.equal(await guidedDesktop.locator('#guided-case-list .guided-case-card').count(), 56,
       'desktop catalog should expose the full case collection');
     await guidedDesktop.locator('#guided-system-filter').selectOption('adrenal-endocrine');
     assert.equal(await guidedDesktop.locator('#guided-case-list .guided-case-card').count(), 3,
