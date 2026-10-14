@@ -12,12 +12,12 @@
 | Hepatobiliary & pancreas | 0 | 11 | 11 |
 | Renal & urinary | 0 | 9 | 9 |
 | Adrenal & endocrine | 0 | 3 | 3 |
-| Female reproductive & pelvis | 0 | 4 | 4 |
+| Female reproductive & pelvis | 0 | 7 | 7 |
 | Male genitourinary | 0 | 4 | 4 |
 | Peritoneum, retroperitoneum & vessels | 0 | 8 | 8 |
-| **Total** | **4** | **49** | **53** |
+| **Total** | **4** | **52** | **56** |
 
-The new 49 records are additional candidates discovered through targeted organ-system searches. They are not the result of an exhaustive survey of Radiopaedia. The requested ceiling of 20 cases per category is a maximum, not an instruction to pad categories. Current overall catalogue counts are gastrointestinal 14 (10 new candidates; 10 short of the 20-new-case aim), hepatobiliary/pancreas 11 (11 new; 9 short), renal/urinary 9 (9 new; 11 short), adrenal/endocrine 3 (3 new; 17 short), female reproductive/pelvic 4 (4 new; 16 short), male genitourinary 4 (4 new; 16 short), and peritoneal/retroperitoneal/vascular 8 (8 new; 12 short). These are candidate counts, not verified CT-image counts. Since live CT images/viewers could not be checked, the strict live-verification count is 0 in every category and the verification shortfall remains unresolved.
+The new 52 records are additional candidates discovered through targeted organ-system searches. They are not the result of an exhaustive survey of Radiopaedia. The requested ceiling of 20 cases per category is a maximum, not an instruction to pad categories. Current overall catalogue counts are gastrointestinal 14 (10 new candidates; 10 short of the 20-new-case aim), hepatobiliary/pancreas 11 (11 new; 9 short), renal/urinary 9 (9 new; 11 short), adrenal/endocrine 3 (3 new; 17 short), female reproductive/pelvic 7 (7 new; 13 short), male genitourinary 4 (4 new; 16 short), and peritoneal/retroperitoneal/vascular 8 (8 new; 12 short). These are candidate counts, not verified CT-image counts. Since live CT images/viewers could not be checked, the strict live-verification count is 0 in every category and the verification shortfall remains unresolved.
 
 ## Selection order and interpretation of status
 
@@ -74,6 +74,9 @@ All source-page links use numeric Radiopaedia case permalinks. The UI shows non-
 | 2 | Female reproductive & pelvis | `abd-frp-002` | [Case 232293](https://radiopaedia.org/cases/232293?lang=us) | Not extracted | `partially_verified` — sagittal portal-venous CT described; live stack not checked |
 | 3 | Female reproductive & pelvis | `abd-frp-003` | [Case 50469](https://radiopaedia.org/cases/50469?lang=us) | Not extracted | `partially_verified` — case discussion describes CT signs in surgically proven torsion; CT study was not live-opened |
 | 4 | Female reproductive & pelvis | `abd-frp-004` | [Case 98221](https://radiopaedia.org/cases/98221?lang=us) | Not extracted | `partially_verified` — contrast-enhanced CT abdomen/pelvis with fat/debris ovarian lesion described; live image loading not checked |
+| 5 | Female reproductive & pelvis | `abd-frp-005` | [Case 161157](https://radiopaedia.org/cases/161157?lang=us) | Not extracted | `partially_verified` — indexed CT describes a large cystic ovarian-region mass with abdominal/pelvic mass effect; live viewer not checked |
+| 6 | Female reproductive & pelvis | `abd-frp-006` | [Case 75582](https://radiopaedia.org/cases/75582?lang=us) | Not extracted | `partially_verified` — CT describes high-density pelvic fluid and adnexal lesion suspicious for haemorrhage; live stack not checked |
+| 7 | Female reproductive & pelvis | `abd-frp-007` | [Case 194493](https://radiopaedia.org/cases/194493?lang=us) | Not extracted | `partially_verified` — CT describes a heterogeneous solid-cystic abdominopelvic mass; live viewer not checked |
 | 1 | Male genitourinary | `abd-mgu-001` | [Case 191413](https://radiopaedia.org/cases/191413?lang=us) | Not extracted | `partially_verified` — both CT and MRI are described; CT cannot settle every ductal relationship |
 | 2 | Male genitourinary | `abd-mgu-002` | [Case 77724](https://radiopaedia.org/cases/77724?lang=us) | Not extracted | `partially_verified` — CT bone-window images described; live viewer not checked |
 | 3 | Male genitourinary | `abd-mgu-003` | [Case 87645](https://radiopaedia.org/cases/87645?lang=us) | Not extracted | `partially_verified` — unenhanced axial/coronal CT and MPR described; source diagnosis is probable, not pathology-proven |
