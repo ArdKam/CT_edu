@@ -530,17 +530,20 @@ const { chromium } = require('playwright');
       'the previously working study route should render embedded frame content, not just update an href');
 
     await guidedPage.locator('#guided-case-list .guided-case-card').first().click();
-    assert.equal(await guidedPage.locator('#source-open-study-link').isVisible(), false,
-      'cases without a study-page URL should not show a separate study-page link');
+    const closedLoopStudyUrl = 'https://radiopaedia.org/cases/59227/studies/66554?lang=us#t=im&v1i=37233728&v1z=1&v2i=37233541&v2z=1&v3i=37233598&v3z=1';
+    assert.equal(await guidedPage.locator('#source-open-study-link').getAttribute('href'), closedLoopStudyUrl,
+      'the original guided case should expose its exact selected study and image IDs');
+    assert.equal(await guidedPage.locator('#source-open-study-link').isVisible(), true,
+      'a legacy guided case with a selected study URL should show its study-page link');
     assert.equal(await guidedPage.locator('#source-open-link').getAttribute('href'), 'https://radiopaedia.org/cases/closed-loop-small-bowel-obstruction-5?lang=us',
       'the original source page should remain available for the legacy guided case');
     assert.equal(await guidedPage.locator('#radiopaedia-frame').getAttribute('src'), null,
       'switching cases must clear the previously loaded source instead of showing a stale case');
     assert.equal(await guidedPage.locator('#source-load-button').isVisible(), true,
-      'the original hand-curated case should retain its legacy embedded source control');
+      'the original hand-curated case should retain its opt-in source control');
     await guidedPage.locator('#source-load-button').click();
-    assert.equal(await guidedPage.locator('#radiopaedia-frame').getAttribute('src'), 'https://radiopaedia.org/cases/closed-loop-small-bowel-obstruction-5?lang=us',
-      'the original hand-curated case should retain its prior source route');
+    assert.equal(await guidedPage.locator('#radiopaedia-frame').getAttribute('src'), closedLoopStudyUrl,
+      'the original case should request the selected-study URL rather than the generic case page');
     assert.equal(await guidedPage.locator('#radiopaedia-frame-wrap').isVisible(), true);
     await guidedPage.frameLocator('#radiopaedia-frame').locator('#mock-source-series').waitFor({ state: 'visible' });
     assert.equal(await guidedPage.frameLocator('#radiopaedia-frame').locator('#mock-source-series').textContent(),
