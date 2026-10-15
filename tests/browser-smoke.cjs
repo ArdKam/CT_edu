@@ -512,6 +512,7 @@ const { chromium } = require('playwright');
       'the viewer container must be visible on initial case selection');
     assert.equal(await guidedPage.locator('#radiopaedia-exit-mask').count(), 1,
       'a small overlay should cover the top-left viewer exit control');
+    await guidedPage.frameLocator('#radiopaedia-frame').locator('#mock-source-series').waitFor({ state: 'visible' });
     await guidedPage.locator('#radiopaedia-frame-wrap').scrollIntoViewIfNeeded();
     const frameBox = await guidedPage.locator('#radiopaedia-frame-wrap').boundingBox();
     await guidedPage.mouse.click(frameBox.x + 20, frameBox.y + 18);
