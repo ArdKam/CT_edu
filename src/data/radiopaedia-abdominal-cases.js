@@ -151,7 +151,11 @@
         caseId: row.caseId,
         url: 'https://radiopaedia.org/cases/' + encodeURIComponent(row.caseId) + '?lang=us',
         ...(studyPageUrl ? { studyPageUrl: studyPageUrl } : {}),
-        citation: 'Radiopaedia.org. ' + row.sourceTitle + '. Case ' + row.caseId + '. Indexed metadata reviewed 14 October 2026; live page not opened in this intake.'
+        citation: 'Radiopaedia.org. ' + row.sourceTitle + '. Case ' + row.caseId + '. Indexed metadata reviewed 14 October 2026; live page not opened in this intake.',
+        caseNotes: {
+          en: [row.summaryEn, 'Key review targets: ' + focus + '.'].filter(Boolean).join(' '),
+          fa: [row.summaryFa, 'محورهای کلیدی مرور: ' + focusFa + '.'].filter(Boolean).join(' ')
+        }
       }, article),
       objectives: {
         en: [
@@ -199,6 +203,12 @@
 
   function normalizeBase(item, index) {
     const copy = Object.assign({}, item);
+    copy.source = Object.assign({}, item.source, {
+      caseNotes: item.source.caseNotes || {
+        en: [item.summary && item.summary.en, 'Review objectives: ' + ((item.objectives && item.objectives.en) || []).slice(0, 3).join(' ')].filter(Boolean).join(' '),
+        fa: [item.summary && item.summary.fa, 'هدف‌های مرور: ' + ((item.objectives && item.objectives.fa) || []).slice(0, 3).join(' ')].filter(Boolean).join(' ')
+      }
+    });
     copy.category = item.category || 'gastrointestinal';
     copy.categoryLabel = CATEGORY[copy.category] || CATEGORY.gastrointestinal;
     copy.tags = Array.isArray(item.tags) ? item.tags.slice() : (
