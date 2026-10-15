@@ -182,37 +182,29 @@
     updateProgress();
   }
 
-  const LEGACY_CASE_PAGE_EMBEDS = new Set([
-    'acute-abdominal-pain-ct',
-    'closed-loop-pattern-ct',
-    'bowel-viability-ct',
-    'ascending-colon-lipoma-ct'
-  ]);
-
   function getEmbeddableSourceUrl(item) {
-    // Prefer a recorded study-page URL. Preserve the original four hand-curated
-    // case routes that had the legacy in-frame behavior. Do not fall back to an
-    // arbitrary case page for candidates without an explicit study route.
-    if (item.source.studyPageUrl) return item.source.studyPageUrl;
-    if (LEGACY_CASE_PAGE_EMBEDS.has(item.id)) return item.source.url;
-    return '';
+    // Only load an explicit Study route. Falling back to a generic case page
+    // would immediately take learners out of the image viewer.
+    return item.source && item.source.studyPageUrl ? item.source.studyPageUrl : '';
   }
 
   function renderSource(item) {
     const frame = el('radiopaedia-frame');
     const frameWrap = el('radiopaedia-frame-wrap');
-    const loadButton = el('source-load-button');
     const viewerUrl = getEmbeddableSourceUrl(item);
     const sameSourceAlreadyLoaded = Boolean(viewerUrl) && frame.getAttribute('src') === viewerUrl;
-    if (!sameSourceAlreadyLoaded) {
+
+    if (viewerUrl) {
+      frame.title = lang() === 'fa'
+        ? 'ویور سری CT انتخاب‌شده از Radiopaedia'
+        : 'Selected CT study viewer from Radiopaedia';
+      if (!sameSourceAlreadyLoaded) frame.src = viewerUrl;
+      frameWrap.hidden = false;
+    } else {
       frameWrap.hidden = true;
       if (frame.getAttribute('src')) frame.removeAttribute('src');
-      loadButton.disabled = false;
-    } else {
-      frameWrap.hidden = false;
-      loadButton.disabled = true;
     }
-    loadButton.hidden = !viewerUrl;
+
     const sourceDetailsRevealed = Boolean(getDraft(item.id).submitted);
     el('source-case-title').textContent = sourceDetailsRevealed
       ? item.source.title
@@ -221,37 +213,42 @@
       ? (lang() === 'fa' ? 'مشارکت‌کننده: ' : 'Contributed by: ') + item.source.contributor + (item.source.rid ? ' · ' + item.source.rid : '')
       : (lang() === 'fa' ? 'شناسهٔ کیس: ' : 'Case ID: ') + (item.source.caseId || item.source.rid || '');
     el('source-case-attribution').textContent = attribution;
+
     const sourceLink = el('source-open-link');
     sourceLink.href = item.source.url;
     sourceLink.textContent = lang() === 'fa'
       ? 'بازکردن صفحهٔ کیس منبع در Radiopaedia ↗'
       : 'Open source case page on Radiopaedia ↗';
+
     const studyLink = el('source-open-study-link');
     studyLink.hidden = !item.source.studyPageUrl;
     if (item.source.studyPageUrl) studyLink.href = item.source.studyPageUrl;
     else studyLink.removeAttribute('href');
     studyLink.textContent = lang() === 'fa'
-      ? 'بازکردن صفحهٔ مطالعه در Radiopaedia ↗'
-      : 'Open study page on Radiopaedia ↗';
-    if (sameSourceAlreadyLoaded) {
-      el('source-load-status').textContent = lang() === 'fa'
-        ? 'منبع در قاب داخلی درخواست شده است. اگر تصاویر نمایش داده نمی‌شوند یا قاب خالی است، صفحهٔ منبع را در تب جدید باز کن؛ ممکن است Radiopaedia نمایش داخلی را مسدود کند.'
-        : 'The source has been requested in the embedded frame. If images do not appear or the frame is blank, open the source in a new tab; Radiopaedia may block embedded display.';
-    } else if (viewerUrl) {
-      el('source-load-status').textContent = lang() === 'fa'
-        ? 'برای بارگذاری منبع تصویربرداری در قاب داخلی، دکمه را بزن. نتیجه به دسترسی و سیاست‌های Radiopaedia بستگی دارد.'
-        : 'Select the button to request the source imaging page in the embedded frame. Rendering depends on Radiopaedia access and framing policy.';
-    } else {
-      el('source-load-status').textContent = lang() === 'fa'
-        ? 'برای این کیس مسیر قابل‌استفادهٔ داخلی ثبت نشده است. فقط صفحهٔ منبع در دسترس است؛ آن را در تب جدید باز کن.'
-        : 'No supported embedded route is recorded for this candidate. Only the external source page is available; open it in a new tab.';
-    }
+      ? 'بازکردن ویور مطالعه در Radiopaedia ↗'
+      : 'Open study viewer on Radiopaedia ↗';
+
+    el('source-load-status').textContent = viewerUrl
+      ? (lang() === 'fa'
+          ? 'ویور به‌صورت خودکار در قاب داخلی درخواست شده است. اگر قاب خالی بود، ممکن است Radiopaedia نمایش داخلی را مسدود کرده باشد؛ لینک ویور در تب جدید در دسترس است.'
+          : 'The viewer was requested automatically. If the frame is blank, Radiopaedia may block embedded display; the direct viewer link is available in a new tab.')
+      : (lang() === 'fa'
+          ? 'برای این کیس هنوز لینک مستقیم Study ثبت نشده است؛ برای دیدن منبع از لینک صفحهٔ کیس استفاده کن.'
+          : 'No direct Study route is recorded for this case yet. Use the source case link to open it externally.');
+
     if (item.source.articleUrl) el('source-article-link').href = item.source.articleUrl;
     else el('source-article-link').removeAttribute('href');
     el('source-article-link').hidden = !sourceDetailsRevealed || !item.source.articleUrl;
     el('source-article-link').textContent = (lang() === 'fa' ? 'مقالهٔ مرتبط: ' : 'Related article: ') + (item.source.articleTitle || '');
     el('source-citation').hidden = !sourceDetailsRevealed;
     el('source-citation').textContent = item.source.citation;
+
+    const notesSection = el('source-case-notes');
+    notesSection.hidden = !sourceDetailsRevealed;
+    el('source-case-notes-title').textContent = item.source.title;
+    el('source-case-notes-body').textContent = text(item.source.caseNotes) || text(item.summary);
+    const sourceNotesLink = el('source-case-fulltext-link');
+    sourceNotesLink.href = item.source.url;
   }
 
 
@@ -290,24 +287,6 @@
     renderCards();
     renderActive();
     el('guided-case-title').focus({ preventScroll: true });
-  }
-
-  function loadSourceViewer() {
-    const item = getActive();
-    if (!item) return;
-    const viewerUrl = getEmbeddableSourceUrl(item);
-    if (!viewerUrl) return;
-    const frame = el('radiopaedia-frame');
-    const wrap = el('radiopaedia-frame-wrap');
-    frame.title = lang() === 'fa'
-      ? 'قاب منبع تصویربرداری خارجی از Radiopaedia'
-      : 'Embedded external imaging source from Radiopaedia';
-    frame.src = viewerUrl;
-    wrap.hidden = false;
-    el('source-load-button').disabled = true;
-    el('source-load-status').textContent = lang() === 'fa'
-      ? 'درخواست بارگذاری ارسال شد. اگر تصاویر یا Viewer در قاب دیده نشدند، صفحهٔ منبع را در تب جدید باز کن.'
-      : 'Load requested. If images or the viewer do not appear in the frame, open the source page in a new tab.';
   }
 
   function submitDraft(event) {
@@ -351,6 +330,7 @@
     el('guided-case-rubric-section').hidden = true;
     el('guided-case-submit-status').textContent = lang() === 'fa' ? 'پیش‌نویس حذف شد.' : 'Draft deleted.';
     persistDrafts();
+    renderSource(item);
   }
 
   function setLanguage(next) {
@@ -388,7 +368,6 @@
       renderActive();
     });
   });
-  el('source-load-button').addEventListener('click', loadSourceViewer);
   el('guided-case-form').addEventListener('submit', submitDraft);
   el('clear-case-draft').addEventListener('click', clearDraft);
   el('language-toggle').addEventListener('click', function () { setLanguage(lang() === 'fa' ? 'en' : 'fa'); });
