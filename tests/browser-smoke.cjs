@@ -605,30 +605,27 @@ const { chromium } = require('playwright');
       'the original source page must remain accessible');
     assert.equal(await guidedPage.locator('#source-open-study-link').getAttribute('href'), 'https://radiopaedia.org/cases/164871/studies/134067?lang=us',
       'the extracted study URL must be used for the new case');
-    assert.equal(await guidedPage.locator('#radiopaedia-frame').getAttribute('src'), null,
-      'selecting a new study-backed case must not load it before opt-in');
-    assert.equal(await guidedPage.locator('#source-load-button').isVisible(), true,
-      'a recorded study-page URL should retain an explicit opt-in load control');
-    await guidedPage.locator('#source-load-button').click();
     assert.equal(await guidedPage.locator('#radiopaedia-frame').getAttribute('src'), 'https://radiopaedia.org/cases/164871/studies/134067?lang=us',
-      'the new record should load the study-page URL rather than fall back to the general case page');
+      'selecting a study-backed candidate should automatically load its exact Study route');
     await guidedPage.locator('#guided-case-list .guided-case-card[data-case-id="abd-gi-006"]').click();
     const gallstoneIleusStudyUrl = 'https://radiopaedia.org/cases/83859/studies/99056?lang=us#t=im&v1i=53805104&v1z=1&v2i=53805048&v2z=1';
     assert.equal(await guidedPage.locator('#source-open-study-link').getAttribute('href'), gallstoneIleusStudyUrl,
       'the selected-series link must preserve the supplied image selectors');
-    assert.equal(await guidedPage.locator('#source-load-button').isVisible(), true,
-      'a candidate with an explicit study route should have an opt-in frame control');
-    assert.equal(await guidedPage.locator('#radiopaedia-frame').getAttribute('src'), null,
-      'the study page must not be requested before learner opt-in');
-    await guidedPage.locator('#source-load-button').click();
     assert.equal(await guidedPage.locator('#radiopaedia-frame').getAttribute('src'), gallstoneIleusStudyUrl,
-      'the exact selected study URL should be requested in the frame after opt-in');
+      'the exact selected study URL should load automatically when the case is selected');
     assert.deepEqual(guidedErrors, [], 'guided case page should not emit uncaught JavaScript errors');
     await guidedPage.close();
 
     const guidedDesktop = await browser.newPage({ viewport: { width: 1440, height: 1000 } });
     const guidedDesktopErrors = [];
     guidedDesktop.on('pageerror', function (error) { guidedDesktopErrors.push(error.message); });
+    await guidedDesktop.route('https://radiopaedia.org/**', function (route) {
+      return route.fulfill({
+        status: 200,
+        contentType: 'text/html; charset=utf-8',
+        body: '<!doctype html><html><body style="margin:0;background:#101923;color:white"><main id="mock-source-series">Mock external Radiopaedia series</main></body></html>'
+      });
+    });
     const guidedDesktopResponse = await guidedDesktop.goto('http://127.0.0.1:8765/cases.html', { waitUntil: 'domcontentloaded' });
     assert.ok(guidedDesktopResponse && guidedDesktopResponse.ok(), 'desktop guided case workspace should return HTTP 200');
     await guidedDesktop.locator('#guided-case-list .guided-case-card').first().waitFor({ state: 'visible' });
