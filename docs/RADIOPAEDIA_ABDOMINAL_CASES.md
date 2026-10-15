@@ -1,7 +1,7 @@
 # Radiopaedia abdominal CT case intake and verification log
 
 **Intake date:** 2026-10-14  
-**Scope:** metadata and links only; no Radiopaedia images, thumbnails, article passages or viewer assets are copied into CT Edu.  
+**Scope:** metadata, source links, and short independently authored bilingual educational synopses; no Radiopaedia images, thumbnails, full article passages or viewer assets are copied into CT Edu.  
 **Status:** `partially_verified` for all records in this intake. This is a candidate teaching library, not a medically or legally approved case set.
 
 ## Summary
