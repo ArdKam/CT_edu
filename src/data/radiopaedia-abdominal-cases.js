@@ -103,12 +103,30 @@
     };
   }
 
+  // Exact selected-series URLs supplied for these existing teaching candidates.
+  // The links remain on Radiopaedia; stored selectors do not certify iframe access or image loading.
+  const SELECTED_STUDY_URLS = Object.freeze({
+    '11083': 'https://radiopaedia.org/cases/11083/studies/11478?lang=us#t=im&v1i=595477&v1z=1',
+    '25921': 'https://radiopaedia.org/cases/25921/studies/26066?lang=us#t=im&v1i=5114893&v1z=1',
+    '31252': 'https://radiopaedia.org/cases/31252/studies/31971?lang=us#t=im&v1i=8514801&v1z=1&v2i=8514813&v2z=1&v3i=8514808&v3z=1',
+    '40732': 'https://radiopaedia.org/cases/40732/studies/43385?lang=us#t=im&v1i=16998886&v1z=1&v2i=16998833&v2z=1&v3i=16998810&v3z=1&v4i=16998871&v4z=1',
+    '47865': 'https://radiopaedia.org/cases/47865/studies/52621#t=im&v1i=24953033&v1z=1',
+    '61116': 'https://radiopaedia.org/cases/61116/studies/68997?lang=us#t=im&v1i=40108037&v1z=1&v2i=40108176&v2z=1&v3i=40108215&v3z=1',
+    '74870': 'https://radiopaedia.org/cases/74870/studies/85892?lang=us#t=im&v1i=52141430&v1z=1&v2i=52141456&v2z=1&v3i=52141480&v3z=1&v4i=52143596&v4z=1',
+    '83859': 'https://radiopaedia.org/cases/83859/studies/99056?lang=us#t=im&v1i=53805104&v1z=1&v2i=53805048&v2z=1',
+    '148532': 'https://radiopaedia.org/cases/148532/studies/123575?lang=us#t=im&v1i=59021469&v1z=1&v2i=59021809&v2z=1&v3i=59021913&v3z=1',
+    '152397': 'https://radiopaedia.org/cases/152397/studies/126296?lang=us#t=im&v1i=59598017&v1z=1&v2i=59598091&v2z=1&v3i=59598162&v3z=1&v4i=59598227&v4z=1',
+    '171645': 'https://radiopaedia.org/cases/171645/studies/138747?lang=us#t=im&v1i=62817554&v1z=1&v2i=62918768&v2z=1&v3i=62918879&v3z=1',
+    '177978': 'https://radiopaedia.org/cases/177978/studies/142870#t=im&v1i=63801646&v1z=1&v2i=63801647&v2z=1&v3i=63801648&v3z=1&v4i=63801649&v4z=1',
+    '198206': 'https://radiopaedia.org/cases/198206/studies/156027?lang=us#t=im&v1i=67958925&v1z=1&v2i=67959103&v2z=1',
+  });
+
   function makeCase(row) {
     const category = CATEGORY[row.category];
     const article = row.articleUrl ? { articleUrl: row.articleUrl, articleTitle: row.articleTitle } : {};
-    const studyPageUrl = row.studyId
+    const studyPageUrl = SELECTED_STUDY_URLS[row.caseId] || (row.studyId
       ? 'https://radiopaedia.org/cases/' + encodeURIComponent(row.caseId) + '/studies/' + encodeURIComponent(row.studyId) + '?lang=us'
-      : undefined;
+      : undefined);
     const focus = row.focusEn;
     const focusFa = row.focusFa;
     return {

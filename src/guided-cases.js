@@ -192,7 +192,7 @@
   function getEmbeddableSourceUrl(item) {
     // Prefer a recorded study-page URL. Preserve the original four hand-curated
     // case routes that had the legacy in-frame behavior. Do not fall back to an
-    // arbitrary case page for the 52 metadata-only candidates.
+    // arbitrary case page for candidates without an explicit study route.
     if (item.source.studyPageUrl) return item.source.studyPageUrl;
     if (LEGACY_CASE_PAGE_EMBEDS.has(item.id)) return item.source.url;
     return '';

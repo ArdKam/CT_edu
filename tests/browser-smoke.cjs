@@ -601,10 +601,16 @@ const { chromium } = require('playwright');
     assert.equal(await guidedPage.locator('#radiopaedia-frame').getAttribute('src'), 'https://radiopaedia.org/cases/164871/studies/134067?lang=us',
       'the new record should load the study-page URL rather than fall back to the general case page');
     await guidedPage.locator('#guided-case-list .guided-case-card[data-case-id="abd-gi-006"]').click();
-    assert.equal(await guidedPage.locator('#source-load-button').isVisible(), false,
-      'a new candidate with no study URL must not offer a fake embedded viewer');
+    const gallstoneIleusStudyUrl = 'https://radiopaedia.org/cases/83859/studies/99056?lang=us#t=im&v1i=53805104&v1z=1&v2i=53805048&v2z=1';
+    assert.equal(await guidedPage.locator('#source-open-study-link').getAttribute('href'), gallstoneIleusStudyUrl,
+      'the selected-series link must preserve the supplied image selectors');
+    assert.equal(await guidedPage.locator('#source-load-button').isVisible(), true,
+      'a candidate with an explicit study route should have an opt-in frame control');
     assert.equal(await guidedPage.locator('#radiopaedia-frame').getAttribute('src'), null,
-      'a new candidate without a study URL must not embed its general case page');
+      'the study page must not be requested before learner opt-in');
+    await guidedPage.locator('#source-load-button').click();
+    assert.equal(await guidedPage.locator('#radiopaedia-frame').getAttribute('src'), gallstoneIleusStudyUrl,
+      'the exact selected study URL should be requested in the frame after opt-in');
     assert.deepEqual(guidedErrors, [], 'guided case page should not emit uncaught JavaScript errors');
     await guidedPage.close();
 
