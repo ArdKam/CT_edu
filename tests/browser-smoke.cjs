@@ -466,7 +466,7 @@ const { chromium } = require('playwright');
       return route.fulfill({
         status: 200,
         contentType: 'text/html; charset=utf-8',
-        body: '<!doctype html><html><body style="margin:0;background:#101923;color:white;font:12px sans-serif"><button id="mock-exit" onclick="document.body.dataset.exitClicked=\'yes\'" style="position:absolute;left:0;top:0;width:70px;height:48px">Exit</button><button id="mock-toolbar-control" onclick="document.body.dataset.toolClicked=\'yes\'" style="position:absolute;left:88px;top:0;width:44px;height:36px">Tool</button><main id="mock-source-series" style="padding-top:45px">Mock external Radiopaedia series</main></body></html>'
+        body: '<!doctype html><html><body style="margin:0;background:#101923;color:white;font:12px sans-serif"><button id="mock-exit" onclick="document.body.dataset.exitClicked=\'yes\'" style="position:absolute;left:0;top:0;width:50px;height:48px">Exit</button><button id="mock-toolbar-control" onclick="document.body.dataset.toolClicked=\'yes\'" style="position:absolute;left:52px;top:0;width:44px;height:36px">Tool</button><main id="mock-source-series" style="padding-top:45px">Mock external Radiopaedia series</main></body></html>'
       });
     });
     const guidedResponse = await guidedPage.goto('http://127.0.0.1:8765/cases.html', { waitUntil: 'domcontentloaded' });
@@ -518,10 +518,10 @@ const { chromium } = require('playwright');
     await guidedPage.mouse.click(frameBox.x + 20, frameBox.y + 18);
     assert.equal(await guidedPage.frameLocator('#radiopaedia-frame').locator('body').getAttribute('data-exit-clicked'), null,
       'clicking the masked top-left exit control should not trigger it');
-    await guidedPage.mouse.click(frameBox.x + 70, frameBox.y + 49);
+    await guidedPage.mouse.click(frameBox.x + 49, frameBox.y + 47);
     assert.equal(await guidedPage.frameLocator('#radiopaedia-frame').locator('body').getAttribute('data-exit-clicked'), null,
-      'the enlarged mask must cover the full lower-right edge of the oversized exit control');
-    await guidedPage.mouse.click(frameBox.x + 100, frameBox.y + 18);
+      'the 52×52 mask must cover the full lower-right edge of the exit control');
+    await guidedPage.mouse.click(frameBox.x + 64, frameBox.y + 18);
     assert.equal(await guidedPage.frameLocator('#radiopaedia-frame').locator('body').getAttribute('data-tool-clicked'), 'yes',
       'toolbar controls outside the mask must remain interactive');
     const studyPageUrl = 'https://radiopaedia.org/cases/2582/studies/6276?lang=us#t=im&v1i=478&v1z=1&v2i=931&v2z=1';
