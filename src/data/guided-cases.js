@@ -28,6 +28,7 @@
         contributor: 'Wayland Wang',
         rid: 'rID-59227',
         url: 'https://radiopaedia.org/cases/closed-loop-small-bowel-obstruction-5?lang=us',
+        studyPageUrl: 'https://radiopaedia.org/cases/59227/studies/66554?lang=us#t=im&v1i=37233728&v1z=1&v2i=37233541&v2z=1&v3i=37233598&v3z=1',
         citation: 'Wang W. Closed loop small bowel obstruction. Radiopaedia.org. rID-59227.',
         articleUrl: 'https://radiopaedia.org/articles/small-bowel-obstruction?lang=us',
         articleTitle: 'Small bowel obstruction'
@@ -82,6 +83,7 @@
         contributor: 'Heather Pascoe',
         rid: 'rID-58281',
         url: 'https://radiopaedia.org/cases/closed-loop-small-bowel-obstruction-4?lang=us',
+        studyPageUrl: 'https://radiopaedia.org/cases/58281/studies/65391?lang=us#t=im&v1i=35824694&v1z=1&v2i=35824879&v2z=1',
         citation: 'Pascoe H. Closed loop small bowel obstruction. Radiopaedia.org. rID-58281.',
         articleUrl: 'https://radiopaedia.org/articles/small-bowel-obstruction?lang=us',
         articleTitle: 'Small bowel obstruction'
@@ -136,6 +138,7 @@
         contributor: 'Michael P. Hartung',
         rid: 'rID-83835',
         url: 'https://radiopaedia.org/cases/closed-loop-obstruction-due-to-adhesive-band-resulting-in-small-bowel-ischemia-and-resection?lang=us',
+        studyPageUrl: 'https://radiopaedia.org/cases/83835/studies/99023?lang=us#t=im&v1i=53798188&v1z=1&v2i=53975701&v2z=1&v3i=53798655&v3z=1&v4i=53798366&v4z=1',
         citation: 'Hartung MP. Closed loop obstruction due to adhesive band, resulting in small bowel ischemia and resection. Radiopaedia.org. rID-83835.',
         articleUrl: 'https://radiopaedia.org/articles/acute-mesenteric-ischaemia?lang=us',
         articleTitle: 'Acute mesenteric ischaemia'
