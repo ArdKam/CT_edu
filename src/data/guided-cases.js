@@ -6,8 +6,8 @@
 }(typeof globalThis !== 'undefined' ? globalThis : this, function () {
   'use strict';
 
-  // Metadata and course-authored prompts only. Radiopaedia text/images are not copied
-  // into this repository; source pages are loaded only after an explicit learner action.
+  // Metadata, independent bilingual teaching prompts and local case synopses only.
+  // Radiopaedia's full text/images are not copied; explicit Study URLs auto-load on selection.
   const cases = [
     {
       id: 'acute-abdominal-pain-ct',
