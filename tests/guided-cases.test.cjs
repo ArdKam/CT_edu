@@ -30,6 +30,7 @@ for (const item of entries) {
   }
   assert.ok((item.source.contributor && item.source.rid) || item.source.caseId, 'each source needs contributor metadata or a stable case ID');
   assert.ok(item.source.citation);
+  assert.ok(item.source.caseNotes && item.source.caseNotes.fa && item.source.caseNotes.en, 'every case needs a bilingual local synopsis');
   if (item.source.studyPageUrl) assert.ok(item.source.studyPageUrl.includes('/studies/'), 'external study-page URLs must point to a study');
   assert.ok(item.clinicalContext.fa && item.clinicalContext.en, 'each exercise needs a bilingual teaching context');
   assert.ok(Array.isArray(item.objectives.fa) && item.objectives.fa.length >= 3);
@@ -89,13 +90,15 @@ assert.ok(page.includes('id="guided-system-filter"'));
 assert.ok(page.includes('id="guided-case-search"'));
 assert.ok(page.includes('src="./src/data/radiopaedia-abdominal-cases.js"'));
 assert.ok(page.includes('id="source-open-study-link"'));
-assert.ok(page.includes('id="source-load-button"'));
+assert.ok(page.includes('id="radiopaedia-exit-mask"'));
+assert.ok(page.includes('id="source-case-notes"'));
 assert.ok(page.includes('id="radiopaedia-frame"'));
 assert.ok(app.includes('function getEmbeddableSourceUrl(item)'));
-assert.ok(app.includes("if (item.source.studyPageUrl) return item.source.studyPageUrl;"));
-assert.ok(app.includes("if (LEGACY_CASE_PAGE_EMBEDS.has(item.id)) return item.source.url;"));
+assert.ok(app.includes("return item.source && item.source.studyPageUrl ? item.source.studyPageUrl : '';"));
 assert.ok(app.includes('frame.src = viewerUrl;'));
-assert.ok(app.includes('loadButton.hidden = !viewerUrl;'));
+assert.ok(app.includes('frameWrap.hidden = false;'));
+assert.ok(app.includes('item.source.caseNotes'));
+assert.ok(!app.includes('LEGACY_CASE_PAGE_EMBEDS'), 'generic case pages must not be embedded as if they were image viewers');
 assert.ok(!app.includes('item.source.studyPageUrl || item.source.url'), 'arbitrary new candidates must not fall back to embedding their case page');
 assert.ok(!app.includes("return item.source.studyPageUrl || item.source.url;"));
 
