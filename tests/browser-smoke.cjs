@@ -564,7 +564,7 @@ const { chromium } = require('playwright');
     await guidedPage.locator('#guided-case-rubric input[type="checkbox"]').first().check();
     assert.match(await guidedPage.locator('#guided-case-rubric-progress').textContent(), /1 از 4/,
       'self-review should show the number of criteria checked');
-    assert.equal(await guidedPage.locator('#radiopaedia-frame').getAttribute('src'), 'https://radiopaedia.org/cases/closed-loop-small-bowel-obstruction-5?lang=us',
+    assert.equal(await guidedPage.locator('#radiopaedia-frame').getAttribute('src'), closedLoopStudyUrl,
       'submitting a report must not silently remove the selected source frame');
     await guidedPage.locator('#language-toggle').click();
     assert.equal(await guidedPage.locator('html').getAttribute('lang'), 'en',
@@ -573,7 +573,7 @@ const { chromium } = require('playwright');
       'checklist progress should follow the selected language');
     assert.equal(await guidedPage.locator('#learner-findings').getAttribute('placeholder'),
       'Record the imaging findings systematically…', 'guided case placeholders should be translated');
-    assert.equal(await guidedPage.locator('#radiopaedia-frame').getAttribute('src'), 'https://radiopaedia.org/cases/closed-loop-small-bowel-obstruction-5?lang=us',
+    assert.equal(await guidedPage.locator('#radiopaedia-frame').getAttribute('src'), closedLoopStudyUrl,
       'language switching should preserve a source frame that the learner already requested');
     await guidedPage.waitForFunction(function () {
       return document.documentElement.scrollWidth <= window.innerWidth + 1;
