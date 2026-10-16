@@ -54,6 +54,20 @@ See [DATASET_ROADMAP.md](DATASET_ROADMAP.md) for reviewed candidate sources and 
 
 ## Release blockers
 
+### Segmentor and annotation workflow — future preview feature
+
+The [Segmentor roadmap](docs/SEGMENTOR_ROADMAP.md) is the implementation contract. The Segmentor is not yet implemented in CT Edu.
+
+- [ ] Validate native-pixel image/overlay alignment, source-image identity, and reference-panel exclusion before enabling editing.
+- [ ] Deliver manual polygon editing with versioned local persistence, safe import/export, provenance, and non-destructive merge rules in the preview workflow.
+- [ ] Test annotation editing, storage failures, malformed imports, duplicate saves, viewport transforms, keyboard/touch use, and existing viewer regressions.
+- [ ] Keep threshold-based regions labelled as intensity suggestions, not organ segmentation; keep them draft-only and non-destructive.
+- [ ] Do not add AI contour generation until a separately reviewed backend, URL-fetch protections, output validation, authorization, and human-review flow exist.
+- [ ] Do not extend to 3D segmentation until source volume geometry, mask transforms, data rights, and independent expert review are documented.
+- [ ] Keep all Segmentor work preview-only until applicable technical, accessibility, privacy/legal, data-rights, and medical-content gates pass. Do not change the public-release approval latch as part of Segmentor development.
+
+See also: [Segmentor implementation roadmap](docs/SEGMENTOR_ROADMAP.md).
+
 ### Git / deployment
 
 - [x] PR #1 is merged into `main` at the current baseline (`a54bc01` at the time of this review). The prior Draft-PR status was stale. This does not close any medical, rights, privacy, device, or release-deployment gate.
