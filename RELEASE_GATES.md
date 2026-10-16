@@ -8,6 +8,8 @@ This checklist separates code that exists from educational, legal, and release r
 ## Current implementation
 
 - [x] Bilingual Persian RTL / English LTR static web workspace.
+- [x] Add a separate 320-image Wikimedia abdomen/pelvis axial-stack preview with source/CC0 metadata, keyboard and slider navigation, zoom/pan, retry messaging, and a separate provenance-aware catalog entry; source images are fetched on demand rather than bundled.
+- [ ] Verify the complete 320-image stack live across representative indices and lower-bandwidth/mobile conditions; confirm all source URLs, view orientation, per-image dimensions and source description before formal educational release.
 - [x] SPL Abdominal Atlas volume decoded into 113 axial, 256 coronal, and 256 sagittal positions.
 - [x] Independent slice navigation, per-plane position retention with visible i/j/k voxel indices, zoom/pan, source-intensity window/level, and label-map overlay.
 - [x] Anatomy search, visibility controls, structure detail panel, and four-choice active recall.
