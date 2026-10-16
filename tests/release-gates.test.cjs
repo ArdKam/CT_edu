@@ -31,3 +31,20 @@ test('public production deployment remains fail-closed while the guided-case pre
   assert.doesNotMatch(gates, /guided-case workspace is being added on a feature branch/i,
     'release status must not imply that the already-merged workspace remains on a feature branch');
 });
+
+test('preview deployment cannot overwrite production after release approval is enabled', function () {
+  const releaseWorkflow = read('.github/workflows/pages-deploy.yml');
+  const previewWorkflow = read('.github/workflows/preview-guided-cases.yml');
+  const previewDeployJob = previewWorkflow.slice(previewWorkflow.indexOf('  deploy-preview:'));
+
+  assert.match(
+    previewDeployJob,
+    /^  deploy-preview:[\\s\\S]*?^    if: vars\\.CT_EDU_PUBLIC_RELEASE_APPROVED != 'true'$/m,
+    'the preview job must stop publishing when the production release latch is enabled'
+  );
+  assert.match(
+    releaseWorkflow,
+    /if: github\\.ref == 'refs\\/heads\\/main' && vars\\.CT_EDU_PUBLIC_RELEASE_APPROVED == 'true'/,
+    'the production job remains the sole deployment path after approval'
+  );
+});
