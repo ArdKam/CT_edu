@@ -18,20 +18,41 @@ test('reduced-motion preference disables app-wide smooth scrolling and nonessent
   assert.match(rule, /transition-duration:\.01ms\s*!important/);
 });
 
-test('core CT navigation controls provide larger touch targets on narrow screens', function () {
-  assert.match(css, /@media\s*\(max-width:780px\)[\s\S]*?\.plane-tab\s*\{\s*min-height:44px;/);
-  assert.match(css, /\.slice-nav-controls\s*\{\s*grid-template-columns:40px minmax\(0,1fr\) 40px;\s*gap:8px;/);
-  assert.match(css, /\.slice-step-button\s*\{\s*width:40px;\s*height:40px;\s*min-width:40px;\s*min-height:40px;/);
-  assert.match(css, /\.mode-tab,[\s\S]*?\.tri-return-button\s*\{\s*min-height:40px;/);
+test('core CT navigation controls provide 44px targets on narrow screens', function () {
+  assert.ok(css.includes('.plane-tab { min-height:44px; }'));
+  assert.ok(css.includes('.slice-nav-controls { grid-template-columns:44px minmax(0,1fr) 44px; gap:8px; }'));
+  assert.ok(css.includes('.slice-step-button { width:44px; height:44px; min-width:44px; min-height:44px; }'));
+  assert.ok(css.includes('.tri-return-button,\n  .window-level-reset,\n  .level-button { min-height:44px; }'));
+  assert.ok(css.includes('.switch-row { min-height:44px; }'));
 });
 
 test('mobile navigation, filters, and report actions keep minimum touch height', function () {
-  assert.match(css, /\.language-toggle\s*\{\s*min-height:44px;/);
-  assert.match(css, /\.case-library-link,[\s\S]*?\.case-library-home\s*\{[\s\S]*?min-height:44px;/);
-  assert.match(css, /\.guided-case-filters input,[\s\S]*?\.guided-case-filters select\s*\{\s*min-height:44px;/);
-  assert.match(css, /\.guided-form-actions button,[\s\S]*?\.guided-secondary-button\s*\{\s*min-height:44px;/);
+  assert.ok(css.includes('.language-toggle { min-height:44px; }'));
+  assert.ok(css.includes('min-height:44px;\n    padding-inline:5px;'));
+  assert.ok(css.includes('.guided-case-filters select { min-height:44px; }'));
+  assert.ok(css.includes('.guided-primary-button,\n  .guided-secondary-button,\n  .bookmark-save-button,'));
 });
 
-test('compact mobile zoom controls remain larger than the previous 24x25 pixel targets', function () {
-  assert.match(css, /@media\s*\(max-width:420px\)\s*\{\s*\.zoom-controls button\s*\{\s*width:32px;\s*height:32px;\s*min-width:32px;\s*min-height:32px;/);
+test('compact mobile zoom controls remain large enough for touch', function () {
+  assert.ok(css.includes('width:36px;\n    height:36px;\n    min-width:36px;\n    min-height:36px;'));
+});
+
+test('secondary mobile controls also retain a 44px minimum target', function () {
+  for (const selector of [
+    '.bookmark-save-button',
+    '.bookmark-toolbar .progress-reset',
+    '.bookmark-row-actions .progress-reset',
+    '.progress-actions .progress-reset',
+    '.radiograph-tool-button',
+    '.radiograph-file-label',
+    '.radiograph-close',
+    '.modality-detail-close',
+    '.modality-card-action',
+    '.bookmark-row-actions button'
+  ]) {
+    assert.ok(css.includes(selector), 'missing mobile touch rule for ' + selector);
+  }
+
+  assert.ok(css.includes('.bookmark-row-actions button { min-height:44px; }'));
+  assert.ok(css.includes('.window-level-reset { height:auto; min-height:44px; }'));
 });

@@ -631,12 +631,15 @@
    Keep CT controls reachable on phones without altering desktop density. */
 @media (max-width:780px) {
   .plane-tab { min-height:44px; }
-  .slice-nav-controls { grid-template-columns:40px minmax(0,1fr) 40px; gap:8px; }
-  .slice-step-button { width:40px; height:40px; min-width:40px; min-height:40px; }
+  .slice-nav-controls { grid-template-columns:44px minmax(0,1fr) 44px; gap:8px; }
+  .slice-step-button { width:44px; height:44px; min-width:44px; min-height:44px; }
   .mode-tab,
   .display-mode-button,
   .tri-open-button,
-  .tri-return-button { min-height:40px; }
+  .tri-return-button,
+  .window-level-reset,
+  .level-button { min-height:44px; }
+  .switch-row { min-height:44px; }
 }
 @media (max-width:640px) {
   .language-toggle { min-height:44px; }
@@ -651,13 +654,24 @@
   .guided-case-filters select { min-height:44px; }
   .guided-form-actions button,
   .guided-primary-button,
-  .guided-secondary-button { min-height:44px; }
+  .guided-secondary-button,
+  .bookmark-save-button,
+  .bookmark-toolbar .progress-reset,
+  .bookmark-row-actions .progress-reset,
+  .progress-actions .progress-reset,
+  .radiograph-tool-button,
+  .radiograph-file-label,
+  .radiograph-close,
+  .modality-detail-close,
+  .modality-card-action,
+  .bookmark-row-actions button { min-height:44px; }
+  .window-level-reset { height:auto; min-height:44px; }
 }
 @media (max-width:420px) {
   .zoom-controls button {
-    width:32px;
-    height:32px;
-    min-width:32px;
-    min-height:32px;
+    width:36px;
+    height:36px;
+    min-width:36px;
+    min-height:36px;
   }
 }

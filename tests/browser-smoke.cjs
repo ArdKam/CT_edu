@@ -424,6 +424,29 @@ const { chromium } = require('playwright');
     assert.equal(await mobile.locator('#plane-axial').isVisible(), true);
     assert.equal(await mobile.locator('#slice-slider').isVisible(), true);
     assert.equal(await mobile.locator('#window-width-slider').isVisible(), true);
+
+    const mobileTouchTargets = await mobile.evaluate(function () {
+      function measure(selector) {
+        const element = document.querySelector(selector);
+        if (!element) return null;
+        const rect = element.getBoundingClientRect();
+        return { width: Math.round(rect.width), height: Math.round(rect.height), visible: rect.width > 0 && rect.height > 0 };
+      }
+      return {
+        planeTab: measure('#plane-axial'),
+        previousSlice: measure('#slice-prev'),
+        windowLevelReset: measure('#window-level-reset'),
+        bookmarkSave: measure('#bookmark-save-current'),
+        zoomIn: measure('#zoom-in')
+      };
+    });
+    for (const key of ['planeTab', 'previousSlice', 'windowLevelReset', 'bookmarkSave']) {
+      const target = mobileTouchTargets[key];
+      assert.ok(target && target.visible, 'mobile touch target should be visible: ' + key);
+      assert.ok(target.height >= 44, key + ' should have at least a 44px touch height: ' + JSON.stringify(target));
+    }
+    assert.ok(mobileTouchTargets.zoomIn && mobileTouchTargets.zoomIn.height >= 36,
+      'compact mobile zoom control should retain its 36px target: ' + JSON.stringify(mobileTouchTargets.zoomIn));
     const mobileLayout = await mobile.evaluate(function () {
       return {
         width: window.innerWidth,
