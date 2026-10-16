@@ -139,6 +139,33 @@
       'Dice scores use the labels bundled with this same atlas; they are not an independent measure of medical accuracy.'
     );
     target.appendChild(warning);
+
+    const downloads = document.createElement('div');
+    downloads.className = 'organ-download-links';
+    const downloadTitle = document.createElement('strong');
+    downloadTitle.textContent = t('ماسک‌های سه‌بعدی', '3D mask files');
+    downloads.appendChild(downloadTitle);
+
+    function appendDownload(fileName, faLabel, enLabel) {
+      if (typeof fileName !== 'string' || !/^[a-z0-9-]+\\.nii\\.gz$/i.test(fileName)) return;
+      const link = document.createElement('a');
+      link.className = 'organ-download-link';
+      link.href = './assets/organ-predictions/' + encodeURIComponent(fileName);
+      link.download = fileName;
+      link.textContent = t(faLabel, enLabel);
+      downloads.appendChild(link);
+    }
+    if (state.manifest.labelMap) {
+      appendDownload(state.manifest.labelMap.file,
+        'دریافت نقشهٔ برچسب چنداندامی (.nii.gz)',
+        'Download combined organ label map (.nii.gz)');
+    }
+    state.manifest.organs.forEach(function (organ) {
+      appendDownload(organ.maskVolumeFile,
+        'دریافت ماسک سه‌بعدی · ' + organ.nameFa,
+        'Download 3D mask · ' + organ.nameEn);
+    });
+    if (downloads.querySelector('a')) target.appendChild(downloads);
   }
   function updatePosition() {
     const position = digits(state.index + 1) + ' / ' + digits(state.count);
