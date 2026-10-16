@@ -10,5 +10,34 @@
 .series-notes{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:16px}.series-note-card{display:flex;align-items:flex-start;gap:13px;padding:19px 20px;background:rgba(255,255,255,.76);border:1px solid #e1e7e5;border-radius:15px}.series-note-icon{flex:0 0 29px;width:29px;height:29px;border-radius:9px;background:#e7f2ef;color:var(--teal);display:flex;align-items:center;justify-content:center;font-weight:700}.series-note-caution .series-note-icon{background:#faf0e0;color:#91672f}.series-note-card h3{font-size:12px;margin:2px 0 8px}.series-note-card p{font-size:11px;line-height:1.9;color:var(--muted);margin:0}.series-footer{display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap;padding:20px 4px 0;color:#78848a;font-size:10px}.series-home-link{display:inline-flex;align-items:center;justify-content:center;min-height:36px;padding:0 12px;border:1px solid #dfe6e4;border-radius:9px;text-decoration:none;font-size:11px;font-weight:600;color:#324650;background:#fff;white-space:nowrap}.series-home-link:hover{background:#f4f8f6}
 body.lang-en .series-intro h1{letter-spacing:-.04em}body.lang-fa .series-intro h1{letter-spacing:-.02em}
 @media(max-width:900px){.series-intro{grid-template-columns:1fr;gap:17px}.series-status-card{display:grid;grid-template-columns:auto 1fr;column-gap:12px;align-items:center;padding:16px}.series-status-mark{grid-row:span 2;margin:0}.series-status-card>strong{align-self:end}.series-status-card p{margin:3px 0 8px}.series-status-card>a{grid-column:2}.series-notes{grid-template-columns:1fr}}
-@media(max-width:560px){.series-main{padding-top:22px}.series-intro{padding-bottom:19px}.series-facts{gap:7px}.series-fact{padding:9px 10px;gap:7px}.series-fact strong{font-size:13px}.series-workspace-heading{padding:17px 14px 14px}.series-plane-switch{padding:0 14px 13px;gap:6px}.series-plane-button{flex:1;min-width:0;padding:0 7px;gap:5px;min-height:46px}.series-toolbar{padding:0 14px 13px;gap:6px}.series-keyboard-hint{margin:0 14px 12px;font-size:9px}.series-button{min-height:44px;padding:0 10px}.series-toolbar-divider{margin:0 1px}.series-stage{height:62vh;min-height:280px;max-height:540px}.series-stage img{max-width:calc(100% - 18px);max-height:calc(100% - 44px)}.series-slider-block{padding:16px 15px 18px}.series-notes{margin-top:11px}.series-note-card{padding:15px}.series-footer{padding:15px 2px 0}.series-home-link{display:none}.series-intro h1{font-size:27px}}
+@media(max-width:560px){
+.series-main{padding-top:14px}
+.series-intro{padding-top:0;padding-bottom:9px;gap:10px}
+.series-intro .eyebrow{margin-bottom:7px}
+.series-intro h1{font-size:25px;margin-bottom:7px}
+.series-lead{font-size:12px;line-height:1.65;margin-bottom:11px}
+.series-facts{display:flex;gap:6px;margin-bottom:0}
+.series-fact:first-child{display:flex}
+.series-fact:nth-child(n+2){display:none}
+.series-fact{padding:7px 10px;font-size:10px}
+.series-fact strong{font-size:12px}
+.series-status-card{padding:9px 11px;grid-template-columns:auto minmax(0,1fr);gap:3px 9px}
+.series-status-mark{width:25px;height:25px;grid-row:span 3;margin:0}
+.series-status-card>strong{font-size:11px;align-self:end;margin:0}
+.series-status-card p{font-size:9px;line-height:1.5;margin:0}
+.series-status-card>a{font-size:10px;grid-column:2;margin-top:1px}
+.series-workspace{display:flex;flex-direction:column}
+.series-workspace-heading{order:0;padding:13px 14px 11px}
+.series-plane-switch{order:1;padding:0 12px 10px;gap:6px}
+.series-plane-button{flex:1;min-width:0;padding:0 6px;gap:4px;min-height:44px;font-size:10px}
+.series-stage{order:2;height:56vh;min-height:270px;max-height:460px}
+.series-stage img{max-width:calc(100% - 18px);max-height:calc(100% - 44px)}
+.series-toolbar{order:3;padding:12px 12px 8px;gap:6px}
+.series-keyboard-hint{order:4;margin:0 14px 8px;font-size:9px}
+.series-slider-block{order:5;padding:12px 15px 16px}
+.series-notes{margin-top:11px}
+.series-note-card{padding:15px}
+.series-footer{padding:15px 2px 0}
+.series-home-link{display:none}
+}
 @media(prefers-reduced-motion:reduce){.series-button,.series-stage img{transition:none}.series-loader{animation:none}}
