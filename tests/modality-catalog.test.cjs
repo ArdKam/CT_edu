@@ -16,7 +16,7 @@ test('modality catalog exposes five paths while only the reviewed SPL learning p
   assert.equal(series.status, 'candidate');
   assert.equal(series.contentAvailable, false);
   assert.equal(series.pageUrl, './abdomen-series.html');
-  assert.match(series.sourceUrl, /commons\\.wikimedia\\.org/);
+  assert.match(series.sourceUrl, /commons\.wikimedia\.org/);
   assert.match(series.detailEn, /320 separate axial images/i);
   assert.match(series.detailEn, /in-plane spacing/i);
   assert.equal(catalog.isAvailable('brain-ct'), false);
