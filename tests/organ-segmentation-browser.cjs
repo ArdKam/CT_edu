@@ -32,8 +32,9 @@ const { chromium } = require('playwright');
     if (!manifestResponse.ok()) {
       // A build without generated model output must fail visibly instead of showing mock masks.
       await page.waitForFunction(function () {
-        return document.getElementById('organ-canvas-state').hidden === false;
-      });
+        const status = document.getElementById('organ-status').textContent;
+        return /No usable output was generated|خروجی قابل‌استفاده‌ای تولید نشده/.test(status);
+      }, null, { timeout: 10000 });
       const status = await page.locator('#organ-status').textContent();
       assert.match(status, /No usable output was generated|خروجی قابل‌استفاده‌ای تولید نشده/);
       assert.equal(await page.locator('#organ-controls-list .organ-control-row').count(), 0);
@@ -68,15 +69,18 @@ const { chromium } = require('playwright');
       return state.hidden && canvas.toDataURL() !== previous;
     }, beforeToggle, { timeout: 10000 });
 
-    await page.locator('#organ-slice-slider').fill('28');
+    await page.locator('#organ-slice-slider').evaluate(function (input) {
+      input.value = '28';
+      input.dispatchEvent(new Event('input', { bubbles: true }));
+    });
     assert.match(await page.locator('#organ-position').textContent(), /28/);
-    await page.locator('#organ-opacity').fill('55');
+    await page.locator('#organ-opacity').evaluate(function (input) {
+      input.value = '55';
+      input.dispatchEvent(new Event('input', { bubbles: true }));
+    });
     assert.match(await page.locator('#organ-opacity-value').textContent(), /55/);
 
-    await page.getByRole('button', { name: /Switch language to Persian|تغییر زبان به انگلیسی/ }).click().catch(async function () {
-      // The starting language is Persian; use the stable control ID if the accessible name differs.
-      await page.locator('#organ-language-toggle').click();
-    });
+    await page.locator('#organ-language-toggle').click();
     assert.ok(['en', 'fa'].includes(await page.locator('html').getAttribute('lang')));
     assert.deepEqual(pageErrors, [], 'organ segmentation preview must not throw runtime errors');
     console.log('ORGAN_PREVIEW_BROWSER_OK: mask display, four-organ toggles, slice navigation, opacity and language');
