@@ -50,3 +50,9 @@
 @media(max-width:980px){.organ-intro{grid-template-columns:1fr}.organ-workspace{grid-template-columns:1fr}.organ-controls{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr)}.organ-controls-heading,.organ-control-note{grid-column:1/-1}.organ-controls-list{grid-column:1/-1}.organ-opacity-block{grid-column:1}.organ-metadata{grid-column:2}.organ-canvas-wrap{min-height:250px}}
 @media(max-width:620px){.organ-main{padding:22px 12px}.organ-viewer-header{padding:15px 14px 11px}.organ-toolbar{padding-inline:14px}.organ-canvas-wrap{min-height:220px;padding:8px}#organ-canvas{max-height:58vh}.organ-slice-navigation{grid-template-columns:1fr auto;gap:8px;padding:13px 14px}.organ-slice-navigation label{grid-column:1/-1}.organ-controls{display:block}.organ-controls-heading{padding:17px 15px 10px}.organ-control-note{padding-inline:15px}.organ-control-row{padding:12px 15px}.organ-model-meta{gap:9px}.organ-footer{padding-inline:4px}}
 @media(prefers-reduced-motion:reduce){.organ-spinner{animation:none}}
+
+.organ-download-links{display:grid;gap:6px;margin-top:12px;padding-top:10px;border-top:1px solid var(--line)}
+.organ-download-links>strong{font-size:10px;margin-bottom:2px}
+.organ-download-link{display:block;padding:7px 9px;border:1px solid var(--line);border-radius:8px;background:var(--surface);color:var(--teal);font-size:10px;font-weight:700;line-height:1.55;text-decoration:none}
+.organ-download-link:hover{border-color:var(--teal);text-decoration:underline;text-underline-offset:3px}
+.organ-download-link:focus-visible{outline:3px solid var(--focus);outline-offset:2px}
