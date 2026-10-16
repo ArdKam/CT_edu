@@ -59,6 +59,11 @@ jobs:
           cp src/guided-cases.js "$preview/src/guided-cases.js"
           cp src/data/guided-cases.js "$preview/src/data/guided-cases.js"
           cp src/data/radiopaedia-abdominal-cases.js "$preview/src/data/radiopaedia-abdominal-cases.js"
+          cp preview/index.html preview/preview.css preview/preview-hub.js "$preview/"
+          cp abdomen-series.html "$preview/abdomen-series.html"
+          cp src/abdomen-series.css "$preview/src/abdomen-series.css"
+          cp src/abdomen-series.js "$preview/src/abdomen-series.js"
+          cp src/data/wikimedia-abdomen-series.js "$preview/src/data/wikimedia-abdomen-series.js"
 
           python - <<'PY'
           from pathlib import Path
@@ -73,10 +78,15 @@ jobs:
               html = html.replace(old, new)
           page.write_text(html)
 
+          series_page = Path("_site/preview/abdomen-series.html")
+          html = series_page.read_text()
+          html = html.replace('href="./index.html"', 'href="../index.html"')
+          series_page.write_text(html)
+
           homepage = Path("_site/index.html")
           html = homepage.read_text()
           anchor = '<div class="topbar-actions"><span class="educational-tag">'
-          link = '<div class="topbar-actions"><a class="case-preview-link" href="./preview/cases.html"><span class="rad-fa">پیش‌نمایش کیس‌ها</span><span class="rad-en">Guided cases preview</span></a><span class="educational-tag">'
+          link = '<div class="topbar-actions"><a class="case-preview-link" href="./preview/index.html"><span class="rad-fa">پیش‌نمایش‌های یادگیری</span><span class="rad-en">Learning previews</span></a><span class="educational-tag">'
           if anchor not in html:
               raise SystemExit("Could not find the stable-homepage navigation insertion point")
           homepage.write_text(html.replace(anchor, link, 1))
@@ -88,12 +98,22 @@ jobs:
           PY
 
           test -s "$GITHUB_WORKSPACE/_site/index.html"
+          test -s "$GITHUB_WORKSPACE/_site/preview/index.html"
+          test -s "$GITHUB_WORKSPACE/_site/preview/preview.css"
+          test -s "$GITHUB_WORKSPACE/_site/preview/preview-hub.js"
           test -s "$GITHUB_WORKSPACE/_site/preview/cases.html"
+          test -s "$GITHUB_WORKSPACE/_site/preview/abdomen-series.html"
+          test -s "$GITHUB_WORKSPACE/_site/preview/src/abdomen-series.js"
+          test -s "$GITHUB_WORKSPACE/_site/preview/src/abdomen-series.css"
+          test -s "$GITHUB_WORKSPACE/_site/preview/src/data/wikimedia-abdomen-series.js"
           test -s "$GITHUB_WORKSPACE/_site/preview/src/guided-cases.js"
           test -s "$GITHUB_WORKSPACE/_site/preview/src/data/guided-cases.js"
           test -s "$GITHUB_WORKSPACE/_site/preview/src/data/radiopaedia-abdominal-cases.js"
-          grep -q './preview/cases.html' "$GITHUB_WORKSPACE/_site/index.html"
-          grep -q 'Guided cases preview' "$GITHUB_WORKSPACE/_site/index.html"
+          grep -q './preview/index.html' "$GITHUB_WORKSPACE/_site/index.html"
+          grep -q 'Learning previews' "$GITHUB_WORKSPACE/_site/index.html"
+          grep -q './cases.html' "$GITHUB_WORKSPACE/_site/preview/index.html"
+          grep -q './abdomen-series.html' "$GITHUB_WORKSPACE/_site/preview/index.html"
+          grep -q 'href="../index.html"' "$GITHUB_WORKSPACE/_site/preview/abdomen-series.html"
           ! find "$GITHUB_WORKSPACE/_site" -type f -name '*.zip' | grep -q .
           echo "Preview staged at /preview/cases.html; stable home retains the previous baseline UI apart from the explicit preview link."
 
@@ -144,7 +164,11 @@ jobs:
             return 1
           }
           fetch_with_retry "$base/" 'preview/cases.html'
+          fetch_with_retry "$base/preview/index.html" 'Abdomen image stacks'
           fetch_with_retry "$base/preview/cases.html" 'Guided cases'
+          fetch_with_retry "$base/preview/abdomen-series.html" 'data-series-plane="coronal"'
+          fetch_with_retry "$base/preview/src/abdomen-series.js" 'function switchPlane(nextPlane)'
+          fetch_with_retry "$base/preview/src/data/wikimedia-abdomen-series.js" 'sagittal_plane_178.png'
           fetch_with_retry "$base/preview/src/data/guided-cases.js" 'rID-59227'
           fetch_with_retry "$base/preview/src/data/radiopaedia-abdominal-cases.js" 'abd-frp-007'
           fetch_with_retry "$base/preview/src/guided-cases.js" 'function getEmbeddableSourceUrl(item)'
