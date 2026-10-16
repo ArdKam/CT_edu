@@ -7,6 +7,7 @@
   const position = byId('series-position'), slider = byId('series-slider'), sliderValue = byId('series-slider-value');
   const zoomValue = byId('series-zoom-value'), retry = byId('series-retry'), languageButton = byId('series-language-toggle');
   const captionFa = byId('series-caption-fa'), captionEn = byId('series-caption-en');
+  const kickerFa = byId('series-viewer-kicker-fa'), kickerEn = byId('series-viewer-kicker-en');
   if (!image || !stage || !slider || !position || !sliderValue) return;
   const planeIds = ['axial','coronal','sagittal'];
   const planeIndices = {};
@@ -59,6 +60,8 @@
     const name = planeName(currentPlane);
     if (captionFa) captionFa.textContent = 'مجموعهٔ ' + name.fa + ' · مختصات و هم‌ترازی با نماهای دیگر تأیید نشده‌اند';
     if (captionEn) captionEn.textContent = name.en.charAt(0).toUpperCase() + name.en.slice(1) + ' stack · coordinates and alignment with other views are not verified';
+    if (kickerFa) kickerFa.textContent = 'نمایشگر مجموعهٔ ' + name.fa;
+    if (kickerEn) kickerEn.textContent = name.en.toUpperCase() + ' IMAGE STACK';
   }
   function updateImageAlt() {
     const name = planeName(currentPlane);
