@@ -34,6 +34,11 @@ jobs:
           node --check src/quiz/quiz-engine.js
           node --check src/data/progress-store.js
           node --check src/data/bookmark-store.js
+          node --check src/segmentor/geometry.js
+          node --check src/segmentor/source-metadata.js
+          node --check src/segmentor/annotation-schema.js
+          node --check src/segmentor/annotation-store.js
+          node --check src/segmentor/editor.js
           node --check src/data/case-manifest.js
           node --check scripts/validate_teaching_case.js
           node --check src/app.js
@@ -175,6 +180,7 @@ jobs:
             sleep 1
           done
           node tests/browser-smoke.cjs
+          node tests/segmentor-browser-smoke.cjs
           for engine in chromium firefox webkit; do
             echo "Running cross-engine compatibility smoke: $engine"
             BROWSER_ENGINE="$engine" node tests/browser-compat.cjs
