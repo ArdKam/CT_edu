@@ -22,7 +22,7 @@ The connected Base44 account exposes entity data but not a read-only preview URL
 
 ## Verified content and implementation inventory
 
-- One non-demo abdominal dataset record references 320 unique axial PNG URLs from Wikimedia Commons. It declares 3 mm slice thickness, `available_planes: ["axial"]`, no segmentation, and CC0 1.0.
+- One non-demo Base44 abdominal dataset record references 320 unique axial PNG URLs from Wikimedia Commons. It declares 3 mm slice thickness, `available_planes: ["axial"]`, no segmentation, and CC0 1.0. Source verification also established that the same Commons gallery has distinct 150-image coronal and 178-image sagittal categories; those extra stacks were added to GitHub separately rather than attributed to Base44's database record.
 - A separate Base44 record contains liver polygons, but the user has confirmed those annotations are not a priority. They are excluded from this migration.
 - Three other anatomical-structure records are explicitly demo placeholders.
 - Two stored clinical cases are explicit demo placeholders; neither has a source case URL, verified viewer URL, or licence.
