@@ -101,7 +101,7 @@ if (!engine) {
     assert.equal(await page.locator('#radiograph-workspace').isVisible(), false);
     assert.equal(await page.locator('#radiograph-canvas').getAttribute('data-image-loaded'), 'false');
 
-    // Exercise the Base44-derived axial series through the real catalog-to-viewer route.
+    // Exercise the Base44-derived three-plane image stacks through the real catalog-to-viewer route.
     const seriesPage = await context.newPage();
     const seriesPageErrors = [];
     seriesPage.on('pageerror', function (error) { seriesPageErrors.push(error.message); });
@@ -113,17 +113,18 @@ if (!engine) {
       engineName + ': axial series slider should be visible');
     await seriesPage.waitForFunction(function () {
       const image = document.getElementById('series-image');
-      return image && !image.hidden && image.complete && image.naturalWidth > 0;
+      return image && !image.hidden && image.complete && image.naturalWidth > 0 &&
+        decodeURIComponent(image.currentSrc).includes('axial_plane_160.png');
     }, null, { timeout: 25000 });
-    assert.equal(await seriesPage.locator('#series-previous').isDisabled(), true,
-      engineName + ': previous should be disabled at first source image');
+    assert.equal(await seriesPage.locator('#series-previous').isDisabled(), false,
+      engineName + ': previous should be enabled at the central axial image');
     await seriesPage.locator('#series-next').click();
     await seriesPage.waitForFunction(function () {
       const image = document.getElementById('series-image');
-      return image && decodeURIComponent(image.currentSrc).includes('axial_plane_2.png') && image.naturalWidth > 0;
+      return image && decodeURIComponent(image.currentSrc).includes('axial_plane_161.png') && image.naturalWidth > 0;
     }, null, { timeout: 20000 });
-    assert.equal(await seriesPage.locator('#series-position').innerText(), '۲ از ۳۲۰',
-      engineName + ': next should advance to image two in Persian mode');
+    assert.equal(await seriesPage.locator('#series-position').innerText(), '۱۶۱ از ۳۲۰',
+      engineName + ': next should advance to axial image 161 in Persian mode');
     await seriesPage.locator('#series-zoom-in').click();
     assert.equal(await seriesPage.locator('#series-zoom-value').innerText(), '125%',
       engineName + ': axial stack zoom should increase');
@@ -141,6 +142,20 @@ if (!engine) {
     }, null, { timeout: 20000 });
     assert.equal(await seriesPage.locator('#series-position').innerText(), '160 of 320',
       engineName + ': index slider should select source image 160');
+    await seriesPage.locator('[data-series-plane="coronal"]').click();
+    await seriesPage.waitForFunction(function () {
+      const image = document.getElementById('series-image');
+      return image && decodeURIComponent(image.currentSrc).includes('coronal_plane_75.png') && image.naturalWidth > 0;
+    }, null, { timeout: 20000 });
+    assert.equal(await seriesPage.locator('#series-position').innerText(), '75 of 150',
+      engineName + ': coronal stack should keep its own index and count');
+    await seriesPage.locator('[data-series-plane="sagittal"]').click();
+    await seriesPage.waitForFunction(function () {
+      const image = document.getElementById('series-image');
+      return image && decodeURIComponent(image.currentSrc).includes('sagittal_plane_89.png') && image.naturalWidth > 0;
+    }, null, { timeout: 20000 });
+    assert.equal(await seriesPage.locator('#series-position').innerText(), '89 of 178',
+      engineName + ': sagittal stack should keep its own index and count');
     const seriesWidth = await seriesPage.evaluate(function () {
       return { viewport: window.innerWidth, document: document.documentElement.scrollWidth, body: document.body.scrollWidth };
     });
