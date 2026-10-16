@@ -623,6 +623,28 @@
 .guided-case-empty[hidden]{display:none!important}
 #guided-active-case-panel[hidden]{display:none!important}
 .guided-case-card-meta{overflow-wrap:anywhere}
+.guided-case-verification {
+  grid-column:2;
+  display:flex;
+  align-items:flex-start;
+  gap:.4rem;
+  color:var(--muted, #5f6b75);
+  font-size:.76rem;
+  line-height:1.5;
+  overflow-wrap:anywhere;
+}
+.guided-case-verification::before {
+  content:"";
+  flex:0 0 .45rem;
+  width:.45rem;
+  height:.45rem;
+  margin-top:.38rem;
+  border-radius:50%;
+  background:#a8751b;
+}
+.guided-case-card[data-case-verification="verified"] .guided-case-verification::before { background:#287654; }
+.guided-case-card[data-case-verification="unavailable"] .guided-case-verification::before { background:#a64d49; }
+.guided-case-card[data-case-verification="excluded"] .guided-case-verification::before { background:var(--muted, #5f6b75); }
 @media(min-width:760px){.guided-case-filter-row{grid-template-columns:minmax(0,1fr) minmax(0,1fr);column-gap:10px}.guided-case-filter-row label{align-self:end}}
 @media(max-width:520px){.guided-case-filters{padding:10px;gap:7px}.guided-case-filters input,.guided-case-filters select{min-height:42px}.guided-case-count{font-size:12px}}
 
