@@ -6,7 +6,7 @@ const root = path.resolve(__dirname, '..');
 const read = function (name) { return fs.readFileSync(path.join(root, name), 'utf8'); };
 const catalog = require('../src/data/modality-catalog.js');
 
-test('modality catalog exposes five paths while only the reviewed SPL learning path is marked available', function () {
+test('modality catalog exposes five paths while only the primary SPL learning path is marked available', function () {
   const entries = catalog.list();
   assert.deepEqual(entries.map(function (entry) { return entry.id; }), ['abdomen-ct','abdomen-ct-series','brain-ct','chest-ct','chest-xray']);
   assert.equal(entries.filter(function (entry) { return catalog.isAvailable(entry.id); }).length, 1);
