@@ -243,6 +243,9 @@ test('public privacy notice is linked, staged, and discloses external source-ima
   assert.match(workflow, /test -s _site\/src\/abdomen-series\.js/);
   assert.match(workflow, /test -s _site\/src\/abdomen-series\.css/);
   assert.match(workflow, /test -s _site\/src\/data\/wikimedia-abdomen-series\.js/);
+  const previewWorkflow = read('.github/workflows/preview-guided-cases.yml');
+  assert.match(previewWorkflow, /test -s "\$GITHUB_WORKSPACE\/_site\/preview\/abdomen-series\.html"/);
+  assert.match(previewWorkflow, /test -s "\$GITHUB_WORKSPACE\/_site\/preview\/src\/data\/wikimedia-abdomen-series\.js"/);
   assert.match(workflow, /test -s _site\/privacy\.html/);
   assert.match(workflow, /fetch_with_retry "\$base\/privacy\.html" 'Privacy &amp; Local Data'/);
 });
