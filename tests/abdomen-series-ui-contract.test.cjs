@@ -11,6 +11,7 @@ test('series page declares both Wikimedia image origins and source attribution',
   assert.match(privacy, /Wikimedia Commons/);
   assert.match(privacy, /upload\.wikimedia\.org/);
   assert.match(html, /img-src[^"]*https:\/\/upload\.wikimedia\.org/);
+  assert.match(html, /img-src[^\"]*https:\/\/commons\.wikimedia\.org/);
   assert.match(html, /referrerpolicy="no-referrer"/);
   assert.match(html, /Scrollable computed tomography images of a normal abdomen and pelvis/);
   assert.match(html, /Mikael Häggström, M\.D\./);
