@@ -626,8 +626,15 @@
   .guided-form-actions button { width:100%; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .guided-case-page *,
-  .guided-case-shell * { scroll-behavior:auto !important; animation-duration:.01ms !important; transition-duration:.01ms !important; }
+  html { scroll-behavior:auto !important; }
+  *,
+  *::before,
+  *::after {
+    scroll-behavior:auto !important;
+    animation-duration:.01ms !important;
+    animation-iteration-count:1 !important;
+    transition-duration:.01ms !important;
+  }
 }
 
 
@@ -648,3 +655,39 @@
 .guided-case-card-meta{overflow-wrap:anywhere}
 @media(min-width:760px){.guided-case-filter-row{grid-template-columns:minmax(0,1fr) minmax(0,1fr);column-gap:10px}.guided-case-filter-row label{align-self:end}}
 @media(max-width:520px){.guided-case-filters{padding:10px;gap:7px}.guided-case-filters input,.guided-case-filters select{min-height:42px}.guided-case-count{font-size:12px}}
+
+
+/* Accessible touch sizing and system motion preferences.
+   Keep CT controls reachable on phones without altering desktop density. */
+@media (max-width:780px) {
+  .plane-tab { min-height:44px; }
+  .slice-nav-controls { grid-template-columns:40px minmax(0,1fr) 40px; gap:8px; }
+  .slice-step-button { width:40px; height:40px; min-width:40px; min-height:40px; }
+  .mode-tab,
+  .display-mode-button,
+  .tri-open-button,
+  .tri-return-button { min-height:40px; }
+}
+@media (max-width:640px) {
+  .language-toggle { min-height:44px; }
+  .case-library-link,
+  .case-library-home {
+    display:inline-flex;
+    align-items:center;
+    min-height:44px;
+    padding-inline:5px;
+  }
+  .guided-case-filters input,
+  .guided-case-filters select { min-height:44px; }
+  .guided-form-actions button,
+  .guided-primary-button,
+  .guided-secondary-button { min-height:44px; }
+}
+@media (max-width:420px) {
+  .zoom-controls button {
+    width:32px;
+    height:32px;
+    min-width:32px;
+    min-height:32px;
+  }
+}
