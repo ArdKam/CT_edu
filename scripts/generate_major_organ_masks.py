@@ -10,6 +10,7 @@ import argparse
 import json
 import shutil
 import subprocess
+from importlib.metadata import version as installed_package_version
 import sys
 import tempfile
 import zipfile
@@ -256,7 +257,7 @@ def main() -> int:
         },
         "model": {
             "name": "TotalSegmentator",
-            "version": "2.11.0",
+            "version": installed_package_version("TotalSegmentator"),
             "task": "total",
             "device": "cpu",
             "resolution": "fast/3mm",
