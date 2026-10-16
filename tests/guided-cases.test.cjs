@@ -6,7 +6,7 @@ const page = fs.readFileSync(require('node:path').join(__dirname, '..', 'cases.h
 const app = fs.readFileSync(require('node:path').join(__dirname, '..', 'src', 'guided-cases.js'), 'utf8');
 const entries = cases.list();
 assert.match(page, /id="guided-case-rubric-progress"[^>]*role="status"[^>]*aria-live="polite"/);
-assert.match(app, /items reviewed/);
+assert.ok(app.includes("item.verification && item.verification.status === 'verified'"));
 assert.match(app, /مورد بررسی شده/);
 assert.equal(cases.schemaVersion, 2);
 assert.equal(entries.length, 56, 'the four pre-existing cases and 52 new intake candidates should be present');
@@ -101,5 +101,20 @@ assert.ok(app.includes('item.source.caseNotes'));
 assert.ok(!app.includes('LEGACY_CASE_PAGE_EMBEDS'), 'generic case pages must not be embedded as if they were image viewers');
 assert.ok(!app.includes('item.source.studyPageUrl || item.source.url'), 'arbitrary new candidates must not fall back to embedding their case page');
 assert.ok(!app.includes("return item.source.studyPageUrl || item.source.url;"));
+
+
+
+assert.match(page, /embedded image viewing is not guaranteed/);
+assert.match(page, /shows only the case page/);
+assert.match(page, /Radiopaedia study page; displayed content is controlled by the source site/);
+assert.match(app, /Open Radiopaedia study page/);
+assert.match(app, /embedded image viewing is not guaranteed/);
+assert.match(app, /Radiopaedia controls the displayed page and image navigation/);
+assert.doesNotMatch(app, /Open study viewer on Radiopaedia/);
+assert.doesNotMatch(page, /the viewer opens automatically/i);
+assert.match(app, /Live image loading for this case has not been independently verified/);
+assert.match(app, /Medical review and image-redistribution rights must also be checked separately/);
+assert.ok(app.includes("item.verification && item.verification.status === 'verified'"));
+assert.match(app, /Live source loading was verified in a recorded check/);
 
 console.log('Guided cases: bilingual metadata, source links, and self-review rubrics validated.');

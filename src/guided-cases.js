@@ -183,8 +183,8 @@
   }
 
   function getEmbeddableSourceUrl(item) {
-    // Only load an explicit Study route. Falling back to a generic case page
-    // would immediately take learners out of the image viewer.
+    // Only load an explicitly recorded Study route. This is still a page served
+    // by Radiopaedia, not a native CT Edu viewer or proof that embedding is allowed.
     return item.source && item.source.studyPageUrl ? item.source.studyPageUrl : '';
   }
 
@@ -196,8 +196,8 @@
 
     if (viewerUrl) {
       frame.title = lang() === 'fa'
-        ? 'ویور سری CT انتخاب‌شده از Radiopaedia'
-        : 'Selected CT study viewer from Radiopaedia';
+        ? 'صفحهٔ مطالعهٔ CT در Radiopaedia؛ محتوای نمایش‌داده‌شده در اختیار سایت منبع است'
+        : 'Radiopaedia CT study page; displayed content is controlled by the source site';
       if (!sameSourceAlreadyLoaded) frame.src = viewerUrl;
       frameWrap.hidden = false;
     } else {
@@ -225,16 +225,24 @@
     if (item.source.studyPageUrl) studyLink.href = item.source.studyPageUrl;
     else studyLink.removeAttribute('href');
     studyLink.textContent = lang() === 'fa'
-      ? 'بازکردن ویور مطالعه در Radiopaedia ↗'
-      : 'Open study viewer on Radiopaedia ↗';
+      ? 'بازکردن صفحهٔ مطالعه در Radiopaedia ↗'
+      : 'Open Radiopaedia study page ↗';
 
-    el('source-load-status').textContent = viewerUrl
+    const sourceRouteStatus = viewerUrl
       ? (lang() === 'fa'
-          ? 'ویور به‌صورت خودکار در قاب داخلی درخواست شده است. اگر قاب خالی بود، ممکن است Radiopaedia نمایش داخلی را مسدود کرده باشد؛ لینک ویور در تب جدید در دسترس است.'
-          : 'The viewer was requested automatically. If the frame is blank, Radiopaedia may block embedded display; the direct viewer link is available in a new tab.')
+          ? 'صفحهٔ مطالعهٔ منبع به‌صورت خودکار در قاب درخواست شده است. محتوای نمایش و پیمایش تصاویر را Radiopaedia کنترل می‌کند؛ نمایش داخلی تضمین‌شده نیست. اگر قاب خالی بود یا فقط صفحهٔ کیس دیده شد، لینک صفحهٔ مطالعه را در تب جدید باز کن.'
+          : 'The source study page was requested in the frame. Radiopaedia controls the displayed page and image navigation, so embedded image viewing is not guaranteed. If the frame is blank or shows only the case page, open the study-page link in a new tab.')
       : (lang() === 'fa'
           ? 'برای این کیس هنوز لینک مستقیم Study ثبت نشده است؛ برای دیدن منبع از لینک صفحهٔ کیس استفاده کن.'
           : 'No direct Study route is recorded for this case yet. Use the source case link to open it externally.');
+    const imageVerificationNotice = item.verification && item.verification.status === 'verified'
+      ? (lang() === 'fa'
+          ? 'بارگذاری زندهٔ منبع در بررسی ثبت‌شده تأیید شده است؛ این به‌معنی تأیید پزشکی یا مجوز بازنشر تصاویر نیست.'
+          : 'Live source loading was verified in a recorded check; this does not imply medical validation or image-redistribution permission.')
+      : (lang() === 'fa'
+          ? 'بارگذاری زندهٔ تصاویر این کیس هنوز به‌طور مستقل تأیید نشده است. بررسی پزشکی و مجوز استفاده از تصاویر نیز جداگانه لازم است.'
+          : 'Live image loading for this case has not been independently verified. Medical review and image-redistribution rights must also be checked separately.');
+    el('source-load-status').textContent = sourceRouteStatus + ' ' + imageVerificationNotice;
 
     if (item.source.articleUrl) el('source-article-link').href = item.source.articleUrl;
     else el('source-article-link').removeAttribute('href');
