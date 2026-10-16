@@ -21,6 +21,8 @@ test('series page declares both Wikimedia image origins and source attribution',
   assert.match(html, /data-series-plane="axial"/);
   assert.match(html, /data-series-plane="coronal"/);
   assert.match(html, /data-series-plane="sagittal"/);
+  assert.match(html, /id="series-viewer-kicker-en"/);
+  assert.match(read('src/abdomen-series.css'), /series-stage\\{order:2/);
   assert.match(html, /648/);
   assert.match(html, /not a synchronized 3D|not a 3D reconstruction|not synchronized/i);
 });
