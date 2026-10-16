@@ -41,6 +41,10 @@ The connected Base44 account exposes entity data but not a read-only preview URL
 | Educational content | Stored clinical cases are placeholders and quiz collection is empty | Exclude them; do not import placeholder learning content |
 | Privacy / third-party requests | Images will load from Wikimedia when the learner opens the separate viewer | Make the external source obvious and set no-referrer on image requests |
 
+## Destination implementation QA (not Base44 visual evidence)
+
+The GitHub implementation now exposes a bilingual preview hub and a separate image-stack viewer. Generated 390px browser smoke screenshots of the GitHub page were visually inspected after the first implementation: the selected plane's header now follows the active tab, and the mobile layout places the CT image before the tool row so more of the image is visible in the initial viewport. Cross-browser checks (Chromium, Firefox and WebKit) validate the viewer route, representative axial/coronal/sagittal navigation, and absence of horizontal overflow. These screenshots are evidence of the **GitHub destination implementation only**, not screenshots of the Base44 source app and not evidence of a faithful Base44 visual clone.
+
 ## What this audit does not establish
 
 No visual-regression result, rendered UI capture, browser interaction trace, screen-reader assessment, independent image-quality review, or clinical validation of the Base44 app was performed. A later screenshot-driven pass is needed to port its exact design details and feature behaviors.
