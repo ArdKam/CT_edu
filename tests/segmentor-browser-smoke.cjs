@@ -40,6 +40,19 @@ const {chromium}=require('playwright');
   assert.equal(await page.locator('#segmentor-overlay path.segmentor-polygon').count(),1,'saved annotation should reload from IndexedDB');
   await page.locator('#segmentor-overlay path.segmentor-polygon').first().click({position:{x:100,y:50}});
   assert.equal(await page.locator('#segmentor-overlay circle.segmentor-vertex-handle').count(),3,'selected polygon exposes editable vertices');
+  const keyboardHandle=page.locator('#segmentor-overlay circle.segmentor-vertex-handle').first();
+  await keyboardHandle.focus();
+  const originalVertexX=Number(await keyboardHandle.getAttribute('cx'));
+  await keyboardHandle.press('ArrowRight');
+  const movedVertexX=Number(await page.locator('#segmentor-overlay circle.segmentor-vertex-handle').first().getAttribute('cx'));
+  assert.equal(movedVertexX,originalVertexX+1,'keyboard arrow moves the selected vertex in native pixels');
+  assert.equal(await page.evaluate(()=>document.activeElement?.classList.contains('segmentor-vertex-handle')),true,'keyboard focus should stay on the moved vertex after rerender');
+  await page.keyboard.press('Control+z');
+  assert.equal(Number(await page.locator('#segmentor-overlay circle.segmentor-vertex-handle').first().getAttribute('cx')),originalVertexX,'Ctrl+Z undoes a keyboard vertex move');
+  await page.keyboard.press('Control+y');
+  assert.equal(Number(await page.locator('#segmentor-overlay circle.segmentor-vertex-handle').first().getAttribute('cx')),originalVertexX+1,'Ctrl+Y redoes a keyboard vertex move');
+  await page.locator('#segmentor-save').click();
+  await page.waitForFunction(()=>document.getElementById('segmentor-save-state')?.dataset.state==='saved',{timeout:10000});
   async function assertVertexAligned() {
     const delta=await page.locator('#segmentor-overlay circle.segmentor-vertex-handle').first().evaluate(circle=>{
       const svg=circle.ownerSVGElement, m=svg.getScreenCTM();

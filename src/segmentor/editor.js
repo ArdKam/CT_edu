@@ -150,7 +150,7 @@
       }
       if(selectedAnnotationId===annotation.id&&mode==='select') annotation.points.forEach((point,pointIndex)=>{
         const handle=makeId('circle');handle.setAttribute('cx',point.x);handle.setAttribute('cy',point.y);handle.setAttribute('r','4.5');
-        handle.setAttribute('class','segmentor-vertex-handle');handle.setAttribute('tabindex','0');handle.setAttribute('role','button');
+        handle.setAttribute('class','segmentor-vertex-handle');handle.setAttribute('data-vertex-index',String(pointIndex));handle.setAttribute('tabindex','0');handle.setAttribute('role','button');
         handle.setAttribute('aria-label',t('ویرایش رأس '+(pointIndex+1),'Edit vertex '+(pointIndex+1)));
         handle.addEventListener('pointerdown',event=>startVertexDrag(event,annotation.id,pointIndex));
         handle.addEventListener('keydown',event=>moveVertexByKeyboard(event,annotation.id,pointIndex));
@@ -245,6 +245,8 @@
     recordSnapshot();
     annotation.points[pointIndex]=candidate;
     annotation.updatedAt=schema.now();markDirty();renderOverlay();renderList();
+    const nextHandle=el.overlay.querySelector('[data-annotation-id="'+annotationId+'"] .segmentor-vertex-handle[data-vertex-index="'+pointIndex+'"]');
+    if(nextHandle)nextHandle.focus();
   }
   function onPointerDown(event) {
     if(!currentSource||!event.isPrimary)return;
