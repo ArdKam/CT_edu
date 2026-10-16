@@ -22,6 +22,19 @@ function luminance(hex) {
   return 0.2126 * rgb[0] + 0.7152 * rgb[1] + 0.0722 * rgb[2];
 }
 
+
+function escapeRegExp(value) {
+  return value.replace(/[.*+?^${}()|[\\]\\\\]/g, '\\function contrastRatio(first, second) {');
+}
+
+function colorForSelector(selector) {
+  const rule = new RegExp('(?:^|})\\s*' + escapeRegExp(selector) + '\\s*\\{([^{}]*)\\}', 'm').exec(css);
+  assert.ok(rule, 'missing CSS rule for ' + selector);
+  const declaration = /(?:^|;)\\s*color\\s*:\\s*(#[0-9a-f]{6}|var\\(\\s*--([a-z-]+))/i.exec(rule[1]);
+  assert.ok(declaration, 'missing explicit text/icon color for ' + selector);
+  return declaration[1].startsWith('#') ? declaration[1] : token(declaration[2]);
+}
+
 function contrastRatio(first, second) {
   const a = luminance(first);
   const b = luminance(second);
@@ -67,5 +80,78 @@ test('focus indicators meet a 3:1 contrast floor and share the focus token', fun
 test('viewer control labels do not regress to the previous low-contrast light-theme colors', function () {
   for (const legacyColor of ['#56a9a2', '#2c8985', '#879594', '#a6b2b0', '#a2acac', '#7c8a8d', '#398c86', '#478f89']) {
     assert.doesNotMatch(css, new RegExp(legacyColor, 'i'), 'legacy low-contrast color remains: ' + legacyColor);
+  }
+});
+
+test('high-frequency light-surface labels and controls meet AA contrast', function () {
+  const paper = token('paper');
+  const white = '#ffffff';
+  const selectors = [
+    '.modality-catalog-heading p',
+    '.modality-subtitle',
+    '.modality-summary',
+    '.modality-detail-head p',
+    '.modality-detail-block ul',
+    '.radiograph-heading p',
+    '.radiograph-projection-label',
+    '.radiograph-status-row p',
+    '.radiograph-disclaimer',
+    '.panel-kicker',
+    '.search-box input::placeholder',
+    '.filter-note',
+    '.tiny-count',
+    '.structure-name small',
+    '.row-chevron',
+    '.visibility-button',
+    '.panel-footnote',
+    '.empty-results',
+    '.viewer-title-group small',
+    '.mode-tab',
+    '.detail-index',
+    '.selected-overline',
+    '.selected-structure>p',
+    '.selected-meta',
+    '.detail-section p',
+    '.orientation-glyph',
+    '.orientation-glyph i',
+    '.orientation-card p',
+    '.learn-nudge p',
+    '.answer-feedback',
+    '.quiet-button',
+    '.page-footer',
+    '.page-footer>span:first-child',
+    '.page-footer a',
+    '.slice-nav-heading .toolbar-label',
+    '.slice-nav-hint',
+    '.plane-tab',
+    '.window-level-heading>span',
+    '.window-level-field label',
+    '.window-level-status',
+    '.display-mode-label',
+    '.display-mode-button',
+    '.tri-planar-heading p',
+    '.tri-plane-card header p',
+    '.tri-slider-row'
+  ];
+
+  for (const selector of selectors) {
+    const foreground = colorForSelector(selector);
+    for (const [surfaceName, background] of [['paper', paper], ['white', white]]) {
+      const ratio = contrastRatio(foreground, background);
+      assert.ok(
+        ratio >= 4.5,
+        selector + ' must meet 4.5:1 contrast on ' + surfaceName + ' (got ' + ratio.toFixed(2) + ':1)'
+      );
+    }
+  }
+});
+
+test('quiz feedback colors remain distinguishable with AA text contrast on white', function () {
+  for (const [name, foreground] of [
+    ['correct', '#287654'],
+    ['incorrect', '#a64d49']
+  ]) {
+    const ratio = contrastRatio(foreground, '#ffffff');
+    assert.ok(ratio >= 4.5, name + ' feedback must meet 4.5:1 contrast (got ' + ratio.toFixed(2) + ':1)');
   }
 });
