@@ -4,14 +4,15 @@ CT Edu is an early-stage bilingual educational web app for medical students. The
 
 ## Multi-modality roadmap status
 
-The app now includes a bilingual modality catalog for four learning paths: the current abdominal CT teaching prototype, plus planned brain CT, chest CT, and chest radiography modules. The catalog intentionally shows data/readiness blockers instead of implying that unavailable images or lessons are already integrated.
+The app includes a bilingual modality catalog for the SPL abdominal CT teaching volume, a separate 320-image Wikimedia axial abdomen/pelvis preview, and candidate brain CT, chest CT, and chest radiography paths. The catalog distinguishes a source-image preview from a geometry-validated volume and from a reviewed teaching module.
 
-- **Abdominal CT:** the SPL-based teaching volume is available for prototype use; clinical/educational review and exact source-rights checks remain release gates.
+- **Abdominal CT (SPL):** the teaching volume powers the primary three-plane viewer; clinical/educational review and exact source-rights checks remain release gates.
+- **Abdomen/pelvis axial series:** 320 separate Wikimedia Commons images are available in a distinct on-demand viewer. The source page states CC0 1.0 and reported 3 mm slice thickness. In-plane spacing and DICOM geometry are not verified, so this stack does not provide coronal/sagittal reconstruction, segmentation, or patient-space coordinates.
 - **Brain CT:** candidate sources and curriculum are under review. Do not embed RSNA-IHD/MIRA source or derived images in the public site unless the applicable current terms clearly permit that use.
 - **Chest CT:** LIDC-IDRI is a potential source for a small, attributed, expert-reviewed teaching subset; its full collection is too large for GitHub Pages.
 - **Chest radiography:** a browser-only 2D viewer is implemented for local PNG/JPEG/WebP files (pan, zoom, fit, projection metadata; no upload). The official NIH Chest X-ray page states image use is unrestricted with attribution, making it the leading candidate for a curated public case subset. VinDr-CXR remains restricted and must not be redistributed.
 
-The catalog is **not** a claim that those three additional image modules are implemented. No extra patient images, labelmaps, or unreviewed clinical examples were bundled in this change. Per-modality data must pass the gates in [DATASET_ROADMAP.md](DATASET_ROADMAP.md) and [RELEASE_GATES.md](RELEASE_GATES.md) before the catalog marks a path available.
+The catalog is **not** a claim that candidate brain, chest, and radiograph content is integrated or medically reviewed. The Wikimedia stack is a separate external-image preview, not a validated volume. Its images load from Wikimedia only when the learner opens that viewer; no binary copies of the 320 PNGs are bundled. Per-modality data must pass the gates in [DATASET_ROADMAP.md](DATASET_ROADMAP.md) and [RELEASE_GATES.md](RELEASE_GATES.md) before a candidate path is treated as release-ready.
 
 ## Current capabilities
 
@@ -24,7 +25,8 @@ The catalog is **not** a claim that those three additional image modules are imp
 - **Local learning progress:** submitted active-recall answers are saved in this browser only, capped at 500 records, and summarized as attempts, accuracy, and distinct target structures. Users can clear the history or export/import a versioned JSON backup. Restore validates the schema and replaces the current local history only after confirmation.
 - **Local slice bookmarks:** save a plane and slice index, i/j/k voxel coordinates, selected structure, and an optional note (up to 500 characters). Bookmarks are capped at 100, de-duplicated per case/plane/slice/structure, and can be opened, removed, exported or restored from a separate versioned JSON backup. Notes render as plain text. Bookmarks remain in this browser; there are no accounts, server upload, or cross-device sync.
 - **Versioned case manifest:** the active SPL anatomy example has a stable case ID, source/geometry metadata, intensity semantics, and explicit medical-review and redistribution gates. A manifest entry does not imply content has been clinically or legally approved.
-- **Bilingual UI:** Persian RTL and English LTR.
+- **Bilingual UI:** Persian RTL and English LTR, including the separate axial series viewer.
+- **Additional axial image stack:** a 320-URL source manifest, keyboard and slider navigation, previous/next controls, zoom/pan, load failure/retry states, source credit, and explicit geometry/clinical limitations. Only the current image and neighboring slices are loaded on demand.
 - **Browser security baseline:** dynamic structure and answer-list UI is built with DOM APIs and `textContent`, not HTML string injection sinks. A document-level Content Security Policy restricts scripts and data connections to the same origin, blocks objects/frames, and allowlists only the Google Fonts CSS/font origins currently required by the UI. CSP and untrusted-search-input behavior are exercised in Chromium; this is not a substitute for a complete security review.
 - **CI supply-chain controls:** GitHub Actions are pinned to full commit SHAs, with weekly Dependabot checks for action updates. The Chromium smoke-test dependency is pinned to Playwright 1.63.0, and tests fail if workflow action references lose their immutable SHA pins.
 - **Privacy notice:** [privacy.html](privacy.html) explains local browser storage, portable progress and bookmark backups, optional bookmark notes, limits on what the app sends, and the third-party Google Fonts request. It does not claim to settle hosting-provider log retention or source-data redistribution rights.
