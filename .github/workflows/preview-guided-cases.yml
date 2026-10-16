@@ -188,7 +188,7 @@ jobs:
           import sys
           from pathlib import Path
           data = Path(sys.argv[1]).read_bytes()
-          assert data[:2] == b"\\x1f\\x8b", "Expected gzip-compressed NIfTI asset"
+          assert list(data[:2]) == [31, 139], "Expected gzip-compressed NIfTI asset"
           PY
             done
           fi
