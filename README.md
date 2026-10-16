@@ -77,7 +77,7 @@ The repository now contains an empty, versioned authoring template and a validat
 
 ## Next product work
 
-- Implement the preview-only Segmentor in the phased order defined by [the Segmentor roadmap](docs/SEGMENTOR_ROADMAP.md): geometry and schema first, then manual polygon editing and safe local persistence. Add intensity-region suggestions only after the manual MVP passes; defer AI and true-volume segmentation to separate security/medical validation gates.
+- Build toward automatic major-organ segmentation through the [Segmentor roadmap](docs/SEGMENTOR_ROADMAP.md): run a pretrained model remotely on the SPL volume, review four major-organ masks and geometry, and keep predictions preview-only. Follow with manual correction and stronger independent validation; do not treat threshold contours as organ recognition.
 - Complete independent medical-image orientation/label review, source redistribution review, public security/privacy checks, accessibility audit, and physical-device Safari/iOS and Android QA before enabling public release.
 - The local bookmark feature is a first step toward a reusable case experience. Next implement a reviewed guided-case flow: clinical context, systematic review prompts, learner-entered findings, independent impression, and rubric-based feedback.
 - Only integrate selected head/chest studies after exact-version use and redistribution rights, metadata review, geometry validation, annotation interpretation, expert review, and attribution are recorded. Candidate dataset names in the roadmap are not approved production content.
