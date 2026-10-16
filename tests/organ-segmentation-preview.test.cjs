@@ -45,6 +45,10 @@ test('automatic inference uses a real model, explicit intensity-offset assumptio
   assert.match(generator, /subtract-stored-value-offset/);
   assert.match(generator, /diceAgainstBundledAtlasLabel/);
   assert.match(generator, /unreviewed-model-output/);
+  assert.match(generator, /major-organ-labelmap\\.nii\\.gz/);
+  assert.match(generator, /affineRAS/);
+  assert.match(generator, /maskVolumeFile/);
+  assert.match(generator, /originRASMm/);
 });
 
 test('preview build stages organ page and generated assets only when they exist', function () {
