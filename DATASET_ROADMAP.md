@@ -12,6 +12,15 @@ Purpose: identify candidate sources for a public educational CT web app. **No ca
 - Rights gate: inspect the exact package license and third-party notices. The notice in the repository references 3D Slicer License Part B; that must not be treated as blanket clearance for every included third-party asset. The original ZIP files are still publicly accessible from the repository, even though the Pages build omits them.
 - Source record: [Open Anatomy — SPL abdominal atlas](https://www.openanatomy.org/atlas-pages/atlas-spl-abdomen.html); [3D Slicer license notice](https://openanatomy.org/atlas-pages/slicer-license.html).
 
+## Additional normal abdomen/pelvis axial image stack — Wikimedia Commons
+
+- Imported from the Base44 CT-Edu dataset record as 320 ordered, unique axial PNG URLs.
+- Official source page: https://commons.wikimedia.org/wiki/Scrollable_computed_tomography_images_of_a_normal_abdomen_and_pelvis
+- Source author: Mikael Häggström, M.D. The Commons page states CC0 1.0 and reports 3 mm slice thickness.
+- Delivery: remote images are loaded on demand from upload.wikimedia.org; image binaries are not bundled in the GitHub Pages artifact.
+- Current product status: **source-image preview only**. The stored Base44 record declares axial-only availability and has no in-plane spacing. CT-Edu does not infer DICOM geometry, patient-space coordinates, HU calibration, segmentation, or reliable coronal/sagittal reconstructions from this stack.
+- Before formal teaching use, check representative/all source URLs, sequence continuity, dimensions, image orientation, performance and educational suitability. The independent medical review gate remains open. This set supplements the SPL volume; it does not replace it.
+
 ## Candidates for additional regions
 
 ### CT head — RSNA Intracranial Hemorrhage Detection (candidate; current agreement must be reviewed)
