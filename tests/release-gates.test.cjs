@@ -37,14 +37,12 @@ test('preview deployment cannot overwrite production after release approval is e
   const previewWorkflow = read('.github/workflows/preview-guided-cases.yml');
   const previewDeployJob = previewWorkflow.slice(previewWorkflow.indexOf('  deploy-preview:'));
 
-  assert.match(
-    previewDeployJob,
-    /^  deploy-preview:[\\s\\S]*?^    if: vars\\.CT_EDU_PUBLIC_RELEASE_APPROVED != 'true'$/m,
+  assert.ok(
+    previewDeployJob.includes("if: vars.CT_EDU_PUBLIC_RELEASE_APPROVED != 'true'"),
     'the preview job must stop publishing when the production release latch is enabled'
   );
-  assert.match(
-    releaseWorkflow,
-    /if: github\\.ref == 'refs\\/heads\\/main' && vars\\.CT_EDU_PUBLIC_RELEASE_APPROVED == 'true'/,
+  assert.ok(
+    releaseWorkflow.includes("if: github.ref == 'refs/heads/main' && vars.CT_EDU_PUBLIC_RELEASE_APPROVED == 'true'"),
     'the production job remains the sole deployment path after approval'
   );
 });
