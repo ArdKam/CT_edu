@@ -1,12 +1,6 @@
 name: Generate experimental major-organ masks
 
 on:
-  push:
-    branches:
-      - "codex/automatic-major-organ-segmentation"
-    paths:
-      - "scripts/generate_major_organ_masks.py"
-      - ".github/workflows/organ-segmentation.yml"
   pull_request:
     branches:
       - "docs/segmentor-roadmap"
@@ -24,7 +18,7 @@ concurrency:
 
 jobs:
   segment-major-organs:
-    if: ${{ github.repository == 'ArdKam/CT_edu' && ((github.event_name == 'push' && github.ref == 'refs/heads/codex/automatic-major-organ-segmentation') || (github.event_name == 'pull_request' && github.head_ref == 'codex/automatic-major-organ-segmentation' && github.event.pull_request.head.repo.full_name == github.repository)) }}
+    if: ${{ github.repository == 'ArdKam/CT_edu' && ((github.event_name == 'pull_request' && github.head_ref == 'codex/automatic-major-organ-segmentation' && github.event.pull_request.head.repo.full_name == github.repository) || (github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/codex/automatic-major-organ-segmentation')) }}
     runs-on: ubuntu-latest
     timeout-minutes: 120
     steps:
@@ -107,5 +101,19 @@ jobs:
           else
             git commit -m "ci: add experimental major-organ masks [skip ci]"
             target_branch="${GITHUB_HEAD_REF:-$GITHUB_REF_NAME}"
-            git push origin "HEAD:refs/heads/$target_branch"
+            pushed=0
+            for attempt in 1 2 3; do
+              git fetch origin "$target_branch"
+              git rebase "origin/$target_branch"
+              if git push origin "HEAD:refs/heads/$target_branch"; then
+                pushed=1
+                break
+              fi
+              git rebase --abort >/dev/null 2>&1 || true
+              sleep 2
+            done
+            if [ "$pushed" -ne 1 ]; then
+              echo "Could not update $target_branch after three fetch/rebase/push attempts."
+              exit 1
+            fi
           fi
