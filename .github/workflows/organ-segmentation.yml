@@ -7,6 +7,12 @@ on:
     paths:
       - "scripts/generate_major_organ_masks.py"
       - ".github/workflows/organ-segmentation.yml"
+  pull_request:
+    branches:
+      - "docs/segmentor-roadmap"
+    paths:
+      - "scripts/generate_major_organ_masks.py"
+      - ".github/workflows/organ-segmentation.yml"
   workflow_dispatch:
 
 permissions:
@@ -18,7 +24,7 @@ concurrency:
 
 jobs:
   segment-major-organs:
-    if: github.repository == 'ArdKam/CT_edu' && github.ref == 'refs/heads/codex/automatic-major-organ-segmentation'
+    if: ${{ github.repository == 'ArdKam/CT_edu' && ((github.event_name == 'push' && github.ref == 'refs/heads/codex/automatic-major-organ-segmentation') || (github.event_name == 'pull_request' && github.head_ref == 'codex/automatic-major-organ-segmentation' && github.event.pull_request.head.repo.full_name == github.repository)) }}
     runs-on: ubuntu-latest
     timeout-minutes: 120
     steps:
@@ -26,6 +32,7 @@ jobs:
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 0
+          ref: ${{ github.head_ref || github.ref_name }}
 
       - name: Set up Python
         uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
@@ -99,5 +106,6 @@ jobs:
             echo "Generated organ masks match the checked-out branch; no generated-asset commit is needed."
           else
             git commit -m "ci: add experimental major-organ masks [skip ci]"
-            git push origin "HEAD:refs/heads/${GITHUB_REF_NAME}"
+            target_branch="${GITHUB_HEAD_REF:-$GITHUB_REF_NAME}"
+            git push origin "HEAD:refs/heads/$target_branch"
           fi
