@@ -123,7 +123,7 @@
       if (!ALLOWED_REVIEW.includes(record.reviewStatus)) add(path+'.reviewStatus','Invalid review state.');
       else if (record.reviewStatus!=='draft') add(path+'.reviewStatus','This preview accepts drafts only; review states require an independent review workflow.');
       if (!validIso(record.createdAt) || !validIso(record.updatedAt)) add(path+'.timestamps','Invalid image record timestamps.');
-      if (record.annotations.length>10000) add(path+'.annotations','Too many annotations for one image.');
+      if (record.annotations.length>1000) add(path+'.annotations','Too many annotations for one image (maximum 1000).');
       record.annotations.forEach((annotation,j)=>{
         const p=path+'.annotations['+j+']';
         if (!isPlainObject(annotation)) { add(p,'Annotation must be an object.'); return; }

@@ -62,7 +62,7 @@
     return false;
   }
   function validatePolygon(points, region, options) {
-    const maxVertices = options && Number.isInteger(options.maxVertices) ? options.maxVertices : 10000;
+    const maxVertices = options && Number.isInteger(options.maxVertices) ? options.maxVertices : 1024;
     if (!Array.isArray(points) || points.length < 3) return {valid:false,error:'too-few-vertices'};
     if (points.length > maxVertices) return {valid:false,error:'too-many-vertices'};
     if (!points.every(p => p && finite(p.x) && finite(p.y))) return {valid:false,error:'non-finite-coordinate'};

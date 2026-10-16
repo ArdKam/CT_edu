@@ -234,12 +234,16 @@
     event.preventDefault();
     const annotation=annotations.find(a=>a.id===annotationId),point=annotation&&annotation.points[pointIndex];
     if(!point)return;
-    const before=clone(point),step=event.shiftKey?5:1;
-    if(event.key==='ArrowUp')point.y-=step;if(event.key==='ArrowDown')point.y+=step;
-    if(event.key==='ArrowLeft')point.x-=step;if(event.key==='ArrowRight')point.x+=step;
-    if(!geometry.insideRegion(point,currentSource.region,0)){annotation.points[pointIndex]=before;return;}
+    const before=clone(point),candidate=clone(point),step=event.shiftKey?5:1;
+    if(event.key==='ArrowUp')candidate.y-=step;if(event.key==='ArrowDown')candidate.y+=step;
+    if(event.key==='ArrowLeft')candidate.x-=step;if(event.key==='ArrowRight')candidate.x+=step;
+    if(!geometry.insideRegion(candidate,currentSource.region,0))return;
+    annotation.points[pointIndex]=candidate;
     const validation=geometry.validatePolygon(annotation.points,currentSource.region);
-    if(!validation.valid){annotation.points[pointIndex]=before;say('رأس در این موقعیت چندضلعی نامعتبر می‌سازد.','That vertex move would make the polygon invalid.','error');return;}
+    annotation.points[pointIndex]=before;
+    if(!validation.valid){say('رأس در این موقعیت چندضلعی نامعتبر می‌سازد.','That vertex move would make the polygon invalid.','error');return;}
+    recordSnapshot();
+    annotation.points[pointIndex]=candidate;
     annotation.updatedAt=schema.now();markDirty();renderOverlay();renderList();
   }
   function onPointerDown(event) {
@@ -249,7 +253,7 @@
       const point=nativePoint(event);if(!point)return;
       if(activePoints&&activePoints.length>0&&Math.hypot(point.x-activePoints[0].x,point.y-activePoints[0].y)<7&&activePoints.length>=3){closePolygon();return;}
       if(!activePoints)activePoints=[];
-      if(activePoints.length>=10000){say('تعداد رأس‌ها از حد مجاز بیشتر شد.','The polygon has reached the vertex limit.','error');return;}
+      if(activePoints.length>=1024){say('تعداد رأس‌ها از حد مجاز بیشتر شد.','The polygon has reached the vertex limit.','error');return;}
       activePoints.push(point);renderOverlay();updateModeControls();return;
     }
     if(mode==='select') {
@@ -484,7 +488,7 @@
     if(!Number.isFinite(point.x)||!Number.isFinite(point.y)||!geometry.insideRegion(point,currentSource.region,0)){
       say('مختصات خارج از محدودهٔ CT است.','Coordinates must be inside the CT-only region.','error');return;
     }
-    if(activePoints&&activePoints.length>=10000){say('تعداد رأس‌ها از حد مجاز بیشتر شد.','The polygon has reached the vertex limit.','error');return;}
+    if(activePoints&&activePoints.length>=1024){say('تعداد رأس‌ها از حد مجاز بیشتر شد.','The polygon has reached the vertex limit.','error');return;}
     if(!activePoints)activePoints=[];
     activePoints.push({x:Math.round(point.x*100)/100,y:Math.round(point.y*100)/100});
     renderOverlay();updateModeControls();updateLabels();

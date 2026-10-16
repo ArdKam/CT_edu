@@ -63,6 +63,7 @@ test('polygon validator rejects degenerate, self-intersecting, repeated and non-
   assert.equal(geometry.validatePolygon([{x:1,y:1},{x:10,y:1},{x:20,y:1}],metadata.annotationRegion).error,'degenerate-area');
   assert.equal(geometry.validatePolygon([{x:1,y:1},{x:10,y:1},{x:10,y:10},{x:NaN,y:5}],metadata.annotationRegion).error,'non-finite-coordinate');
   assert.equal(geometry.validatePolygon([{x:1,y:1},{x:10,y:1},{x:10,y:10}],metadata.annotationRegion).valid,true);
+  assert.equal(geometry.validatePolygon(Array.from({length:1025},(_,i)=>({x:20+Math.cos(i),y:20+Math.sin(i)})),metadata.annotationRegion).error,'too-many-vertices');
 });
 
 test('versioned annotation schema stores native coordinates, stable source identity and draft provenance',()=>{
