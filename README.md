@@ -4,15 +4,15 @@ CT Edu is an early-stage bilingual educational web app for medical students. The
 
 ## Multi-modality roadmap status
 
-The app includes a bilingual modality catalog for the SPL abdominal CT teaching volume, a separate 320-image Wikimedia axial abdomen/pelvis preview, and candidate brain CT, chest CT, and chest radiography paths. The catalog distinguishes a source-image preview from a geometry-validated volume and from a reviewed teaching module.
+The app includes a bilingual modality catalog for the SPL abdominal CT teaching volume, a separate Wikimedia abdomen/pelvis image library with 648 images across three independent stacks (320 axial, 150 coronal, 178 sagittal), and candidate brain CT, chest CT, and chest radiography paths. The catalog distinguishes source-image previews from a geometry-validated volume and from a reviewed teaching module.
 
 - **Abdominal CT (SPL):** the teaching volume powers the primary three-plane viewer; clinical/educational review and exact source-rights checks remain release gates.
-- **Abdomen/pelvis axial series:** 320 separate Wikimedia Commons images are available in a distinct on-demand viewer. The source page states CC0 1.0 and reported 3 mm slice thickness. In-plane spacing and DICOM geometry are not verified, so this stack does not provide coronal/sagittal reconstruction, segmentation, or patient-space coordinates.
+- **Abdomen/pelvis image stacks:** 648 separate Wikimedia Commons images are available on demand: 320 axial, 150 coronal, and 178 sagittal. The coronal/sagittal stacks were added from the same Commons source categories beyond the axial-only Base44 record. They are separate pre-rendered image sequences—not linked reformats of one known volume. The source states CC0 1.0 and reports 3 mm slice thickness. DICOM geometry, in-plane spacing, shared patient-space coordinates, segmentation, and cross-plane alignment are not verified.
 - **Brain CT:** candidate sources and curriculum are under review. Do not embed RSNA-IHD/MIRA source or derived images in the public site unless the applicable current terms clearly permit that use.
 - **Chest CT:** LIDC-IDRI is a potential source for a small, attributed, expert-reviewed teaching subset; its full collection is too large for GitHub Pages.
 - **Chest radiography:** a browser-only 2D viewer is implemented for local PNG/JPEG/WebP files (pan, zoom, fit, projection metadata; no upload). The official NIH Chest X-ray page states image use is unrestricted with attribution, making it the leading candidate for a curated public case subset. VinDr-CXR remains restricted and must not be redistributed.
 
-The catalog is **not** a claim that candidate brain, chest, and radiograph content is integrated or medically reviewed. The Wikimedia stack is a separate external-image preview, not a validated volume. Its images load from Wikimedia only when the learner opens that viewer; no binary copies of the 320 PNGs are bundled. Per-modality data must pass the gates in [DATASET_ROADMAP.md](DATASET_ROADMAP.md) and [RELEASE_GATES.md](RELEASE_GATES.md) before a candidate path is treated as release-ready.
+The catalog is **not** a claim that candidate brain, chest, and radiograph content is integrated or medically reviewed. The Wikimedia stacks are a separate external-image preview, not a validated volume. Images load from Wikimedia only when the learner opens that viewer; no binary copies of the 648 PNGs are bundled. Per-modality data must pass the gates in [DATASET_ROADMAP.md](DATASET_ROADMAP.md) and [RELEASE_GATES.md](RELEASE_GATES.md) before a candidate path is treated as release-ready.
 
 ## Current capabilities
 
