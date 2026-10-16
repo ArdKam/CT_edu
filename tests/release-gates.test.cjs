@@ -23,7 +23,14 @@ test('public production deployment remains fail-closed while the guided-case pre
     'the preview workflow should deliberately preserve the reviewed stable root baseline');
   assert.match(previewWorkflow, /preview\/cases\.html/,
     'the current guided-case UI should be deployed under its separate preview path');
+  assert.match(previewWorkflow, /preview\/index\.html/,
+    'the stable homepage should link to a preview hub that lists both learning workspaces');
+  assert.match(previewWorkflow, /cp abdomen-series\.html "\$preview\/abdomen-series\.html"/);
+  assert.match(previewWorkflow, /cp src\/data\/wikimedia-abdomen-series\.js "\$preview\/src\/data\/wikimedia-abdomen-series\.js"/);
+  assert.match(previewWorkflow, /fetch_with_retry "\$base\/preview\/abdomen-series\.html"/);
+  assert.match(previewWorkflow, /fetch_with_retry "\$base\/preview\/src\/data\/wikimedia-abdomen-series\.js"/);
   assert.match(readme, /https:\/\/ardkam\.github\.io\/CT_edu\/preview\/cases\.html/);
+  assert.match(readme, /https:\/\/ardkam\.github\.io\/CT_edu\/preview\/index\.html/);
   assert.match(gates, /Base revision inspected for this status update: `main @ d0b1cb71cf80d3c1735b2b891ac2e50375434233`/);
   assert.match(gates, /No radiologist\/anatomy-educator approval/);
   assert.match(gates, /Promote the guided-case workspace to the root production experience only after/);
