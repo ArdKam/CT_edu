@@ -74,4 +74,7 @@ test('preview and annotation source remain explicit about separate non-volume im
   assert.ok(previewWorkflow.includes('cp src/segmentor/*.js'));
   assert.ok(previewWorkflow.includes('preview/segmentor.html'));
   assert.ok(previewWorkflow.includes("CT_EDU_PUBLIC_RELEASE_APPROVED != 'true'"));
+  const productionWorkflow=read('.github/workflows/pages-deploy.yml');
+  assert.ok(productionWorkflow.includes('rm -rf _site/src/segmentor _site/src/segmentor.css'));
+  assert.ok(productionWorkflow.includes("if: github.ref == 'refs/heads/main' && vars.CT_EDU_PUBLIC_RELEASE_APPROVED == 'true'"));
 });
