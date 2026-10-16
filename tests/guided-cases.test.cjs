@@ -102,7 +102,7 @@ assert.ok(!app.includes('LEGACY_CASE_PAGE_EMBEDS'), 'generic case pages must not
 assert.ok(!app.includes('item.source.studyPageUrl || item.source.url'), 'arbitrary new candidates must not fall back to embedding their case page');
 assert.ok(!app.includes("return item.source.studyPageUrl || item.source.url;"));
 
-console.log('Guided cases: bilingual metadata, source links, and self-review rubrics validated.');
+
 
 assert.match(page, /embedded image viewing is not guaranteed/);
 assert.match(page, /shows only the case page/);
