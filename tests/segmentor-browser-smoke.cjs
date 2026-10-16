@@ -93,6 +93,8 @@ const {chromium}=require('playwright');
   await page.locator('#segmentor-image-index').evaluate(input=>{input.value='160';input.dispatchEvent(new Event('change',{bubbles:true}));});
   await page.waitForFunction(()=>document.getElementById('segmentor-image-index')?.value==='160'&&document.getElementById('segmentor-movable')?.hidden===false,{timeout:15000});
   assert.equal(await page.locator('#segmentor-overlay path.segmentor-polygon').count(),2,'returning to the exact source identity restores annotations');
+  await page.locator('#segmentor-overlay path.segmentor-polygon').first().click({position:{x:100,y:50}});
+  assert.equal(await page.locator('#segmentor-overlay circle.segmentor-vertex-handle').count(),3,'returning to an image requires explicit annotation selection before vertex handles appear');
   await page.setViewportSize({width:390,height:844});
   await page.waitForTimeout(120);
   assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=window.innerWidth),'mobile Segmentor page must not overflow horizontally');
