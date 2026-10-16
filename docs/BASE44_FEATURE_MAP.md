@@ -8,7 +8,7 @@ Working branch: `feature/base44-dataset-and-ux-integration`
 
 | Base44 asset / idea | GitHub destination | Decision | Rationale |
 |---|---|---|---|
-| 320-image normal abdomen/pelvis axial series | `src/data/wikimedia-abdomen-series.js` + `abdomen-series.html` | Integrate as a separate preview | Adds a distinct source image stack without corrupting SPL volume geometry |
+| 320-image normal abdomen/pelvis axial series from Base44, plus 150 coronal and 178 sagittal images found in the same Commons source categories | `src/data/wikimedia-abdomen-series.js` + `abdomen-series.html` | Integrate as three separate preview stacks | Preserves the Base44 axial asset and expands the same public-domain teaching source while keeping the images explicitly separate from SPL volume geometry |
 | Source URL, CC0 licence, author, reported 3 mm thickness | Dataset manifest and source panel | Integrate with caveats | Keeps provenance attached to the image series |
 | Liver polygons | None in this phase | Exclude | User says they are not important; annotations are draft and not independently verified |
 | Three demo anatomy structures | None | Exclude | Placeholder shapes, not authoritative anatomy |
@@ -20,7 +20,9 @@ Working branch: `feature/base44-dataset-and-ux-integration`
 
 ## Data constraints
 
-- The imported list must contain 320 unique URLs, all on `upload.wikimedia.org`, and indices 1–320 must stay in their source order.
+- The original Base44 axial list contains 320 unique URLs on `upload.wikimedia.org`, with indices 1–320 in source order.
+- The same Commons case also has 150 coronal and 178 sagittal files in its official plane categories; the app links these through Wikimedia Commons Special:FilePath URLs.
+- Plane tabs are separate image stacks, not synchronized reformats or evidence of shared physical coordinates.
 - Treat the entries as displayable 2D axial images only. The Base44 schema reports no in-plane spacing and declares axial-only availability.
 - Do not generate coronal/sagittal reformats or label the series as a verified 3D volume.
 - Do not use the SPL viewer's voxel coordinates or segmentation for the Wikimedia images.
