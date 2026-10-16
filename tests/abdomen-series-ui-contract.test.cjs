@@ -7,6 +7,9 @@ const read = function (name) { return fs.readFileSync(path.join(root, name), 'ut
 
 test('axial series page declares its only external image origin and source attribution', function () {
   const html = read('abdomen-series.html');
+  const privacy = read('privacy.html');
+  assert.match(privacy, /Wikimedia Commons/);
+  assert.match(privacy, /upload\.wikimedia\.org/);
   assert.match(html, /img-src[^"]*https:\/\/upload\.wikimedia\.org/);
   assert.match(html, /referrerpolicy="no-referrer"/);
   assert.match(html, /Scrollable computed tomography images of a normal abdomen and pelvis/);
