@@ -20,7 +20,7 @@ test('reduced-motion preference disables app-wide smooth scrolling and nonessent
 
 test('core CT navigation controls provide larger touch targets on narrow screens', function () {
   assert.match(css, /@media\s*\(max-width:780px\)[\s\S]*?\.plane-tab\s*\{\s*min-height:44px;/);
-  assert.match(css, /\.slice-nav-controls\s*\{\s*grid-template-columns:40px minmax\(0,1fr\) 40px;\s*gap:8px;/);
+  assert.match(css, /\.slice-nav-controls\s*\{\s*grid-template-columns:44px minmax\\(0,1fr\\) 44px;\s*gap:8px;/);
   assert.match(css, /\.slice-step-button\s*\{\s*width:40px;\s*height:40px;\s*min-width:40px;\s*min-height:40px;/);
   assert.match(css, /\.mode-tab,[\s\S]*?\.tri-return-button\s*\{\s*min-height:40px;/);
 });
@@ -34,4 +34,24 @@ test('mobile navigation, filters, and report actions keep minimum touch height',
 
 test('compact mobile zoom controls remain larger than the previous 24x25 pixel targets', function () {
   assert.match(css, /@media\s*\(max-width:420px\)\s*\{\s*\.zoom-controls button\s*\{\s*width:32px;\s*height:32px;\s*min-width:32px;\s*min-height:32px;/);
+});
+
+test('secondary mobile controls also retain a 44px minimum target', function () {
+  for (const selector of [
+    '.bookmark-save-button',
+    '.bookmark-toolbar .progress-reset',
+    '.bookmark-row-actions .progress-reset',
+    '.progress-actions .progress-reset',
+    '.radiograph-tool-button',
+    '.radiograph-file-label',
+    '.radiograph-close',
+    '.modality-detail-close',
+    '.modality-card-action',
+    '.bookmark-row-actions button'
+  ]) {
+    assert.ok(css.includes(selector), 'missing mobile touch rule for ' + selector);
+  }
+  assert.match(css, /\.bookmark-save-button,[\s\S]*?\.bookmark-row-actions button\s*\{\s*min-height:44px;/);
+  assert.match(css, /\.window-level-reset\s*\{\s*height:auto;\s*min-height:44px;/);
+  assert.match(css, /\.switch-row\s*\{\s*min-height:44px;/);
 });
