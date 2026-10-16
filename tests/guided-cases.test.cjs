@@ -6,7 +6,7 @@ const page = fs.readFileSync(require('node:path').join(__dirname, '..', 'cases.h
 const app = fs.readFileSync(require('node:path').join(__dirname, '..', 'src', 'guided-cases.js'), 'utf8');
 const entries = cases.list();
 assert.match(page, /id="guided-case-rubric-progress"[^>]*role="status"[^>]*aria-live="polite"/);
-assert.match(app, /items reviewed/);
+assert.ok(app.includes("item.verification && item.verification.status === 'verified'"));
 assert.match(app, /مورد بررسی شده/);
 assert.equal(cases.schemaVersion, 2);
 assert.equal(entries.length, 56, 'the four pre-existing cases and 52 new intake candidates should be present');
