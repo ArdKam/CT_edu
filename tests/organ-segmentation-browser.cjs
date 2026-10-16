@@ -84,7 +84,11 @@ const { chromium } = require('playwright');
       input.value = '28';
       input.dispatchEvent(new Event('input', { bubbles: true }));
     });
-    assert.match(await page.locator('#organ-position').textContent(), /28/);
+    const slicePosition = await page.locator('#organ-position').textContent();
+    const westernSlicePosition = slicePosition.replace(/[۰-۹]/g, function (digit) {
+      return String('۰۱۲۳۴۵۶۷۸۹'.indexOf(digit));
+    });
+    assert.match(westernSlicePosition, /28/);
     await page.locator('#organ-opacity').evaluate(function (input) {
       input.value = '55';
       input.dispatchEvent(new Event('input', { bubbles: true }));
