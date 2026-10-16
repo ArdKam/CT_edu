@@ -44,6 +44,7 @@ jobs:
         run: |
           python3 -m py_compile scripts/inspect_archives.py
           python3 -m py_compile scripts/read_atlas_metadata.py
+          python3 -m py_compile scripts/generate_major_organ_masks.py
       - name: Inventory uploaded atlas archives without extracting them
         continue-on-error: true
         run: python3 scripts/inspect_archives.py
