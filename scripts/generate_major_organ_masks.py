@@ -199,6 +199,7 @@ def main() -> int:
         from nibabel.affines import voxel_sizes
         target = (image.shape, image.affine)
         organ_records = []
+        masks_xyz = {}
         for item in TARGETS:
             predicted_path = output_dir / (item["model_name"] + ".nii.gz")
             if not predicted_path.is_file():
@@ -222,6 +223,17 @@ def main() -> int:
                 destination = output / pattern.format(index=k)
                 save_binary_mask(pred_xyz, destination)
 
+            # Keep the actual 3D mask in the source volume's voxel grid as well
+            # as the 2D display stack. This preserves affine/spacing for later
+            # multi-plane viewing and mask correction.
+            mask_volume_file = item["key"] + ".nii.gz"
+            mask_volume = nib.Nifti1Image(pred_xyz.astype(np.uint8), affine)
+            mask_volume.set_qform(affine, code=1)
+            mask_volume.set_sform(affine, code=1)
+            mask_volume.header.set_data_dtype(np.uint8)
+            nib.save(mask_volume, str(output / mask_volume_file))
+            masks_xyz[item["key"]] = pred_xyz
+
             nonempty_slices = [int(k) for k in range(pred_zyx.shape[0]) if bool(pred_zyx[k].any())]
             organ_records.append({
                 "id": item["key"],
@@ -230,6 +242,8 @@ def main() -> int:
                 "nameFa": item["name_fa"],
                 "color": item["color"],
                 "maskPattern": pattern,
+                "maskVolumeFile": mask_volume_file,
+                "volumeLabelId": TARGETS.index(item) + 1,
                 "voxels": count,
                 "nonEmptySlices": nonempty_slices,
                 "referenceLabelId": reference_ids[item["key"]],
@@ -241,6 +255,29 @@ def main() -> int:
                   f"dice_vs_atlas={score if score is not None else 'n/a'} "
                   f"nonempty_slices={len(nonempty_slices)}", flush=True)
 
+    # Build a combined integer label map for workflows that need one 3D
+    # volume. Separate per-organ NIfTI files remain authoritative if masks
+    # overlap; this combined map uses the declared order and records overlaps.
+    mask_stack = np.stack([masks_xyz[item["key"]] for item in TARGETS], axis=0)
+    overlap_voxel_count = int(np.count_nonzero(mask_stack.sum(axis=0) > 1))
+    combined_xyz = np.zeros(image.shape, dtype=np.uint8)
+    combined_labels = []
+    for label_id, item in enumerate(TARGETS, start=1):
+        combined_xyz[masks_xyz[item["key"]]] = label_id
+        combined_labels.append({
+            "labelId": label_id,
+            "organId": item["key"],
+            "nameEn": item["name_en"],
+            "nameFa": item["name_fa"],
+            "color": item["color"],
+        })
+    labelmap_file = "major-organ-labelmap.nii.gz"
+    combined_volume = nib.Nifti1Image(combined_xyz, affine)
+    combined_volume.set_qform(affine, code=1)
+    combined_volume.set_sform(affine, code=1)
+    combined_volume.header.set_data_dtype(np.uint8)
+    nib.save(combined_volume, str(output / labelmap_file))
+
     manifest = {
         "schemaVersion": 1,
         "status": "experimental-unreviewed",
@@ -248,6 +285,15 @@ def main() -> int:
         "sourceDimensionsXYZ": [256, 256, 113],
         "sourceArrayOrder": "zyx",
         "coordinateSystem": "RAS after conversion from NRRD LPS",
+        "affineRAS": [[float(value) for value in row] for row in affine],
+        "originRASMm": [float(value) for value in affine[:3, 3]],
+        "sourceNRRDGeometry": {
+            "space": ct_header.get("space"),
+            "sizesXYZ": ct_header.get("sizes"),
+            "spaceDirectionsLPS": ct_header.get("space directions"),
+            "spaceOriginLPS": ct_header.get("space origin"),
+            "sourceArrayOrder": "zyx",
+        },
         "spacingMm": [float(v) for v in voxel_sizes(affine)],
         "sourceIntensitySemantics": "Stored source intensities; independent HU calibration is not confirmed.",
         "preprocessing": {
@@ -265,6 +311,15 @@ def main() -> int:
         },
         "maskImageSize": [256, 256],
         "maskFormat": "8-bit grayscale PNG; 0=background, 255=inside predicted organ; rows are flipped to match the CT preview image.",
+        "labelMap": {
+            "file": labelmap_file,
+            "format": "NIfTI-1, uint8",
+            "dimensionsXYZ": [int(v) for v in image.shape],
+            "backgroundLabelId": 0,
+            "labels": combined_labels,
+            "overlapVoxelCount": overlap_voxel_count,
+            "overlapPolicy": "Separate per-organ masks are authoritative; the combined label map applies the declared label order when voxels overlap.",
+        },
         "metricsNote": "Dice values compare model predictions with the atlas's bundled labels on this same volume. They are a technical reference comparison, not an independent benchmark or clinical accuracy claim.",
         "organs": organ_records,
         "warning": "Preview only. These are model-generated, unreviewed educational candidates; not for diagnosis or clinical decisions.",
@@ -274,7 +329,11 @@ def main() -> int:
     actual_pngs = len(list(output.glob("*.png")))
     if actual_pngs != expected_pngs:
         raise SystemExit(f"Expected {expected_pngs} organ-mask PNGs, found {actual_pngs}.")
-    print(f"SEGMENTATION_OUTPUT_OK files={actual_pngs} manifest={output / 'manifest.json'}", flush=True)
+    actual_nifti = len(list(output.glob("*.nii.gz")))
+    expected_nifti = len(TARGETS) + 1
+    if actual_nifti != expected_nifti:
+        raise SystemExit(f"Expected {expected_nifti} NIfTI mask files, found {actual_nifti}.")
+    print(f"SEGMENTATION_OUTPUT_OK pngs={actual_pngs} nifti={actual_nifti} manifest={output / 'manifest.json'}", flush=True)
     return 0
 
 
