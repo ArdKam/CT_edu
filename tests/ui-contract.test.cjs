@@ -75,6 +75,9 @@ test('project-relative favicon resolves for GitHub Pages subpaths', function () 
   assert.ok(workflow.includes('cp favicon.svg _site/'), "Pages workflow should copy the favicon into the published artifact");
   assert.ok(workflow.includes('test -s _site/favicon.svg'), "Pages staging should verify the favicon exists");
   assert.ok(workflow.includes('fetch_with_retry "$base/favicon.svg"'), "post-deploy checks should fetch the live favicon");
+  assert.ok(workflow.includes('fetch_with_retry "$base/abdomen-series.html"'), "post-deploy checks should fetch the separate image-stack viewer");
+  assert.ok(workflow.includes('fetch_with_retry "$base/src/abdomen-series.js"'), "post-deploy checks should fetch the plane-navigation controller");
+  assert.ok(workflow.includes('fetch_with_retry "$base/src/data/wikimedia-abdomen-series.js"'), "post-deploy checks should verify the coronal/sagittal source manifest");
 });
 
 test('real CT slice and lossless segment-ID map are present', function () {
