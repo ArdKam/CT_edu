@@ -93,7 +93,11 @@ const { chromium } = require('playwright');
       input.value = '55';
       input.dispatchEvent(new Event('input', { bubbles: true }));
     });
-    assert.match(await page.locator('#organ-opacity-value').textContent(), /55/);
+    const opacityText = await page.locator('#organ-opacity-value').textContent();
+    const westernOpacity = opacityText.replace(/[۰-۹]/g, function (digit) {
+      return String('۰۱۲۳۴۵۶۷۸۹'.indexOf(digit));
+    });
+    assert.match(westernOpacity, /55/);
 
     await page.locator('#organ-language-toggle').click();
     assert.ok(['en', 'fa'].includes(await page.locator('html').getAttribute('lang')));
