@@ -21,6 +21,21 @@ Allow a learner or authorised content author to draw, edit, label, save, and rev
 - Keep annotation data local in the MVP, with a versioned schema and validated JSON export/import. Do not add accounts, cloud sync, or a backend solely to port Base44 functionality.
 - The existing public-release latch and human medical, privacy, accessibility, and data-rights gates remain unchanged.
 
+## Priority clarification — automatic major-organ segmentation
+
+The primary product objective is **automatic segmentation of major body organs**, initially excluding vessels. For this objective, a pretrained model experiment should precede a complete manual authoring tool. Manual polygons remain the future correction/QA layer rather than the segmentation engine.
+
+The first feasibility path uses the existing SPL abdominal NRRD volume and the paired reference labelmap. A remote GitHub Actions runner can install and execute TotalSegmentator so the maintainer does not need a local model installation. The first scope is liver, spleen, right kidney, and left kidney; do not request vessels. Predictions are exported as four independent binary masks per axial slice plus a manifest and overlap metrics against the bundled labels.
+
+Important constraints:
+- The SPL stored intensity values are not independently HU-calibrated. The legacy viewer's window level suggests subtracting 1024 as an experimental preprocessing assumption; the conversion must be stated explicitly and revisited if source metadata proves otherwise.
+- Dice against the labels bundled with the same SPL volume is a technical consistency check, not an independent accuracy benchmark or expert review.
+- The initial output is preview-only, model-generated, and unreviewed. Never silently replace the original atlas labels or treat the model output as approved teaching content.
+- A result on this one normal-anatomy volume does not establish generalization to arbitrary CT scans, pathologies, contrast phases, different scanners, or incomplete coverage.
+- The separate Wikimedia PNG stacks are not used as model input because their planes are independent image stacks, not a verified shared 3D volume.
+
+Future segmentation work should follow this order: validate/run a pretrained model; review and measure results; integrate masks into the existing viewer without replacing its source labelmap; add manual mask correction; then evaluate external held-out volumes and broader organ coverage. Intensity thresholds and AI contours remain optional supporting tools rather than the core organ-recognition method.
+
 ## Phases and exit criteria
 
 ### Phase 0 — repository and data-contract groundwork (P0)
