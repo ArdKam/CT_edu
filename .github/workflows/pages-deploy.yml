@@ -46,6 +46,8 @@ jobs:
           cp index.html cases.html abdomen-series.html data-license.html privacy.html DATA_LICENSE_REVIEW.md _site/
           cp favicon.svg _site/
           cp -R src _site/src
+          # Keep Segmentor authoring code out of the root teaching site until its separate preview/release gates pass.
+          rm -rf _site/src/segmentor _site/src/segmentor.css
           cp -R build/ct-demo-volume _site/assets/spl-abdominal-demo
           cp licenses/SPL-Abdominal-Atlas-LICENSE.txt _site/licenses/
           touch _site/.nojekyll

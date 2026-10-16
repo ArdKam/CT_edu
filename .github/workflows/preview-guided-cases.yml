@@ -52,7 +52,7 @@ jobs:
         run: |
           set -euo pipefail
           preview="$GITHUB_WORKSPACE/_site/preview"
-          mkdir -p "$preview/src/data"
+          mkdir -p "$preview/src/data" "$preview/src/segmentor"
           cp cases.html "$preview/cases.html"
           cp favicon.svg "$preview/favicon.svg"
           cp src/styles.css "$preview/src/styles.css"
@@ -64,6 +64,9 @@ jobs:
           cp src/abdomen-series.css "$preview/src/abdomen-series.css"
           cp src/abdomen-series.js "$preview/src/abdomen-series.js"
           cp src/data/wikimedia-abdomen-series.js "$preview/src/data/wikimedia-abdomen-series.js"
+          cp preview/segmentor.html "$preview/segmentor.html"
+          cp src/segmentor.css "$preview/src/segmentor.css"
+          cp src/segmentor/*.js "$preview/src/segmentor/"
 
           python - <<'PY'
           from pathlib import Path
@@ -77,6 +80,12 @@ jobs:
           ]:
               html = html.replace(old, new)
           page.write_text(html)
+
+          segmentor = Path("_site/preview/segmentor.html")
+          html = segmentor.read_text()
+          html = html.replace('href="../src/', 'href="./src/')
+          html = html.replace('src="../src/', 'src="./src/')
+          segmentor.write_text(html)
 
           homepage = Path("_site/index.html")
           html = homepage.read_text()
@@ -98,6 +107,13 @@ jobs:
           test -s "$GITHUB_WORKSPACE/_site/preview/preview-hub.js"
           test -s "$GITHUB_WORKSPACE/_site/preview/cases.html"
           test -s "$GITHUB_WORKSPACE/_site/preview/abdomen-series.html"
+          test -s "$GITHUB_WORKSPACE/_site/preview/segmentor.html"
+          test -s "$GITHUB_WORKSPACE/_site/preview/src/segmentor.css"
+          test -s "$GITHUB_WORKSPACE/_site/preview/src/segmentor/editor.js"
+          test -s "$GITHUB_WORKSPACE/_site/preview/src/segmentor/annotation-schema.js"
+          test -s "$GITHUB_WORKSPACE/_site/preview/src/segmentor/annotation-store.js"
+          test -s "$GITHUB_WORKSPACE/_site/preview/src/segmentor/geometry.js"
+          test -s "$GITHUB_WORKSPACE/_site/preview/src/segmentor/source-metadata.js"
           test -s "$GITHUB_WORKSPACE/_site/preview/src/abdomen-series.js"
           test -s "$GITHUB_WORKSPACE/_site/preview/src/abdomen-series.css"
           test -s "$GITHUB_WORKSPACE/_site/preview/src/data/wikimedia-abdomen-series.js"
@@ -108,9 +124,12 @@ jobs:
           grep -q 'Learning previews' "$GITHUB_WORKSPACE/_site/index.html"
           grep -q './cases.html' "$GITHUB_WORKSPACE/_site/preview/index.html"
           grep -q './abdomen-series.html' "$GITHUB_WORKSPACE/_site/preview/index.html"
+          grep -q './segmentor.html' "$GITHUB_WORKSPACE/_site/preview/index.html"
+          grep -q 'id="segmentor-overlay"' "$GITHUB_WORKSPACE/_site/preview/segmentor.html"
+          grep -q 'src="./src/segmentor/editor.js"' "$GITHUB_WORKSPACE/_site/preview/segmentor.html"
           grep -q 'href="./index.html"' "$GITHUB_WORKSPACE/_site/preview/abdomen-series.html"
           ! find "$GITHUB_WORKSPACE/_site" -type f -name '*.zip' | grep -q .
-          echo "Preview hub staged at /preview/index.html with guided cases and abdomen image stacks; stable home retains the reviewed baseline UI."
+          echo "Preview hub staged at /preview/index.html with guided cases, abdomen image stacks and the manual annotation workspace; stable home retains the reviewed baseline UI."
 
       - name: Upload preview Pages artifact
         uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0
@@ -162,6 +181,9 @@ jobs:
           fetch_with_retry "$base/preview/index.html" 'preview-hub-title'
           fetch_with_retry "$base/preview/cases.html" 'Guided cases'
           fetch_with_retry "$base/preview/abdomen-series.html" 'data-series-plane="coronal"'
+          fetch_with_retry "$base/preview/segmentor.html" 'id="segmentor-overlay"'
+          fetch_with_retry "$base/preview/src/segmentor/annotation-schema.js" 'SCHEMA_VERSION = 1'
+          fetch_with_retry "$base/preview/src/segmentor/editor.js" 'getScreenCTM'
           fetch_with_retry "$base/preview/src/abdomen-series.js" 'function switchPlane(nextPlane)'
           fetch_with_retry "$base/preview/src/data/wikimedia-abdomen-series.js" 'sagittal_plane_178.png'
           fetch_with_retry "$base/preview/src/data/guided-cases.js" 'rID-59227'

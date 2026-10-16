@@ -107,12 +107,14 @@ if (!engine) {
     hubPage.on('pageerror', function (error) { hubErrors.push(error.message); });
     const hubResponse = await hubPage.goto(origin + '/preview/index.html', { waitUntil: 'domcontentloaded' });
     assert.ok(hubResponse && hubResponse.ok(), engineName + ': preview hub should load');
-    assert.equal(await hubPage.locator('.preview-hub-card').count(), 2,
-      engineName + ': preview hub should expose two learning workspaces');
+    assert.equal(await hubPage.locator('.preview-hub-card').count(), 3,
+      engineName + ': preview hub should expose three learning workspaces');
     assert.equal(await hubPage.locator('.preview-hub-card a[href="./cases.html"]').count(), 1,
       engineName + ': guided-case preview route should be linked');
     assert.equal(await hubPage.locator('.preview-hub-card a[href="./abdomen-series.html"]').count(), 1,
       engineName + ': image-stack preview route should be linked');
+    assert.equal(await hubPage.locator('.preview-hub-card a[href="./segmentor.html"]').count(), 1,
+      engineName + ': manual Segmentor preview route should be linked');
     await hubPage.locator('#preview-language-toggle').click();
     assert.equal(await hubPage.locator('html').getAttribute('dir'), 'ltr',
       engineName + ': preview hub language toggle should switch to LTR');

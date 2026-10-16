@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#101923">
+  <meta name="description" content="Educational manual polygon annotation workspace for a separate Wikimedia axial CT image stack.">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'self'; object-src 'none'; script-src 'self'; style-src 'self' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: blob: https://upload.wikimedia.org https://commons.wikimedia.org; connect-src 'self'; form-action 'self'; frame-src 'none'">
+  <link rel="icon" type="image/svg+xml" href="../favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Vazirmatn:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../src/styles.css">
+  <link rel="stylesheet" href="../src/segmentor.css">
+  <title>Manual annotation preview · CT Edu</title>
+</head>
+<body class="segmentor-page lang-fa">
+  <div class="app-shell">
+    <header class="topbar">
+      <a class="brand" href="../index.html" aria-label="CT Edu home">
+        <span class="brand-mark" aria-hidden="true"><span></span><span></span><span></span></span>
+        <span class="brand-copy"><strong>CT <em>EDU</em></strong><small>ANATOMY LAB</small></span>
+      </a>
+      <div class="topbar-center"><span class="crumb-dot"></span><span class="rad-fa">ابزار حاشیه‌نویسی</span><span class="rad-en">Annotation workspace</span><span class="crumb-slash">/</span><strong class="rad-fa">سگمنتور آزمایشی</strong><strong class="rad-en">Segmentor preview</strong></div>
+      <div class="topbar-actions">
+        <a class="segmentor-home-link" href="./index.html"><span class="rad-fa">بازگشت به پیش‌نمایش‌ها</span><span class="rad-en">Back to previews</span></a>
+        <button id="segmentor-language-toggle" class="language-toggle" type="button" aria-label="Switch language">EN ↔ فا</button>
+      </div>
+    </header>
+
+    <main class="segmentor-main">
+      <section class="segmentor-intro">
+        <div>
+          <div class="eyebrow"><span class="eyebrow-line"></span><span class="rad-fa">ابزار نویسندگی آموزشی · فقط محلی</span><span class="rad-en">EDUCATIONAL AUTHORING · LOCAL ONLY</span></div>
+          <h1><span class="rad-fa">حاشیه‌نویسی دستی CT</span><span class="rad-en">Manual CT annotation</span></h1>
+          <p class="segmentor-lead"><span class="rad-fa">برای ترسیم چندضلعی روی تصویر محوری، ساختار آناتومیک را انتخاب کن و سپس رأس‌ها را ثبت کن. مختصات در پیکسل‌های تصویر اصلی ذخیره می‌شوند؛ پنل مرجع سمت راست عمداً خارج از محدودهٔ قابل ویرایش است.</span><span class="rad-en">Draw polygons on the axial image by choosing a structure and placing vertices. Coordinates are stored in native source-image pixels; the fixed right-hand reference panel is deliberately excluded from editing.</span></p>
+        </div>
+        <aside class="segmentor-safety-note">
+          <strong><span class="rad-fa">پیش‌نویس آموزشی — بازبینی‌نشده</span><span class="rad-en">Educational draft — not reviewed</span></strong>
+          <p><span class="rad-fa">این ابزار تشخیصی نیست. ذخیره‌سازی به معنی تأیید پزشکی یا انتشار نیست. این توالی تصویری، حجم DICOM تأییدشده محسوب نمی‌شود.</span><span class="rad-en">This is not a diagnostic tool. Saving does not mean medical review or publication approval. This independent image stack is not a verified DICOM volume.</span></p>
+        </aside>
+      </section>
+
+      <section class="segmentor-workspace" aria-labelledby="segmentor-workspace-title">
+        <header class="segmentor-workspace-heading">
+          <div><span class="panel-kicker"><span class="rad-fa">تصویر منبع</span><span class="rad-en">SOURCE IMAGE</span></span><h2 id="segmentor-workspace-title"><span class="rad-fa">مجموعهٔ محوری شکم و لگن</span><span class="rad-en">Abdomen &amp; pelvis · axial stack</span></h2></div>
+          <div id="segmentor-save-state" class="segmentor-save-state" role="status" aria-live="polite"><span class="segmentor-state-dot"></span><span class="rad-fa">در حال آماده‌سازی…</span><span class="rad-en">Preparing…</span></div>
+        </header>
+
+        <div class="segmentor-image-toolbar" role="group" aria-label="Source image navigation">
+          <label class="segmentor-index-field" for="segmentor-image-index"><span class="rad-fa">شمارهٔ تصویر</span><span class="rad-en">Image index</span><input id="segmentor-image-index" type="number" min="1" max="320" value="160" inputmode="numeric"></label>
+          <button id="segmentor-previous" class="segmentor-button" type="button"><span class="rad-fa">تصویر قبلی</span><span class="rad-en">Previous image</span></button>
+          <button id="segmentor-next" class="segmentor-button" type="button"><span class="rad-fa">تصویر بعدی</span><span class="rad-en">Next image</span></button>
+          <span class="segmentor-toolbar-divider" aria-hidden="true"></span>
+          <button id="segmentor-zoom-out" class="segmentor-button segmentor-icon-button" type="button" aria-label="Zoom out">−</button>
+          <output id="segmentor-zoom-value" class="segmentor-zoom-value">100%</output>
+          <button id="segmentor-zoom-in" class="segmentor-button segmentor-icon-button" type="button" aria-label="Zoom in">+</button>
+          <button id="segmentor-fit" class="segmentor-button" type="button"><span class="rad-fa">جا دادن</span><span class="rad-en">Fit</span></button>
+          <button id="segmentor-retry" class="segmentor-button" type="button" hidden><span class="rad-fa">تلاش دوباره</span><span class="rad-en">Retry image</span></button>
+          <button id="segmentor-save" class="segmentor-button segmentor-button-primary" type="button"><span class="rad-fa">ذخیرهٔ پیش‌نویس</span><span class="rad-en">Save draft</span></button>
+        </div>
+
+        <div id="segmentor-stage" class="segmentor-stage" aria-label="CT image and annotation canvas">
+          <div class="segmentor-stage-grid" aria-hidden="true"></div>
+          <div id="segmentor-movable" class="segmentor-movable" hidden>
+            <div id="segmentor-ct-clip" class="segmentor-ct-clip">
+              <img id="segmentor-image" alt="" draggable="false" referrerpolicy="no-referrer">
+              <svg id="segmentor-overlay" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Native-coordinate annotation overlay"></svg>
+            </div>
+          </div>
+          <img id="segmentor-fallback-image" class="segmentor-fallback-image" alt="" draggable="false" referrerpolicy="no-referrer" hidden>
+          <div id="segmentor-image-state" class="segmentor-image-state" role="status" aria-live="polite">
+            <span class="segmentor-loader" aria-hidden="true"></span>
+            <strong><span class="rad-fa">در حال بارگذاری تصویر…</span><span class="rad-en">Loading image…</span></strong>
+          </div>
+          <div id="segmentor-stage-caption" class="segmentor-stage-caption"><span class="rad-fa">پنل مرجع از ابزار حاشیه‌نویسی خارج است.</span><span class="rad-en">The reference panel is excluded from annotation.</span></div>
+        </div>
+
+        <div class="segmentor-tool-row" role="group" aria-label="Annotation tools">
+          <button id="segmentor-mode-select" class="segmentor-button segmentor-mode-button" type="button" aria-pressed="true"><span class="rad-fa">انتخاب / ویرایش رأس</span><span class="rad-en">Select / edit vertices</span></button>
+          <button id="segmentor-mode-draw" class="segmentor-button segmentor-mode-button" type="button" aria-pressed="false"><span class="rad-fa">ترسیم چندضلعی</span><span class="rad-en">Draw polygon</span></button>
+          <button id="segmentor-mode-pan" class="segmentor-button segmentor-mode-button" type="button" aria-pressed="false"><span class="rad-fa">جابجایی تصویر</span><span class="rad-en">Pan image</span></button>
+          <button id="segmentor-close-polygon" class="segmentor-button" type="button" disabled><span class="rad-fa">بستن چندضلعی</span><span class="rad-en">Close polygon</span></button>
+          <button id="segmentor-cancel-polygon" class="segmentor-button segmentor-button-quiet" type="button" disabled><span class="rad-fa">لغو ترسیم</span><span class="rad-en">Cancel drawing</span></button>
+          <div class="segmentor-coordinate-entry" role="group" aria-label="Add a vertex by native pixel coordinates">
+            <label for="segmentor-vertex-x"><span class="rad-fa">X پیکسلی (۰–۵۳۰)</span><span class="rad-en">Pixel X (0–530)</span><input id="segmentor-vertex-x" type="number" min="0" max="530" step="0.1" inputmode="decimal"></label>
+            <label for="segmentor-vertex-y"><span class="rad-fa">Y پیکسلی (۰–۵۱۲)</span><span class="rad-en">Pixel Y (0–346)</span><input id="segmentor-vertex-y" type="number" min="0" max="346" step="0.1" inputmode="decimal"></label>
+            <button id="segmentor-add-coordinate-vertex" class="segmentor-button" type="button"><span class="rad-fa">افزودن رأس با صفحه‌کلید</span><span class="rad-en">Add vertex by coordinates</span></button>
+          </div>
+          <button id="segmentor-undo" class="segmentor-button" type="button" disabled><span class="rad-fa">واگرد</span><span class="rad-en">Undo</span></button>
+          <button id="segmentor-redo" class="segmentor-button" type="button" disabled><span class="rad-fa">ازنو</span><span class="rad-en">Redo</span></button>
+        </div>
+
+        <div class="segmentor-editor-grid">
+          <section class="segmentor-panel" aria-labelledby="segmentor-structures-title">
+            <div class="segmentor-panel-heading"><div><span class="panel-kicker"><span class="rad-fa">کتابخانه</span><span class="rad-en">LIBRARY</span></span><h3 id="segmentor-structures-title"><span class="rad-fa">ساختارها</span><span class="rad-en">Structures</span></h3></div><span id="segmentor-annotation-count" class="segmentor-count">0</span></div>
+            <label class="segmentor-field" for="segmentor-structure-select"><span class="rad-fa">ساختار فعال</span><span class="rad-en">Active structure</span><select id="segmentor-structure-select"></select></label>
+            <div class="segmentor-create-structure">
+              <label class="segmentor-field" for="segmentor-structure-name"><span class="rad-fa">نام ساختار جدید</span><span class="rad-en">New structure name</span><input id="segmentor-structure-name" type="text" maxlength="100" placeholder="e.g. Liver / کبد"></label>
+              <label class="segmentor-color-field" for="segmentor-structure-color"><span class="rad-fa">رنگ</span><span class="rad-en">Color</span><input id="segmentor-structure-color" type="color" value="#f2b84b"></label>
+              <button id="segmentor-add-structure" class="segmentor-button segmentor-button-block" type="button"><span class="rad-fa">افزودن ساختار</span><span class="rad-en">Add structure</span></button>
+            </div>
+            <p class="segmentor-help"><span class="rad-fa">شناسهٔ پایدار ساختار جدا از نام نمایشی نگه داشته می‌شود. تغییر نام، هویت یا شناسهٔ ساختار را عوض نمی‌کند.</span><span class="rad-en">A stable structure ID is separate from its display name. Renaming does not change structure identity.</span></p>
+            <div class="segmentor-annotation-list-heading"><h4><span class="rad-fa">حاشیه‌نویسی‌های این تصویر</span><span class="rad-en">Annotations on this image</span></h4><button id="segmentor-clear-image" class="segmentor-clear-image" type="button"><span class="rad-fa">پاک‌کردن تصویر</span><span class="rad-en">Clear image</span></button></div>
+            <div id="segmentor-annotation-list" class="segmentor-annotation-list"><p class="segmentor-empty-state"><span class="rad-fa">هنوز حاشیه‌نویسی‌ای وجود ندارد.</span><span class="rad-en">No annotations yet.</span></p></div>
+            <p id="segmentor-selected-empty" class="segmentor-help"><span class="rad-fa">برای ویرایش، یک حاشیه‌نویسی را انتخاب کن.</span><span class="rad-en">Select an annotation to edit its properties.</span></p>
+            <div id="segmentor-selected-editor" class="segmentor-selected-editor" hidden>
+              <h4><span class="rad-fa">ویرایش حاشیه‌نویسی انتخاب‌شده</span><span class="rad-en">Selected annotation</span></h4>
+              <label class="segmentor-field" for="segmentor-annotation-name"><span class="rad-fa">نام نمایشی</span><span class="rad-en">Display name</span><input id="segmentor-annotation-name" type="text" maxlength="100"></label>
+              <label class="segmentor-field" for="segmentor-annotation-structure"><span class="rad-fa">انتساب به ساختار</span><span class="rad-en">Assign to structure</span><select id="segmentor-annotation-structure"></select></label>
+              <label class="segmentor-color-field segmentor-annotation-color" for="segmentor-annotation-color"><span class="rad-fa">رنگ حاشیه‌نویسی</span><span class="rad-en">Annotation color</span><input id="segmentor-annotation-color" type="color" value="#f2b84b"></label>
+              <div class="segmentor-edit-actions"><button id="segmentor-update-annotation" class="segmentor-button" type="button"><span class="rad-fa">اعمال تغییرات</span><span class="rad-en">Apply changes</span></button><button id="segmentor-delete-annotation" class="segmentor-button segmentor-button-danger" type="button"><span class="rad-fa">حذف انتخاب‌شده</span><span class="rad-en">Delete selected</span></button></div>
+            </div>
+          </section>
+
+          <aside class="segmentor-panel segmentor-data-panel" aria-labelledby="segmentor-data-title">
+            <div class="segmentor-panel-heading"><div><span class="panel-kicker"><span class="rad-fa">دادهٔ محلی</span><span class="rad-en">LOCAL DATA</span></span><h3 id="segmentor-data-title"><span class="rad-fa">ذخیره و انتقال</span><span class="rad-en">Save & transfer</span></h3></div><span class="segmentor-local-badge"><span class="rad-fa">فقط این مرورگر</span><span class="rad-en">This browser only</span></span></div>
+            <p class="segmentor-help"><span class="rad-fa">پیش‌نویس‌ها در IndexedDB همین مرورگر ذخیره می‌شوند. داده‌ای بارگذاری نمی‌شود و همگام‌سازی بین دستگاه‌ها وجود ندارد.</span><span class="rad-en">Drafts are stored in this browser’s IndexedDB. Nothing is uploaded and there is no cross-device sync.</span></p>
+            <div class="segmentor-transfer-actions"><button id="segmentor-export" class="segmentor-button segmentor-button-block" type="button"><span class="rad-fa">خروجی JSON</span><span class="rad-en">Export JSON</span></button><label class="segmentor-button segmentor-button-block segmentor-import-label" for="segmentor-import-file"><span class="rad-fa">انتخاب فایل برای ورود</span><span class="rad-en">Choose JSON to import</span><input id="segmentor-import-file" type="file" accept="application/json,.json"></label></div>
+            <div id="segmentor-import-preview" class="segmentor-import-preview" hidden>
+              <h4><span class="rad-fa">پیش‌نمایش ورود</span><span class="rad-en">Import preview</span></h4>
+              <p id="segmentor-import-summary" class="segmentor-help"></p>
+              <p id="segmentor-import-errors" class="segmentor-import-errors" hidden></p>
+              <div class="segmentor-edit-actions"><button id="segmentor-import-merge" class="segmentor-button" type="button" disabled><span class="rad-fa">ادغام بدون جایگزینی تعارضی</span><span class="rad-en">Merge without overwriting conflicts</span></button><button id="segmentor-import-replace" class="segmentor-button segmentor-button-danger" type="button" disabled><span class="rad-fa">جایگزینی کامل مجموعه</span><span class="rad-en">Replace entire collection</span></button><button id="segmentor-import-cancel" class="segmentor-button segmentor-button-quiet" type="button"><span class="rad-fa">لغو</span><span class="rad-en">Cancel</span></button></div>
+              <p class="segmentor-help"><span class="rad-fa">ورود ابتدا اعتبارسنجی می‌شود. تعارض شناسه‌ها باعث توقف ادغام می‌شود؛ جایگزینی کامل به تأیید جداگانه نیاز دارد.</span><span class="rad-en">Imports are validated first. ID conflicts stop a merge; full replacement requires a separate confirmation.</span></p>
+            </div>
+            <div class="segmentor-review-legend">
+              <span class="segmentor-review-dot segmentor-review-dot-draft"></span><span><strong><span class="rad-fa">پیش‌نویس</span><span class="rad-en">Draft</span></strong><small><span class="rad-fa">ذخیره‌شده، بدون بازبینی مستقل</span><span class="rad-en">Saved, not independently reviewed</span></small></span>
+            </div>
+            <p id="segmentor-feedback" class="segmentor-feedback" role="status" aria-live="polite"><span class="rad-fa">ذخیرهٔ محلی پس از نخستین ذخیره در دسترس قرار می‌گیرد.</span><span class="rad-en">Local saving is available after the first save.</span></p>
+            <p class="segmentor-source-credit"><span class="rad-fa">منبع: Wikimedia Commons؛ Mikael Häggström, M.D.؛ CC0 1.0. جهت، کیفیت و suitability آموزشی هنوز نیازمند بازبینی مستقل هستند.</span><span class="rad-en">Source: Wikimedia Commons; Mikael Häggström, M.D.; CC0 1.0. Orientation, image quality and educational suitability still require independent review.</span></p>
+          </aside>
+        </div>
+      </section>
+      <footer class="segmentor-footer"><span>CT Edu · Segmentor preview</span><span><span class="rad-fa">نسخهٔ آزمایشی حاشیه‌نویسی دستی · بدون تشخیص یا انتشار</span><span class="rad-en">Manual annotation preview · no diagnosis or publication</span></span></footer>
+    </main>
+  </div>
+
+  <script defer src="../src/data/wikimedia-abdomen-series.js"></script>
+  <script defer src="../src/segmentor/source-metadata.js"></script>
+  <script defer src="../src/segmentor/geometry.js"></script>
+  <script defer src="../src/segmentor/annotation-schema.js"></script>
+  <script defer src="../src/segmentor/annotation-store.js"></script>
+  <script defer src="../src/segmentor/editor.js"></script>
+</body>
+</html>
