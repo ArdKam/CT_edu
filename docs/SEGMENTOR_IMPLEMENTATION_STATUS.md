@@ -40,4 +40,4 @@ The browser smoke mocks the external axial image with a deterministic test image
 
 ## Release posture
 
-The route is linked only from the separate preview hub. This change does not modify the public-release approval variable, disable the deployment latch, deploy the preview to the public site, or change the SPL production-viewer code. Keep it behind review until the new checks pass and the source-image geometry has been reviewed. Do not treat this status note as approval for diagnosis, clinical decisions or public medical use.
+Opening this PR does not modify the public-release approval variable/latch or deploy anything. After an approved merge, the existing preview-only workflow stages this page under `/preview/segmentor.html` while `CT_EDU_PUBLIC_RELEASE_APPROVED` remains false; the production workflow still requires its separate `main`-branch release gate. The SPL production-viewer code is not changed. Keep it behind review until the new checks pass and the source-image geometry has been reviewed. Do not treat this status note as approval for diagnosis, clinical decisions or public medical use.

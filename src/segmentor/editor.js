@@ -69,14 +69,15 @@
     updateLabels();
   }
   function checkLeave() {
-    if (activePoints && activePoints.length) {
-      const discardDrawing=window.confirm(t('ترسیم چندضلعی هنوز تمام نشده است. آن را لغو و ادامه می‌دهی؟','The polygon is unfinished. Cancel the drawing and continue?'));
-      if (!discardDrawing) return false;
-      activePoints=null;
-    }
-    if (!dirty) return true;
-    const approved=window.confirm(t('تغییرات این تصویر ذخیره نشده‌اند. بدون ذخیره ادامه می‌دهی؟','This image has unsaved edits. Leave without saving?'));
-    if (approved) { dirty=false; activePoints=null; selectedAnnotationId=null; }
+    const hasActiveDrawing=!!(activePoints&&activePoints.length);
+    if(!dirty&&!hasActiveDrawing)return true;
+    const message=dirty&&hasActiveDrawing
+      ? t('ترسیم ناتمام و تغییرات ذخیره‌نشده از دست می‌روند. بدون ذخیره ادامه می‌دهی؟','The unfinished contour and unsaved edits will be lost. Continue without saving?')
+      : hasActiveDrawing
+        ? t('ترسیم چندضلعی هنوز تمام نشده است. آن را لغو و ادامه می‌دهی؟','The polygon is unfinished. Cancel the drawing and continue?')
+        : t('تغییرات این تصویر ذخیره نشده‌اند. بدون ذخیره ادامه می‌دهی؟','This image has unsaved edits. Leave without saving?');
+    const approved=window.confirm(message);
+    if(approved){dirty=false;activePoints=null;selectedAnnotationId=null;}
     return approved;
   }
   function setImageState(state,fa,en) {

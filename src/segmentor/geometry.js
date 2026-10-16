@@ -68,7 +68,6 @@
     if (!points.every(p => p && finite(p.x) && finite(p.y))) return {valid:false,error:'non-finite-coordinate'};
     if (region && !points.every(p => insideRegion(p,region,0))) return {valid:false,error:'out-of-region'};
     if (new Set(points.map(p => p.x.toFixed(6)+','+p.y.toFixed(6))).size < 3) return {valid:false,error:'duplicate-vertices'};
-    if (Math.abs(signedArea(points)) < 1) return {valid:false,error:'degenerate-area'};
     const n=points.length;
     for (let i=0;i<n;i++) {
       const a=points[i], b=points[(i+1)%n];
@@ -79,6 +78,7 @@
         if (segmentsIntersect(a,b,points[j],points[(j+1)%n])) return {valid:false,error:'self-intersection'};
       }
     }
+    if (Math.abs(signedArea(points)) < 1) return {valid:false,error:'degenerate-area'};
     return {valid:true,error:null,area:Math.abs(signedArea(points))};
   }
   function clonePoints(points) { return points.map(p => ({x:Number(p.x),y:Number(p.y)})); }

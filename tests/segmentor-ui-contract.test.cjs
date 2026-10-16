@@ -11,8 +11,8 @@ test('Segmentor is isolated in the preview workflow and loads its own modules in
   assert.match(hub,/segmentor\.html/);
   assert.match(html,/lang="fa" dir="rtl"/);
   assert.match(html,/Educational draft|بازبینی‌نشده/);
-  assert.match(html,/img-src[^"]*upload\\.wikimedia\\.org/);
-  assert.match(html,/img-src[^"]*commons\\.wikimedia\\.org/);
+  assert.ok(html.includes('img-src') && html.includes('https://upload.wikimedia.org'));
+  assert.ok(html.includes('https://commons.wikimedia.org'));
   assert.match(html,/../);
   const scripts=[ '../src/data/wikimedia-abdomen-series.js','../src/segmentor/source-metadata.js','../src/segmentor/geometry.js','../src/segmentor/annotation-schema.js','../src/segmentor/annotation-store.js','../src/segmentor/editor.js' ];
   let last=-1;
@@ -24,6 +24,7 @@ test('Segmentor is isolated in the preview workflow and loads its own modules in
 });
 
 test('manual annotation source profile crops the fixed locator panel and fails closed on unknown dimensions',()=>{
+  const html=read('preview/segmentor.html');
   const metadata=read('src/segmentor/source-metadata.js');
   assert.match(metadata,/expectedWidth: 786/);
   assert.match(metadata,/expectedHeight: 512/);
