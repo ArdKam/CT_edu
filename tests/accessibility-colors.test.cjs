@@ -4,7 +4,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 
 const css = fs.readFileSync(path.resolve(__dirname, '..', 'src', 'styles.css'), 'utf8');
-const rootTokens = (css.match(/:root\\s*\\{([^}]*)\\}/i) || [])[1];
+const rootTokens = (css.match(/:root\s*\{([^}]*)\}/i) || [])[1];
 
 function token(name) {
   assert.ok(rootTokens, 'the stylesheet must declare a root design-token block');
@@ -60,8 +60,8 @@ test('focus indicators meet a 3:1 contrast floor and share the focus token', fun
     );
   }
 
-  assert.match(css, /button:focus-visible,[^}]*outline:3px solid var\\(--focus\\)/);
-  assert.match(css, /\\.switch-row input:focus-visible\\+\\.switch-ui\\{outline:3px solid var\\(--focus\\)/);
+  assert.match(css, /button:focus-visible,[^}]*outline:3px solid var\(--focus\)/);
+  assert.match(css, /\.switch-row input:focus-visible\+\.switch-ui\{outline:3px solid var\(--focus\)/);
 });
 
 test('viewer control labels do not regress to the previous low-contrast light-theme colors', function () {
