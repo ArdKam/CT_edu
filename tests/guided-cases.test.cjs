@@ -114,7 +114,7 @@ assert.doesNotMatch(app, /Open study viewer on Radiopaedia/);
 assert.doesNotMatch(page, /the viewer opens automatically/i);
 assert.match(app, /Live image loading for this case has not been independently verified/);
 assert.match(app, /Medical review and image-redistribution rights must also be checked separately/);
-assert.match(app, /item\\.verification && item\\.verification\\.status === 'verified'/);
+assert.ok(app.includes("item.verification && item.verification.status === 'verified'"));
 assert.match(app, /Live source loading was verified in a recorded check/);
 
 console.log('Guided cases: bilingual metadata, source links, and self-review rubrics validated.');
