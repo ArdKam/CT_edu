@@ -148,8 +148,10 @@ if (!engine) {
       engineName + ': axial series should not overflow horizontally on mobile: ' + JSON.stringify(seriesWidth));
     assert.deepEqual(seriesPageErrors, [],
       engineName + ': axial series should have no runtime exceptions: ' + JSON.stringify(seriesPageErrors));
+    const seriesScreenshotDir = path.join(__dirname, '..', 'build', 'browser-smoke');
+    fs.mkdirSync(seriesScreenshotDir, { recursive: true });
     await seriesPage.screenshot({
-      path: path.join(__dirname, '..', 'build', 'browser-smoke', 'series-' + engineName + '-390.png'),
+      path: path.join(seriesScreenshotDir, 'series-' + engineName + '-390.png'),
       animations: 'disabled'
     });
     await seriesPage.close();
