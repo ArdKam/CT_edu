@@ -24,9 +24,12 @@ function luminance(hex) {
 
 
 function escapeRegExp(value) {
-  return value.replace(/[.*+?^${}()|[\\]\\\\]/g, '\\function contrastRatio(first, second) {');
+  const slash = String.fromCharCode(92);
+  const special = '.^$*+?()[]{}|' + slash;
+  return value.split('').map(function (character) {
+    return special.includes(character) ? slash + character : character;
+  }).join('');
 }
-
 function colorForSelector(selector) {
   const rule = new RegExp('(?:^|})\\s*' + escapeRegExp(selector) + '\\s*\\{([^{}]*)\\}', 'm').exec(css);
   assert.ok(rule, 'missing CSS rule for ' + selector);
