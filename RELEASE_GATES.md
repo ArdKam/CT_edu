@@ -25,6 +25,7 @@ This checklist separates code that exists from educational, legal, and release r
 - [x] Extend mobile touch sizing to bookmark save/delete/export controls, radiograph controls, modality detail actions, and Window/Level buttons. Core plane and slice controls now use 44px targets; compact zoom controls use 36px targets. CSS contract tests cover these declarations; physical-device layout QA remains open.
 - [x] Label Radiopaedia destinations as source study pages rather than implying a guaranteed standalone viewer; show that live image loading, medical review and redistribution rights remain separate checks.
 - [x] Prevent the guided-case preview workflow from deploying once `CT_EDU_PUBLIC_RELEASE_APPROVED=true`, so its stable-baseline artifact cannot overwrite an approved production site.
+- [x] Show each guided-case record's source/image verification status in the case list and in the active case workspace, with bilingual copy that separates source loading from medical validation and redistribution permission.
 
 ## Dataset acquisition plan
 
@@ -39,12 +40,14 @@ See [DATASET_ROADMAP.md](DATASET_ROADMAP.md) for reviewed candidate sources and 
 - Automated checks establish technical behavior only. No radiologist/anatomy-educator approval, Radiopaedia item-specific permission determination, source ZIP redistribution clearance, jurisdiction-specific legal review, physical-device sign-off, or full accessibility review has been recorded here.
 ## Maintenance verification — 2026-10-16
 
-- Latest `main` revision inspected for this update: [`b49ba002bbd8d244d742ba6150b07f21314e41c8`](https://github.com/ArdKam/CT_edu/commit/b49ba002bbd8d244d742ba6150b07f21314e41c8), after merge of [PR #14](https://github.com/ArdKam/CT_edu/pull/14) and [PR #15](https://github.com/ArdKam/CT_edu/pull/15).
-- PR #14's full checks passed; it clarifies that an external Radiopaedia Study URL is a source-hosted page, not proof of a CT Edu-native viewer or guaranteed iframe image loading. The 52 added candidates remain partially verified.
-- PR #15's full checks passed; the preview deployment job now skips deployment when the public-release approval latch is `true`. Production itself remains locked until the independently reviewed release gates are closed.
-- PR #12 and PR #13 are merged: selected text/control colors and focus indicators were improved; touch targets and reduced-motion behavior were improved; contrast and CSS-contract regression checks were added. These changes do not constitute a complete WCAG or physical-device audit.
-- A further contrast/CSS follow-up is under review in [PR #16](https://github.com/ArdKam/CT_edu/pull/16); do not treat its changes as merged until its CI completes and it is integrated.
-- This maintenance update does not close any medical, legal, image-rights, human accessibility-review, or physical-device sign-off.
+- Latest `main` revision inspected for this update: [`1785a7dde4cafec5706c82add069452d830c1bb5`](https://github.com/ArdKam/CT_edu/commit/1785a7dde4cafec5706c82add069452d830c1bb5), after merges of [PR #14](https://github.com/ArdKam/CT_edu/pull/14), [PR #15](https://github.com/ArdKam/CT_edu/pull/15), [PR #16](https://github.com/ArdKam/CT_edu/pull/16), [PR #17](https://github.com/ArdKam/CT_edu/pull/17), and [PR #18](https://github.com/ArdKam/CT_edu/pull/18).
+- PR #12 and PR #13 improved selected light-theme contrast and focus indicators, added contrast regressions, applied `prefers-reduced-motion` app-wide, and began raising mobile touch targets.
+- PR #14 clarifies that Radiopaedia Study destinations are source-hosted pages, not proof of a CT Edu-native viewer or guaranteed iframe image loading. Its checks passed; the 52 added catalog candidates remain partially verified.
+- PR #15 adds a deployment guard: once `CT_EDU_PUBLIC_RELEASE_APPROVED=true`, the preview workflow builds/checks but does not publish over the production site.
+- PR #16 fixes the search placeholder CSS declaration and expands contrast regressions for selected small text and controls. Its Node/UI and browser checks passed.
+- PR #17 raises remaining mobile controls (including slice, Window/Level, bookmarks and radiograph actions) and adds rendered Chromium target-size assertions at a 390px touch-enabled viewport. CI passed, but physical iOS/Android validation remains open.
+- PR #18 exposes source/image verification status in the case list and active workspace, and explicitly distinguishes source loading from medical review and redistribution rights. CI passed; this does not make any case medically reviewed or rights-cleared.
+- The latest feature PR checks and Pages builds succeeded; the actual production Pages deployment remained skipped behind the public-release approval latch. This maintenance update does not close any medical, legal, image-rights, privacy, physical-device, or full accessibility sign-off.
 
 ## Release blockers
 
