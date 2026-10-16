@@ -114,7 +114,7 @@
       if (!ALLOWED_PLANES.includes(source.plane)) add(path+'.sourceImage.plane','Only the independent axial source stack is supported in this MVP.');
       if (!Number.isInteger(source.index) || source.index<0 || source.index>=320) add(path+'.sourceImage.index','Source image index is out of range.');
       if (!allowedImageUrl(source.url,source.index)) add(path+'.sourceImage.url','Unsupported, non-axial, or index-mismatched source URL.');
-      if (Number(source.width)!==786 || Number(source.height)!==346 || source.geometryProfile!=='wikimedia-axial-composite-layout-v1') add(path+'.sourceImage','Image dimensions do not match the supported source-layout profile.');
+      if (source.width!==786 || source.height!==346 || source.geometryProfile!=='wikimedia-axial-composite-layout-v1') add(path+'.sourceImage','Image dimensions do not match the supported source-layout profile.');
       if (source.coordinateSystem!=='native-source-pixel') add(path+'.sourceImage.coordinateSystem','Coordinates must be stored in native source-image pixels.');
       const region=source.annotationRegion;
       if (!region || region.x!==0 || region.y!==0 || region.width!==530 || region.height!==346) add(path+'.sourceImage.annotationRegion','Annotation region must match the known CT-only crop; the right reference panel is excluded.');

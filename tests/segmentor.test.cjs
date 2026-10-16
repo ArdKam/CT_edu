@@ -89,6 +89,7 @@ test('schema rejects other planes, wrong dataset versions, changed dimensions, w
     p=>{p.images[Object.keys(p.images)[0]].sourceImage.plane='coronal';},
     p=>{p.images[Object.keys(p.images)[0]].sourceImage.width=512;},
     p=>{p.images[Object.keys(p.images)[0]].sourceImage.height=512;},
+    p=>{p.images[Object.keys(p.images)[0]].sourceImage.width='786';},
     p=>{const record=p.images[Object.keys(p.images)[0]];record.sourceImage.url=record.sourceImage.url.replace('plane_160','plane_1');record.sourceImage.id=schema.imageIdentity(record.sourceImage.index,record.sourceImage.url);const key=Object.keys(p.images)[0];delete p.images[key];p.images[record.sourceImage.id]=record;record.annotations.forEach(annotation=>annotation.sourceImageId=record.sourceImage.id);},
     p=>{const record=p.images[Object.keys(p.images)[0]];record.annotations[0].points[0].x=700;},
     p=>{const record=p.images[Object.keys(p.images)[0]];record.annotations[0].sourceImageId='another-image';}
