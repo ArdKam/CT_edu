@@ -134,7 +134,20 @@ test('high-frequency light-surface labels and controls meet AA contrast', functi
     '.display-mode-button',
     '.tri-planar-heading p',
     '.tri-plane-card header p',
-    '.tri-slider-row'
+    '.tri-slider-row',
+    '.brand-copy small',
+    '.educational-tag',
+    '.search-icon',
+    '.search-box kbd',
+    '.option-letter',
+    '.learning-progress-metrics span',
+    '.progress-reset',
+    '.legal-note',
+    '.bookmark-note-label',
+    '.bookmark-empty',
+    '.bookmark-coordinates',
+    '.bookmark-case-name',
+    '.tri-planar-footnote'
   ];
 
   for (const selector of selectors) {
@@ -157,4 +170,9 @@ test('quiz feedback colors remain distinguishable with AA text contrast on white
     const ratio = contrastRatio(foreground, '#ffffff');
     assert.ok(ratio >= 4.5, name + ' feedback must meet 4.5:1 contrast (got ' + ratio.toFixed(2) + ':1)');
   }
+});
+
+test('search placeholder uses valid CSS declarations after contrast-token migration', function () {
+  assert.match(css, /\.search-box input::placeholder\{color:var\(--muted\);opacity:1;\}/);
+  assert.doesNotMatch(css, /color:var\(--muted\)opacity:1/);
 });
