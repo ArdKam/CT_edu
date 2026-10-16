@@ -325,7 +325,9 @@
     const opts=options||{};
     if(!opts.force&&!checkLeave()){updateLabels();return;}
     index=Math.max(0,Math.min(series.planeCounts.axial-1,Math.trunc(Number(nextIndex)||0)));
-    requestToken++;const token=requestToken;activePoints=null;selectedAnnotationId=null;currentSource=null;currentRecord=null;annotations=[];dirty=false;history=[];future=[];
+    requestToken++;const token=requestToken;
+    activePoints=null;vertexDrag=null;dragState=null;el.movable.classList.remove('is-panning');
+    selectedAnnotationId=null;currentSource=null;currentRecord=null;annotations=[];dirty=false;history=[];future=[];
     el.movable.hidden=true;el.fallback.hidden=true;setImageState('loading','در حال بارگذاری تصویر…','Loading image…');
     const url=series.getImageUrl(index,'axial');updateLabels();updateModeControls();
     if(!url){setImageState('error','نشانی تصویر در دسترس نیست.','Image URL is unavailable.');return;}
