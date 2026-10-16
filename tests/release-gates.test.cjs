@@ -25,6 +25,8 @@ test('public production deployment remains fail-closed while the guided-case pre
     'the current guided-case UI should be deployed under its separate preview path');
   assert.match(previewWorkflow, /preview\/index\.html/,
     'the stable homepage should link to a preview hub that lists both learning workspaces');
+  assert.match(previewWorkflow, /fetch_with_retry "\$base\/preview\/index\.html" 'preview-hub-title'/,
+    'the deployed preview hub should be checked after publication');
   assert.match(previewWorkflow, /cp abdomen-series\.html "\$preview\/abdomen-series\.html"/);
   assert.match(previewWorkflow, /cp src\/data\/wikimedia-abdomen-series\.js "\$preview\/src\/data\/wikimedia-abdomen-series\.js"/);
   assert.match(previewWorkflow, /fetch_with_retry "\$base\/preview\/abdomen-series\.html"/);
