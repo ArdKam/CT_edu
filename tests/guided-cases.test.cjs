@@ -114,3 +114,10 @@ test('Radiopaedia source links describe the destination as a source study page, 
   assert.doesNotMatch(app, /Open study viewer on Radiopaedia/);
   assert.doesNotMatch(page, /the viewer opens automatically/i);
 });
+
+test('unverified Radiopaedia image loading is disclosed in the active case source status', function () {
+  assert.match(app, /Live image loading for this case has not been independently verified/);
+  assert.match(app, /Medical review and image-redistribution rights must also be checked separately/);
+  assert.match(app, /item\.verification && item\.verification\.status === 'verified'/);
+  assert.match(app, /Live source loading was verified in a recorded check/);
+});
