@@ -33,7 +33,7 @@ function escapeRegExp(value) {
 function colorForSelector(selector) {
   const rule = new RegExp('(?:^|})\\s*' + escapeRegExp(selector) + '\\s*\\{([^{}]*)\\}', 'm').exec(css);
   assert.ok(rule, 'missing CSS rule for ' + selector);
-  const declaration = /(?:^|;)\\s*color\\s*:\\s*(#[0-9a-f]{6}|var\\(\\s*--([a-z-]+))/i.exec(rule[1]);
+  const declaration = /(?:^|;)\s*color\s*:\s*(#[0-9a-f]{6}|var\(\s*--([a-z-]+))/i.exec(rule[1]);
   assert.ok(declaration, 'missing explicit text/icon color for ' + selector);
   return declaration[1].startsWith('#') ? declaration[1] : token(declaration[2]);
 }
