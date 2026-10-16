@@ -1,0 +1,103 @@
+name: Generate experimental major-organ masks
+
+on:
+  push:
+    branches:
+      - "codex/automatic-major-organ-segmentation"
+    paths:
+      - "scripts/generate_major_organ_masks.py"
+      - ".github/workflows/organ-segmentation.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: experimental-organ-segmentation-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  segment-major-organs:
+    if: github.repository == 'ArdKam/CT_edu' && github.ref == 'refs/heads/codex/automatic-major-organ-segmentation'
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - name: Check out the experiment branch
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: "3.11"
+
+      - name: Install CPU inference dependencies
+        run: |
+          python -m pip install --upgrade --disable-pip-version-check pip
+          python -m pip install --disable-pip-version-check "numpy<2" pillow nibabel "TotalSegmentator==2.11.0"
+
+      - name: Validate the inference runner syntax
+        run: python -m py_compile scripts/generate_major_organ_masks.py scripts/build_demo_assets.py
+
+      - name: Run TotalSegmentator for four major abdominal organs
+        env:
+          OMP_NUM_THREADS: "2"
+          ITK_GLOBAL_DEFAULT_NUMBER_OF_THREADS: "2"
+        run: |
+          set -euo pipefail
+          python scripts/generate_major_organ_masks.py \
+            --output preview/assets/organ-predictions \
+            --intensity-offset 1024 \
+            --fast
+
+      - name: Validate output masks and manifest
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          root = Path("preview/assets/organ-predictions")
+          manifest = json.loads((root / "manifest.json").read_text(encoding="utf-8"))
+          assert manifest["schemaVersion"] == 1
+          assert manifest["status"] == "experimental-unreviewed"
+          assert manifest["sourceDimensionsXYZ"] == [256, 256, 113]
+          assert len(manifest["organs"]) == 4
+          assert len(list(root.glob("*.png"))) == 452
+          assert {item["id"] for item in manifest["organs"]} == {
+              "liver", "spleen", "kidney_right", "kidney_left"
+          }
+          for item in manifest["organs"]:
+              assert item["voxels"] > 0, item["id"]
+              assert len(item["nonEmptySlices"]) > 0, item["id"]
+              assert item["reviewStatus"] == "unreviewed-model-output"
+              print(
+                  "ORGAN_SUMMARY",
+                  item["id"],
+                  "voxels=", item["voxels"],
+                  "dice_vs_same_atlas=", item["diceAgainstBundledAtlasLabel"],
+                  "slice_range=", (min(item["nonEmptySlices"]), max(item["nonEmptySlices"]))
+              )
+          print("FOUR_ORGAN_MASKS_VALIDATED")
+          PY
+
+      - name: Upload generated mask artifact
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: ctedu-experimental-major-organ-masks
+          path: preview/assets/organ-predictions/
+          if-no-files-found: error
+          retention-days: 30
+
+      - name: Commit generated masks to the experiment branch
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -f preview/assets/organ-predictions
+          if git diff --cached --quiet; then
+            echo "Generated organ masks match the checked-out branch; no generated-asset commit is needed."
+          else
+            git commit -m "ci: add experimental major-organ masks [skip ci]"
+            git push origin "HEAD:refs/heads/${GITHUB_REF_NAME}"
+          fi
