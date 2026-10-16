@@ -18,6 +18,11 @@
     document.body.classList.toggle('lang-en', language === 'en');
     languageButton.textContent = language === 'fa' ? 'EN ↔ فا' : 'فا ↔ EN';
     languageButton.setAttribute('aria-label', text('تغییر زبان به انگلیسی','Switch language to Persian'));
+    byId('series-previous').setAttribute('aria-label', text('تصویر قبلی','Previous image'));
+    byId('series-next').setAttribute('aria-label', text('تصویر بعدی','Next image'));
+    byId('series-zoom-out').setAttribute('aria-label', text('کوچک‌نمایی','Zoom out'));
+    byId('series-zoom-in').setAttribute('aria-label', text('بزرگ‌نمایی','Zoom in'));
+    slider.setAttribute('aria-label', text('انتخاب شمارهٔ تصویر محوری','Select axial image index'));
     image.alt = text('تصویر محوری CT شمارهٔ ' + toDigits(current + 1) + ' از ' + toDigits(series.imageCount),'Axial CT image ' + (current + 1) + ' of ' + series.imageCount);
     updateLabels();
   }
