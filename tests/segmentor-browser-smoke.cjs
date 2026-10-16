@@ -13,7 +13,7 @@ const {chromium}=require('playwright');
     const width=url.includes('axial_plane_162.png')?1200:786;
     return route.fulfill({
       status:200,contentType:'image/svg+xml',
-      body:'<svg xmlns="http://www.w3.org/2000/svg" width="'+width+'" height="512" viewBox="0 0 '+width+' 512"><rect width="530" height="512" fill="#20262b"/><ellipse cx="265" cy="256" rx="180" ry="225" fill="#777"/><circle cx="265" cy="256" r="60" fill="#ddd"/><rect x="530" width="'+(width-530)+'" height="512" fill="#efefef"/><path d="M540 20H'+(width-10)+'V490H540Z" fill="#aaa"/></svg>'
+      body:'<svg xmlns="http://www.w3.org/2000/svg" width="'+width+'" height="346" viewBox="0 0 '+width+' 346"><rect width="530" height="346" fill="#20262b"/><ellipse cx="265" cy="174" rx="190" ry="145" fill="#777"/><circle cx="265" cy="174" r="50" fill="#ddd"/><rect x="530" width="'+(width-530)+'" height="346" fill="#efefef"/><path d="M540 20H'+(width-10)+'V330H540Z" fill="#aaa"/></svg>'
     });
   });
   await page.goto('http://127.0.0.1:8765/preview/segmentor.html',{waitUntil:'domcontentloaded'});
@@ -66,7 +66,7 @@ const {chromium}=require('playwright');
   assert.equal(await page.locator('#segmentor-overlay path.segmentor-active-contour').count(),1);
   await page.keyboard.press('Escape');
   assert.equal(await page.locator('#segmentor-overlay path.segmentor-active-contour').count(),0,'Escape cancels the unfinished contour');
-  for(const [x,y] of [[300,300],[350,300],[350,350]]){
+  for(const [x,y] of [[300,280],[350,280],[350,330]]){
     await page.locator('#segmentor-vertex-x').fill(String(x));
     await page.locator('#segmentor-vertex-y').fill(String(y));
     await page.locator('#segmentor-add-coordinate-vertex').click();

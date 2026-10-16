@@ -76,8 +76,9 @@
     if (typeof value!=='string' || value.length>2048) return false;
     try {
       const url=new URL(value);
-      if (url.protocol!=='https:' || (url.hostname!=='upload.wikimedia.org' && url.hostname!=='commons.wikimedia.org')) return false;
-      const match=/CT_of_a_normal_abdomen_and_pelvis,_axial_plane_([0-9]+)\.png$/i.exec(decodeURIComponent(url.pathname));
+      if (url.protocol!=='https:' || url.port || url.username || url.password || url.search || url.hash ||
+          (url.hostname!=='upload.wikimedia.org' && url.hostname!=='commons.wikimedia.org')) return false;
+      const match=/^\/wikipedia\/commons\/[a-f0-9]\/[a-f0-9]{2}\/CT_of_a_normal_abdomen_and_pelvis,_axial_plane_([0-9]+)\.png$/i.exec(decodeURIComponent(url.pathname));
       return !!match && (!Number.isInteger(expectedIndex) || Number(match[1])===expectedIndex+1);
     } catch (_) { return false; }
   }
@@ -113,10 +114,10 @@
       if (!ALLOWED_PLANES.includes(source.plane)) add(path+'.sourceImage.plane','Only the independent axial source stack is supported in this MVP.');
       if (!Number.isInteger(source.index) || source.index<0 || source.index>=320) add(path+'.sourceImage.index','Source image index is out of range.');
       if (!allowedImageUrl(source.url,source.index)) add(path+'.sourceImage.url','Unsupported, non-axial, or index-mismatched source URL.');
-      if (Number(source.width)!==786 || Number(source.height)!==512 || source.geometryProfile!=='wikimedia-axial-composite-layout-v1') add(path+'.sourceImage','Image dimensions do not match the supported source-layout profile.');
+      if (Number(source.width)!==786 || Number(source.height)!==346 || source.geometryProfile!=='wikimedia-axial-composite-layout-v1') add(path+'.sourceImage','Image dimensions do not match the supported source-layout profile.');
       if (source.coordinateSystem!=='native-source-pixel') add(path+'.sourceImage.coordinateSystem','Coordinates must be stored in native source-image pixels.');
       const region=source.annotationRegion;
-      if (!region || region.x!==0 || region.y!==0 || region.width!==530 || region.height!==512) add(path+'.sourceImage.annotationRegion','Annotation region must match the known CT-only crop; the right reference panel is excluded.');
+      if (!region || region.x!==0 || region.y!==0 || region.width!==530 || region.height!==346) add(path+'.sourceImage.annotationRegion','Annotation region must match the known CT-only crop; the right reference panel is excluded.');
       if (source.id!==imageIdentity(source.index,source.url)) add(path+'.sourceImage.id','Stable image ID does not match dataset, index and source URL.');
       if (record.provenance!=='manual' && record.provenance!=='mixed') add(path+'.provenance','Invalid record provenance.');
       if (!ALLOWED_REVIEW.includes(record.reviewStatus)) add(path+'.reviewStatus','Invalid review state.');

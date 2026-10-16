@@ -8,7 +8,7 @@ const metadata=require('../src/segmentor/source-metadata.js');
 function fixture(index=159) {
   const url='https://upload.wikimedia.org/wikipedia/commons/6/6c/CT_of_a_normal_abdomen_and_pelvis%2C_axial_plane_'+(index+1)+'.png';
   const project=schema.createProject();
-  const record=schema.createImageRecord({index,url,width:786,height:512,annotationRegion:metadata.annotationRegion,geometryProfile:metadata.id});
+  const record=schema.createImageRecord({index,url,width:786,height:346,annotationRegion:metadata.annotationRegion,geometryProfile:metadata.id});
   const annotation=schema.createAnnotation({
     structureId:project.structures[0].id,sourceImageId:record.sourceImage.id,
     points:[{x:80,y:90},{x:190,y:90},{x:190,y:210},{x:80,y:210}],labelPoint:{x:135,y:150}
@@ -46,11 +46,11 @@ test('native coordinates round-trip through affine transforms at varied zooms, a
 });
 
 test('CT-only region rejects reference panel clicks and out-of-bounds points',()=>{
-  assert.deepEqual(metadata.getRegion(786,512,159),{x:0,y:0,width:530,height:512});
-  assert.equal(metadata.getRegion(786,513,159),null);
-  assert.equal(metadata.getRegion(1200,512,159),null);
-  assert.equal(metadata.getRegion(786,512,320),null);
-  assert.equal(geometry.insideRegion({x:529.9,y:511.9},metadata.annotationRegion),true);
+  assert.deepEqual(metadata.getRegion(786,346,159),{x:0,y:0,width:530,height:346});
+  assert.equal(metadata.getRegion(786,347,159),null);
+  assert.equal(metadata.getRegion(1200,346,159),null);
+  assert.equal(metadata.getRegion(786,346,320),null);
+  assert.equal(geometry.insideRegion({x:529.9,y:345.9},metadata.annotationRegion),true);
   assert.equal(geometry.insideRegion({x:530.1,y:20},metadata.annotationRegion),false);
   assert.equal(geometry.insideRegion({x:700,y:200},metadata.annotationRegion),false);
   assert.equal(geometry.validatePolygon([{x:520,y:10},{x:540,y:20},{x:520,y:40}],metadata.annotationRegion).valid,false);
@@ -73,6 +73,9 @@ test('versioned annotation schema stores native coordinates, stable source ident
   assert.equal(record.sourceImage.id,schema.imageIdentity(159,record.sourceImage.url));
   assert.equal(annotation.provenance,'manual');
   assert.equal(annotation.reviewStatus,'draft');
+  assert.equal(schema.allowedImageUrl(record.sourceImage.url,159),true);
+  assert.equal(schema.allowedImageUrl(record.sourceImage.url+'?download=1',159),false);
+  assert.equal(schema.allowedImageUrl(record.sourceImage.url,158),false);
   assert.equal(project.images[record.sourceImage.id].annotations[0].sourceImageId,record.sourceImage.id);
   const roundTrip=JSON.parse(JSON.stringify(project));
   assert.deepEqual(schema.validateProject(roundTrip),{valid:true,errors:[]});
@@ -84,6 +87,7 @@ test('schema rejects other planes, wrong dataset versions, changed dimensions, w
     p=>{p.dataset.version='future-version';},
     p=>{p.images[Object.keys(p.images)[0]].sourceImage.plane='coronal';},
     p=>{p.images[Object.keys(p.images)[0]].sourceImage.width=512;},
+    p=>{p.images[Object.keys(p.images)[0]].sourceImage.height=512;},
     p=>{const record=p.images[Object.keys(p.images)[0]];record.sourceImage.url=record.sourceImage.url.replace('plane_160','plane_1');record.sourceImage.id=schema.imageIdentity(record.sourceImage.index,record.sourceImage.url);const key=Object.keys(p.images)[0];delete p.images[key];p.images[record.sourceImage.id]=record;record.annotations.forEach(annotation=>annotation.sourceImageId=record.sourceImage.id);},
     p=>{const record=p.images[Object.keys(p.images)[0]];record.annotations[0].points[0].x=700;},
     p=>{const record=p.images[Object.keys(p.images)[0]];record.annotations[0].sourceImageId='another-image';}

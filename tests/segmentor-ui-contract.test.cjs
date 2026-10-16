@@ -27,8 +27,8 @@ test('manual annotation source profile crops the fixed locator panel and fails c
   const html=read('preview/segmentor.html');
   const metadata=read('src/segmentor/source-metadata.js');
   assert.match(metadata,/expectedWidth: 786/);
-  assert.match(metadata,/expectedHeight: 512/);
-  assert.match(metadata,/width:530,height:512/);
+  assert.match(metadata,/expectedHeight: 346/);
+  assert.match(metadata,/width:530,height:346/);
   assert.match(metadata,/supportsAnnotation/);
   assert.match(metadata,/dimension-gated/);
   const editor=read('src/segmentor/editor.js');
