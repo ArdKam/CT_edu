@@ -499,11 +499,22 @@ const { chromium } = require('playwright');
       'the existing four and 52 intake candidates should be listed');
     assert.equal(await guidedPage.locator('#guided-case-count').textContent(), '56 از 56 کیس',
       'the case count should reflect the full catalog in Persian');
+    const initialVerificationLabels = await guidedPage.locator('#guided-case-list .guided-case-verification').allTextContents();
+    assert.equal(initialVerificationLabels.length, 56,
+      'every visible case must expose a source/image verification label');
+    assert.ok(initialVerificationLabels.every(function (label) { return label.trim().length > 0; }),
+      'verification labels must not be empty');
+    const firstCardStatus = await guidedPage.locator('#guided-case-list .guided-case-card').first().getAttribute('data-case-verification');
+    assert.ok(['verified', 'partially_verified', 'unavailable', 'excluded'].includes(firstCardStatus),
+      'case cards should expose a known verification state, not infer it from the URL');
+    assert.match(await guidedPage.locator('.guided-case-notice').innerText(), /لینک منبع به معنی تأیید تصویر/);
     await guidedPage.locator('#guided-system-filter').selectOption('renal-urinary');
     assert.equal(await guidedPage.locator('#guided-case-list .guided-case-card').count(), 9,
       'the renal/urinary filter should narrow the displayed case collection');
     assert.equal(await guidedPage.locator('#guided-case-list .guided-case-card[data-case-category="renal-urinary"]').count(), 9,
       'all visible results must belong to the selected primary category');
+    assert.equal(await guidedPage.locator('#guided-case-list .guided-case-verification').count(), 9,
+      'verification labels should remain synchronized with filtered results');
     await guidedPage.locator('#guided-system-filter').selectOption('gastrointestinal');
     await guidedPage.locator('#guided-case-search').fill('pneumobilia');
     assert.equal(await guidedPage.locator('#guided-case-list .guided-case-card').count(), 1,
