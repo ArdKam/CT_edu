@@ -82,7 +82,7 @@ if (!engine) {
     }
 
 
-    assert.equal(await page.locator('#modality-catalog .modality-card').count(), 4, engineName + ': all four learning paths should render');
+    assert.equal(await page.locator('#modality-catalog .modality-card').count(), 5, engineName + ': all five learning paths should render');
     await page.locator('[data-modality-select="chest-xray"]').click();
     await page.waitForFunction(() => window.CTEduRadiographViewer && !document.querySelector('#radiograph-workspace').hidden, null, {timeout:5000});
     await page.locator('#radiograph-file-input').setInputFiles({
