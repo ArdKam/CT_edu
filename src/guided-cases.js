@@ -141,6 +141,39 @@
       const level = ({ foundations: lang() === 'fa' ? 'پایه' : 'Foundations', intermediate: lang() === 'fa' ? 'متوسط' : 'Intermediate', advanced: lang() === 'fa' ? 'پیشرفته' : 'Advanced' }[item.level] || item.level || '');
       const meta = make('span', 'guided-case-card-meta', label + ' · CT' + (level ? ' · ' + level : ''));
       button.appendChild(meta);
+
+      const verificationStatus = item.verification && item.verification.status
+        ? item.verification.status
+        : 'partially_verified';
+      const verificationLabels = {
+        verified: {
+          fa: 'بارگذاری منبع ثبت شده؛ تأیید پزشکی جداست',
+          en: 'Source loading recorded; medical review is separate'
+        },
+        partially_verified: {
+          fa: 'بارگذاری تصاویر مستقل تأیید نشده',
+          en: 'Image loading not independently verified'
+        },
+        unavailable: {
+          fa: 'منبع فعلاً در دسترس نیست',
+          en: 'Source currently unavailable'
+        },
+        excluded: {
+          fa: 'خارج از مجموعهٔ فعال',
+          en: 'Excluded from active collection'
+        }
+      };
+      button.dataset.caseVerification = verificationStatus;
+      const verificationLabel = verificationLabels[verificationStatus] || {
+        fa: 'وضعیت تصاویر نامشخص',
+        en: 'Image status unknown'
+      };
+      const verificationNote = make(
+        'span',
+        'guided-case-verification',
+        lang() === 'fa' ? verificationLabel.fa : verificationLabel.en
+      );
+      button.appendChild(verificationNote);
       button.addEventListener('click', function () { selectCase(item.id); });
       container.appendChild(button);
     });
