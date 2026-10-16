@@ -117,4 +117,15 @@ assert.match(app, /Medical review and image-redistribution rights must also be c
 assert.ok(app.includes("item.verification && item.verification.status === 'verified'"));
 assert.match(app, /Live source loading was verified in a recorded check/);
 
-console.log('Guided cases: bilingual metadata, source links, and self-review rubrics validated.');
+assert.match(page, /Image-loading status is shown per case/);
+assert.match(page, /لینک منبع به معنی تأیید تصویر/);
+assert.ok(app.includes("button.dataset.caseVerification = verificationStatus;"));
+assert.ok(app.includes("'guided-case-verification'"));
+assert.ok(app.includes("Image loading not independently verified"));
+assert.ok(app.includes("Source loading recorded; medical review is separate"));
+for (const item of entries) {
+  assert.ok(item.verification && item.verification.status,
+    'each case must expose an explicit image/source verification status: ' + item.id);
+}
+
+console.log('Guided cases: metadata, source-status disclosure, and self-review rubrics validated.');
