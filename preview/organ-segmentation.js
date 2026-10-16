@@ -147,7 +147,7 @@
     downloads.appendChild(downloadTitle);
 
     function appendDownload(fileName, faLabel, enLabel) {
-      if (typeof fileName !== 'string' || !/^[a-z0-9-]+\.nii\.gz$/i.test(fileName)) return;
+      if (typeof fileName !== 'string' || !/^[a-z0-9_-]+\.nii\.gz$/i.test(fileName)) return;
       const link = document.createElement('a');
       link.className = 'organ-download-link';
       link.href = './assets/organ-predictions/' + encodeURIComponent(fileName);
