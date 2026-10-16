@@ -59,6 +59,15 @@ const { chromium } = require('playwright');
     assert.equal(await page.locator('#organ-controls-list .organ-control-row').count(), 4);
     assert.equal(await page.locator('.organ-download-links a').count(), 5);
     assert.equal(await page.locator('.organ-download-links a').first().getAttribute('download'), 'major-organ-labelmap.nii.gz');
+    const downloads = await page.locator('.organ-download-links a').evaluateAll(function (links) {
+      return links.map(function (link) { return { href: link.href, fileName: link.download }; });
+    });
+    for (const download of downloads) {
+      const fileResponse = await page.request.get(download.href);
+      assert.ok(fileResponse.ok(), '3D mask asset should be available: ' + download.fileName);
+      const bytes = await fileResponse.body();
+      assert.deepEqual(Array.from(bytes.slice(0, 2)), [31, 139], 'NIfTI file should be gzip-compressed: ' + download.fileName);
+    }
     assert.match(await page.locator('#organ-status').textContent(), /model predictions|پیش‌بینی مدل/);
 
     const beforeToggle = await page.locator('#organ-canvas').evaluate(function (canvas) {
