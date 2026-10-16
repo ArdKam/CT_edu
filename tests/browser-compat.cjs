@@ -108,7 +108,7 @@ if (!engine) {
     const seriesResponse = await seriesPage.goto(origin + '/', { waitUntil: 'domcontentloaded' });
     assert.ok(seriesResponse && seriesResponse.ok(), engineName + ': series catalog entry should start from the homepage');
     await seriesPage.locator('[data-modality-select="abdomen-ct-series"]').click();
-    await seriesPage.waitForURL(/abdomen-series\\.html$/, { timeout: 5000 });
+    await seriesPage.waitForURL(/abdomen-series\.html$/, { timeout: 5000 });
     assert.ok(await seriesPage.locator('#series-slider').isVisible(),
       engineName + ': axial series slider should be visible');
     await seriesPage.waitForFunction(function () {
