@@ -2,6 +2,7 @@ name: Generate experimental major-organ masks
 
 on:
   pull_request:
+    types: [opened]
     branches:
       - "docs/segmentor-roadmap"
     paths:
