@@ -68,4 +68,9 @@ test('preview and annotation source remain explicit about separate non-volume im
   assert.match(html,/This browser only|فقط این مرورگر/);
   const workflow=read('.github/workflows/test.yml');
   assert.match(workflow,/segmentor-browser-smoke\.cjs/);
+  const previewWorkflow=read('.github/workflows/preview-guided-cases.yml');
+  assert.ok(previewWorkflow.includes('cp preview/segmentor.html'));
+  assert.ok(previewWorkflow.includes('cp src/segmentor/*.js'));
+  assert.ok(previewWorkflow.includes('preview/segmentor.html'));
+  assert.ok(previewWorkflow.includes("CT_EDU_PUBLIC_RELEASE_APPROVED != 'true'"));
 });
