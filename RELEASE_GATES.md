@@ -8,6 +8,7 @@ This checklist separates code that exists from educational, legal, and release r
 ## Current implementation
 
 - [x] Bilingual Persian RTL / English LTR static web workspace.
+- [x] Add a separate 648-image abdominal source-stack preview (320 axial, 150 coronal, 178 sagittal) behind the `/preview/` workflow, with a bilingual hub, independent per-stack navigation and explicit geometry limitations; the root production release latch remains closed.
 - [x] Add a separate 648-image Wikimedia abdomen/pelvis preview: 320 axial URLs from the Base44 record, plus 150 coronal and 178 sagittal images in the same Commons source categories. The stacks have provenance/CC0 metadata, independent plane navigation, zoom/pan and retry messaging; images are fetched on demand rather than bundled, and are not represented as a shared 3D volume.
 - [ ] Verify all 648 source files across representative and boundary indices, including Wikimedia Special:FilePath redirects, on lower-bandwidth/mobile conditions; confirm sequence continuity, dimensions, view orientation and educational suitability before formal release.
 - [x] SPL Abdominal Atlas volume decoded into 113 axial, 256 coronal, and 256 sagittal positions.
