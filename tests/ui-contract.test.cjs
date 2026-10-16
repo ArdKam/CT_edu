@@ -75,6 +75,9 @@ test('project-relative favicon resolves for GitHub Pages subpaths', function () 
   assert.ok(workflow.includes('cp favicon.svg _site/'), "Pages workflow should copy the favicon into the published artifact");
   assert.ok(workflow.includes('test -s _site/favicon.svg'), "Pages staging should verify the favicon exists");
   assert.ok(workflow.includes('fetch_with_retry "$base/favicon.svg"'), "post-deploy checks should fetch the live favicon");
+  assert.ok(workflow.includes('fetch_with_retry "$base/abdomen-series.html"'), "post-deploy checks should fetch the separate image-stack viewer");
+  assert.ok(workflow.includes('fetch_with_retry "$base/src/abdomen-series.js"'), "post-deploy checks should fetch the plane-navigation controller");
+  assert.ok(workflow.includes('fetch_with_retry "$base/src/data/wikimedia-abdomen-series.js"'), "post-deploy checks should verify the coronal/sagittal source manifest");
 });
 
 test('real CT slice and lossless segment-ID map are present', function () {
@@ -222,7 +225,7 @@ test('security policy provides a private vulnerability reporting path and exclud
   assert.match(readme, /\[Security policy\]\(SECURITY\.md\)/);
 });
 
-test('public privacy notice is linked, staged, and explicit about local data and third-party fonts', function () {
+test('public privacy notice is linked, staged, and discloses external source-image requests', function () {
   const html = read('index.html');
   const privacy = read('privacy.html');
   const workflow = read('.github/workflows/pages-deploy.yml');
@@ -230,10 +233,19 @@ test('public privacy notice is linked, staged, and explicit about local data and
   assert.match(privacy, /Content-Security-Policy/);
   assert.match(privacy, /ct-edu|browser|مرورگر/i);
   assert.match(privacy, /Google Fonts/);
+  assert.match(privacy, /Wikimedia Commons/);
+  assert.match(privacy, /upload\.wikimedia\.org/);
   assert.match(privacy, /IP address/);
   assert.match(privacy, /1 MB/);
   assert.match(privacy, /no account system or cloud sync/);
-  assert.match(workflow, /cp index\.html (?:cases\.html )?data-license\.html privacy\.html DATA_LICENSE_REVIEW\.md _site\//);
+  assert.match(workflow, /cp index\.html cases\.html abdomen-series\.html data-license\.html privacy\.html DATA_LICENSE_REVIEW\.md _site\//);
+  assert.match(workflow, /test -s _site\/abdomen-series\.html/);
+  assert.match(workflow, /test -s _site\/src\/abdomen-series\.js/);
+  assert.match(workflow, /test -s _site\/src\/abdomen-series\.css/);
+  assert.match(workflow, /test -s _site\/src\/data\/wikimedia-abdomen-series\.js/);
+  const previewWorkflow = read('.github/workflows/preview-guided-cases.yml');
+  assert.match(previewWorkflow, /test -s "\$GITHUB_WORKSPACE\/_site\/preview\/abdomen-series\.html"/);
+  assert.match(previewWorkflow, /test -s "\$GITHUB_WORKSPACE\/_site\/preview\/src\/data\/wikimedia-abdomen-series\.js"/);
   assert.match(workflow, /test -s _site\/privacy\.html/);
   assert.match(workflow, /fetch_with_retry "\$base\/privacy\.html" 'Privacy &amp; Local Data'/);
 });

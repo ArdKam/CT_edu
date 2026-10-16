@@ -6,11 +6,19 @@ const root = path.resolve(__dirname, '..');
 const read = function (name) { return fs.readFileSync(path.join(root, name), 'utf8'); };
 const catalog = require('../src/data/modality-catalog.js');
 
-test('modality catalog exposes four paths and only the current CT viewer is openable', function () {
+test('modality catalog exposes five paths while only the primary SPL learning path is marked available', function () {
   const entries = catalog.list();
-  assert.deepEqual(entries.map(function (entry) { return entry.id; }), ['abdomen-ct','brain-ct','chest-ct','chest-xray']);
+  assert.deepEqual(entries.map(function (entry) { return entry.id; }), ['abdomen-ct','abdomen-ct-series','brain-ct','chest-ct','chest-xray']);
   assert.equal(entries.filter(function (entry) { return catalog.isAvailable(entry.id); }).length, 1);
   assert.equal(catalog.isAvailable('abdomen-ct'), true);
+  assert.equal(catalog.isAvailable('abdomen-ct-series'), false);
+  const series = catalog.getById('abdomen-ct-series');
+  assert.equal(series.status, 'candidate');
+  assert.equal(series.contentAvailable, false);
+  assert.equal(series.pageUrl, './abdomen-series.html');
+  assert.match(series.sourceUrl, /commons\.wikimedia\.org/);
+  assert.match(series.detailEn, /648 static images across three separate sequences/i);
+  assert.match(series.detailEn, /in-plane spacing/i);
   assert.equal(catalog.isAvailable('brain-ct'), false);
   assert.equal(catalog.isAvailable('chest-ct'), false);
   assert.equal(catalog.isAvailable('chest-xray'), false);

@@ -9,18 +9,18 @@
   const copy = {
     fa: {
       kicker:'IMAGING LIBRARY',title:'مسیرهای یادگیری تصویربرداری',
-      intro:'مسیر فعال با دادهٔ فعلی مشخص است؛ سه مسیر دیگر تا تأیید منبع، مجوز و بازبینی تخصصی در وضعیت انتظار می‌مانند.',
+      intro:'حجم SPL مسیر اصلی است؛ یک سری محوری مستقل برای پیش‌نمایش اضافه شده و سایر مسیرها تا تأیید منبع و بازبینی تخصصی در انتظارند.',
       status:{available:'نمونهٔ موجود',candidate:'کاندیدا · بازبینی لازم',blocked:'فعلاً مسدود'},
-      action:{available:'ورود به آزمایشگاه',candidate:'بررسی مسیر توسعه',blocked:'مشاهدهٔ موانع',localViewer:'بازکردن نمایشگر محلی'},
+      action:{available:'ورود به آزمایشگاه',candidate:'بررسی مسیر توسعه',blocked:'مشاهدهٔ موانع',localViewer:'بازکردن نمایشگر محلی',seriesPreview:'پیش‌نمایش مجموعه‌های تصویری'},
       goals:'اهداف آموزشی پیشنهادی',gates:'پیش‌نیازهای ورود به محصول',source:'منبع برای بررسی',
       close:'بستن جزئیات',warning:'این مسیر هنوز تصویر آموزشیِ قابل‌انتشار ندارد. هیچ تصویر بیمار، دادهٔ مشتق‌شده یا برچسب تأییدنشده‌ای در این تغییر اضافه نشده است.',
       currentWarning:'این مسیر در نسخهٔ آزمایشی کار می‌کند، اما جایگزین آموزش بالینی، نظر رادیولوژیست یا سامانهٔ تشخیصی نیست.'
     },
     en: {
       kicker:'IMAGING LIBRARY',title:'Imaging learning paths',
-      intro:'The active path uses the current teaching dataset. The other three remain gated until source, rights, and specialist review are complete.',
+      intro:'The SPL volume remains the primary viewer. A separate axial series is available as a preview; other paths remain gated pending source and specialist review.',
       status:{available:'Teaching demo available',candidate:'Candidate · review needed',blocked:'Blocked for now'},
-      action:{available:'Open learning lab',candidate:'Review expansion path',blocked:'View blockers',localViewer:'Open local image viewer'},
+      action:{available:'Open learning lab',candidate:'Review expansion path',blocked:'View blockers',localViewer:'Open local image viewer',seriesPreview:'Preview image stacks'},
       goals:'Proposed learning objectives',gates:'Requirements before release',source:'Source to review',
       close:'Close details',warning:'This path has no approved public teaching images yet. No patient images, derivatives, or unreviewed labels were added in this change.',
       currentWarning:'This path works as a prototype, but it is not a substitute for clinical teaching, radiologist judgment, or a diagnostic system.'
@@ -81,7 +81,7 @@
     heading.appendChild(h2);
     heading.appendChild(node('p','',strings.intro));
     header.appendChild(heading);
-    header.appendChild(node('span','modality-catalog-count',lang === 'fa' ? ('۱ مسیر فعال از ۴') : (count + ' active of ' + entries.length)));
+    header.appendChild(node('span','modality-catalog-count',lang === 'fa' ? (String(count).replace(/[0-9]/g,function(d){return '۰۱۲۳۴۵۶۷۸۹'[Number(d)];}) + ' مسیر فعال از ' + String(entries.length).replace(/[0-9]/g,function(d){return '۰۱۲۳۴۵۶۷۸۹'[Number(d)];})) : (count + ' active of ' + entries.length)));
     const grid = node('div','modality-grid');
     grid.setAttribute('role','list');
     entries.forEach(function (entry) {
@@ -96,7 +96,7 @@
       card.appendChild(node('h3','',lang === 'fa' ? entry.titleFa : entry.titleEn));
       card.appendChild(node('p','modality-subtitle',lang === 'fa' ? entry.subtitleFa : entry.subtitleEn));
       card.appendChild(node('p','modality-summary',lang === 'fa' ? entry.summaryFa : entry.summaryEn));
-      const action = node('button','modality-card-action',entry.viewerAvailable ? strings.action.localViewer : (strings.action[entry.status] || strings.action.blocked));
+      const action = node('button','modality-card-action',entry.pageUrl ? strings.action.seriesPreview : (entry.viewerAvailable ? strings.action.localViewer : (strings.action[entry.status] || strings.action.blocked)));
       action.type = 'button';
       action.dataset.modalitySelect = entry.id;
       action.setAttribute('aria-expanded',selectedId === entry.id ? 'true' : 'false');
@@ -118,6 +118,7 @@
     if (!button) return;
     const entry = catalog.getById(button.dataset.modalitySelect);
     if (!entry) return;
+    if (entry.pageUrl) { window.location.assign(entry.pageUrl); return; }
     if (catalog.isAvailable(entry.id)) {
       selectedId = null;
       render();

@@ -82,7 +82,7 @@ if (!engine) {
     }
 
 
-    assert.equal(await page.locator('#modality-catalog .modality-card').count(), 4, engineName + ': all four learning paths should render');
+    assert.equal(await page.locator('#modality-catalog .modality-card').count(), 5, engineName + ': all five learning paths should render');
     await page.locator('[data-modality-select="chest-xray"]').click();
     await page.waitForFunction(() => window.CTEduRadiographViewer && !document.querySelector('#radiograph-workspace').hidden, null, {timeout:5000});
     await page.locator('#radiograph-file-input').setInputFiles({
@@ -100,6 +100,110 @@ if (!engine) {
     await page.locator('#radiograph-close').click();
     assert.equal(await page.locator('#radiograph-workspace').isVisible(), false);
     assert.equal(await page.locator('#radiograph-canvas').getAttribute('data-image-loaded'), 'false');
+
+    // The preview hub should render directly and keep both preview destinations discoverable.
+    const hubPage = await context.newPage();
+    const hubErrors = [];
+    hubPage.on('pageerror', function (error) { hubErrors.push(error.message); });
+    const hubResponse = await hubPage.goto(origin + '/preview/index.html', { waitUntil: 'domcontentloaded' });
+    assert.ok(hubResponse && hubResponse.ok(), engineName + ': preview hub should load');
+    assert.equal(await hubPage.locator('.preview-hub-card').count(), 2,
+      engineName + ': preview hub should expose two learning workspaces');
+    assert.equal(await hubPage.locator('.preview-hub-card a[href="./cases.html"]').count(), 1,
+      engineName + ': guided-case preview route should be linked');
+    assert.equal(await hubPage.locator('.preview-hub-card a[href="./abdomen-series.html"]').count(), 1,
+      engineName + ': image-stack preview route should be linked');
+    await hubPage.locator('#preview-language-toggle').click();
+    assert.equal(await hubPage.locator('html').getAttribute('dir'), 'ltr',
+      engineName + ': preview hub language toggle should switch to LTR');
+    assert.equal(await hubPage.locator('#preview-hub-title').innerText(), 'Imaging learning previews',
+      engineName + ': preview hub should show English title after language switch');
+    const hubWidth = await hubPage.evaluate(function () {
+      return { viewport: window.innerWidth, document: document.documentElement.scrollWidth, body: document.body.scrollWidth };
+    });
+    assert.ok(hubWidth.document <= hubWidth.viewport + 1,
+      engineName + ': preview hub should not overflow horizontally on mobile: ' + JSON.stringify(hubWidth));
+    assert.deepEqual(hubErrors, [],
+      engineName + ': preview hub should have no runtime exceptions: ' + JSON.stringify(hubErrors));
+    const hubScreenshotDir = path.join(__dirname, '..', 'build', 'browser-smoke');
+    fs.mkdirSync(hubScreenshotDir, { recursive: true });
+    await hubPage.screenshot({
+      path: path.join(hubScreenshotDir, 'preview-hub-' + engineName + '-390.png'),
+      animations: 'disabled'
+    });
+    await hubPage.close();
+
+    // Exercise the Base44-derived three-plane image stacks through the real catalog-to-viewer route.
+    const seriesPage = await context.newPage();
+    const seriesPageErrors = [];
+    seriesPage.on('pageerror', function (error) { seriesPageErrors.push(error.message); });
+    const seriesResponse = await seriesPage.goto(origin + '/', { waitUntil: 'domcontentloaded' });
+    assert.ok(seriesResponse && seriesResponse.ok(), engineName + ': series catalog entry should start from the homepage');
+    await seriesPage.locator('[data-modality-select="abdomen-ct-series"]').click();
+    await seriesPage.waitForURL(/abdomen-series\.html$/, { timeout: 5000 });
+    assert.ok(await seriesPage.locator('#series-slider').isVisible(),
+      engineName + ': axial series slider should be visible');
+    await seriesPage.waitForFunction(function () {
+      const image = document.getElementById('series-image');
+      return image && !image.hidden && image.complete && image.naturalWidth > 0 &&
+        decodeURIComponent(image.currentSrc).includes('axial_plane_160.png');
+    }, null, { timeout: 25000 });
+    assert.equal(await seriesPage.locator('#series-previous').isDisabled(), false,
+      engineName + ': previous should be enabled at the central axial image');
+    await seriesPage.locator('#series-next').click();
+    await seriesPage.waitForFunction(function () {
+      const image = document.getElementById('series-image');
+      return image && decodeURIComponent(image.currentSrc).includes('axial_plane_161.png') && image.naturalWidth > 0;
+    }, null, { timeout: 20000 });
+    assert.equal(await seriesPage.locator('#series-position').innerText(), '۱۶۱ از ۳۲۰',
+      engineName + ': next should advance to axial image 161 in Persian mode');
+    await seriesPage.locator('#series-zoom-in').click();
+    assert.equal(await seriesPage.locator('#series-zoom-value').innerText(), '125%',
+      engineName + ': axial stack zoom should increase');
+    await seriesPage.locator('#series-language-toggle').click();
+    assert.equal(await seriesPage.locator('html').getAttribute('dir'), 'ltr',
+      engineName + ': axial stack language switch should set LTR');
+    await seriesPage.locator('#series-slider').evaluate(function (element) {
+      element.value = '160';
+      element.dispatchEvent(new Event('input', { bubbles: true }));
+      element.dispatchEvent(new Event('change', { bubbles: true }));
+    });
+    await seriesPage.waitForFunction(function () {
+      const image = document.getElementById('series-image');
+      return image && decodeURIComponent(image.currentSrc).includes('axial_plane_160.png') && image.naturalWidth > 0;
+    }, null, { timeout: 20000 });
+    assert.equal(await seriesPage.locator('#series-position').innerText(), '160 of 320',
+      engineName + ': index slider should select source image 160');
+    await seriesPage.locator('[data-series-plane="coronal"]').click();
+    await seriesPage.waitForFunction(function () {
+      const image = document.getElementById('series-image');
+      return image && decodeURIComponent(image.currentSrc).includes('coronal_plane_75.png') && image.naturalWidth > 0;
+    }, null, { timeout: 20000 });
+    assert.equal(await seriesPage.locator('#series-position').innerText(), '75 of 150',
+      engineName + ': coronal stack should keep its own index and count');
+    await seriesPage.locator('[data-series-plane="sagittal"]').click();
+    await seriesPage.waitForFunction(function () {
+      const image = document.getElementById('series-image');
+      return image && decodeURIComponent(image.currentSrc).includes('sagittal_plane_89.png') && image.naturalWidth > 0;
+    }, null, { timeout: 20000 });
+    assert.equal(await seriesPage.locator('#series-position').innerText(), '89 of 178',
+      engineName + ': sagittal stack should keep its own index and count');
+    assert.equal(await seriesPage.locator('#series-viewer-kicker-en').innerText(), 'SAGITTAL IMAGE STACK',
+      engineName + ': viewer title should follow the selected plane');
+    const seriesWidth = await seriesPage.evaluate(function () {
+      return { viewport: window.innerWidth, document: document.documentElement.scrollWidth, body: document.body.scrollWidth };
+    });
+    assert.ok(seriesWidth.document <= seriesWidth.viewport + 1,
+      engineName + ': axial series should not overflow horizontally on mobile: ' + JSON.stringify(seriesWidth));
+    assert.deepEqual(seriesPageErrors, [],
+      engineName + ': axial series should have no runtime exceptions: ' + JSON.stringify(seriesPageErrors));
+    const seriesScreenshotDir = path.join(__dirname, '..', 'build', 'browser-smoke');
+    fs.mkdirSync(seriesScreenshotDir, { recursive: true });
+    await seriesPage.screenshot({
+      path: path.join(seriesScreenshotDir, 'series-' + engineName + '-390.png'),
+      animations: 'disabled'
+    });
+    await seriesPage.close();
 
     const widthMetrics = await page.evaluate(function () {
       return {
