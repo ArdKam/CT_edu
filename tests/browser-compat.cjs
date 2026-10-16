@@ -156,6 +156,8 @@ if (!engine) {
     }, null, { timeout: 20000 });
     assert.equal(await seriesPage.locator('#series-position').innerText(), '89 of 178',
       engineName + ': sagittal stack should keep its own index and count');
+    assert.equal(await seriesPage.locator('#series-viewer-kicker-en').innerText(), 'SAGITTAL IMAGE STACK',
+      engineName + ': viewer title should follow the selected plane');
     const seriesWidth = await seriesPage.evaluate(function () {
       return { viewport: window.innerWidth, document: document.documentElement.scrollWidth, body: document.body.scrollWidth };
     });
