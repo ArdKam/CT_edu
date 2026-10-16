@@ -5,7 +5,7 @@ const path = require('node:path');
 const root = path.resolve(__dirname, '..');
 const read = function (name) { return fs.readFileSync(path.join(root, name), 'utf8'); };
 
-test('axial series page declares its only external image origin and source attribution', function () {
+test('series page declares both Wikimedia image origins and source attribution', function () {
   const html = read('abdomen-series.html');
   const privacy = read('privacy.html');
   assert.match(privacy, /Wikimedia Commons/);
@@ -17,6 +17,11 @@ test('axial series page declares its only external image origin and source attri
   assert.match(html, /CC0 1\.0/);
   assert.match(html, /not a verified DICOM series|not provide coronal\/sagittal reconstruction/i);
   assert.match(html, /id="series-slider"[^>]*max="320"/);
+  assert.match(html, /data-series-plane="axial"/);
+  assert.match(html, /data-series-plane="coronal"/);
+  assert.match(html, /data-series-plane="sagittal"/);
+  assert.match(html, /648/);
+  assert.match(html, /not a synchronized 3D|not a 3D reconstruction|not synchronized/i);
 });
 
 test('viewer provides bilingual navigation, loading/error states, and keyboard controls without HTML string sinks', function () {
