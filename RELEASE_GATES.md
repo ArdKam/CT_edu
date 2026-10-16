@@ -22,6 +22,7 @@ This checklist separates code that exists from educational, legal, and release r
 - [x] Interface language clarifies that anatomy controls filter real image overlays rather than a schematic drawing.
 - [x] Introduce shared light-theme text, teal and keyboard-focus tokens; add automated contrast regression tests for the ink, secondary-text, brand and focus tokens on paper/white surfaces. This covers selected design tokens, not every color use in every component or dark-surface text.
 - [x] Apply the `prefers-reduced-motion` preference app-wide and increase touch-target sizes for the core mobile CT plane, slice, zoom, case navigation, filter and report controls. Automated CSS contract tests cover declared sizes; physical-device validation remains open.
+- [x] Extend mobile touch sizing to bookmark save/delete/export controls, radiograph controls, modality detail actions, and Window/Level buttons. Core plane and slice controls now use 44px targets; compact zoom controls use 36px targets. CSS contract tests cover these declarations; physical-device layout QA remains open.
 - [x] Label Radiopaedia destinations as source study pages rather than implying a guaranteed standalone viewer; show that live image loading, medical review and redistribution rights remain separate checks.
 - [x] Prevent the guided-case preview workflow from deploying once `CT_EDU_PUBLIC_RELEASE_APPROVED=true`, so its stable-baseline artifact cannot overwrite an approved production site.
 
