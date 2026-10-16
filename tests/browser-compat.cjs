@@ -101,6 +101,38 @@ if (!engine) {
     assert.equal(await page.locator('#radiograph-workspace').isVisible(), false);
     assert.equal(await page.locator('#radiograph-canvas').getAttribute('data-image-loaded'), 'false');
 
+    // The preview hub should render directly and keep both preview destinations discoverable.
+    const hubPage = await context.newPage();
+    const hubErrors = [];
+    hubPage.on('pageerror', function (error) { hubErrors.push(error.message); });
+    const hubResponse = await hubPage.goto(origin + '/preview/index.html', { waitUntil: 'domcontentloaded' });
+    assert.ok(hubResponse && hubResponse.ok(), engineName + ': preview hub should load');
+    assert.equal(await hubPage.locator('.preview-hub-card').count(), 2,
+      engineName + ': preview hub should expose two learning workspaces');
+    assert.equal(await hubPage.locator('.preview-hub-card a[href="./cases.html"]').count(), 1,
+      engineName + ': guided-case preview route should be linked');
+    assert.equal(await hubPage.locator('.preview-hub-card a[href="./abdomen-series.html"]').count(), 1,
+      engineName + ': image-stack preview route should be linked');
+    await hubPage.locator('#preview-language-toggle').click();
+    assert.equal(await hubPage.locator('html').getAttribute('dir'), 'ltr',
+      engineName + ': preview hub language toggle should switch to LTR');
+    assert.equal(await hubPage.locator('#preview-hub-title').innerText(), 'Imaging learning previews',
+      engineName + ': preview hub should show English title after language switch');
+    const hubWidth = await hubPage.evaluate(function () {
+      return { viewport: window.innerWidth, document: document.documentElement.scrollWidth, body: document.body.scrollWidth };
+    });
+    assert.ok(hubWidth.document <= hubWidth.viewport + 1,
+      engineName + ': preview hub should not overflow horizontally on mobile: ' + JSON.stringify(hubWidth));
+    assert.deepEqual(hubErrors, [],
+      engineName + ': preview hub should have no runtime exceptions: ' + JSON.stringify(hubErrors));
+    const hubScreenshotDir = path.join(__dirname, '..', 'build', 'browser-smoke');
+    fs.mkdirSync(hubScreenshotDir, { recursive: true });
+    await hubPage.screenshot({
+      path: path.join(hubScreenshotDir, 'preview-hub-' + engineName + '-390.png'),
+      animations: 'disabled'
+    });
+    await hubPage.close();
+
     // Exercise the Base44-derived three-plane image stacks through the real catalog-to-viewer route.
     const seriesPage = await context.newPage();
     const seriesPageErrors = [];
