@@ -103,6 +103,9 @@ jobs:
           path: _site
 
   deploy-preview:
+    # Once production is explicitly approved, only pages-deploy.yml may publish the root site.
+    # This prevents the stable-baseline preview artifact from overwriting the production artifact.
+    if: vars.CT_EDU_PUBLIC_RELEASE_APPROVED != 'true'
     needs: build-preview
     runs-on: ubuntu-latest
     permissions:
