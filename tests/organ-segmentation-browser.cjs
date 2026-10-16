@@ -57,6 +57,8 @@ const { chromium } = require('playwright');
       return state && state.hidden;
     }, null, { timeout: 30000 });
     assert.equal(await page.locator('#organ-controls-list .organ-control-row').count(), 4);
+    assert.equal(await page.locator('.organ-download-links a').count(), 5);
+    assert.equal(await page.locator('.organ-download-links a').first().getAttribute('download'), 'major-organ-labelmap.nii.gz');
     assert.match(await page.locator('#organ-status').textContent(), /model predictions|پیش‌بینی مدل/);
 
     const beforeToggle = await page.locator('#organ-canvas').evaluate(function (canvas) {
