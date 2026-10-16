@@ -1,6 +1,6 @@
 # CT Edu — release gates and implementation status
 
-Last reviewed: 2026-10-14
+Last reviewed: 2026-10-16
 Scope: educational CT web app for clinical-year medical students.
 
 This checklist separates code that exists from educational, legal, and release requirements that still need independent evidence. Passing software tests does not establish medical validity.
@@ -22,6 +22,8 @@ This checklist separates code that exists from educational, legal, and release r
 - [x] Interface language clarifies that anatomy controls filter real image overlays rather than a schematic drawing.
 - [x] Introduce shared light-theme text, teal and keyboard-focus tokens; add automated contrast regression tests for the ink, secondary-text, brand and focus tokens on paper/white surfaces. This covers selected design tokens, not every color use in every component or dark-surface text.
 - [x] Apply the `prefers-reduced-motion` preference app-wide and increase touch-target sizes for the core mobile CT plane, slice, zoom, case navigation, filter and report controls. Automated CSS contract tests cover declared sizes; physical-device validation remains open.
+- [x] Label Radiopaedia destinations as source study pages rather than implying a guaranteed standalone viewer; show that live image loading, medical review and redistribution rights remain separate checks.
+- [x] Prevent the guided-case preview workflow from deploying once `CT_EDU_PUBLIC_RELEASE_APPROVED=true`, so its stable-baseline artifact cannot overwrite an approved production site.
 
 ## Dataset acquisition plan
 
@@ -34,6 +36,15 @@ See [DATASET_ROADMAP.md](DATASET_ROADMAP.md) for reviewed candidate sources and 
 - The [guided-case preview deployment run](https://github.com/ArdKam/CT_edu/actions/runs/38545091431) completed both build and deploy jobs and passed live HTTP/content probes for the root navigation, preview page, case metadata, and guided-case script.
 - **Live preview:** https://ardkam.github.io/CT_edu/preview/cases.html. The root URL https://ardkam.github.io/CT_edu/ retains the `a54bc01` stable baseline feature set with an added preview link; the new guided-case workspace is served from `/preview/cases.html`. This is intentionally not represented as a full production release.
 - Automated checks establish technical behavior only. No radiologist/anatomy-educator approval, Radiopaedia item-specific permission determination, source ZIP redistribution clearance, jurisdiction-specific legal review, physical-device sign-off, or full accessibility review has been recorded here.
+## Maintenance verification — 2026-10-16
+
+- Latest `main` revision inspected for this update: [`b49ba002bbd8d244d742ba6150b07f21314e41c8`](https://github.com/ArdKam/CT_edu/commit/b49ba002bbd8d244d742ba6150b07f21314e41c8), after merge of [PR #14](https://github.com/ArdKam/CT_edu/pull/14) and [PR #15](https://github.com/ArdKam/CT_edu/pull/15).
+- PR #14's full checks passed; it clarifies that an external Radiopaedia Study URL is a source-hosted page, not proof of a CT Edu-native viewer or guaranteed iframe image loading. The 52 added candidates remain partially verified.
+- PR #15's full checks passed; the preview deployment job now skips deployment when the public-release approval latch is `true`. Production itself remains locked until the independently reviewed release gates are closed.
+- PR #12 and PR #13 are merged: selected text/control colors and focus indicators were improved; touch targets and reduced-motion behavior were improved; contrast and CSS-contract regression checks were added. These changes do not constitute a complete WCAG or physical-device audit.
+- A further contrast/CSS follow-up is under review in [PR #16](https://github.com/ArdKam/CT_edu/pull/16); do not treat its changes as merged until its CI completes and it is integrated.
+- This maintenance update does not close any medical, legal, image-rights, human accessibility-review, or physical-device sign-off.
+
 ## Release blockers
 
 ### Git / deployment
