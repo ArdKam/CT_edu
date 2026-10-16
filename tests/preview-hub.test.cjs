@@ -18,6 +18,8 @@ test('preview hub exposes both learning workspaces without claiming clinical app
   assert.match(html, /not diagnostic|not a diagnostic/i);
   assert.match(html, /not a 3D volume|not synchronized reformats/i);
   assert.match(html, /src="\.\/preview-hub\.js"/);
+  assert.match(html, /href="\.\.\/src\/styles\.css"/);
+  assert.match(html, /href="\.\.\/favicon\.svg"/);
   assert.match(css, /preview-hub-grid/);
   assert.match(css, /@media\(max-width:620px\)/);
   assert.match(js, /Switch language to Persian/);
