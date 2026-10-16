@@ -54,17 +54,16 @@ See [DATASET_ROADMAP.md](DATASET_ROADMAP.md) for reviewed candidate sources and 
 
 ## Release blockers
 
-### Segmentor and annotation workflow — future preview feature
+### Automatic major-organ segmentation — experimental preview
 
-The [Segmentor roadmap](docs/SEGMENTOR_ROADMAP.md) is the implementation contract. The Segmentor is not yet implemented in CT Edu.
+The [Segmentor roadmap](docs/SEGMENTOR_ROADMAP.md) is the implementation contract. The initial model-inference experiment targets liver, spleen, right kidney, and left kidney only.
 
-- [ ] Validate native-pixel image/overlay alignment, source-image identity, and reference-panel exclusion before enabling editing.
-- [ ] Deliver manual polygon editing with versioned local persistence, safe import/export, provenance, and non-destructive merge rules in the preview workflow.
-- [ ] Test annotation editing, storage failures, malformed imports, duplicate saves, viewport transforms, keyboard/touch use, and existing viewer regressions.
-- [ ] Keep threshold-based regions labelled as intensity suggestions, not organ segmentation; keep them draft-only and non-destructive.
-- [ ] Do not add AI contour generation until a separately reviewed backend, URL-fetch protections, output validation, authorization, and human-review flow exist.
-- [ ] Do not extend to 3D segmentation until source volume geometry, mask transforms, data rights, and independent expert review are documented.
-- [ ] Keep all Segmentor work preview-only until applicable technical, accessibility, privacy/legal, data-rights, and medical-content gates pass. Do not change the public-release approval latch as part of Segmentor development.
+- [ ] Execute TotalSegmentator on the SPL NRRD volume via the isolated GitHub Actions runner; do not require local installation by the maintainer.
+- [ ] Verify source geometry and explicitly record that subtracting a 1024 intensity offset is an experimental assumption until HU calibration is proven.
+- [ ] Confirm that all four masks are non-empty, 256 × 256 × 113 after resampling, and aligned with the source volume; retain per-organ comparison metrics against the bundled atlas labels as technical checks only.
+- [ ] Review the unreviewed masks across representative slices; no automated output is medically approved by inference success or a high Dice score on this same volume.
+- [ ] Keep the predictions on the preview route, separated from the original SPL labelmap. Do not change the public-release approval latch.
+- [ ] After the model experiment, develop mask correction/editing, independent held-out evaluation, and additional organ coverage before considering production teaching use.
 
 See also: [Segmentor implementation roadmap](docs/SEGMENTOR_ROADMAP.md).
 
