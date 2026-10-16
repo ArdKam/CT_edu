@@ -23,6 +23,22 @@
       sourceNoteEn:'Images are present in the prototype; this does not mean the module is clinically validated or all release gates are closed.'
     },
     {
+      id:'abdomen-ct-series',shortLabel:'CT',modality:'CT',region:'abdomen',status:'candidate',contentAvailable:false,pageUrl:'./abdomen-series.html',
+      titleFa:'سری محوری شکم و لگن',titleEn:'Abdomen & pelvis · axial series',
+      subtitleFa:'۳۲۰ تصویر مستقل · منبع Wikimedia Commons',subtitleEn:'320 separate images · Wikimedia Commons source',
+      summaryFa:'یک سری مستقل از تصاویر محوری برای مرور آناتومی طبیعی؛ بدون سگمنتیشن و بدون بازسازی سه‌بعدی تأییدشده.',
+      summaryEn:'A separate axial image stack for reviewing normal anatomy; no segmentation or verified 3D reconstruction.',
+      detailFa:'این مجموعه از ۳۲۰ تصویر محوری جداگانه با ضخامت برش گزارش‌شدهٔ ۳ میلی‌متر تشکیل شده است. منبع مجوز CC0 را اعلام می‌کند، اما این برنامه فاصلهٔ درون‌صفحه‌ای، هندسهٔ DICOM، مختصات بیمار یا هم‌ترازی سگمنتیشن را تأیید نکرده است. برای مشاهدهٔ منبع، تصاویر فقط هنگام بازکردن نمایشگر از Wikimedia بارگیری می‌شوند.',
+      detailEn:'This set contains 320 separate axial images with a reported 3 mm slice thickness. The source declares CC0, but this app has not verified in-plane spacing, DICOM geometry, patient-space coordinates, or segmentation alignment. Images load from Wikimedia only when the viewer is opened.',
+      objectivesFa:['مرور پیوستگی ظاهری ساختارها در برش‌های مجاور','تمرین جهت‌یابی محوری در آناتومی طبیعی شکم و لگن','مقایسه با حجم SPL بدون ادعای هندسهٔ مشترک'],
+      objectivesEn:['Review apparent anatomical continuity across adjacent slices','Practice axial orientation in normal abdomen and pelvis anatomy','Compare with the SPL volume without assuming shared geometry'],
+      gatesFa:['اعتبارسنجی ابعاد تصاویر و ترتیب سری','تأیید هندسه و فاصله‌های فیزیکی پیش از هر بازسازی','بازبینی تخصصی برای استفادهٔ آموزشی رسمی'],
+      gatesEn:['Validate image dimensions and sequence ordering','Verify physical geometry and spacing before any reconstruction','Obtain specialist review before formal teaching use'],
+      sourceName:'Wikimedia Commons · Mikael Häggström, M.D.',sourceUrl:'https://commons.wikimedia.org/wiki/Scrollable_computed_tomography_images_of_a_normal_abdomen_and_pelvis',
+      sourceNoteFa:'صفحهٔ منبع CC0 1.0 را اعلام می‌کند. این پیش‌نمایش، تأیید بالینی یا مجوز استفاده به‌عنوان ابزار تشخیصی نیست.',
+      sourceNoteEn:'The source page states CC0 1.0. This preview is not clinical validation or clearance for diagnostic use.'
+    },
+    {
       id:'brain-ct',shortLabel:'CT',modality:'CT',region:'brain',status:'blocked',contentAvailable:false,
       titleFa:'CT مغز',titleEn:'Brain CT',subtitleFa:'آناتومی سر و یافته‌های حاد',subtitleEn:'Head anatomy and acute findings',
       summaryFa:'مسیر پیشنهادی: بطن‌ها و خط وسط، خونریزی حاد، اثر فشاری و هیدروسفالی؛ داده هنوز وارد نشده است.',
