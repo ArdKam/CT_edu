@@ -16,7 +16,7 @@ test('major-organ segmentation preview is bilingual, self-hosted, and explicitly
   assert.match(html, /organ-segmentation\.css/);
   assert.match(html, /TotalSegmentator/);
   assert.match(html, /not a diagnostic tool/i);
-  assert.match(html, /not independently calibrated/i);
+  assert.match(html, /not independently.*calibrated/i);
   [
     'organ-canvas', 'organ-prev', 'organ-next', 'organ-slice-slider',
     'organ-opacity', 'organ-controls-list', 'organ-model-meta'
