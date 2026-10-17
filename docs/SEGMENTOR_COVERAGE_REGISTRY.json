@@ -4,7 +4,7 @@
   "lastUpdated": "2026-10-17",
   "repositoryBaseline": {
     "branch": "main",
-    "commit": "83f68eaf65a0dbebfca27d0ba6864ccf6d18f23a"
+    "commit": "b1074711b5ac7f70b592d761df1fdb2536d2e977"
   },
   "purpose": "Track upstream model availability separately from CT Edu output generation, technical checks, independent evaluation, anatomical review and approval for educational use.",
   "statusDefinitions": {
@@ -78,8 +78,8 @@
     "resolution": "fast/3mm",
     "preprocessingOffset": 1024,
     "preprocessingOffsetStatus": "unverified-hypothesis",
-    "sourceInputHashesAvailableOnMain": false,
-    "note": "An open implementation PR adds exact source-member SHA-256 provenance and failure-safe asset publication; it is not yet merged into the current baseline."
+    "sourceInputHashesAvailableOnMain": true,
+    "note": "The bundled SPL inference path now hashes the source CT and reference labelmap, publishes outputs atomically with failure recovery, and writes millimetre spatial units to generated NIfTI masks. The 1024 preprocessing offset remains an unverified hypothesis."
   },
   "taskCatalog": [
     {
@@ -5435,5 +5435,29 @@
         "This upstream class list does not establish correct segmentation on any specific CT study."
       ]
     }
-  ]
+  ],
+  "externalInferenceUtility": {
+    "status": "implemented-cli-no-external-cohort-yet",
+    "scriptPath": "scripts/infer_external_ct_volume.py",
+    "documentationPath": "docs/SEGMENTOR_EXTERNAL_NIFTI_INFERENCE.md",
+    "model": "TotalSegmentator",
+    "version": "2.11.0",
+    "executionMode": "local-or-controlled-environment",
+    "defaultClasses": [
+      "liver",
+      "spleen",
+      "kidney_right",
+      "kidney_left"
+    ],
+    "arbitraryCtUploadSupported": false,
+    "externalCohortCasesProcessed": 0,
+    "independentEvaluationStatus": "not-run-on-external-cohort",
+    "educationalApprovalStatus": "not-approved",
+    "notes": [
+      "This utility processes a supplied local NIfTI and writes masks plus provenance without copying the CT into its output directory.",
+      "It does not alter the precomputed SPL preview assets and does not add a public upload endpoint.",
+      "Only the four default major-organ classes are currently implemented in this utility; wider class coverage remains a separate increment.",
+      "Input intensity semantics must be explicitly declared; this does not independently prove Hounsfield-unit calibration."
+    ]
+  }
 }
