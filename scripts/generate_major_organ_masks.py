@@ -242,7 +242,7 @@ def main() -> int:
                 save_binary_mask(pred_xyz, output / pattern.format(index=k))
             for y_index in range(source_ct.shape[1]):
                 save_coronal_mask(pred_xyz, output / coronal_pattern.format(index=y_index))
-            for x_index in range(source_ct.shape[0]):
+            for x_index in range(source_ct.shape[2]):
                 save_sagittal_mask(pred_xyz, output / sagittal_pattern.format(index=x_index))
 
             # Keep the actual 3D mask in the source volume's voxel grid as well
