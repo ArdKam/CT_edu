@@ -81,8 +81,24 @@ test('the three new preview viewers expose navigation, source credit and explici
   }
 });
 
+test('the homepage exposes direct bilingual links to the thorax and brain source-stack previews', function () {
+  const html = read('index.html');
+  assert.match(html, /class="source-stack-shortcuts"/);
+  assert.match(html, /not verified DICOM volumes/i);
+  for (const route of ['thorax-series.html','brain-series.html','brain-contrast-series.html']) {
+    assert.ok(html.includes('href="./preview/' + route + '"'), 'homepage is missing direct link to ' + route);
+  }
+});
+
 test('the Pages workflow stages preview routes and their shared source manifests without bundling image binaries', function () {
   const previewWorkflow = read('.github/workflows/preview-guided-cases.yml');
+  assert.match(previewWorkflow, /catalog_anchor = '<section class="modality-catalog"/);
+  assert.match(previewWorkflow, /stack_section = """/);
+  assert.match(previewWorkflow, /class="source-stack-shortcuts"/);
+  assert.match(previewWorkflow, /\.source-stack-grid/);
+  for (const route of ['thorax-series.html','brain-series.html','brain-contrast-series.html']) {
+    assert.ok(previewWorkflow.includes('href="./preview/' + route + '"'), 'live homepage injection is missing ' + route);
+  }
   assert.match(previewWorkflow, /cp src\/data\/wikimedia-thorax-series\.js src\/data\/wikimedia-brain-series\.js src\/data\/wikimedia-brain-contrast-series\.js "\$preview\/src\/data\/"/);
   assert.match(previewWorkflow, /cp preview\/thorax-series\.html preview\/brain-series\.html preview\/brain-contrast-series\.html "\$preview\/"/);
   for (const route of ['thorax-series.html','brain-series.html','brain-contrast-series.html']) {
