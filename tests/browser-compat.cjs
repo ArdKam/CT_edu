@@ -215,6 +215,16 @@ if (!engine) {
     ];
     for (const sourceStack of sourceStackPages) {
       const sourcePage = await context.newPage();
+      // The static test server serves repository-root paths. Mirror the dedicated Pages workflow's
+      // intended /preview/src/ staging so this smoke tests the viewer and remote source URLs.
+      await sourcePage.route('**/preview/src/**', async function (route) {
+        const requestedPath = new URL(route.request().url()).pathname;
+        const relativePath = requestedPath.split('/preview/src/')[1] || '';
+        const sourceRoot = path.resolve(__dirname, '..', 'src');
+        const localPath = path.resolve(sourceRoot, relativePath);
+        if (!localPath.startsWith(sourceRoot + path.sep)) return route.abort();
+        await route.fulfill({ path: localPath });
+      });
       const sourcePageErrors = [];
       sourcePage.on('pageerror', function (error) { sourcePageErrors.push(error.message); });
       const response = await sourcePage.goto(origin + sourceStack.route, { waitUntil: 'domcontentloaded' });
