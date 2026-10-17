@@ -7,9 +7,12 @@ must not be treated as clinically validated segmentations.
 from __future__ import annotations
 
 import argparse
+import atexit
+import hashlib
 import json
 import shutil
 import subprocess
+from datetime import datetime, timezone
 from importlib.metadata import version as installed_package_version
 import sys
 import tempfile
@@ -21,6 +24,7 @@ import numpy as np
 from PIL import Image
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
+from atomic_artifact_publish import publish_directory
 from build_demo_assets import has_type, read_nrrd
 
 ARCHIVE_GLOB = "abacktools-abdomen-2016-09-part*-of6.zip"
@@ -146,8 +150,11 @@ def dice_score(prediction_zyx: np.ndarray, reference_zyx: np.ndarray) -> float |
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--output", default="preview/assets/organ-predictions")
-    parser.add_argument("--intensity-offset", type=float, default=1024.0,
-                        help="Subtract this experimental stored-value offset before model inference.")
+    parser.add_argument(
+        "--intensity-offset", type=float, required=True,
+        help=("Required experimental stored-value offset to subtract before inference. "
+              "The source HU calibration is not independently confirmed; state the assumption explicitly.")
+    )
     parser.add_argument("--fast", action="store_true", default=True,
                         help="Use the lower-resolution TotalSegmentator model for CPU feasibility.")
     args = parser.parse_args()
@@ -155,6 +162,7 @@ def main() -> int:
     if not np.isfinite(args.intensity_offset) or not (-10000 <= args.intensity_offset <= 10000):
         raise SystemExit("--intensity-offset must be a finite value between -10000 and 10000.")
 
+    run_started_at = datetime.now(timezone.utc)
     print("Reading source SPL CT, reference labelmap, and anatomy metadata from the six ZIP parts.", flush=True)
     found = read_source_members()
     ct_header, source_ct = read_nrrd(found["i.nrrd"])
@@ -179,14 +187,15 @@ def main() -> int:
     if float(np.percentile(model_values, 0.1)) < -1300 or float(np.percentile(model_values, 99.9)) > 5000:
         raise SystemExit("Converted intensity distribution is outside the guarded experimental range.")
 
-    output = Path(args.output)
-    output.mkdir(parents=True, exist_ok=True)
-    for old in output.glob("*.png"):
-        old.unlink()
-    for old in output.glob("*.nii*"):
-        old.unlink()
-    for old in output.glob("manifest.json"):
-        old.unlink()
+    destination = Path(args.output)
+    destination.parent.mkdir(parents=True, exist_ok=True)
+    if destination.is_symlink() or (destination.exists() and not destination.is_dir()):
+        raise SystemExit(f"Refusing to replace non-directory or symlink output target: {destination}")
+    # Keep the existing asset directory intact until inference, conversion, and
+    # output-count checks succeed. The stage is a sibling so publication is a
+    # same-filesystem rename, with rollback handled by publish_directory().
+    output = Path(tempfile.mkdtemp(prefix=f".{destination.name}.staging-", dir=destination.parent))
+    atexit.register(shutil.rmtree, output, ignore_errors=True)
 
     with tempfile.TemporaryDirectory(prefix="ctedu-organ-seg-") as temp_dir:
         temp = Path(temp_dir)
@@ -309,6 +318,16 @@ def main() -> int:
         "schemaVersion": 1,
         "status": "experimental-unreviewed",
         "sourceDataset": "SPL Abdominal Atlas",
+        "sourceInputHashes": {
+            "algorithm": "SHA-256",
+            "ctNrrdSha256": hashlib.sha256(found["i.nrrd"]).hexdigest(),
+            "labelMapNrrdSha256": hashlib.sha256(found["seg.nrrd"]).hexdigest(),
+            "hashScope": "Exact NRRD member bytes extracted from the source ZIP archives.",
+        },
+        "inferenceTimestampsUtc": {
+            "startedAt": run_started_at.isoformat().replace("+00:00", "Z"),
+            "completedAt": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
+        },
         "sourceDimensionsXYZ": [256, 256, 113],
         "sourceArrayOrder": "zyx",
         "coordinateSystem": "RAS after conversion from NRRD LPS",
@@ -382,7 +401,12 @@ def main() -> int:
     expected_nifti = len(TARGETS) + 1
     if actual_nifti != expected_nifti:
         raise SystemExit(f"Expected {expected_nifti} NIfTI mask files, found {actual_nifti}.")
-    print(f"SEGMENTATION_OUTPUT_OK pngs={actual_pngs} nifti={actual_nifti} manifest={output / 'manifest.json'}", flush=True)
+    publish_directory(output, destination)
+    print(
+        f"SEGMENTATION_OUTPUT_OK pngs={actual_pngs} nifti={actual_nifti} "
+        f"manifest={destination / 'manifest.json'}",
+        flush=True,
+    )
     return 0
 
 
