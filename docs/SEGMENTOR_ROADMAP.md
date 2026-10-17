@@ -42,10 +42,10 @@ Future segmentation work should follow this order: validate/run a pretrained mod
 
 - Hosted GitHub Actions installed TotalSegmentator 2.11.0 and ran CPU inference on the SPL abdominal NRRD volume. No maintainer-local model installation or execution was required.
 - Initial target scope is liver, spleen, right kidney, and left kidney only. No vessel classes were requested.
-- Generated four independent binary NIfTI masks (liver.nii.gz, spleen.nii.gz, kidney_right.nii.gz, kidney_left.nii.gz), one combined integer label map (major-organ-labelmap.nii.gz), 452 axial PNG mask overlays, and a versioned manifest.
+- Generated four independent binary NIfTI masks (liver.nii.gz, spleen.nii.gz, kidney_right.nii.gz, kidney_left.nii.gz), one combined integer label map (major-organ-labelmap.nii.gz), 2,500 plane-specific PNG mask overlays (113 axial + 256 coronal + 256 sagittal slices per organ), and a versioned manifest.
 - The five NIfTI assets preserve the source 256 × 256 × 113 voxel grid, RAS affine and approximately 0.9375 × 0.9375 × 1.5 mm spacing. The manifest records source NRRD spatial metadata, model metadata, the intensity-offset assumption, and unreviewed status.
-- A bilingual preview at preview/organ-segmentation.html exposes independent per-organ toggles, slice navigation, overlay opacity, and downloads for the combined and per-organ 3D masks.
-- The Pages build now copies preview/ into the staged site and validates the preview route, manifest, expected mask counts, and NIfTI files. This only builds the artifact; the public deploy job remains guarded by CT_EDU_PUBLIC_RELEASE_APPROVED.
+- A bilingual preview at preview/organ-segmentation.html exposes axial/coronal/sagittal selection, linked voxel-coordinate readout and crosshairs, per-organ toggles, plane-specific slice navigation, overlay opacity, and downloads for the combined and per-organ 3D masks.
+- The Pages build now copies preview/ into the staged site and validates the preview route, manifest, 2,500 three-plane mask PNGs, and five NIfTI files. The inference job also checks sampled PNG masks pixel-for-pixel against the 3D mask in each plane and verifies the source affine. This only builds the artifact; the public deploy job remains guarded by CT_EDU_PUBLIC_RELEASE_APPROVED.
 
 ### Initial same-volume comparison
 
