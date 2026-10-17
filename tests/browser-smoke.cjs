@@ -544,6 +544,19 @@ const { chromium } = require('playwright');
       'the active case Study viewer must load automatically without an extra click');
     assert.equal(await guidedPage.locator('#radiopaedia-frame-wrap').isVisible(), true,
       'the viewer container must be visible on initial case selection');
+    const originalCasePageUrl = await guidedPage.locator('#source-open-link').getAttribute('href');
+    await guidedPage.locator('#source-show-case-page').click();
+    assert.equal(await guidedPage.locator('#radiopaedia-frame').getAttribute('src'), originalCasePageUrl,
+      'learners should be able to switch the embedded panel to the original case page');
+    assert.equal(await guidedPage.locator('#radiopaedia-exit-mask').isVisible(), false,
+      'the source-viewer exit mask must not obscure the original case description');
+    await guidedPage.frameLocator('#radiopaedia-frame').locator('#mock-source-series').waitFor({ state: 'visible' });
+    await guidedPage.locator('#source-show-study-page').click();
+    assert.equal(await guidedPage.locator('#radiopaedia-frame').getAttribute('src'), initialStudyUrl,
+      'learners should be able to switch back to the recorded CT study page');
+    assert.equal(await guidedPage.locator('#radiopaedia-exit-mask').isVisible(), true,
+      'the viewer exit mask should return only when the study page is shown');
+    await guidedPage.locator('#radiopaedia-exit-mask').waitFor({ state: 'visible' });
     assert.equal(await guidedPage.locator('#radiopaedia-exit-mask').count(), 1,
       'a small overlay should cover the top-left viewer exit control');
     await guidedPage.frameLocator('#radiopaedia-frame').locator('#mock-source-series').waitFor({ state: 'visible' });
