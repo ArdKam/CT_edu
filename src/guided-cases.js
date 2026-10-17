@@ -7,7 +7,12 @@
   const STORAGE_KEY = 'ctedu-guided-case-drafts-v1';
   const MAX_DRAFTS = 20;
   const MAX_FIELD = 4000;
-  const state = { activeId: data.list()[0] ? data.list()[0].id : null, drafts: readDrafts() };
+  const initialCase = data.list()[0] || null;
+  const state = {
+    activeId: initialCase ? initialCase.id : null,
+    drafts: readDrafts(),
+    sourceFrameMode: initialCase && initialCase.source && initialCase.source.studyPageUrl ? 'study' : 'none'
+  };
   const el = function (id) { return document.getElementById(id); };
   const lang = function () { return document.documentElement.lang === 'en' ? 'en' : 'fa'; };
   const text = function (value) { return value && value[lang()] ? value[lang()] : ''; };
@@ -216,27 +221,49 @@
   }
 
   function getEmbeddableSourceUrl(item) {
-    // Only load an explicitly recorded Study route. This is still a page served
-    // by Radiopaedia, not a native CT Edu viewer or proof that embedding is allowed.
+    // Study URLs are source-hosted pages, not a native CT Edu viewer.
     return item.source && item.source.studyPageUrl ? item.source.studyPageUrl : '';
+  }
+
+  function getEmbeddedSourceUrl(item) {
+    if (state.sourceFrameMode === 'case') return item.source && item.source.url ? item.source.url : '';
+    if (state.sourceFrameMode === 'none') return '';
+    return getEmbeddableSourceUrl(item);
   }
 
   function renderSource(item) {
     const frame = el('radiopaedia-frame');
     const frameWrap = el('radiopaedia-frame-wrap');
-    const viewerUrl = getEmbeddableSourceUrl(item);
+    const exitMask = el('radiopaedia-exit-mask');
+    const viewerUrl = getEmbeddedSourceUrl(item);
     const sameSourceAlreadyLoaded = Boolean(viewerUrl) && frame.getAttribute('src') === viewerUrl;
 
     if (viewerUrl) {
-      frame.title = lang() === 'fa'
-        ? 'صفحهٔ مطالعهٔ CT در Radiopaedia؛ محتوای نمایش‌داده‌شده در اختیار سایت منبع است'
-        : 'Radiopaedia CT study page; displayed content is controlled by the source site';
+      frame.title = state.sourceFrameMode === 'case'
+        ? (lang() === 'fa'
+            ? 'صفحهٔ اصلی کیس در Radiopaedia؛ متن و نمایش را سایت منبع کنترل می‌کند'
+            : 'Original Radiopaedia case page; text and rendering are controlled by the source site')
+        : (lang() === 'fa'
+            ? 'صفحهٔ مطالعهٔ CT در Radiopaedia؛ محتوای نمایش‌داده‌شده در اختیار سایت منبع است'
+            : 'Radiopaedia CT study page; displayed content is controlled by the source site');
       if (!sameSourceAlreadyLoaded) frame.src = viewerUrl;
       frameWrap.hidden = false;
     } else {
       frameWrap.hidden = true;
       if (frame.getAttribute('src')) frame.removeAttribute('src');
     }
+    // The overlay protects the source viewer's exit control. Do not cover
+    // source-case text when the learner switches to the original case page.
+    if (exitMask) exitMask.hidden = state.sourceFrameMode !== 'study' || !viewerUrl;
+
+    const casePageButton = el('source-show-case-page');
+    casePageButton.hidden = state.sourceFrameMode === 'case';
+    casePageButton.setAttribute('aria-pressed', String(state.sourceFrameMode === 'case'));
+    const studyPageButton = el('source-show-study-page');
+    studyPageButton.hidden = !item.source.studyPageUrl || state.sourceFrameMode === 'study';
+    studyPageButton.setAttribute('aria-pressed', String(state.sourceFrameMode === 'study'));
+    const hideFrameButton = el('source-hide-frame');
+    hideFrameButton.hidden = !viewerUrl;
 
     const sourceDetailsRevealed = Boolean(getDraft(item.id).submitted);
     el('source-case-title').textContent = sourceDetailsRevealed
@@ -261,13 +288,17 @@
       ? 'بازکردن صفحهٔ مطالعه در Radiopaedia ↗'
       : 'Open Radiopaedia study page ↗';
 
-    const sourceRouteStatus = viewerUrl
+    const sourceRouteStatus = state.sourceFrameMode === 'case'
       ? (lang() === 'fa'
-          ? 'صفحهٔ مطالعهٔ منبع به‌صورت خودکار در قاب درخواست شده است. محتوای نمایش و پیمایش تصاویر را Radiopaedia کنترل می‌کند؛ نمایش داخلی تضمین‌شده نیست. اگر قاب خالی بود یا فقط صفحهٔ کیس دیده شد، لینک صفحهٔ مطالعه را در تب جدید باز کن.'
-          : 'The source study page was requested in the frame. Radiopaedia controls the displayed page and image navigation, so embedded image viewing is not guaranteed. If the frame is blank or shows only the case page, open the study-page link in a new tab.')
-      : (lang() === 'fa'
-          ? 'برای این کیس هنوز لینک مستقیم Study ثبت نشده است؛ برای دیدن منبع از لینک صفحهٔ کیس استفاده کن.'
-          : 'No direct Study route is recorded for this case yet. Use the source case link to open it externally.');
+          ? 'صفحهٔ اصلی کیس برای نمایش توضیحات منبع درخواست شده است. اگر قاب خالی ماند یا دسترسی مسدود شد، لینک «بازکردن صفحهٔ کیس» را در تب جدید باز کن.'
+          : 'The original case page was requested to show the source description. If the frame is blank or access is blocked, open the source case link in a new tab.')
+      : viewerUrl
+        ? (lang() === 'fa'
+            ? 'صفحهٔ مطالعهٔ منبع در قاب درخواست شده است. نمایش داخلی و بارگذاری تصاویر را Radiopaedia کنترل می‌کند؛ اگر قاب خالی بود، لینک صفحهٔ مطالعه را در تب جدید باز کن.'
+            : 'The source study page was requested in the frame. Radiopaedia controls embedded display and image loading; if the frame is blank, open the study-page link in a new tab.')
+        : (lang() === 'fa'
+            ? 'برای این کیس لینک مستقیم Study ثبت نشده است؛ می‌توانی صفحهٔ اصلی کیس را در همین قاب یا در تب جدید باز کنی.'
+            : 'No direct Study route is recorded for this case; you can open the original case page here or in a new tab.');
     const imageVerificationNotice = item.verification && item.verification.status === 'verified'
       ? (lang() === 'fa'
           ? 'بارگذاری زندهٔ منبع در بررسی ثبت‌شده تأیید شده است؛ این به‌معنی تأیید پزشکی یا مجوز بازنشر تصاویر نیست.'
@@ -325,6 +356,8 @@
   function selectCase(id) {
     if (!data.getById(id)) return;
     state.activeId = id;
+    const selected = data.getById(id);
+    state.sourceFrameMode = selected && selected.source && selected.source.studyPageUrl ? 'study' : 'none';
     renderCards();
     renderActive();
     el('guided-case-title').focus({ preventScroll: true });
@@ -411,6 +444,24 @@
   });
   el('guided-case-form').addEventListener('submit', submitDraft);
   el('clear-case-draft').addEventListener('click', clearDraft);
+  el('source-show-case-page').addEventListener('click', function () {
+    const item = getActive();
+    if (!item || !item.source || !item.source.url) return;
+    state.sourceFrameMode = 'case';
+    renderActive();
+    el('radiopaedia-frame-wrap').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
+  el('source-show-study-page').addEventListener('click', function () {
+    const item = getActive();
+    if (!item || !item.source || !item.source.studyPageUrl) return;
+    state.sourceFrameMode = 'study';
+    renderActive();
+    el('radiopaedia-frame-wrap').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
+  el('source-hide-frame').addEventListener('click', function () {
+    state.sourceFrameMode = 'none';
+    renderActive();
+  });
   el('language-toggle').addEventListener('click', function () { setLanguage(lang() === 'fa' ? 'en' : 'fa'); });
   if (typeof MutationObserver !== 'undefined') {
     new MutationObserver(function () { renderCards(); renderActive(); }).observe(document.documentElement, { attributes: true, attributeFilter: ['lang'] });
