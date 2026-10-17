@@ -75,6 +75,17 @@ class ExternalNiftiInferenceTests(unittest.TestCase):
         with self.assertRaisesRegex(inference.ExternalInferenceError, "non-orthogonal"):
             inference.load_source_volume(shear_path)
 
+        disagree_path = self.root / "qform-sform-disagree.nii.gz"
+        disagree = nib.Nifti1Image(self.ct, self.affine)
+        disagree.set_qform(self.affine, code=1)
+        different_sform = self.affine.copy()
+        different_sform[0, 3] += 5.0
+        disagree.set_sform(different_sform, code=1)
+        disagree.header.set_xyzt_units("mm")
+        nib.save(disagree, str(disagree_path))
+        with self.assertRaisesRegex(inference.ExternalInferenceError, "qform and sform disagree"):
+            inference.load_source_volume(disagree_path)
+
     def test_intensity_preprocessing_requires_explicit_semantics(self) -> None:
         raw = np.array([-1024.0, 0.0, 1024.0], dtype=np.float32)
         np.testing.assert_array_equal(
