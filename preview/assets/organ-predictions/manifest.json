@@ -75,7 +75,36 @@
     256,
     256
   ],
-  "maskFormat": "8-bit grayscale PNG; 0=background, 255=inside predicted organ; rows are flipped to match the CT preview image.",
+  "planeDefinitions": {
+    "axial": {
+      "sliceCount": 113,
+      "imageSize": [
+        256,
+        256
+      ],
+      "indexAxis": "z",
+      "displayOrientation": "rows flipped so anterior is at the top"
+    },
+    "coronal": {
+      "sliceCount": 256,
+      "imageSize": [
+        256,
+        113
+      ],
+      "indexAxis": "y",
+      "displayOrientation": "columns x, rows z, superior at the top"
+    },
+    "sagittal": {
+      "sliceCount": 256,
+      "imageSize": [
+        256,
+        113
+      ],
+      "indexAxis": "x",
+      "displayOrientation": "columns y flipped, rows z, superior at the top"
+    }
+  },
+  "maskFormat": "8-bit grayscale PNG; 0=background, 255=inside predicted organ. Each plane follows the matching CT Edu reformatted slice orientation.",
   "labelMap": {
     "file": "major-organ-labelmap.nii.gz",
     "format": "NIfTI-1, uint8",
@@ -127,6 +156,11 @@
       "nameFa": "کبد",
       "color": "#d96d52",
       "maskPattern": "liver-{index:03d}.png",
+      "maskPatterns": {
+        "axial": "liver-{index:03d}.png",
+        "coronal": "liver-coronal-{index:03d}.png",
+        "sagittal": "liver-sagittal-{index:03d}.png"
+      },
       "maskVolumeFile": "liver.nii.gz",
       "volumeLabelId": 1,
       "voxels": 174982,
@@ -195,6 +229,11 @@
       "nameFa": "طحال",
       "color": "#bd83bf",
       "maskPattern": "spleen-{index:03d}.png",
+      "maskPatterns": {
+        "axial": "spleen-{index:03d}.png",
+        "coronal": "spleen-coronal-{index:03d}.png",
+        "sagittal": "spleen-sagittal-{index:03d}.png"
+      },
       "maskVolumeFile": "spleen.nii.gz",
       "volumeLabelId": 2,
       "voxels": 9894,
@@ -225,6 +264,11 @@
       "nameFa": "کلیهٔ راست",
       "color": "#4c9f91",
       "maskPattern": "kidney_right-{index:03d}.png",
+      "maskPatterns": {
+        "axial": "kidney_right-{index:03d}.png",
+        "coronal": "kidney_right-coronal-{index:03d}.png",
+        "sagittal": "kidney_right-sagittal-{index:03d}.png"
+      },
       "maskVolumeFile": "kidney_right.nii.gz",
       "volumeLabelId": 3,
       "voxels": 32512,
@@ -279,6 +323,11 @@
       "nameFa": "کلیهٔ چپ",
       "color": "#7398d6",
       "maskPattern": "kidney_left-{index:03d}.png",
+      "maskPatterns": {
+        "axial": "kidney_left-{index:03d}.png",
+        "coronal": "kidney_left-coronal-{index:03d}.png",
+        "sagittal": "kidney_left-sagittal-{index:03d}.png"
+      },
       "maskVolumeFile": "kidney_left.nii.gz",
       "volumeLabelId": 4,
       "voxels": 35768,
