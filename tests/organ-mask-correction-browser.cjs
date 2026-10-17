@@ -45,10 +45,7 @@ function westernDigits(text) {
         for (let y = 2; y < ny - 2; y += 1) {
           for (let x = 2; x < nx - 2; x += 1) {
             const offset = x + nx * (y + ny * z);
-            const neighborhood = [
-              offset, offset + 1, offset - 1, offset + nx, offset - nx,
-              offset + nx + 1, offset + nx - 1, offset - nx + 1, offset - nx - 1
-            ];
+            const neighborhood = [offset, offset + 1, offset - 1, offset + nx, offset - nx];
             if (!neighborhood.every((index) => liver[index] === 1)) continue;
             const otherIds = Object.keys(parsed).filter((id) => id !== 'liver');
             if (neighborhood.some((index) => otherIds.some((id) => parsed[id].data[index] !== 0))) continue;
