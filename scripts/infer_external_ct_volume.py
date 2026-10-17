@@ -30,16 +30,96 @@ REQUIRED_TOTAL_SEGMENTATOR_VERSION = "2.11.0"
 MAX_OFFSET_ABS = 10000.0
 CASE_ID_PATTERN = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$")
 DATASET_ID_PATTERN = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$")
+REGISTRY_PATH = Path(__file__).resolve().parents[1] / "docs" / "SEGMENTOR_COVERAGE_REGISTRY.json"
 TARGETS = [
-    {"id": "liver", "modelClass": "liver", "labelId": 1, "name": "Liver"},
-    {"id": "spleen", "modelClass": "spleen", "labelId": 2, "name": "Spleen"},
-    {"id": "kidney_right", "modelClass": "kidney_right", "labelId": 3, "name": "Right kidney"},
-    {"id": "kidney_left", "modelClass": "kidney_left", "labelId": 4, "name": "Left kidney"},
+    {"id": "anatomy.liver", "modelClass": "liver", "labelId": 1, "name": "Liver"},
+    {"id": "anatomy.spleen", "modelClass": "spleen", "labelId": 2, "name": "Spleen"},
+    {"id": "anatomy.kidney_right", "modelClass": "kidney_right", "labelId": 3, "name": "Right kidney"},
+    {"id": "anatomy.kidney_left", "modelClass": "kidney_left", "labelId": 4, "name": "Left kidney"},
 ]
+
 
 
 class ExternalInferenceError(ValueError):
     """Raised when input or output cannot support a geometry-faithful run."""
+
+
+def available_total_class_targets() -> list[dict[str, Any]]:
+    """Load only the pinned TotalSegmentator total-task classes from the versioned registry."""
+    try:
+        registry = json.loads(REGISTRY_PATH.read_text(encoding="utf-8"))
+    except Exception as exc:
+        raise ExternalInferenceError(f"Could not read the versioned class-coverage registry: {exc}") from exc
+    if registry.get("schemaVersion") != 1 or registry.get("upstreamSources", {}).get("pinnedVersion") != REQUIRED_TOTAL_SEGMENTATOR_VERSION:
+        raise ExternalInferenceError("Coverage registry schema/version does not match the pinned TotalSegmentator package.")
+    structures = registry.get("structures")
+    if not isinstance(structures, list) or not structures:
+        raise ExternalInferenceError("Coverage registry has no anatomy structures.")
+    result: list[dict[str, Any]] = []
+    seen_ids: set[str] = set()
+    seen_classes: set[str] = set()
+    for entry in structures:
+        availability = entry.get("upstreamAvailability", {})
+        if availability.get("model") != "TotalSegmentator" or availability.get("task") != "total":
+            continue
+        if availability.get("version") != REQUIRED_TOTAL_SEGMENTATOR_VERSION:
+            continue
+        stable_id = entry.get("id")
+        model_class = entry.get("upstreamModelClass")
+        display_name = entry.get("displayName")
+        if (
+            not isinstance(stable_id, str) or not stable_id.startswith("anatomy.") or
+            not isinstance(model_class, str) or not re.fullmatch(r"[a-z0-9_]+", model_class) or
+            not isinstance(display_name, str) or not display_name.strip()
+        ):
+            raise ExternalInferenceError("Coverage registry contains a malformed TotalSegmentator class entry.")
+        if stable_id in seen_ids or model_class in seen_classes:
+            raise ExternalInferenceError("Coverage registry contains duplicate stable IDs or upstream model classes.")
+        seen_ids.add(stable_id)
+        seen_classes.add(model_class)
+        result.append({
+            "id": stable_id,
+            "modelClass": model_class,
+            "name": display_name.strip(),
+            "anatomicalGroup": entry.get("anatomicalGroup"),
+            "laterality": entry.get("laterality"),
+        })
+    if not result:
+        raise ExternalInferenceError("Coverage registry has no classes for the pinned total task.")
+    return result
+
+
+def resolve_target_classes(class_names: list[str] | None = None) -> list[dict[str, Any]]:
+    """Resolve explicit upstream class names/stable IDs, or 'all', into unique output label IDs."""
+    if class_names is None:
+        requested = [item["modelClass"] for item in TARGETS]
+    else:
+        requested = list(class_names)
+    if not requested:
+        raise ExternalInferenceError("Select at least one class.")
+    available = available_total_class_targets()
+    by_model = {item["modelClass"]: item for item in available}
+    by_id = {item["id"]: item for item in available}
+    if len(requested) == 1 and requested[0].casefold() == "all":
+        selected = available
+    else:
+        if any(str(name).casefold() == "all" for name in requested):
+            raise ExternalInferenceError("'all' must be used alone, not alongside individual classes.")
+        selected = []
+        seen: set[str] = set()
+        for requested_name in requested:
+            candidate = by_model.get(requested_name) or by_id.get(requested_name)
+            if candidate is None:
+                raise ExternalInferenceError(
+                    f"Unsupported TotalSegmentator {REQUIRED_TOTAL_SEGMENTATOR_VERSION} total-task class: {requested_name!r}."
+                )
+            if candidate["id"] in seen:
+                raise ExternalInferenceError(f"Class {requested_name!r} was requested more than once.")
+            seen.add(candidate["id"])
+            selected.append(candidate)
+    if len(selected) > 255:
+        raise ExternalInferenceError("A uint8 combined label map can represent at most 255 foreground classes.")
+    return [dict(item, labelId=index) for index, item in enumerate(selected, start=1)]
 
 
 def sha256_file(path: Path) -> str:
