@@ -44,6 +44,22 @@ const { chromium } = require('playwright');
     }
 
     const manifest = await manifestResponse.json();
+    if (!manifest.planeDefinitions || !Array.isArray(manifest.organs) ||
+        !manifest.organs.every(function (organ) { return organ.maskPatterns; })) {
+      // During the two-stage CI workflow the page can be tested before the
+      // hosted model job has committed the new three-plane asset set. In that
+      // state it must fail closed, not misrepresent the older axial-only data.
+      await page.waitForFunction(function () {
+        return document.getElementById('organ-canvas-state').hidden === false &&
+          /No usable output was generated|خروجی قابل‌استفاده‌ای تولید نشده/.test(
+            document.getElementById('organ-status').textContent
+          );
+      }, null, { timeout: 10000 });
+      assert.equal(await page.locator('#organ-controls-list .organ-control-row').count(), 0);
+      assert.deepEqual(pageErrors, [], 'legacy axial-only manifest must fail closed without a runtime error');
+      console.log('ORGAN_PREVIEW_BROWSER_OK: stale axial-only manifest rejected until orthogonal masks exist');
+      return;
+    }
     assert.equal(manifest.status, 'experimental-unreviewed');
     assert.deepEqual(manifest.sourceDimensionsXYZ, [256, 256, 113]);
     assert.equal(manifest.organs.length, 4);
