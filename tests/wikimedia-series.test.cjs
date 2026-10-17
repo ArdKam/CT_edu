@@ -35,13 +35,13 @@ test('Wikimedia thorax manifest lists only known files and all three independent
 test('Wikimedia brain manifests use correct plane coverage and keep contrast series separate', function () {
   assert.deepEqual(brain.planeCounts, { axial: 41, coronal: 58, sagittal: 40 });
   assert.equal(brain.totalImageCount, 139);
-  assert.match(brain.sourceUrl, /normal_brain_\\(case_1\\)/);
+  assert.ok(brain.sourceUrl.includes('(case_1)'));
   assert.equal(brain.geometryVerified, false);
   assert.equal(brain.synchronizedVolume, false);
   assert.equal(brainContrast.planeCounts.axial, 34);
   assert.equal(brainContrast.totalImageCount, 34);
   assert.equal(brainContrast.getPlaneInfo('coronal'), null);
-  assert.match(brainContrast.sourceUrl, /normal_brain_\\(case_2\\)/);
+  assert.ok(brainContrast.sourceUrl.includes('(case_2)'));
   assert.equal(brainContrast.geometryVerified, false);
   for (const manifest of [brain, brainContrast]) {
     assert.equal(manifest.sourceAuthor, 'Mikael Häggström, M.D.');
@@ -63,7 +63,7 @@ test('the three new preview viewers expose navigation, source credit and explici
   ];
   for (const [file, manifest, count, license] of routes) {
     const html = read(file);
-    assert.match(html, new RegExp(manifest.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')));
+    assert.ok(html.includes(manifest), 'viewer missing ' + manifest);
     assert.match(html, /src="\.\.\/src\/abdomen-series\.js"/);
     assert.match(html, /id="series-slider"/);
     assert.match(html, /id="series-retry"/);
