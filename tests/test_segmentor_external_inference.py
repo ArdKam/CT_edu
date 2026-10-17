@@ -99,6 +99,10 @@ class ExternalNiftiInferenceTests(unittest.TestCase):
         self.assertEqual([item["modelClass"] for item in selected], ["aorta", "liver"])
         self.assertEqual([item["labelId"] for item in selected], [1, 2])
         self.assertEqual(selected[0]["anatomicalGroup"], "vessel")
+        vertebra = inference.resolve_target_classes(["vertebrae_L5"])
+        self.assertEqual(vertebra[0]["id"], "anatomy.vertebrae_l5")
+        self.assertEqual(vertebra[0]["modelClass"], "vertebrae_L5",
+            "preserve the upstream class spelling rather than lowercasing its model filename")
 
         with self.assertRaisesRegex(inference.ExternalInferenceError, "more than once"):
             inference.resolve_target_classes(["liver", "anatomy.liver"])
