@@ -652,7 +652,7 @@ const { chromium } = require('playwright');
       'the original discussion should be rendered as four readable paragraphs');
     assert.match(await guidedPage.locator('#source-case-discussion-paragraphs').textContent(), /normal calibre, decompressed ileum/);
     assert.match(await guidedPage.locator('#source-case-discussion-paragraphs').textContent(), /surgical abdomen/);
-    assert.match(await guidedPage.locator('#source-case-discussion-attribution').textContent(), /Michael P\\. Hartung.*rID-83835/);
+    assert.match(await guidedPage.locator('#source-case-discussion-attribution').textContent(), /Michael P\. Hartung.*rID-83835/);
     assert.equal(await guidedPage.locator('#source-case-operative-note-section').isVisible(), true,
       'the separately labelled operative-note excerpt should be visible with the discussion');
     assert.match(await guidedPage.locator('#source-case-operative-note').textContent(), /sigmoid colon epiploica and pelvic sidewall/);
