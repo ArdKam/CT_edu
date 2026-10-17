@@ -125,12 +125,12 @@ jobs:
           if catalog_anchor not in html:
               raise SystemExit("Could not find the stable-homepage modality catalog insertion point")
           if 'class="source-stack-shortcuts"' not in html:
-              html = html.replace(catalog_anchor, stack_section + "\\n      " + catalog_anchor, 1)
+              html = html.replace(catalog_anchor, stack_section + "\n      " + catalog_anchor, 1)
           homepage.write_text(html)
 
           css = Path("_site/src/styles.css")
           styles = css.read_text()
-          styles += '\\n.case-preview-link{color:var(--teal);font-weight:650;font-size:11px;text-decoration:underline;text-underline-offset:3px;white-space:nowrap}.case-preview-link:focus-visible{outline:3px solid #56a9a2;outline-offset:3px;border-radius:4px}@media(max-width:640px){.case-preview-link{font-size:10px}.topbar-actions{gap:8px}}\\n'
+          styles += '\n.case-preview-link{color:var(--teal);font-weight:650;font-size:11px;text-decoration:underline;text-underline-offset:3px;white-space:nowrap}.case-preview-link:focus-visible{outline:3px solid #56a9a2;outline-offset:3px;border-radius:4px}@media(max-width:640px){.case-preview-link{font-size:10px}.topbar-actions{gap:8px}}\n'
           styles += """
           /* Featured links to the externally hosted thorax/brain image stacks. */
           .source-stack-shortcuts{margin:0 0 18px;padding:17px 20px 15px;border:1px solid #dce7e3;border-radius:var(--radius);background:linear-gradient(125deg,rgba(255,255,255,.9),rgba(244,249,247,.88));box-shadow:0 7px 24px rgba(25,42,55,.025)}
