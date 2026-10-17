@@ -35,13 +35,13 @@ test('Wikimedia thorax manifest lists only known files and all three independent
 test('Wikimedia brain manifests use correct plane coverage and keep contrast series separate', function () {
   assert.deepEqual(brain.planeCounts, { axial: 41, coronal: 58, sagittal: 40 });
   assert.equal(brain.totalImageCount, 139);
-  assert.match(brain.sourceUrl, /normal_brain_%28case_1%29/);
+  assert.match(brain.sourceUrl, /normal_brain_\\(case_1\\)/);
   assert.equal(brain.geometryVerified, false);
   assert.equal(brain.synchronizedVolume, false);
   assert.equal(brainContrast.planeCounts.axial, 34);
   assert.equal(brainContrast.totalImageCount, 34);
   assert.equal(brainContrast.getPlaneInfo('coronal'), null);
-  assert.match(brainContrast.sourceUrl, /normal_brain_%28case_2%29/);
+  assert.match(brainContrast.sourceUrl, /normal_brain_\\(case_2\\)/);
   assert.equal(brainContrast.geometryVerified, false);
   for (const manifest of [brain, brainContrast]) {
     assert.equal(manifest.sourceAuthor, 'Mikael Häggström, M.D.');
