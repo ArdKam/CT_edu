@@ -226,11 +226,14 @@
   function normaliseStoredEdits(entries, organ) {
     if (!Array.isArray(entries)) throw new Error('Stored draft edits are malformed for ' + organ.id + '.');
     var overrides = new Map();
+    var seen = new Set();
     entries.forEach(function (entry) {
       if (!Array.isArray(entry) || entry.length !== 2) throw new Error('Stored draft entry has an invalid shape.');
       var index = Number(entry[0]), value = Number(entry[1]);
       if (!Number.isSafeInteger(index) || index < 0 || index >= organ.data.length ||
           (value !== 0 && value !== 1)) throw new Error('Stored draft contains an invalid voxel index or label value.');
+      if (seen.has(index)) throw new Error('Stored draft contains a duplicate voxel index.');
+      seen.add(index);
       if (organ.base[index] !== value) overrides.set(index, value);
       organ.data[index] = value;
     });
