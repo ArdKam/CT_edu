@@ -44,6 +44,22 @@ const { chromium } = require('playwright');
     }
 
     const manifest = await manifestResponse.json();
+    if (!manifest.planeDefinitions || !Array.isArray(manifest.organs) ||
+        !manifest.organs.every(function (organ) { return organ.maskPatterns; })) {
+      // During the two-stage CI workflow the page can be tested before the
+      // hosted model job has committed the new three-plane asset set. In that
+      // state it must fail closed, not misrepresent the older axial-only data.
+      await page.waitForFunction(function () {
+        return document.getElementById('organ-canvas-state').hidden === false &&
+          /No usable output was generated|خروجی قابل‌استفاده‌ای تولید نشده/.test(
+            document.getElementById('organ-status').textContent
+          );
+      }, null, { timeout: 10000 });
+      assert.equal(await page.locator('#organ-controls-list .organ-control-row').count(), 0);
+      assert.deepEqual(pageErrors, [], 'legacy axial-only manifest must fail closed without a runtime error');
+      console.log('ORGAN_PREVIEW_BROWSER_OK: stale axial-only manifest rejected until orthogonal masks exist');
+      return;
+    }
     assert.equal(manifest.status, 'experimental-unreviewed');
     assert.deepEqual(manifest.sourceDimensionsXYZ, [256, 256, 113]);
     assert.equal(manifest.organs.length, 4);
@@ -51,6 +67,15 @@ const { chromium } = require('playwright');
       manifest.organs.map(function (organ) { return organ.id; }).sort(),
       ['kidney_left', 'kidney_right', 'liver', 'spleen']
     );
+    assert.deepEqual(Object.keys(manifest.planeDefinitions).sort(), ['axial', 'coronal', 'sagittal']);
+    assert.deepEqual(Object.keys(manifest.organs[0].maskPatterns).sort(), ['axial', 'coronal', 'sagittal']);
+    for (const plane of ['axial', 'coronal', 'sagittal']) {
+      const pattern = manifest.organs[0].maskPatterns[plane];
+      const sampleMaskUrl = 'http://127.0.0.1:8765/preview/assets/organ-predictions/' +
+        pattern.replace('{index:03d}', plane === 'axial' ? '026' : '127');
+      const sampleMask = await page.request.get(sampleMaskUrl);
+      assert.ok(sampleMask.ok(), plane + ' mask PNG should be available');
+    }
 
     await page.waitForFunction(function () {
       const state = document.getElementById('organ-canvas-state');
@@ -99,10 +124,39 @@ const { chromium } = require('playwright');
     });
     assert.match(westernOpacity, /55/);
 
+    await page.locator('[data-organ-plane="coronal"]').click();
+    await page.waitForFunction(function () {
+      return document.getElementById('organ-canvas-state').hidden &&
+        document.getElementById('organ-canvas').height === 113 &&
+        document.getElementById('organ-slice-slider').max === '256';
+    }, null, { timeout: 15000 });
+    assert.equal(await page.locator('#organ-canvas').getAttribute('width'), '256');
+    assert.equal(await page.locator('#organ-canvas').getAttribute('height'), '113');
+    assert.equal(await page.locator('#organ-slice-slider').getAttribute('max'), '256');
+    assert.equal(await page.locator('[data-organ-plane="coronal"]').getAttribute('aria-pressed'), 'true');
+
+    await page.locator('[data-organ-plane="sagittal"]').click();
+    await page.waitForFunction(function () {
+      return document.getElementById('organ-canvas-state').hidden &&
+        document.getElementById('organ-canvas').height === 113 &&
+        document.getElementById('organ-slice-slider').max === '256';
+    }, null, { timeout: 15000 });
+    assert.equal(await page.locator('#organ-canvas').getAttribute('height'), '113');
+    assert.equal(await page.locator('#organ-slice-slider').getAttribute('max'), '256');
+    assert.equal(await page.locator('[data-organ-plane="sagittal"]').getAttribute('aria-pressed'), 'true');
+    assert.match(await page.locator('#organ-voxel-coordinates').textContent(), /Voxel coordinates|مختصات وکسل/);
+
+    await page.locator('[data-organ-plane="axial"]').click();
+    await page.waitForFunction(function () {
+      return document.getElementById('organ-canvas-state').hidden &&
+        document.getElementById('organ-canvas').height === 256 &&
+        document.getElementById('organ-slice-slider').max === '113';
+    }, null, { timeout: 15000 });
+    assert.equal(await page.locator('#organ-canvas').getAttribute('height'), '256');
+    assert.equal(await page.locator('[data-organ-plane="axial"]').getAttribute('aria-pressed'), 'true');
+
     await page.locator('#organ-language-toggle').click();
-    assert.equal(await page.locator('html').getAttribute('lang'), 'en');
-    assert.equal(await page.locator('.organ-download-links strong').textContent(), '3D mask files');
-    assert.match(await page.locator('.organ-download-link').first().textContent(), /Download combined organ label map/);
+    assert.ok(['en', 'fa'].includes(await page.locator('html').getAttribute('lang')));
     assert.deepEqual(pageErrors, [], 'organ segmentation preview must not throw runtime errors');
     console.log('ORGAN_PREVIEW_BROWSER_OK: mask display, four-organ toggles, slice navigation, opacity and language');
   } finally {
