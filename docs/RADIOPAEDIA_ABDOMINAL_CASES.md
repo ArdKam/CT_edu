@@ -125,3 +125,12 @@ Before report submission, the UI does not display the source diagnosis, source t
 Radiopaedia remains the image host and source of record. CT Edu does not download, mirror, cache or bundle images; it stores links, identifiers discovered in case metadata, and CT Edu-authored teaching prompts. Source attribution is retained. Do not copy source text or images into the repository or change a record to `verified` without confirming the actual image stack and applicable item terms. The existence of an accessible URL is not a licence grant. Review current Radiopaedia terms and exact item/third-party rights before public release or any image reuse.
 
 Every case remains an educational candidate, not a reviewed clinical reference interpretation. Independent radiologist/anatomy-educator review of the actual CT series, source-rights review, accessibility and physical-device testing, and legal/privacy review remain release gates. The deployment approval latch must remain unchanged.
+
+
+## Public source-page viewing path — 2026-10-17
+
+The public-page route was tested using indexed Radiopaedia case pages. Search results can expose the original presentation, CT findings and discussion for some existing records, but result completeness is inconsistent and is not a supported bulk-import interface. The public API documentation reviewed for this project documents uploads and the authenticated user's case list, not a read endpoint for arbitrary public case descriptions.
+
+Radiopaedia's public Cases guidance states that the complete text-file download of original case files is available for a user's own cases; its offline presentation download for other public cases is a separate supporter feature. Radiopaedia's API page also describes an anti-bot challenge introduced in response to unsanctioned scraping. CT Edu therefore does not implement a crawler or attempt to bypass access controls.
+
+The guided-case workspace now provides a user-initiated option to show the original Radiopaedia case page inside the external-source frame, switch back to a recorded Study page, or close the embedded frame. The direct source link remains the fallback when framing is blocked. This is an external-content viewing aid, not a local import of the original discussion, and should not be described as guaranteeing that an embedded page loads. Full text, images, captions and discussions remain hosted by Radiopaedia; no bulk copy is created. Clinical review and item-specific rights remain separate release requirements.
