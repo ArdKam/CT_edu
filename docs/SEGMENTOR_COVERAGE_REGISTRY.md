@@ -2,7 +2,7 @@
 
 **Registry schema:** 1  
 **Last updated:** 2026-10-17  
-**Baseline checked:** `main` at `83f68eaf65a0dbebfca27d0ba6864ccf6d18f23a`  
+**Baseline checked:** `main` at `b1074711b5ac7f70b592d761df1fdb2536d2e977`  
 **Pinned baseline model:** TotalSegmentator 2.11.0, task `total`, CPU, `fast/3mm`
 
 This page summarizes `SEGMENTOR_COVERAGE_REGISTRY.json`, the machine-readable record of upstream class availability versus what CT Edu has actually generated, technically checked, independently evaluated, anatomically reviewed and approved.
@@ -15,6 +15,10 @@ This page summarizes `SEGMENTOR_COVERAGE_REGISTRY.json`, the machine-readable re
 - Current model output Dice against the bundled labels from the same atlas is shown below. Same-volume overlap is not independent held-out evaluation.
 - Independent held-out evaluation, qualified anatomical review and approval for broader educational use remain outstanding for all 117 classes.
 - Upstream class availability does not guarantee that a structure is present, visible or resolvable in an arbitrary scan. Missing field-of-view coverage and unsupported acquisition conditions must be reported instead of inventing masks.
+
+- The repository also now has a **controlled external-NIfTI inference CLI** at `scripts/infer_external_ct_volume.py`. It supports the same four major-organ classes for a supplied local 3D NIfTI and writes masks with provenance; it is not a public upload endpoint and does not change the precomputed SPL preview.
+- No independent external cohort has been processed by this CLI as of this baseline. Therefore the generated-prediction count in this registry remains 4 (the SPL preview), independent evaluation remains 0, and anatomical review/educational approval remain 0.
+- The bundled SPL generator now records exact source-member hashes, uses atomic artifact publication/failure recovery, and explicitly writes millimetre spatial units to its generated NIfTI masks. Its 1024 intensity offset remains an unverified hypothesis.
 
 ## Implementation status summary
 
