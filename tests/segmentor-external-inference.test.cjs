@@ -33,7 +33,7 @@ test('external Segmentor inference pins its model version and requires explicit 
   assert.doesNotMatch(script, /np\.stack\(\[aligned_masks/);
   assert.doesNotMatch(script, /preview\/assets\/organ-predictions/);
   assert.doesNotMatch(script, /inputPath["']?\s*:/);
-  assert.match(doc, /select additional classes.*versioned 117-class registry/i);
+  assert.match(doc, /select any class.*117-class registry/i);
   assert.match(doc, /Specialist vessel tasks/i);
   assert.match(doc, /coronary_arteries.*brain_structures.*remain blocked/s);
   assert.match(doc, /Use .*all.*117 classes/i);
