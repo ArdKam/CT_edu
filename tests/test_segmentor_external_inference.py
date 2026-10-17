@@ -49,10 +49,17 @@ class ExternalNiftiInferenceTests(unittest.TestCase):
         output_path = Path(command[command.index("-o") + 1])
         model_input = nib.load(str(input_path))
         shape = model_input.shape
+        subset_index = command.index("--roi_subset") + 1
+        model_classes = []
+        for token in command[subset_index:]:
+            if token.startswith("--"):
+                break
+            model_classes.append(token)
+        selected_targets = inference.resolve_target_classes(model_classes)
         # Use separate regions so the combined-label-map order can be checked.
-        for target in inference.TARGETS:
+        for target in selected_targets:
             mask = np.zeros(shape, dtype=np.uint8)
-            if target["id"] != "kidney_left":
+            if target["modelClass"] != "kidney_left":
                 offset = target["labelId"] - 1
                 mask[1 + offset:4 + offset, 2:5, 2:4] = 1
             self.save_nifti(output_path / f"{target['modelClass']}.nii.gz", mask, model_input.affine, "mm")
@@ -85,6 +92,35 @@ class ExternalNiftiInferenceTests(unittest.TestCase):
         nib.save(disagree, str(disagree_path))
         with self.assertRaisesRegex(inference.ExternalInferenceError, "qform and sform disagree"):
             inference.load_source_volume(disagree_path)
+
+    def test_class_selection_uses_stable_registry_ids_and_supports_selected_vessels(self) -> None:
+        selected = inference.resolve_target_classes(["aorta", "anatomy.liver"])
+        self.assertEqual([item["id"] for item in selected], ["anatomy.aorta", "anatomy.liver"])
+        self.assertEqual([item["modelClass"] for item in selected], ["aorta", "liver"])
+        self.assertEqual([item["labelId"] for item in selected], [1, 2])
+        self.assertEqual(selected[0]["anatomicalGroup"], "vessel")
+        vertebra = inference.resolve_target_classes(["vertebrae_L5"])
+        self.assertEqual(vertebra[0]["id"], "anatomy.vertebrae_l5")
+        self.assertEqual(vertebra[0]["modelClass"], "vertebrae_L5",
+            "preserve the upstream class spelling rather than lowercasing its model filename")
+
+        with self.assertRaisesRegex(inference.ExternalInferenceError, "more than once"):
+            inference.resolve_target_classes(["liver", "anatomy.liver"])
+        with self.assertRaisesRegex(inference.ExternalInferenceError, "Unsupported TotalSegmentator"):
+            inference.resolve_target_classes(["made_up_organ"])
+        with self.assertRaisesRegex(inference.ExternalInferenceError, "'all' must be used alone"):
+            inference.resolve_target_classes(["all", "liver"])
+
+    def test_all_class_selection_covers_pinned_total_registry_without_claiming_validation(self) -> None:
+        targets = inference.resolve_target_classes(["all"])
+        self.assertEqual(len(targets), 117)
+        self.assertEqual(len({item["id"] for item in targets}), 117)
+        self.assertEqual(len({item["modelClass"] for item in targets}), 117)
+        self.assertEqual([item["labelId"] for item in targets], list(range(1, 118)))
+        self.assertTrue(any(item["modelClass"] == "aorta" for item in targets))
+        self.assertTrue(any(item["modelClass"] == "portal_vein_and_splenic_vein" for item in targets))
+        self.assertEqual(inference.resolve_target_classes(None)[0]["id"], "anatomy.liver")
+        self.assertEqual(len(inference.resolve_target_classes(None)), 4)
 
     def test_intensity_preprocessing_requires_explicit_semantics(self) -> None:
         raw = np.array([-1024.0, 0.0, 1024.0], dtype=np.float32)
@@ -136,6 +172,30 @@ class ExternalNiftiInferenceTests(unittest.TestCase):
         stored_manifest = json.loads((self.output_path / "manifest.json").read_text(encoding="utf-8"))
         self.assertNotIn(self.input_path.name, json.dumps(stored_manifest))
         self.assertEqual(stored_manifest["sourceInputSha256"], inference.sha256_file(self.input_path))
+
+    def test_external_inference_can_generate_a_selected_vessel_and_organ(self) -> None:
+        with patch.object(inference, "model_version", return_value="2.11.0"), \
+             patch.object(inference.subprocess, "run", side_effect=self.fake_model_run) as model_run:
+            report = inference.run_external_inference(
+                self.input_path,
+                self.output_path,
+                case_id="case-vessel-001",
+                dataset_id="independent-cohort-v1",
+                intensity_offset=0,
+                intensity_semantics="hounsfield-units-confirmed",
+                preprocessing_notes="Fixture uses calibrated HU values and an explicit orthogonal RAS affine.",
+                class_names=["aorta", "anatomy.liver"],
+                resolution="fast",
+                timeout_seconds=300,
+            )
+        self.assertEqual([item["modelClass"] for item in report["organs"]], ["aorta", "liver"])
+        self.assertEqual([item["id"] for item in report["organs"]], ["anatomy.aorta", "anatomy.liver"])
+        self.assertEqual([item["labelId"] for item in report["labelMap"]["labels"]], [1, 2])
+        self.assertTrue((self.output_path / "aorta.nii.gz").is_file())
+        self.assertTrue((self.output_path / "liver.nii.gz").is_file())
+        command = model_run.call_args.args[0]
+        subset = command[command.index("--roi_subset") + 1:command.index("--fast")]
+        self.assertEqual(subset, ["aorta", "liver"])
 
     def test_failed_model_run_preserves_previous_output_and_cleans_stage(self) -> None:
         self.output_path.mkdir()

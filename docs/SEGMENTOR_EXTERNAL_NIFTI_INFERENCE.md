@@ -2,7 +2,7 @@
 
 **Status:** reusable inference utility added on a dedicated feature branch; no external cohort has been processed or evaluated by this change.  
 **Purpose:** let the existing TotalSegmentator-based pipeline generate geometry-aligned masks for a separately licensed CT volume so the independent evaluator can compare them with that dataset's own reference labels.  
-**Scope:** four current abdominal classes only—liver, spleen, right kidney and left kidney. This is not a browser upload feature or a claim of general clinical accuracy.
+**Scope:** defaults to the four current abdominal classes—liver, spleen, right kidney and left kidney. The CLI can also select additional classes from the pinned `TotalSegmentator` `total` task, including vessels, through the versioned 117-class registry. Availability is not validation. This is not a browser upload feature or a claim of general clinical accuracy.
 
 ## Commands
 
@@ -21,6 +21,23 @@ python3 scripts/infer_external_ct_volume.py \
   --preprocessing-notes "Document the source conversion, verified HU semantics and any prior resampling." \
   --resolution fast
 ```
+
+The default targets remain four major abdominal organs. To request a specific additional organ or vessel, pass upstream class names or stable registry IDs:
+
+```bash
+# Liver plus aorta, preserving each as a separate mask volume
+python3 scripts/infer_external_ct_volume.py \
+  --input /private-validation/case-001-ct.nii.gz \
+  --output-dir /private-validation/outputs/case-001-aorta \
+  --case-id case-001 \
+  --dataset-id AMOS22-CT-v2 \
+  --intensity-offset 0 \
+  --intensity-semantics hounsfield-units-confirmed \
+  --preprocessing-notes "Document verified source HU semantics and prior transforms." \
+  --classes liver anatomy.aorta
+```
+
+Use `--classes all` to request all 117 classes in the pinned `total`-task registry. For a large volume this increases runtime, output size and peak memory; use it only on a host with sufficient resources. The 8-bit combined map assigns sequential label IDs for the selected classes in the recorded selection order (registry order for `all`). If classes overlap, individual mask files remain authoritative. The tool marks empty predictions explicitly. This does not add 117 validated CT Edu classes: all generated outputs remain experimental and need independent evaluation and qualified anatomical review.
 
 The `hounsfield-units-confirmed` value is an operator declaration, not a fact the utility can independently verify. If the NIfTI contains stored values whose HU interpretation remains uncertain, use `--intensity-semantics stored-values-unverified` and record a justified explicit offset plus the evidence in `--preprocessing-notes`. Do not choose an offset because it gives a visually pleasing result. For HU-confirmed input, the utility enforces an offset of zero.
 
