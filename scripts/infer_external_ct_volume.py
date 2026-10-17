@@ -122,6 +122,114 @@ def resolve_target_classes(class_names: list[str] | None = None) -> list[dict[st
     return [dict(item, labelId=index) for index, item in enumerate(selected, start=1)]
 
 
+OPEN_SPECIALIST_TASKS = {"lung_vessels", "headneck_bones_vessels", "liver_vessels"}
+
+
+def task_catalog_entry(task_name: str) -> dict[str, Any]:
+    """Return an explicitly open task from the pinned registry; licensed tasks fail closed."""
+    try:
+        registry = json.loads(REGISTRY_PATH.read_text(encoding="utf-8"))
+    except Exception as exc:
+        raise ExternalInferenceError(f"Could not read the versioned task-coverage registry: {exc}") from exc
+    if (
+        registry.get("schemaVersion") != 1 or
+        registry.get("upstreamSources", {}).get("pinnedVersion") != REQUIRED_TOTAL_SEGMENTATOR_VERSION
+    ):
+        raise ExternalInferenceError("Coverage registry schema/version does not match the pinned TotalSegmentator package.")
+    if task_name not in ({"total"} | OPEN_SPECIALIST_TASKS):
+        raise ExternalInferenceError(
+            f"Task {task_name!r} is not enabled. Licensed tasks are deliberately blocked until task/model terms are reviewed."
+        )
+    catalog = registry.get("taskCatalog")
+    if not isinstance(catalog, list):
+        raise ExternalInferenceError("Coverage registry has no task catalog.")
+    entry = next((item for item in catalog if isinstance(item, dict) and item.get("task") == task_name), None)
+    if not entry or entry.get("version") != REQUIRED_TOTAL_SEGMENTATOR_VERSION:
+        raise ExternalInferenceError(f"Task {task_name!r} is not declared for the pinned model version.")
+    licensing = entry.get("licensing", {})
+    if licensing.get("taskLicense") != "Apache-2.0":
+        raise ExternalInferenceError(
+            f"Task {task_name!r} is not listed as openly licensed in the pinned registry; refusing to execute it."
+        )
+    if task_name != "total" and (
+        not isinstance(entry.get("classes"), list) or not entry.get("classes") or
+        not all(isinstance(name, str) and re.fullmatch(r"[A-Za-z0-9_]+", name) for name in entry["classes"])
+    ):
+        raise ExternalInferenceError(f"Specialist task {task_name!r} has a malformed class list in the coverage registry.")
+    return entry
+
+
+def available_task_targets(task_name: str) -> list[dict[str, Any]]:
+    """Resolve the target classes for a pinned, explicitly open TotalSegmentator task."""
+    task_entry = task_catalog_entry(task_name)
+    if task_name == "total":
+        return available_total_class_targets()
+    structures = json.loads(REGISTRY_PATH.read_text(encoding="utf-8")).get("structures", [])
+    total_by_model = {
+        item["modelClass"]: item
+        for item in available_total_class_targets()
+    }
+    result: list[dict[str, Any]] = []
+    seen_ids: set[str] = set()
+    for model_class in task_entry["classes"]:
+        existing = total_by_model.get(model_class)
+        stable_id = existing["id"] if existing else f"anatomy.task.{task_name}.{model_class}"
+        display_name = existing["name"] if existing else model_class.replace("_", " ").title()
+        group = existing.get("anatomicalGroup") if existing else "specialist-task-structure"
+        if stable_id in seen_ids:
+            raise ExternalInferenceError(f"Task {task_name!r} contains duplicate stable class identities.")
+        seen_ids.add(stable_id)
+        result.append({
+            "id": stable_id,
+            "modelClass": model_class,
+            "name": display_name,
+            "anatomicalGroup": group,
+            "laterality": existing.get("laterality") if existing else "not-applicable-or-task-defined",
+            "task": task_name,
+        })
+    if not result:
+        raise ExternalInferenceError(f"Task {task_name!r} has no selectable classes.")
+    return result
+
+
+def resolve_task_classes(task_name: str, class_names: list[str] | None = None) -> list[dict[str, Any]]:
+    """Resolve upstream class names/stable IDs or 'all' to sequential combined-map labels."""
+    task_catalog_entry(task_name)
+    if task_name == "total":
+        return resolve_target_classes(class_names)
+    available = available_task_targets(task_name)
+    if class_names is None:
+        requested = ["all"]
+    else:
+        requested = list(class_names)
+    if not requested:
+        raise ExternalInferenceError("Select at least one class.")
+    by_model = {item["modelClass"]: item for item in available}
+    by_id = {item["id"]: item for item in available}
+    if len(requested) == 1 and requested[0].casefold() == "all":
+        selected = available
+    else:
+        if any(not isinstance(name, str) for name in requested):
+            raise ExternalInferenceError("Requested class names must be strings.")
+        if any(name.casefold() == "all" for name in requested):
+            raise ExternalInferenceError("'all' must be used alone, not alongside individual classes.")
+        selected = []
+        seen: set[str] = set()
+        for requested_name in requested:
+            candidate = by_model.get(requested_name) or by_id.get(requested_name)
+            if candidate is None:
+                raise ExternalInferenceError(
+                    f"Unsupported TotalSegmentator {REQUIRED_TOTAL_SEGMENTATOR_VERSION} {task_name} class: {requested_name!r}."
+                )
+            if candidate["id"] in seen:
+                raise ExternalInferenceError(f"Class {requested_name!r} was requested more than once.")
+            seen.add(candidate["id"])
+            selected.append(candidate)
+    if len(selected) > 255:
+        raise ExternalInferenceError("A uint8 combined label map can represent at most 255 foreground classes.")
+    return [dict(item, labelId=index) for index, item in enumerate(selected, start=1)]
+
+
 def sha256_file(path: Path) -> str:
     digest = hashlib.sha256()
     with Path(path).open("rb") as stream:
