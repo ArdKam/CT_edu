@@ -356,8 +356,13 @@ def run_external_inference(
                     "reviewStatus": "unreviewed-model-output",
                 })
 
-            stacked = np.stack([aligned_masks[item["id"]] for item in targets], axis=0)
-            overlap_voxels = int(np.count_nonzero(stacked.sum(axis=0) > 1))
+            # Count overlaps incrementally instead of stacking every 3D mask.
+            # This avoids a second all-classes boolean tensor when all 117 classes are requested.
+            occupancy = np.zeros(image.shape, dtype=np.uint8)
+            for item in targets:
+                occupancy += aligned_masks[item["id"]]
+            overlap_voxels = int(np.count_nonzero(occupancy > 1))
+            del occupancy
             combined = np.zeros(image.shape, dtype=np.uint8)
             for item in targets:
                 combined[aligned_masks[item["id"]]] = item["labelId"]
