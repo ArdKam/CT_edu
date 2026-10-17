@@ -117,6 +117,19 @@
     });
   }
 
+  async function fingerprintBytes(buffer) {
+    if (window.crypto && window.crypto.subtle && typeof TextEncoder === 'function') {
+      var digest = await window.crypto.subtle.digest('SHA-256', buffer);
+      return Array.from(new Uint8Array(digest)).map(function (value) { return value.toString(16).padStart(2, '0'); }).join('');
+    }
+    var bytes = new Uint8Array(buffer);
+    var hash = 2166136261;
+    for (var i = 0; i < bytes.length; i += 1) {
+      hash ^= bytes[i];
+      hash = Math.imul(hash, 16777619);
+    }
+    return 'fnv1a32-' + (hash >>> 0).toString(16).padStart(8, '0') + '-bytes-' + bytes.length;
+  }
   async function decompressGzip(buffer) {
     if (typeof DecompressionStream !== 'function') {
       throw new Error('This browser cannot decompress gzip streams. Use a current Chrome, Edge, Firefox or Safari build to edit 3D masks.');
@@ -142,6 +155,7 @@
         new Uint8Array(compressed, 0, 2)[1] !== 139) {
       throw new Error('Mask asset is not gzip-compressed: ' + fileName);
     }
+    var assetFingerprint = await fingerprintBytes(compressed);
     var uncompressed = await decompressGzip(compressed);
     var parsed = Core.parseNifti(uncompressed, {
       dimensionsXYZ: state.dimensions,
@@ -149,6 +163,7 @@
     }, { maxLabel: maxLabel });
     return {
       fileName: fileName,
+      assetFingerprint: assetFingerprint,
       headerPrefix: parsed.headerPrefix,
       base: Uint8Array.from(parsed.baseVoxels),
       data: Uint8Array.from(parsed.baseVoxels),
@@ -156,7 +171,7 @@
       voxelCount: parsed.voxelCount
     };
   }
-  async function makeSourceSignature(manifest) {
+  async function makeSourceSignature(manifest, loadedVolumes, combined) {
     var canonical = JSON.stringify({
       schemaVersion: manifest.schemaVersion,
       sourceDataset: manifest.sourceDataset,
@@ -164,10 +179,18 @@
       affineRAS: manifest.affineRAS,
       sourceInputHashes: manifest.sourceInputHashes || null,
       model: manifest.model,
-      organs: manifest.organs.map(function (organ) {
-        return { id: organ.id, maskVolumeFile: organ.maskVolumeFile, volumeLabelId: organ.volumeLabelId };
+      organs: loadedVolumes.map(function (organ) {
+        return {
+          id: organ.id,
+          maskVolumeFile: organ.fileName,
+          volumeLabelId: organ.volumeLabelId,
+          assetFingerprint: organ.assetFingerprint
+        };
       }),
-      combinedLabelMap: manifest.labelMap && manifest.labelMap.file
+      combinedLabelMap: {
+        file: combined.fileName,
+        assetFingerprint: combined.assetFingerprint
+      }
     });
     if (window.crypto && window.crypto.subtle && typeof TextEncoder === 'function') {
       var digest = await window.crypto.subtle.digest('SHA-256', new TextEncoder().encode(canonical));
@@ -760,8 +783,6 @@
       var manifest = await response.json();
       validateManifest(manifest);
       state.manifest = manifest;
-      state.signature = await makeSourceSignature(manifest);
-      state.draftId = 'spl-atlas-mask-correction-v1:' + state.signature;
       var loadedVolumes = await Promise.all(manifest.organs.map(async function (organ) {
         var volume = await fetchVolume(organ.maskVolumeFile, 1);
         volume.id = organ.id;
@@ -773,6 +794,8 @@
         return volume;
       }));
       var combined = await fetchVolume(manifest.labelMap.file, 4);
+      state.signature = await makeSourceSignature(manifest, loadedVolumes, combined);
+      state.draftId = 'spl-atlas-mask-correction-v1:' + state.signature;
       state.spacingMm = loadedVolumes[0].spacingMm;
       loadedVolumes.forEach(function (organ) {
         if (organ.voxelCount !== combined.voxelCount ||
