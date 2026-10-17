@@ -9,7 +9,6 @@ on:
       - "scripts/generate_major_organ_masks.py"
       - "scripts/build_demo_assets.py"
       - "abacktools-abdomen-2016-09-part*-of6.zip"
-      - ".github/workflows/organ-segmentation.yml"
   workflow_dispatch:
 
 permissions:
