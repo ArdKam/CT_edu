@@ -49,13 +49,14 @@ class ExternalNiftiInferenceTests(unittest.TestCase):
         output_path = Path(command[command.index("-o") + 1])
         model_input = nib.load(str(input_path))
         shape = model_input.shape
+        task_name = command[command.index("--task") + 1]
         subset_index = command.index("--roi_subset") + 1
         model_classes = []
         for token in command[subset_index:]:
             if token.startswith("--"):
                 break
             model_classes.append(token)
-        selected_targets = inference.resolve_target_classes(model_classes)
+        selected_targets = inference.resolve_task_classes(task_name, model_classes)
         # Use separate regions so the combined-label-map order can be checked.
         for target in selected_targets:
             mask = np.zeros(shape, dtype=np.uint8)
@@ -121,6 +122,46 @@ class ExternalNiftiInferenceTests(unittest.TestCase):
         self.assertTrue(any(item["modelClass"] == "portal_vein_and_splenic_vein" for item in targets))
         self.assertEqual(inference.resolve_target_classes(None)[0]["id"], "anatomy.liver")
         self.assertEqual(len(inference.resolve_target_classes(None)), 4)
+
+    def test_open_specialist_tasks_expose_vessels_and_block_license_restricted_tasks(self) -> None:
+        lung = inference.resolve_task_classes("lung_vessels")
+        self.assertEqual([item["modelClass"] for item in lung], ["lung_vessels", "lung_trachea_bronchia"])
+        self.assertTrue(all(item["labelId"] in {1, 2} for item in lung))
+        carotid = inference.resolve_task_classes("headneck_bones_vessels", ["internal_carotid_artery_right"])
+        self.assertEqual(carotid[0]["modelClass"], "internal_carotid_artery_right")
+        liver_vessel = inference.resolve_task_classes("liver_vessels", ["liver_vessels"])
+        self.assertEqual(liver_vessel[0]["modelClass"], "liver_vessels")
+        with self.assertRaisesRegex(inference.ExternalInferenceError, "not enabled"):
+            inference.resolve_task_classes("brain_structures", ["brainstem"])
+        with self.assertRaisesRegex(inference.ExternalInferenceError, "not enabled"):
+            inference.resolve_task_classes("coronary_arteries", ["coronary_arteries"])
+        with self.assertRaisesRegex(inference.ExternalInferenceError, "not enabled"):
+            inference.resolve_task_classes("heartchambers_highres", ["myocardium"])
+
+    def test_external_inference_runs_an_open_specialist_vessel_task(self) -> None:
+        with patch.object(inference, "model_version", return_value="2.11.0"), \
+             patch.object(inference.subprocess, "run", side_effect=self.fake_model_run) as model_run:
+            report = inference.run_external_inference(
+                self.input_path,
+                self.output_path,
+                case_id="case-lung-vessel-001",
+                dataset_id="independent-cohort-v1",
+                intensity_offset=0,
+                intensity_semantics="hounsfield-units-confirmed",
+                preprocessing_notes="Fixture uses calibrated HU values and an explicit orthogonal RAS affine.",
+                task="lung_vessels",
+                class_names=["lung_vessels"],
+                resolution="fast",
+                timeout_seconds=300,
+            )
+        self.assertEqual(report["model"]["task"], "lung_vessels")
+        self.assertEqual(report["model"]["taskLicense"], "Apache-2.0")
+        self.assertEqual([item["modelClass"] for item in report["organs"]], ["lung_vessels"])
+        self.assertEqual(report["labelMap"]["labels"][0]["id"], "anatomy.task.lung_vessels.lung_vessels")
+        self.assertTrue((self.output_path / "lung_vessels.nii.gz").is_file())
+        command = model_run.call_args.args[0]
+        self.assertEqual(command[command.index("--task") + 1], "lung_vessels")
+        self.assertEqual(command[command.index("--roi_subset") + 1], "lung_vessels")
 
     def test_intensity_preprocessing_requires_explicit_semantics(self) -> None:
         raw = np.array([-1024.0, 0.0, 1024.0], dtype=np.float32)
