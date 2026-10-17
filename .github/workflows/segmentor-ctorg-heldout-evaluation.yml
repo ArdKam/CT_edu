@@ -36,7 +36,7 @@ jobs:
       contents: read
     env:
       OMP_NUM_THREADS: "2"
-      ITK_GLOBAL_DEFAULT_MAX_THREADS: "2"
+      ITK_GLOBAL_DEFAULT_NUMBER_OF_THREADS: "2"
       CTORG_CASE_SET: ${{ inputs.case_set }}
       CTORG_RESOLUTION: ${{ inputs.resolution }}
     steps:
@@ -89,11 +89,7 @@ jobs:
           for archive in Path("build/ctorg-validation/private-archives").glob("*.zip"):
               if not zipfile.is_zipfile(archive):
                   raise SystemExit(f"Downloaded file is not a ZIP archive: {archive.name}")
-              with zipfile.ZipFile(archive) as z:
-                  bad = z.testzip()
-                  if bad:
-                      raise SystemExit(f"ZIP CRC failure in {archive.name}: {bad}")
-          print("CTORG_SOURCE_ARCHIVES_VALID")
+          print("CTORG_SOURCE_ARCHIVES_VALID; selected member CRCs are checked during extraction")
           PY
 
           python scripts/prepare_ctorg_test_subset.py \
