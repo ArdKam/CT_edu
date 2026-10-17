@@ -78,7 +78,7 @@ test('coverage registry tracks current provenance safeguards without overstating
   assert.equal(registry.externalInferenceUtility.scriptPath, 'scripts/infer_external_ct_volume.py');
   assert.equal(registry.externalInferenceUtility.arbitraryCtUploadSupported, false);
   assert.equal(registry.externalInferenceUtility.externalCohortCasesProcessed, 0);
-  assert.equal(registry.externalInferenceUtility.independentEvaluationStatus, 'not-run-on-external-cohort');
+  assert.equal(registry.externalInferenceUtility.independentEvaluationStatus, 'runner-implemented-CTORG-real-data-run-pending');
   assert.equal(registry.externalInferenceUtility.educationalApprovalStatus, 'not-approved');
   assert.equal(registry.externalInferenceUtility.selectableTotalTaskClassCount, 117);
   assert.equal(registry.externalInferenceUtility.externalCohortCasesProcessed, 0);
