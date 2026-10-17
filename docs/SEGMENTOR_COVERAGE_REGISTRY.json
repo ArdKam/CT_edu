@@ -78,8 +78,8 @@
     "resolution": "fast/3mm",
     "preprocessingOffset": 1024,
     "preprocessingOffsetStatus": "unverified-hypothesis",
-    "sourceInputHashesAvailableOnMain": true,
-    "note": "The bundled SPL inference path now hashes the source CT and reference labelmap, publishes outputs atomically with failure recovery, and writes millimetre spatial units to generated NIfTI masks. The 1024 preprocessing offset remains an unverified hypothesis."
+    "sourceInputHashesAvailableOnMain": false,
+    "note": "The generator code now computes exact source-member SHA-256 hashes, writes millimetre units and publishes atomically with failure recovery. The currently committed preview manifest has not yet been regenerated with these source hashes, so sourceInputHashesAvailableOnMain remains false. The 1024 preprocessing offset remains an unverified hypothesis."
   },
   "taskCatalog": [
     {
