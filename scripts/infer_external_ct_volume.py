@@ -323,9 +323,13 @@ def run_external_inference(
                     f"TotalSegmentator exited with status {completed.returncode}. Diagnostic tail: {tail}"
                 )
 
-            aligned_masks: dict[str, np.ndarray] = {}
             organ_records: list[dict[str, Any]] = []
             target_grid = (image.shape, image.affine)
+            # Stream one mask at a time; keeping 117 full-size masks resident would
+            # multiply memory use on large CTs. The uint8 accumulators track overlap
+            # and the combined label map while each separate mask is published to stage.
+            occupancy = np.zeros(image.shape, dtype=np.uint8)
+            combined = np.zeros(image.shape, dtype=np.uint8)
             for item in targets:
                 predicted_path = model_outputs / f"{item['modelClass']}.nii.gz"
                 if not predicted_path.is_file():
@@ -345,7 +349,8 @@ def run_external_inference(
                 mask_file = f"{item['modelClass']}.nii.gz"
                 nib.save(mask_image(mask, affine), str(stage / mask_file))
                 mask_sha = sha256_file(stage / mask_file)
-                aligned_masks[item["id"]] = mask
+                occupancy += mask
+                combined[mask] = item["labelId"]
                 organ_records.append({
                     **item,
                     "maskVolumeFile": mask_file,
@@ -355,17 +360,8 @@ def run_external_inference(
                     "predictionStatus": "nonempty" if mask_voxels > 0 else "empty-prediction",
                     "reviewStatus": "unreviewed-model-output",
                 })
-
-            # Count overlaps incrementally instead of stacking every 3D mask.
-            # This avoids a second all-classes boolean tensor when all 117 classes are requested.
-            occupancy = np.zeros(image.shape, dtype=np.uint8)
-            for item in targets:
-                occupancy += aligned_masks[item["id"]]
             overlap_voxels = int(np.count_nonzero(occupancy > 1))
             del occupancy
-            combined = np.zeros(image.shape, dtype=np.uint8)
-            for item in targets:
-                combined[aligned_masks[item["id"]]] = item["labelId"]
             combined_file = "major-organ-labelmap.nii.gz"
             nib.save(mask_image(combined, affine), str(stage / combined_file))
             combined_sha = sha256_file(stage / combined_file)
