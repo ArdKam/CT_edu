@@ -100,7 +100,9 @@ const { chromium } = require('playwright');
     assert.match(westernOpacity, /55/);
 
     await page.locator('#organ-language-toggle').click();
-    assert.ok(['en', 'fa'].includes(await page.locator('html').getAttribute('lang')));
+    assert.equal(await page.locator('html').getAttribute('lang'), 'en');
+    assert.equal(await page.locator('.organ-download-links strong').textContent(), '3D mask files');
+    assert.match(await page.locator('.organ-download-link').first().textContent(), /Download combined organ label map/);
     assert.deepEqual(pageErrors, [], 'organ segmentation preview must not throw runtime errors');
     console.log('ORGAN_PREVIEW_BROWSER_OK: mask display, four-organ toggles, slice navigation, opacity and language');
   } finally {
