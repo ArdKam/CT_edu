@@ -1,6 +1,6 @@
 # Segmentor independent-validation tooling
 
-**Status:** evaluation tooling merged into `main` on 17 October 2026; no external patient cohort has been evaluated using it yet.  
+**Status:** evaluator/aggregator tooling is merged; a CT-ORG held-out runner is implemented but has not yet been run against real CT-ORG test data. No independent cohort metric result is claimed.  
 **Purpose:** make future independent-case evaluation reproducible and prevent geometry mismatches or empty masks from looking like success.  
 **Scope:** discrete NIfTI label maps; this does not add inference for arbitrary uploaded CT scans.
 
@@ -66,6 +66,26 @@ python3 scripts/aggregate_segmentor_evaluations.py --reports build/segmentor-eva
 The aggregator requires at least two reports with unique case IDs and distinct reference-file hashes, an explicitly declared independent reference type, and identical model/preprocessing/dataset/class-map configuration. Reusing the exact same reference NIfTI file under multiple case IDs is rejected. It reports class-specific case counts, mean/median/min/max Dice, mean sensitivity/precision, mean surface distance and Hausdorff-95 summaries, plus empty-mask rates and per-case results. Dice and sensitivity summaries are unweighted case-level summaries; an organ in a large volume does not automatically dominate a smaller case. Precision/surface metrics report their own denominators because they cannot be computed meaningfully for every empty-mask scenario.
 
 Two cases are only a minimum software gate, not a scientifically adequate cohort size. The aggregate report explicitly states that cohort independence and annotation quality were not independently verified and always keeps `educationalApprovalStatus` at `not-approved`.
+
+## CT-ORG held-out evaluation runner (real-data run pending)
+
+The repository now includes two experimental utilities:
+
+- `scripts/prepare_ctorg_test_subset.py` extracts only selected CT-ORG volume/label NIfTI pairs from the official ZIP bundles. It restricts case numbers to the documented held-out test split 0–20, hashes the extracted members, records attribution/license metadata, and atomically publishes the selected subset.
+- `scripts/evaluate_ctorg_heldout.py` invokes the existing pinned TotalSegmentator 2.11.0 controlled NIfTI inference CLI and computes per-case/cohort metrics with the existing evaluator. It retains JSON metrics/provenance only; source CTs, reference labels and predicted NIfTIs are not placed in the report directory.
+
+The manual workflow `.github/workflows/segmentor-ctorg-heldout-evaluation.yml` offers `pilot-2` (cases 0 and 1) and `official-test-21` (cases 0–20), with `fast`/ `full` resolution. The default is the two-case engineering pilot. The workflow is restricted to a non-main branch, deletes private source archives and selected input NIfTIs when its inference step exits, and uploads only the reports directory. **The real CT-ORG workflow has not yet been dispatched**, so no real-data CT-ORG score is available.
+
+Dataset and interpretation requirements:
+
+- CT-ORG is distributed through [The Cancer Imaging Archive (TCIA)](https://www.cancerimagingarchive.net/collection/ct-org/). Preserve CC BY 3.0 attribution and comply with TCIA's Data Usage Policy. Citation: Rister B, Shivakumar K, Nobashi T, Rubin DL. *CT-ORG: A Dataset of CT Volumes With Multiple Organ Segmentations (Version 1).* TCIA (2019), DOI: [10.7937/tcia.2019.tt7f4v7o](https://doi.org/10.7937/tcia.2019.tt7f4v7o). Cite TCIA itself as Clark K et al., *Journal of Digital Imaging* 26(6), 1045–1057 (2013), DOI: [10.1007/s10278-013-9622-7](https://doi.org/10.1007/s10278-013-9622-7).
+- Comparisons cover liver (reference label 1), bladder (2), lungs (3), kidneys (4), broad bone (5) and brain (6) when the reference label exists. CT-ORG documentation describes the values as HU; this runner uses offset 0 and requires native CT/reference dimensions and geometry to match. It never silently flips, resizes, or auto-resamples input.
+- The prediction is the union of the five lobe masks for the single whole-lung label and the union of both kidneys for the one kidney label. Broad bone is compared with an approximate union of 62 available TotalSegmentator skeletal classes excluding costal cartilage. These are not lobe-/laterality-/individual-bone-level validation.
+- **CT-ORG provides no vessel reference labels.** This pipeline cannot validate any vessel segmentation; that requires a separate appropriately licensed dataset with vascular annotations and vessel-specific branch/centerline metrics.
+- Empty reference labels (notably brain labels missing from some cases) are skipped rather than counted as true negatives. A brain aggregate may remain below the two-distinct-case minimum.
+- The two-case pilot is an engineering smoke test, not a scientific cohort. Even a successful 21-case split result is exploratory; annotation quality, left/right orientation, cohort representativeness and qualified anatomical review remain separate gates. No result enables educational approval or public release.
+
+To run it manually, open Actions → **Experimental CT-ORG held-out Segmentor evaluation**, choose `pilot-2` first, then choose `official-test-21` only after reviewing archive download, disk usage, runtime and grouped-label mapping behavior.
 
 ## Safe use and next actions
 
