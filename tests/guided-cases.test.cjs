@@ -118,6 +118,12 @@ assert.ok(app.includes("item.verification && item.verification.status === 'verif
 assert.match(app, /Live source loading was verified in a recorded check/);
 
 assert.match(page, /Image-loading status is shown per case/);
+assert.match(page, /id="source-show-case-page"/);
+assert.match(page, /id="source-show-study-page"/);
+assert.match(page, /id="source-hide-frame"/);
+assert.ok(app.includes("state.sourceFrameMode === 'case'"));
+assert.ok(app.includes("state.sourceFrameMode = 'case'"));
+assert.match(app, /Original Radiopaedia case page; text and rendering are controlled by the source site/);
 assert.match(page, /لینک منبع به معنی تأیید تصویر/);
 assert.ok(app.includes("button.dataset.caseVerification = verificationStatus;"));
 assert.ok(app.includes("'guided-case-verification'"));
