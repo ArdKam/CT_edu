@@ -67,6 +67,8 @@ assert.ok(app.includes('item.source.caseDiscussion'));
 assert.ok(app.includes('discussionSection.hidden = !discussionRevealed || !hasDiscussion'));
 assert.ok(app.includes('state.discussionShown[item.id] = true'));
 assert.ok(page.includes('id="source-case-discussion-toggle"'));
+assert.match(page, /<p id="source-case-title">External imaging source<\/p>/);
+assert.match(page, /id="source-open-link"[^>]*hidden/);
 assert.ok(page.includes('id="guided-stage-1"'));
 assert.ok(page.includes('id="guided-stage-2"'));
 assert.ok(page.includes('id="guided-stage-3"'));
