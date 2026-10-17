@@ -11,6 +11,8 @@ test('major-organ segmentation preview is bilingual, self-hosted, and explicitly
   assert.match(html, /lang="fa" dir="rtl"/);
   assert.match(html, /Content-Security-Policy/);
   assert.match(html, /script-src 'self'/);
+  assert.match(html, /style-src 'self' https:\/\/fonts\.googleapis\.com/);
+  assert.doesNotMatch(html, /style-src[^"]*unsafe-inline/);
   assert.match(html, /img-src 'self'/);
   assert.match(html, /organ-segmentation\.js/);
   assert.match(html, /organ-segmentation\.css/);
