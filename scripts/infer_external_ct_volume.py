@@ -443,6 +443,11 @@ def build_parser() -> argparse.ArgumentParser:
         help="Operator declaration only; the script does not independently verify HU calibration.",
     )
     parser.add_argument("--preprocessing-notes", required=True, help="Record source scaling, any resampling, and why this offset is appropriate.")
+    parser.add_argument(
+        "--classes", nargs="+", dest="class_names", default=None,
+        help=("Optional TotalSegmentator total-task classes. Accept upstream names (e.g. aorta, liver) or stable anatomy IDs "
+              "(e.g. anatomy.aorta). Use the single value 'all' for all registry classes. Default: liver, spleen and both kidneys."),
+    )
     parser.add_argument("--resolution", choices=["fast", "full"], default="fast")
     parser.add_argument("--timeout-seconds", type=int, default=5400)
     parser.add_argument("--executable", default="TotalSegmentator", help="Model executable path/name; version remains pinned.")
@@ -461,6 +466,7 @@ def main(argv: list[str] | None = None) -> int:
             intensity_offset=args.intensity_offset,
             intensity_semantics=args.intensity_semantics,
             preprocessing_notes=args.preprocessing_notes,
+            class_names=args.class_names,
             resolution=args.resolution,
             timeout_seconds=args.timeout_seconds,
             executable=args.executable,
