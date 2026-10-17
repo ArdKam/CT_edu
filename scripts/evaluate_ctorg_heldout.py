@@ -377,7 +377,7 @@ def run_ctorg_heldout_evaluation(
             "status": "aggregated",
             "evaluatedCaseCount": len(report_paths),
             "summaryReport": _safe_relative(summary_path, output_dir),
-            "metrics": summary["perClass"][0] if summary.get("perClass") else {},
+            "metrics": summary["classes"][0] if summary.get("classes") else {},
             "ontologyNote": group["ontologyNote"],
         }
 
