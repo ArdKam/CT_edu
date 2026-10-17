@@ -2,7 +2,7 @@
 
 **Registry schema:** 1  
 **Last updated:** 2026-10-17  
-**Baseline checked:** `main` at `b1074711b5ac7f70b592d761df1fdb2536d2e977`  
+**Baseline checked:** `main` at `9a7ea034467cd95199ec1b606bc41ecb41ee18b5`  
 **Pinned baseline model:** TotalSegmentator 2.11.0, task `total`, CPU, `fast/3mm`
 
 This page summarizes `SEGMENTOR_COVERAGE_REGISTRY.json`, the machine-readable record of upstream class availability versus what CT Edu has actually generated, technically checked, independently evaluated, anatomically reviewed and approved.
@@ -17,7 +17,8 @@ This page summarizes `SEGMENTOR_COVERAGE_REGISTRY.json`, the machine-readable re
 - Upstream class availability does not guarantee that a structure is present, visible or resolvable in an arbitrary scan. Missing field-of-view coverage and unsupported acquisition conditions must be reported instead of inventing masks.
 
 - The repository also now has a **controlled external-NIfTI inference CLI** at `scripts/infer_external_ct_volume.py`. It supports the same four major-organ classes for a supplied local 3D NIfTI and writes masks with provenance; it is not a public upload endpoint and does not change the precomputed SPL preview.
-- No independent external cohort has been processed by this CLI as of this baseline. Therefore the generated-prediction count in this registry remains 4 (the SPL preview), independent evaluation remains 0, and anatomical review/educational approval remain 0.
+- The external-NIfTI CLI now accepts explicit class selection from the pinned `total`-task coverage registry: default four major organs, individual upstream class names/stable anatomy IDs, or `--classes all` for the 117 classes listed by TotalSegmentator 2.11.0. It supports selecting vessel and vertebral classes that exist in that task, but does not imply validation. The all-classes mode has not been run or benchmarked.
+- No independent external cohort has been processed by this CLI as of this baseline. Therefore the generated-prediction count in this registry remains 4 (the SPL preview), independent evaluation remains 0, and anatomical review/educational approval remain 0. The 117-class inventory remains an upstream availability catalogue, not a claim that 117 CT Edu masks are generated or validated.
 - The bundled SPL generator code now computes exact source-member hashes, uses atomic artifact publication/failure recovery, and explicitly writes millimetre spatial units to its generated NIfTI masks. However, the currently committed preview manifest has not been regenerated with the source hashes, so the code capability and committed-asset state remain distinct. Its 1024 intensity offset remains an unverified hypothesis.
 
 ## Implementation status summary
