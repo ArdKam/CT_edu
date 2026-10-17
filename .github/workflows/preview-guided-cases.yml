@@ -181,6 +181,8 @@ jobs:
           test -s "$GITHUB_WORKSPACE/_site/preview/src/guided-cases.js"
           test -s "$GITHUB_WORKSPACE/_site/preview/src/data/guided-cases.js"
           test -s "$GITHUB_WORKSPACE/_site/preview/src/data/radiopaedia-abdominal-cases.js"
+          grep -q 'source-case-discussion-toggle' "$GITHUB_WORKSPACE/_site/preview/cases.html"
+          grep -q 'caseDiscussion' "$GITHUB_WORKSPACE/_site/preview/src/data/guided-cases.js"
           grep -q './preview/index.html' "$GITHUB_WORKSPACE/_site/index.html"
           grep -q 'Learning previews' "$GITHUB_WORKSPACE/_site/index.html"
           grep -q 'source-stack-shortcuts' "$GITHUB_WORKSPACE/_site/index.html"
@@ -303,5 +305,7 @@ jobs:
           fetch_with_retry "$base/preview/src/data/wikimedia-brain-series.js" 'wikimedia-normal-brain-case-1'
           fetch_with_retry "$base/preview/src/data/wikimedia-brain-contrast-series.js" 'wikimedia-brain-contrast-case-2'
           fetch_with_retry "$base/preview/src/data/guided-cases.js" 'rID-59227'
+          fetch_with_retry "$base/preview/src/data/guided-cases.js" 'caseDiscussion'
+          fetch_with_retry "$base/preview/cases.html" 'source-case-discussion-toggle'
           fetch_with_retry "$base/preview/src/data/radiopaedia-abdominal-cases.js" 'abd-frp-007'
           fetch_with_retry "$base/preview/src/guided-cases.js" 'function getEmbeddableSourceUrl(item)'
