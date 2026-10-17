@@ -15,7 +15,7 @@ This is a reusable evaluation layer, not proof of improved model accuracy. The c
 
 ## Requirements and input contract
 
-Use Python 3.11+ with NumPy, SciPy and nibabel installed. Both NIfTI inputs must contain discrete 3D labels or binary masks with integer-valued voxels. Probability maps and logits are rejected. The script deliberately does not resample, register, flip, crop, or resize either input. Shape and affine must match within the declared tolerance. Sheared/non-orthogonal voxel axes are rejected because surface-distance calculations use spacing-aware Euclidean distance transforms on an orthogonal grid.
+Use Python 3.11+ with NumPy, SciPy and nibabel installed. Both NIfTI inputs must contain discrete 3D labels or binary masks with integer-valued voxels and explicitly declare spatial units as millimetres (`mm`). Unknown units are rejected because surface metrics are reported in mm; first confirm the real source geometry before correcting a header. Probability maps and logits are rejected. The script deliberately does not resample, register, flip, crop, or resize either input. Shape and affine must match within the declared tolerance. Sheared/non-orthogonal voxel axes are rejected because surface-distance calculations use spacing-aware Euclidean distance transforms on an orthogonal grid.
 
 Create a version-1 class-map JSON file. Example for a model label map in which the liver prediction is label 1 and the reference dataset identifies liver as label 5:
 
