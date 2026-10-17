@@ -69,6 +69,8 @@ jobs:
           cp src/abdomen-series.css "$preview/src/abdomen-series.css"
           cp src/abdomen-series.js "$preview/src/abdomen-series.js"
           cp src/data/wikimedia-abdomen-series.js "$preview/src/data/wikimedia-abdomen-series.js"
+          cp src/data/wikimedia-thorax-series.js src/data/wikimedia-brain-series.js src/data/wikimedia-brain-contrast-series.js "$preview/src/data/"
+          cp preview/thorax-series.html preview/brain-series.html preview/brain-contrast-series.html "$preview/"
 
           python - <<'PY'
           from pathlib import Path
@@ -116,6 +118,12 @@ jobs:
           test -s "$GITHUB_WORKSPACE/_site/preview/src/abdomen-series.js"
           test -s "$GITHUB_WORKSPACE/_site/preview/src/abdomen-series.css"
           test -s "$GITHUB_WORKSPACE/_site/preview/src/data/wikimedia-abdomen-series.js"
+          test -s "$GITHUB_WORKSPACE/_site/preview/thorax-series.html"
+          test -s "$GITHUB_WORKSPACE/_site/preview/brain-series.html"
+          test -s "$GITHUB_WORKSPACE/_site/preview/brain-contrast-series.html"
+          test -s "$GITHUB_WORKSPACE/_site/preview/src/data/wikimedia-thorax-series.js"
+          test -s "$GITHUB_WORKSPACE/_site/preview/src/data/wikimedia-brain-series.js"
+          test -s "$GITHUB_WORKSPACE/_site/preview/src/data/wikimedia-brain-contrast-series.js"
           test -s "$GITHUB_WORKSPACE/_site/preview/src/guided-cases.js"
           test -s "$GITHUB_WORKSPACE/_site/preview/src/data/guided-cases.js"
           test -s "$GITHUB_WORKSPACE/_site/preview/src/data/radiopaedia-abdominal-cases.js"
@@ -123,6 +131,9 @@ jobs:
           grep -q 'Learning previews' "$GITHUB_WORKSPACE/_site/index.html"
           grep -q './cases.html' "$GITHUB_WORKSPACE/_site/preview/index.html"
           grep -q './abdomen-series.html' "$GITHUB_WORKSPACE/_site/preview/index.html"
+          grep -q './thorax-series.html' "$GITHUB_WORKSPACE/_site/preview/index.html"
+          grep -q './brain-series.html' "$GITHUB_WORKSPACE/_site/preview/index.html"
+          grep -q './brain-contrast-series.html' "$GITHUB_WORKSPACE/_site/preview/index.html"
           grep -q './organ-segmentation.html' "$GITHUB_WORKSPACE/_site/preview/index.html"
           grep -q 'href="./index.html"' "$GITHUB_WORKSPACE/_site/preview/abdomen-series.html"
           ! find "$GITHUB_WORKSPACE/_site" -type f -name '*.zip' | grep -q .
@@ -178,6 +189,9 @@ jobs:
           fetch_with_retry "$base/preview/index.html" 'preview-hub-title'
           fetch_with_retry "$base/preview/cases.html" 'Guided cases'
           fetch_with_retry "$base/preview/abdomen-series.html" 'data-series-plane="coronal"'
+          fetch_with_retry "$base/preview/thorax-series.html" 'Normal thorax'
+          fetch_with_retry "$base/preview/brain-series.html" 'Normal brain'
+          fetch_with_retry "$base/preview/brain-contrast-series.html" 'Contrast-enhanced brain CT'
           fetch_with_retry "$base/preview/organ-segmentation.html" 'organ-segmentation.js'
           fetch_with_retry "$base/preview/organ-segmentation.js" 'maskPatterns'
           # This deploy job intentionally has no repository checkout. Validate the live
@@ -221,6 +235,9 @@ jobs:
           done
           fetch_with_retry "$base/preview/src/abdomen-series.js" 'function switchPlane(nextPlane)'
           fetch_with_retry "$base/preview/src/data/wikimedia-abdomen-series.js" 'sagittal_plane_178.png'
+          fetch_with_retry "$base/preview/src/data/wikimedia-thorax-series.js" 'wikimedia-normal-thorax'
+          fetch_with_retry "$base/preview/src/data/wikimedia-brain-series.js" 'wikimedia-normal-brain-case-1'
+          fetch_with_retry "$base/preview/src/data/wikimedia-brain-contrast-series.js" 'wikimedia-brain-contrast-case-2'
           fetch_with_retry "$base/preview/src/data/guided-cases.js" 'rID-59227'
           fetch_with_retry "$base/preview/src/data/radiopaedia-abdominal-cases.js" 'abd-frp-007'
           fetch_with_retry "$base/preview/src/guided-cases.js" 'function getEmbeddableSourceUrl(item)'
