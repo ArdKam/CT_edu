@@ -150,7 +150,6 @@ def run_candidate(
     offset: float,
     source_ct: np.ndarray,
     source_labels: np.ndarray,
-    source_header: dict[str, str],
     reference_ids: dict[str, int],
     affine: np.ndarray,
     temp_root: Path,
@@ -353,9 +352,7 @@ def main() -> int:
     if mismatch:
         raise ValueError("CT/reference geometry mismatch: " + json.dumps(mismatch))
     affine = geometry_affine_ras(ct_header)
-    reference_ids = get_source_structure_ids(
-        __import__("json").loads(found["atlasstructure.json"].decode("utf-8"))
-    )
+    reference_ids = get_source_structure_ids(json.loads(found["atlasstructure.json"].decode("utf-8")))
     source_archive_hashes = {
         "ctNrrdSha256": sha256_bytes(found["i.nrrd"]),
         "labelMapNrrdSha256": sha256_bytes(found["seg.nrrd"]),
@@ -393,7 +390,7 @@ def main() -> int:
         for index, offset in enumerate(offsets):
             try:
                 record, masks = run_candidate(
-                    index, offset, source_ct, source_labels, ct_header, reference_ids,
+                    index, offset, source_ct, source_labels, reference_ids,
                     affine, temp_root, logs, args.timeout_seconds,
                 )
             except Exception as exc:
