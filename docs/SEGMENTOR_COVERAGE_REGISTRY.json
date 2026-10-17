@@ -4,7 +4,7 @@
   "lastUpdated": "2026-10-17",
   "repositoryBaseline": {
     "branch": "main",
-    "commit": "994265ec6f86231dba3d21e6948d4ceecb1c23fa"
+    "commit": "7a69e9f1a63738d4b55f934aee886e91f9f3564a"
   },
   "purpose": "Track upstream model availability separately from CT Edu output generation, technical checks, independent evaluation, anatomical review and approval for educational use.",
   "statusDefinitions": {
@@ -5466,15 +5466,16 @@
     ],
     "arbitraryCtUploadSupported": false,
     "externalCohortCasesProcessed": 0,
-    "independentEvaluationStatus": "not-run-on-external-cohort",
+    "independentEvaluationStatus": "runner-implemented-CTORG-real-data-run-pending",
     "educationalApprovalStatus": "not-approved",
     "notes": [
       "This utility processes a supplied local NIfTI and writes masks plus provenance without copying the CT into its output directory.",
       "It does not alter the precomputed SPL preview assets and does not add a public upload endpoint.",
       "The total task supports selection of any of the 117 pinned TotalSegmentator 2.11.0 total-task classes; the default remains liver, spleen and both kidneys.",
-      "Three open specialist tasks are selectable by CLI: lung_vessels, headneck_bones_vessels, and liver_vessels. They have not been run in CT Edu. License-required brain/cardiac/coronary tasks remain blocked pending exact terms review.",
+      "Three open specialist tasks are selectable by CLI: lung_vessels, headneck_bones_vessels, and liver_vessels. They remain unrun in CT Edu. License-required brain/cardiac/coronary tasks remain blocked pending exact terms review.",
       "A selectable upstream class/task is not a generated, independently evaluated, anatomically reviewed, or educationally approved CT Edu class.",
-      "The all-classes mode and open specialist tasks were not run by this change; runtime, memory, artifacts and clinical/anatomical quality still need measurement on appropriately licensed data.",
+      "The CT-ORG held-out evaluation runner and test-split extraction workflow are implemented, but the real-data workflow has not been dispatched and no external CT-ORG cases have been evaluated yet.",
+      "The CT-ORG runner compares liver, bladder, lungs, kidneys, broad bone and brain where annotated; it provides no vessel evaluation and grouped outputs have explicit ontology limits.",
       "Input intensity semantics must be explicitly declared; this does not independently prove Hounsfield-unit calibration."
     ],
     "selectableTotalTaskClassCount": 117,
@@ -5558,6 +5559,78 @@
       "enforcement": "The CLI reads this versioned task catalog and rejects tasks not explicitly enabled with an Apache-2.0 declaration.",
       "outputsRemainUnreviewed": true,
       "notes": "Task support is implemented and unit-tested; no inference, vessel accuracy evaluation, anatomical review, or educational approval is implied."
-    }
+    },
+    "realExternalEvaluationRunCount": 0
+  },
+  "externalValidationRunner": {
+    "status": "implemented-manual-workflow-not-run-on-real-data",
+    "dataset": "CT-ORG",
+    "datasetVersion": "v1 / TCIA current collection record",
+    "runnerPath": "scripts/evaluate_ctorg_heldout.py",
+    "subsetPreparationPath": "scripts/prepare_ctorg_test_subset.py",
+    "workflowPath": ".github/workflows/segmentor-ctorg-heldout-evaluation.yml",
+    "unitTestPath": "tests/test_segmentor_ctorg_heldout.py",
+    "subsetTestPath": "tests/test_prepare_ctorg_test_subset.py",
+    "permittedCaseNumbers": {
+      "min": 0,
+      "max": 20,
+      "officialSplit": "test",
+      "defaultWorkflowSelection": "pilot-2"
+    },
+    "selectableWorkflowModes": [
+      "pilot-2",
+      "official-test-21"
+    ],
+    "resolutions": [
+      "fast",
+      "full"
+    ],
+    "reportOnlyArtifacts": true,
+    "sourceImagesOrMasksPublished": false,
+    "realDataWorkflowRunsCompleted": 0,
+    "externalCasesEvaluated": 0,
+    "vesselValidationSupported": false,
+    "groupMappings": [
+      {
+        "id": "liver",
+        "referenceLabel": 1,
+        "status": "mapped"
+      },
+      {
+        "id": "bladder",
+        "referenceLabel": 2,
+        "status": "mapped"
+      },
+      {
+        "id": "lungs",
+        "referenceLabel": 3,
+        "status": "five-lobe-union-versus-whole-lung-label"
+      },
+      {
+        "id": "kidneys",
+        "referenceLabel": 4,
+        "status": "left-right-union-versus-single-kidney-label"
+      },
+      {
+        "id": "bones",
+        "referenceLabel": 5,
+        "status": "approximate-union-of-62-skeletal-classes-excluding-costal-cartilage"
+      },
+      {
+        "id": "brain",
+        "referenceLabel": 6,
+        "status": "evaluated-only-when-reference-label-is-nonempty"
+      }
+    ],
+    "limitations": [
+      "The real-data CT-ORG workflow has not been dispatched; no external accuracy metric is available yet.",
+      "CT-ORG contains no vessel reference labels and cannot validate vessel segmentation.",
+      "The two-case pilot is an engineering smoke test, not an adequate scientific cohort.",
+      "Grouped lungs, kidneys, and bone metrics are not class-by-class anatomical validation.",
+      "Qualified anatomical review, dataset-label review, rights review and intended educational-use approval remain outstanding."
+    ],
+    "nextGate": "Run the pilot-2 workflow manually on a non-main branch; inspect case-level reports and resource use before running official-test-21.",
+    "educationalApprovalStatus": "not-approved",
+    "publicReleaseGate": "unchanged-and-closed-unless-explicitly-approved"
   }
 }
