@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#101923">
   <meta name="description" content="Experimental, unreviewed model-generated major-organ masks for a CT Edu teaching volume.">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'self'; object-src 'none'; script-src 'self'; style-src 'self' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: blob:; connect-src 'self'; form-action 'self'; frame-src 'none'">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'self'; object-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: blob:; connect-src 'self'; form-action 'self'; frame-src 'none'">
   <link rel="icon" type="image/svg+xml" href="../favicon.svg">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -47,8 +47,13 @@
       <section class="organ-workspace" aria-label="Automatic organ segmentation preview">
         <div class="organ-viewer">
           <div class="organ-viewer-header">
-            <div><span class="panel-kicker"><span class="rad-fa">نمای محوری</span><span class="rad-en">AXIAL VIEW</span></span><h2><span class="rad-fa">خروجی مدل روی CT</span><span class="rad-en">Model output on CT</span></h2></div>
+            <div><span class="panel-kicker"><span id="organ-plane-label-fa" class="rad-fa">نمای محوری</span><span id="organ-plane-label-en" class="rad-en">AXIAL VIEW</span></span><h2><span class="rad-fa">خروجی مدل روی CT</span><span class="rad-en">Model output on CT</span></h2></div>
             <span id="organ-position" class="organ-position">27 / 113</span>
+          </div>
+          <div id="organ-plane-selector" class="organ-plane-selector" role="group" aria-label="CT plane">
+            <button class="organ-plane-button" type="button" data-organ-plane="axial" aria-pressed="true"><span class="rad-fa">محوری</span><span class="rad-en">Axial</span></button>
+            <button class="organ-plane-button" type="button" data-organ-plane="coronal" aria-pressed="false"><span class="rad-fa">کرونال</span><span class="rad-en">Coronal</span></button>
+            <button class="organ-plane-button" type="button" data-organ-plane="sagittal" aria-pressed="false"><span class="rad-fa">ساژیتال</span><span class="rad-en">Sagittal</span></button>
           </div>
           <div class="organ-toolbar">
             <button id="organ-prev" class="series-button" type="button"><span class="rad-fa">قبلی</span><span class="rad-en">Previous</span></button>
@@ -64,6 +69,7 @@
             <input id="organ-slice-slider" type="range" min="1" max="113" value="27" step="1">
             <output id="organ-slice-value" for="organ-slice-slider">27 / 113</output>
           </div>
+          <p id="organ-voxel-coordinates" class="organ-voxel-coordinates"><span class="rad-fa">مختصات وکسل (i, j, k): (129, 129, 27)</span><span class="rad-en">Voxel coordinates (i, j, k): (129, 129, 27)</span></p>
           <p id="organ-status" class="organ-status" role="status" aria-live="polite"><span class="rad-fa">در انتظار خروجی مدل…</span><span class="rad-en">Waiting for model output…</span></p>
         </div>
 
