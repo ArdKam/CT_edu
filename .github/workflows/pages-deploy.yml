@@ -85,6 +85,11 @@ jobs:
           test -s _site/preview/organ-segmentation.html
           test -s _site/preview/organ-segmentation.css
           test -s _site/preview/organ-segmentation.js
+          test -s _site/preview/organ-mask-correction.html
+          test -s _site/preview/organ-mask-correction.css
+          test -s _site/preview/organ-mask-correction.js
+          test -s _site/preview/organ-mask-correction-core.js
+          grep -q 'organ-mask-correction.html' _site/preview/index.html
           test -s _site/preview/assets/organ-predictions/manifest.json
           mask_manifest="_site/preview/assets/organ-predictions/manifest.json"
           if grep -q '"planeDefinitions"' "$mask_manifest"; then

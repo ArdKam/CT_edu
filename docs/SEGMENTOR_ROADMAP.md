@@ -193,3 +193,12 @@ These are candidates, not commitments, and should only be prioritized after the 
 ## Definition of done for the first release
 
 The preview-only manual annotation MVP is complete when Phases 0–3 and their exit gates pass, the repository's existing test and browser checks remain green, the feature is discoverable only through the intended preview workflow, and the release documentation explicitly says that annotations are author-created drafts rather than medically approved content. Phases 4–6 remain future work until separately approved.
+
+## Additive implementation note — 3D mask correction workspace (2026-10-17)
+
+A dedicated voxel-level correction workspace is now being implemented separately from the Wikimedia axial polygon editor. See [SEGMENTOR_3D_MASK_CORRECTION.md](SEGMENTOR_3D_MASK_CORRECTION.md) for the current behavior contract and merge gates.
+
+The workspace loads the existing per-organ NIfTI mask volumes read-only, validates their dimensions, uint8 datatype, explicit millimetre units and affine, then paints/erases the shared voxel arrays used by axial, coronal and sagittal views. Edits are a versioned local IndexedDB draft; original predictions and the source labelmap remain unchanged. It provides stroke cancellation, undo/redo, source-fingerprinted draft reopening, per-organ NIfTI export and a combined label-map export with explicit overlap precedence.
+
+This implementation status is **proposed until the feature PR’s full unit/browser/Pages checks pass and the PR is reviewed**. It does not establish anatomical accuracy, fix the unverified intensity conversion, add general CT upload inference or grant educational approval. Independent multi-volume validation, qualified anatomical review, exact licensing review and public-release approval remain separate gates.
+

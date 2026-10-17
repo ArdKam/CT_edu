@@ -9,6 +9,7 @@
   ],
   "sourceArrayOrder": "zyx",
   "coordinateSystem": "RAS after conversion from NRRD LPS",
+  "niftiSpatialUnits": "mm",
   "affineRAS": [
     [
       -0.9375000000000002,
