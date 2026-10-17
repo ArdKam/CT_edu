@@ -202,3 +202,16 @@ The workspace loads the existing per-organ NIfTI mask volumes read-only, validat
 
 The implementation passed the repository’s Node/unit suite, the existing CT viewer browser smoke test, and the dedicated Chromium correction smoke test in PR #37; Pages artifact staging also passed. The feature remains experimental and has not received anatomical approval. It does not establish anatomical accuracy, fix the unverified intensity conversion, add general CT upload inference or grant educational approval. Independent multi-volume validation, qualified anatomical review, exact licensing review and public-release approval remain separate gates.
 
+
+## Additive implementation note — CT-ORG held-out validation runner (2026-10-17)
+
+A controlled external-validation path has been added on branch `feat/segmentor-ctorg-heldout-evaluation-clean-20261017`; **it has not yet been run against real CT-ORG scans**.
+
+- `scripts/prepare_ctorg_test_subset.py` restricts archive extraction to CT-ORG's official test cases 0–20, hashes selected members, records attribution/license context, and atomically publishes only the requested volume/label pairs.
+- `scripts/evaluate_ctorg_heldout.py` calls the pinned TotalSegmentator 2.11.0 local inference utility and existing evaluator, and retains JSON metrics/provenance only. Source CTs, references and generated NIfTI masks are not kept in the report output.
+- `.github/workflows/segmentor-ctorg-heldout-evaluation.yml` is manual-only and restricted to non-main branches. It offers a two-case pilot and the full official test split; its artifact path is restricted to reports.
+- Evaluated group mappings are liver, bladder, lungs (union of five lobe masks), kidneys (left/right union), broad bone (approximate union of 62 skeletal classes, excluding costal cartilage) and brain only where a non-empty reference exists. These grouped mappings are not individual lobe/kidney/bone-class validation.
+- CT-ORG contains no vessel labels. It cannot validate vessel segmentation. The three open-license TotalSegmentator specialist tasks remain implemented but not run by CT Edu.
+- Next gate: trigger the pilot manually on a non-main branch, fix archive/model/runtime/mapping failures, then consider a full 21-case held-out run. The pilot is an engineering check; even the test-split summary remains exploratory until reference suitability and expert anatomical review are independently checked.
+- CT-ORG source documentation records HU and the experiment uses offset zero. This does not settle the separate SPL 1024-offset uncertainty; do not infer one source's calibration from the other.
+
