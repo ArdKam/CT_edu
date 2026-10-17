@@ -92,8 +92,8 @@ test('coverage registry tracks current provenance safeguards without overstating
     ['upstream-class-name', 'stable-anatomy-id', 'all']);
   assert.deepEqual(registry.externalInferenceUtility.classSelection.defaultClasses,
     ['liver', 'spleen', 'kidney_right', 'kidney_left']);
-  assert.match(registry.externalInferenceUtility.notes.join(' '), /all-classes mode was not run/i);
-  assert.match(registry.externalInferenceUtility.notes.join(' '), /runtime, memory and artifact cost must be measured/i);
+  assert.match(registry.externalInferenceUtility.notes.join(' '), /all-classes mode and open specialist tasks were not run/i);
+  assert.match(registry.externalInferenceUtility.notes.join(' '), /runtime, memory, artifacts and clinical\/anatomical quality still need measurement/i);
   assert.match(fs.readFileSync(path.join(root, 'docs', 'SEGMENTOR_COVERAGE_REGISTRY.md'), 'utf8'),
     /No independent external cohort has been processed by this CLI/i);
   assert.match(fs.readFileSync(path.join(root, 'docs', 'SEGMENTOR_COVERAGE_REGISTRY.md'), 'utf8'),
