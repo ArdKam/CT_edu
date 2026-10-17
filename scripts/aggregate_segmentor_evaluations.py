@@ -7,6 +7,7 @@ import json
 import os
 import statistics
 import sys
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
@@ -51,6 +52,7 @@ def aggregate_reports(report_paths: list[Path]) -> dict[str, Any]:
         raise AggregationInputError("At least two case reports are required for cohort aggregation.")
     reports = [read_report(path) for path in report_paths]
     case_ids: set[str] = set()
+    reference_hashes: set[str] = set()
     baseline = reports[0]
     if baseline.get("referenceType") not in INDEPENDENT_TYPES or baseline.get("independentComparisonEligible") is not True:
         raise AggregationInputError("Only reports with an explicitly declared independent reference type may be aggregated.")
@@ -61,6 +63,9 @@ def aggregate_reports(report_paths: list[Path]) -> dict[str, Any]:
     baseline_class_map = baseline_config.get("classMap")
     if not isinstance(baseline_class_map, list) or not baseline_class_map:
         raise AggregationInputError("Evaluation report is missing its class map.")
+    expected_class_ids = [item.get("id") for item in baseline_class_map if isinstance(item, dict)]
+    if len(expected_class_ids) != len(baseline_class_map) or len(set(expected_class_ids)) != len(expected_class_ids):
+        raise AggregationInputError("Baseline class map is malformed or contains duplicate class IDs.")
 
     for index, report in enumerate(reports):
         case_id = report.get("caseId")
@@ -73,10 +78,20 @@ def aggregate_reports(report_paths: list[Path]) -> dict[str, Any]:
             raise AggregationInputError("All reports must use the same declared independent reference type.")
         if _canonical(report.get("configuration")) != _canonical(baseline_config):
             raise AggregationInputError("Reports use different model/preprocessing/dataset/class-map configurations.")
-        expected_class_ids = [item.get("id") for item in baseline_class_map]
+        reference_hash = report.get("inputs", {}).get("reference", {}).get("sha256")
+        if not isinstance(reference_hash, str) or len(reference_hash) != 64:
+            raise AggregationInputError(f"Case {case_id} is missing a valid reference SHA-256 digest.")
+        if reference_hash in reference_hashes:
+            raise AggregationInputError(
+                f"Duplicate reference-file hash in case {case_id}; the same reference file cannot count as two independent cases."
+            )
+        reference_hashes.add(reference_hash)
         results = report.get("results")
-        if not isinstance(results, list) or {item.get("id") for item in results if isinstance(item, dict)} != set(expected_class_ids):
+        if not isinstance(results, list) or len(results) != len(expected_class_ids):
             raise AggregationInputError(f"Case {case_id} does not have exactly the configured class results.")
+        result_ids = [item.get("id") for item in results if isinstance(item, dict)]
+        if len(result_ids) != len(results) or set(result_ids) != set(expected_class_ids):
+            raise AggregationInputError(f"Case {case_id} has missing, duplicate or unexpected class results.")
 
     per_class: list[dict[str, Any]] = []
     for class_spec in baseline_class_map:
@@ -113,9 +128,9 @@ def aggregate_reports(report_paths: list[Path]) -> dict[str, Any]:
                     false_positive_on_reference_empty += 1
                 else:
                     both_empty_count += 1
+            if pred_count > 0 and result.get("precision") is not None:
+                precision_values.append(float(result["precision"]))
             if pred_count > 0 and ref_count > 0:
-                if result.get("precision") is not None:
-                    precision_values.append(float(result["precision"]))
                 distances = result.get("surfaceDistances")
                 if isinstance(distances, dict):
                     if distances.get("averageSymmetricSurfaceDistanceMm") is not None:
@@ -158,7 +173,7 @@ def aggregate_reports(report_paths: list[Path]) -> dict[str, Any]:
     return {
         "schemaVersion": 1,
         "reportType": "independent-segmentation-cohort-aggregate",
-        "createdAtUTC": __import__("datetime").datetime.now(__import__("datetime").timezone.utc).isoformat().replace("+00:00", "Z"),
+        "createdAtUTC": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
         "evaluatorVersion": baseline.get("evaluator", {}).get("version"),
         "caseCount": len(reports),
         "uniqueCaseCount": len(case_ids),
