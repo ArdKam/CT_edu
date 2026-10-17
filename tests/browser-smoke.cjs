@@ -638,20 +638,46 @@ const { chromium } = require('playwright');
     assert.match(await guidedPage.locator('#guided-case-list .guided-case-card[data-case-id="bowel-viability-ct"]').textContent(), /Original Case Discussion available/,
       'the case list should identify which case contains original discussion text');
     await guidedPage.locator('#guided-case-list .guided-case-card[data-case-id="bowel-viability-ct"]').click();
+    assert.equal(await guidedPage.locator('#guided-case-title').textContent(), 'Abdominal CT · Case 04',
+      'the case title should remain neutral and diagnosis-safe');
+    assert.equal(await guidedPage.locator('#guided-case-presentation-block').isVisible(), true,
+      'Stage 1 should show source-reported clinical presentation details');
+    assert.match(await guidedPage.locator('#guided-presentation-age-sex').textContent(), /80-year-old male/);
+    assert.match(await guidedPage.locator('#guided-presentation-symptoms').textContent(), /bright red blood per rectum/);
+    assert.match(await guidedPage.locator('#guided-presentation-labs').textContent(), /Very high lactate/);
+    assert.equal(await guidedPage.locator('#guided-case-context-block').isVisible(), false,
+      'the generic independent context must not replace known source clinical details');
+    assert.equal(await guidedPage.locator('#guided-stage-4').isVisible(), false,
+      'the reference explanation should remain concealed at first');
     assert.equal(await guidedPage.locator('#source-case-title').textContent(), 'External imaging source',
-      'the source diagnosis should remain masked before report submission');
+      'the source diagnosis should remain masked before Stage 4');
     assert.equal(await guidedPage.locator('#source-case-discussion').isVisible(), false,
-      'the original discussion should remain concealed until submission or explicit reveal');
+      'the original discussion must remain concealed before Stage 4');
     assert.equal(await guidedPage.locator('#source-case-discussion-toggle').isVisible(), true,
-      'a case with original discussion should have an obvious reveal action');
+      'a visible Stage 4 reveal control should be available');
     assert.equal(await guidedPage.locator('#source-open-link').getAttribute('href'),
       'https://radiopaedia.org/cases/closed-loop-obstruction-due-to-adhesive-band-resulting-in-small-bowel-ischemia-and-resection?lang=us',
-      'the source-discussion panel must point to the exact credited source case');
+      'the full source URL should remain correctly linked for the final explanation');
+    assert.equal(await guidedPage.locator('#guided-next-hint').isVisible(), true,
+      'progressive hints should be optional and available before the reference answer');
+    await guidedPage.locator('#guided-next-hint').click();
+    assert.equal(await guidedPage.locator('#guided-progressive-hints li').count(), 1,
+      'the first hint should reveal on demand');
+    assert.match(await guidedPage.locator('#guided-progressive-hints').textContent(), /follow the distal bowel/);
+    await guidedPage.locator('#guided-next-hint').click();
+    assert.equal(await guidedPage.locator('#guided-progressive-hints li').count(), 2,
+      'hints should be revealed progressively, not all at once');
     await guidedPage.locator('#source-case-discussion-toggle').click();
+    assert.equal(await guidedPage.locator('#guided-stage-4').isVisible(), true,
+      'the reveal control should open Stage 4 without requiring report submission');
     assert.equal(await guidedPage.locator('#source-case-discussion').isVisible(), true,
-      'the visible reveal action should show discussion without forcing report submission');
+      'the original Case Discussion should appear inside Stage 4');
     assert.equal(await guidedPage.locator('#source-case-discussion-toggle').isVisible(), false,
-      'the reveal action should disappear once the discussion is shown');
+      'the Stage 4 reveal action should disappear once the explanation is open');
+    assert.match(await guidedPage.locator('#guided-reference-diagnosis').textContent(), /adhesive band.*small bowel ischemia/i);
+    assert.equal(await guidedPage.locator('#guided-reference-findings li').count(), 4,
+      'Stage 4 should list the source-backed reference imaging findings');
+    assert.match(await guidedPage.locator('#guided-reference-pathology').textContent(), /mucosal ischaemic necrosis/);
     assert.match(await guidedPage.locator('#source-case-discussion-paragraphs').textContent(), /surgical abdomen/);
     await guidedPage.locator('#learner-findings').fill('Clustered small bowel with mural thickening and reduced enhancement; follow the ileum to both transition points.');
     await guidedPage.locator('#learner-impression').fill('Closed-loop small-bowel obstruction with bowel-wall changes concerning for venous ischaemia; urgent surgical assessment is required.');
