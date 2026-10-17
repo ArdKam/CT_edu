@@ -164,9 +164,13 @@ def run_candidate(
         "operation": "subtract-stored-value-offset",
         "offset": offset,
         "status": "running",
+        "modelExecutionStatus": "running",
+        "outputIntegrityStatus": "unknown",
+        "segmentationQualityStatus": "unknown",
         "startedAtUtc": run_started,
         "classes": [],
         "errors": [],
+        "qualityWarnings": [],
     }
     masks: dict[str, np.ndarray] = {}
     log_path = log_root / f"{candidate_id}.log"
@@ -221,17 +225,24 @@ def run_candidate(
                                stderr=subprocess.STDOUT, env=env)
         except subprocess.TimeoutExpired:
             record["status"] = "failed"
+            record["modelExecutionStatus"] = "failed"
+            record["outputIntegrityStatus"] = "failed"
+            record["segmentationQualityStatus"] = "failed"
             record["errors"].append(f"Model inference exceeded timeout of {timeout_seconds} seconds.")
             record["completedAtUtc"] = utc_now()
             record["durationSeconds"] = round(time.perf_counter() - clock_started, 3)
             return record, masks
         except subprocess.CalledProcessError as exc:
             record["status"] = "failed"
+            record["modelExecutionStatus"] = "failed"
+            record["outputIntegrityStatus"] = "failed"
+            record["segmentationQualityStatus"] = "failed"
             record["errors"].append(f"TotalSegmentator exited with return code {exc.returncode}; see log.")
             record["completedAtUtc"] = utc_now()
             record["durationSeconds"] = round(time.perf_counter() - clock_started, 3)
             return record, masks
 
+        record["modelExecutionStatus"] = "success"
         target = (image.shape, image.affine)
         per_class_statuses = []
         for item in TARGETS:
@@ -275,14 +286,23 @@ def run_candidate(
             })
             record["classes"].append(class_record)
             per_class_statuses.append(class_record["status"])
-            if pred_count > 0:
-                masks[item["key"]] = packed
-            else:
-                record["errors"].append(
-                    f"Prediction for {item['model_name']} is empty; treat this candidate as incomplete, not a successful segmentation."
+            # Retain empty but present, geometry-aligned masks for pairwise comparison.
+            # An empty mask is a quality failure, not evidence that inference did not run.
+            masks[item["key"]] = packed
+            if pred_count == 0:
+                record["qualityWarnings"].append(
+                    f"Prediction for {item['model_name']} is empty. Model execution succeeded, but this class is not a usable segmentation."
                 )
 
-    record["status"] = classify_run_status(per_class_statuses)
+    class_statuses = [item.get("status") for item in record["classes"]]
+    valid_output_count = sum(status in {"complete", "empty-mask"} for status in class_statuses)
+    record["outputIntegrityStatus"] = (
+        "complete" if len(class_statuses) == len(TARGETS) and valid_output_count == len(TARGETS)
+        else ("partial" if valid_output_count else "failed")
+    )
+    record["segmentationQualityStatus"] = classify_run_status(per_class_statuses)
+    # Backwards-compatible status alias denotes mask quality, not process execution.
+    record["status"] = record["segmentationQualityStatus"]
     record["completedAtUtc"] = utc_now()
     record["durationSeconds"] = round(time.perf_counter() - clock_started, 3)
     return record, masks
@@ -317,6 +337,7 @@ def main() -> int:
         "schemaVersion": 1,
         "experimentType": "single-volume-controlled-intensity-preprocessing-ablation",
         "status": "running",
+        "segmentationOutcomeStatus": "pending",
         "calibrationDecision": "not-established",
         "source": {},
         "model": {
@@ -399,21 +420,40 @@ def main() -> int:
                     "operation": "subtract-stored-value-offset",
                     "offset": offset,
                     "status": "failed",
+                    "modelExecutionStatus": "failed",
+                    "outputIntegrityStatus": "failed",
+                    "segmentationQualityStatus": "failed",
                     "startedAtUtc": utc_now(),
                     "completedAtUtc": utc_now(),
                     "errors": [str(exc), traceback.format_exc(limit=8)],
+                    "qualityWarnings": [],
                     "classes": [],
                 }
                 masks = {}
             report["runs"].append(record)
             packed_masks_by_offset[offset] = masks
-            completed_count = sum(run.get("status") == "complete" for run in report["runs"])
-            if completed_count == len(offsets):
+            finished_count = len(report["runs"])
+            execution_integrity_count = sum(
+                run.get("modelExecutionStatus") == "success" and
+                run.get("outputIntegrityStatus") == "complete"
+                for run in report["runs"]
+            )
+            quality_complete_count = sum(
+                run.get("segmentationQualityStatus") == "complete"
+                for run in report["runs"]
+            )
+            if finished_count < len(offsets):
+                report["status"] = "running"
+            elif execution_integrity_count == len(offsets):
                 report["status"] = "complete"
-            elif completed_count:
+            elif execution_integrity_count:
                 report["status"] = "partial"
             else:
-                report["status"] = "running"
+                report["status"] = "failed"
+            report["segmentationOutcomeStatus"] = (
+                "complete" if quality_complete_count == len(offsets)
+                else ("partial" if quality_complete_count else "failed")
+            )
             write_report(report_path, report)
 
         for first_index, first_offset in enumerate(offsets):
@@ -445,16 +485,34 @@ def main() -> int:
                     "interpretation": "Mask differences quantify preprocessing sensitivity only; they do not identify true calibration.",
                 })
 
-    all_complete = len(report["runs"]) == len(offsets) and all(r.get("status") == "complete" for r in report["runs"])
-    report["status"] = "complete" if all_complete else (
-        "partial" if any(r.get("status") in {"complete", "partial"} for r in report["runs"]) else "failed"
+    outputs_complete = len(report["runs"]) == len(offsets) and all(
+        r.get("modelExecutionStatus") == "success" and r.get("outputIntegrityStatus") == "complete"
+        for r in report["runs"]
+    )
+    any_valid_output = any(
+        r.get("modelExecutionStatus") == "success" and r.get("outputIntegrityStatus") == "complete"
+        for r in report["runs"]
+    )
+    report["status"] = "complete" if outputs_complete else ("partial" if any_valid_output else "failed")
+    quality_complete_count = sum(
+        r.get("segmentationQualityStatus") == "complete" for r in report["runs"]
+    )
+    report["segmentationOutcomeStatus"] = (
+        "complete" if quality_complete_count == len(offsets)
+        else ("partial" if quality_complete_count else "failed")
     )
     report["completedAtUtc"] = utc_now()
     write_report(report_path, report)
-    print(f"INTENSITY_PREPROCESSING_EXPERIMENT status={report['status']} report={report_path}", flush=True)
-    if not all_complete:
-        print("One or more offset candidates failed or yielded incomplete masks; inspect the JSON report and logs.", file=sys.stderr)
+    print(
+        f"INTENSITY_PREPROCESSING_EXPERIMENT status={report['status']} "
+        f"segmentationOutcomeStatus={report['segmentationOutcomeStatus']} report={report_path}",
+        flush=True,
+    )
+    if not outputs_complete:
+        print("At least one candidate failed inference/output-integrity checks; inspect the JSON report and logs.", file=sys.stderr)
         return 1
+    # A completed negative-control run may legitimately return empty masks. That
+    # is a segmentation-quality result, not a workflow execution failure.
     return 0
 
 
