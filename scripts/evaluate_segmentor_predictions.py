@@ -304,9 +304,10 @@ def evaluate_case(
         "referenceType": reference_type,
         "independentComparisonEligible": independent_eligible,
         "configurationSha256": hashlib.sha256(canonical_config.encode("utf-8")).hexdigest(),
+        # Do not persist source filenames: they can contain patient identifiers.
         "inputs": {
-            "prediction": {"fileName": prediction_path.name, "sha256": sha256_file(prediction_path)},
-            "reference": {"fileName": reference_path.name, "sha256": sha256_file(reference_path)},
+            "prediction": {"sha256": sha256_file(prediction_path)},
+            "reference": {"sha256": sha256_file(reference_path)},
         },
         "geometry": {
             "dimensionsXYZ": [int(v) for v in prediction_image.shape],
