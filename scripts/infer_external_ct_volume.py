@@ -9,6 +9,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import re
 import shutil
 import subprocess
 import sys
@@ -27,6 +28,8 @@ from atomic_artifact_publish import publish_directory
 
 REQUIRED_TOTAL_SEGMENTATOR_VERSION = "2.11.0"
 MAX_OFFSET_ABS = 10000.0
+CASE_ID_PATTERN = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$")
+DATASET_ID_PATTERN = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$")
 TARGETS = [
     {"id": "liver", "modelClass": "liver", "labelId": 1, "name": "Liver"},
     {"id": "spleen", "modelClass": "spleen", "labelId": 2, "name": "Spleen"},
@@ -169,9 +172,18 @@ def run_external_inference(
     timeout_seconds: int = 5400,
     executable: str = "TotalSegmentator",
 ) -> dict[str, Any]:
-    if not str(case_id).strip() or not str(dataset_id).strip():
-        raise ExternalInferenceError("Pseudonymous case ID and reference dataset ID must be non-empty.")
-    if not str(preprocessing_notes).strip():
+    case_id = case_id.strip() if isinstance(case_id, str) else ""
+    dataset_id = dataset_id.strip() if isinstance(dataset_id, str) else ""
+    if not CASE_ID_PATTERN.fullmatch(case_id):
+        raise ExternalInferenceError(
+            "Case ID must be a pseudonymous 1–128 character token containing only letters, digits, dot, underscore or hyphen."
+        )
+    if not DATASET_ID_PATTERN.fullmatch(dataset_id):
+        raise ExternalInferenceError(
+            "Dataset ID must be a 1–128 character token containing only letters, digits, dot, underscore or hyphen."
+        )
+    if not isinstance(preprocessing_notes, str) or not preprocessing_notes.strip():
+
         raise ExternalInferenceError("Provide explicit preprocessing notes; do not leave calibration assumptions implicit.")
     if resolution not in {"fast", "full"}:
         raise ExternalInferenceError("Resolution must be either 'fast' or 'full'.")
@@ -239,6 +251,9 @@ def run_external_inference(
                     raise ExternalInferenceError(f"Expected mask output is missing for {item['id']}.")
                 try:
                     predicted_image = nib.load(str(predicted_path))
+                    # Validate the model's own grid before resampling; otherwise an
+                    # unknown spatial unit or ambiguous transform could corrupt alignment.
+                    validate_geometry(predicted_image, f"model prediction {item['id']}")
                     aligned_image = resample_from_to(predicted_image, target_grid, order=0)
                     mask = np.asarray(aligned_image.dataobj) > 0.5
                 except Exception as exc:
@@ -320,7 +335,7 @@ def run_external_inference(
             manifest_path.write_text(json.dumps(manifest, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
             # Re-open staged NIfTIs to ensure the saved affine, dimensions, type, and units are sound.
             for item in TARGETS:
-                staged_img = nib.load(str(stage / item["maskVolumeFile"]))
+                staged_img = nib.load(str(stage / f"{item['id']}.nii.gz"))
                 if staged_img.shape != image.shape or not np.allclose(staged_img.affine, affine, rtol=0, atol=1e-4):
                     raise ExternalInferenceError(f"Staged mask geometry validation failed for {item['id']}.")
                 unit, _ = staged_img.header.get_xyzt_units()
