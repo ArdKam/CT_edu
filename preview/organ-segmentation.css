@@ -29,7 +29,12 @@
 .organ-control-row{display:grid;grid-template-columns:auto auto minmax(0,1fr);align-items:center;gap:9px;padding:12px 18px;border-bottom:1px solid var(--line);font-size:12px}
 .organ-control-row:last-child{border-bottom:0}
 .organ-control-row input{width:17px;height:17px;accent-color:var(--teal);margin:0}
-.organ-color-chip{width:11px;height:11px;border-radius:4px;box-shadow:0 0 0 3px color-mix(in srgb,var(--organ-color) 18%,transparent);background:var(--organ-color)}
+.organ-color-chip{width:11px;height:11px;border-radius:4px}
+.organ-color-chip.organ-liver{background:#d96d52;box-shadow:0 0 0 3px rgba(217,109,82,.18)}
+.organ-color-chip.organ-spleen{background:#bd83bf;box-shadow:0 0 0 3px rgba(189,131,191,.18)}
+.organ-color-chip.organ-kidney-right{background:#4c9f91;box-shadow:0 0 0 3px rgba(76,159,145,.18)}
+.organ-color-chip.organ-kidney-left{background:#7398d6;box-shadow:0 0 0 3px rgba(115,152,214,.18)}
+.organ-color-chip.organ-neutral{background:#96aab4;box-shadow:0 0 0 3px rgba(150,170,180,.18)}
 .organ-control-name{font-weight:700;min-width:0}
 .organ-control-meta{grid-column:2 / -1;margin-inline-start:26px;font-size:10px;line-height:1.6;color:var(--muted)}
 .organ-opacity-block{padding:17px 20px}
