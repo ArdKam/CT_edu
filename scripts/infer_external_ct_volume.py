@@ -9,6 +9,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import re
 import shutil
 import subprocess
 import sys
@@ -27,6 +28,8 @@ from atomic_artifact_publish import publish_directory
 
 REQUIRED_TOTAL_SEGMENTATOR_VERSION = "2.11.0"
 MAX_OFFSET_ABS = 10000.0
+CASE_ID_PATTERN = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$")
+DATASET_ID_PATTERN = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$")
 TARGETS = [
     {"id": "liver", "modelClass": "liver", "labelId": 1, "name": "Liver"},
     {"id": "spleen", "modelClass": "spleen", "labelId": 2, "name": "Spleen"},
@@ -169,9 +172,18 @@ def run_external_inference(
     timeout_seconds: int = 5400,
     executable: str = "TotalSegmentator",
 ) -> dict[str, Any]:
-    if not str(case_id).strip() or not str(dataset_id).strip():
-        raise ExternalInferenceError("Pseudonymous case ID and reference dataset ID must be non-empty.")
-    if not str(preprocessing_notes).strip():
+    case_id = case_id.strip() if isinstance(case_id, str) else ""
+    dataset_id = dataset_id.strip() if isinstance(dataset_id, str) else ""
+    if not CASE_ID_PATTERN.fullmatch(case_id):
+        raise ExternalInferenceError(
+            "Case ID must be a pseudonymous 1–128 character token containing only letters, digits, dot, underscore or hyphen."
+        )
+    if not DATASET_ID_PATTERN.fullmatch(dataset_id):
+        raise ExternalInferenceError(
+            "Dataset ID must be a 1–128 character token containing only letters, digits, dot, underscore or hyphen."
+        )
+    if not isinstance(preprocessing_notes, str) or not preprocessing_notes.strip():
+
         raise ExternalInferenceError("Provide explicit preprocessing notes; do not leave calibration assumptions implicit.")
     if resolution not in {"fast", "full"}:
         raise ExternalInferenceError("Resolution must be either 'fast' or 'full'.")
