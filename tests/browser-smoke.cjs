@@ -649,6 +649,12 @@ const { chromium } = require('playwright');
       'the generic independent context must not replace known source clinical details');
     assert.equal(await guidedPage.locator('#guided-stage-4').isVisible(), false,
       'the reference explanation should remain concealed at first');
+    assert.equal(await guidedPage.locator('#source-open-link').isVisible(), false,
+      'the diagnosis-bearing original case link should remain hidden before Stage 4');
+    assert.equal(await guidedPage.locator('#radiopaedia-frame-wrap').isVisible(), false,
+      'the source study should not auto-open and disclose the source-page title before learner choice');
+    assert.equal(await guidedPage.locator('#source-show-study-page').isVisible(), true,
+      'the learner should still be able to explicitly open the study for image review');
     assert.equal(await guidedPage.locator('#source-case-title').textContent(), 'External imaging source',
       'the source diagnosis should remain masked before Stage 4');
     assert.equal(await guidedPage.locator('#source-case-discussion').isVisible(), false,
