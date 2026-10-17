@@ -28,6 +28,7 @@ from nibabel.affines import voxel_sizes
 from nibabel.processing import resample_from_to
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
+from build_demo_assets import read_nrrd
 from generate_major_organ_masks import (
     TARGETS,
     dice_score,
@@ -342,8 +343,8 @@ def main() -> int:
 
     print("Reading original SPL CT, labelmap, and metadata from source ZIP members.", flush=True)
     found = read_source_members()
-    ct_header, source_ct = __import__("scripts.build_demo_assets", fromlist=["read_nrrd"]).read_nrrd(found["i.nrrd"])
-    label_header, source_labels = __import__("scripts.build_demo_assets", fromlist=["read_nrrd"]).read_nrrd(found["seg.nrrd"])
+    ct_header, source_ct = read_nrrd(found["i.nrrd"])
+    label_header, source_labels = read_nrrd(found["seg.nrrd"])
     if source_ct.shape != (113, 256, 256) or source_labels.shape != source_ct.shape:
         raise ValueError(f"Unexpected source arrays: CT={source_ct.shape}, labels={source_labels.shape}")
     geometry_keys = ("space", "sizes", "space directions", "space origin")
@@ -448,7 +449,9 @@ def main() -> int:
                 })
 
     all_complete = len(report["runs"]) == len(offsets) and all(r.get("status") == "complete" for r in report["runs"])
-    report["status"] = "complete" if all_complete else ("partial" if any(r.get("status") == "complete" for r in report["runs"]) else "failed")
+    report["status"] = "complete" if all_complete else (
+        "partial" if any(r.get("status") in {"complete", "partial"} for r in report["runs"]) else "failed"
+    )
     report["completedAtUtc"] = utc_now()
     write_report(report_path, report)
     print(f"INTENSITY_PREPROCESSING_EXPERIMENT status={report['status']} report={report_path}", flush=True)
