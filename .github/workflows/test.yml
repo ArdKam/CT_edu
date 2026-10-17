@@ -56,6 +56,11 @@ jobs:
         uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
         with:
           python-version: "3.12"
+      - name: Test Segmentor independent evaluation metrics
+        run: |
+          python -m pip install --disable-pip-version-check "numpy<2" scipy nibabel
+          python -m py_compile scripts/evaluate_segmentor_predictions.py scripts/aggregate_segmentor_evaluations.py tests/test_segmentor_independent_evaluation.py
+          python -m unittest discover -s tests -p 'test_segmentor_independent_evaluation.py' -v
       - name: Prepare 113-slice CT/labelmap review bundle
         run: |
           python -m pip install --disable-pip-version-check numpy pillow
