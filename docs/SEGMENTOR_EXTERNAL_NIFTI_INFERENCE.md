@@ -1,8 +1,8 @@
 # External NIfTI inference for independent Segmentor evaluation
 
-**Status:** reusable inference utility added on a dedicated feature branch; no external cohort has been processed or evaluated by this change.  
+**Status:** controlled inference utility in `main`; this increment adds support for selected open-license specialist vessel tasks. No external cohort has been processed or evaluated by this change.  
 **Purpose:** let the existing TotalSegmentator-based pipeline generate geometry-aligned masks for a separately licensed CT volume so the independent evaluator can compare them with that dataset's own reference labels.  
-**Scope:** defaults to the four current abdominal classes—liver, spleen, right kidney and left kidney. The CLI can also select additional classes from the pinned `TotalSegmentator` `total` task, including vessels, through the versioned 117-class registry. Availability is not validation. This is not a browser upload feature or a claim of general clinical accuracy.
+**Scope:** defaults to the four abdominal classes—liver, spleen, right kidney and left kidney—from the pinned TotalSegmentator `total` task. It can select any class in that 117-class registry and can run three documented open-license specialist tasks: `lung_vessels`, `headneck_bones_vessels`, and `liver_vessels`. It deliberately blocks task entries that the registry marks as license-required. Availability is not validation. This is not a browser upload feature or a claim of general clinical accuracy.
 
 ## Commands
 
@@ -38,6 +38,30 @@ python3 scripts/infer_external_ct_volume.py \
 ```
 
 Use `--classes all` to request all 117 classes in the pinned `total`-task registry. For a large volume this increases runtime, output size and peak memory; use it only on a host with sufficient resources. The 8-bit combined map assigns sequential label IDs for the selected classes in the recorded selection order (registry order for `all`). If classes overlap, individual mask files remain authoritative. The tool marks empty predictions explicitly. This does not add 117 validated CT Edu classes: all generated outputs remain experimental and need independent evaluation and qualified anatomical review.
+
+## Specialist vessel tasks
+
+The pinned registry permits controlled use of the following tasks because the pinned v2.11.0 README lists them as Apache-2.0 tasks. The CLI checks this versioned task catalog at runtime and fails closed for tasks not explicitly enabled.
+
+```bash
+# Lung vessels only; the model task also offers trachea/bronchia labels
+python3 scripts/infer_external_ct_volume.py \
+  --input /private-validation/chest-case-001-ct.nii.gz \
+  --output-dir /private-validation/outputs/chest-case-001-lung-vessels \
+  --case-id chest-case-001 \
+  --dataset-id deidentified-chest-cohort-v1 \
+  --intensity-offset 0 \
+  --intensity-semantics hounsfield-units-confirmed \
+  --preprocessing-notes "Record the verified CT intensity semantics, contrast phase and spatial transform." \
+  --task lung_vessels \
+  --classes lung_vessels
+```
+
+For head-and-neck vessels, `--task headneck_bones_vessels --classes internal_carotid_artery_right` selects a single class; omitting `--classes` selects all classes declared for that specialist task. For the liver task, choose `--task liver_vessels --classes liver_vessels` if only the vascular structure is required, because the task catalog also lists a tumour class.
+
+Tasks `heartchambers_highres`, `coronary_arteries`, and `brain_structures` remain blocked: the current registry marks them license-required and they must not be used until the exact task/model terms have been reviewed and cleared. The specialist task list and classes are sourced from `docs/SEGMENTOR_COVERAGE_REGISTRY.json`, not inferred from a generic model class count.
+
+No specialist inference was run by this increment. It adds capability only; it does not establish vessel quality. For vascular results, use external reference annotations and add vessel-specific review of centerline coverage, branch sensitivity, continuity, false-positive branches and surface-distance errors. Thin/tiny branches may remain inadequate even when a generic Dice score looks acceptable.
 
 The `hounsfield-units-confirmed` value is an operator declaration, not a fact the utility can independently verify. If the NIfTI contains stored values whose HU interpretation remains uncertain, use `--intensity-semantics stored-values-unverified` and record a justified explicit offset plus the evidence in `--preprocessing-notes`. Do not choose an offset because it gives a visually pleasing result. For HU-confirmed input, the utility enforces an offset of zero.
 
