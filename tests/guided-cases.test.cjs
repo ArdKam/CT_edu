@@ -55,7 +55,9 @@ assert.match(bowelViability.source.caseDiscussion.paragraphs.join(' '), /surgica
 assert.match(bowelViability.source.caseDiscussion.operativeNote, /sigmoid colon epiploica and pelvic sidewall/);
 assert.ok(page.includes('id="source-case-discussion"'));
 assert.ok(app.includes('item.source.caseDiscussion'));
-assert.ok(app.includes('discussionSection.hidden = !sourceDetailsRevealed || !hasDiscussion'));
+assert.ok(app.includes('discussionSection.hidden = !discussionRevealed || !hasDiscussion'));
+assert.ok(app.includes('state.discussionShown[item.id] = true'));
+assert.ok(page.includes('id="source-case-discussion-toggle"'));
 const lipoma = cases.getById('ascending-colon-lipoma-ct');
 assert.equal(lipoma.source.url, 'https://radiopaedia.org/cases/ascending-colon-lipoma?lang=us');
 assert.equal(lipoma.source.studyPageUrl, 'https://radiopaedia.org/cases/2582/studies/6276?lang=us#t=im&v1i=478&v1z=1&v2i=931&v2z=1');
