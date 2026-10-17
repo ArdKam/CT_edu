@@ -356,6 +356,7 @@ def run_external_inference(
     intensity_offset: float,
     intensity_semantics: str,
     preprocessing_notes: str,
+    task: str = "total",
     class_names: list[str] | None = None,
     resolution: str = "fast",
     timeout_seconds: int = 5400,
@@ -383,7 +384,8 @@ def run_external_inference(
             f"Expected TotalSegmentator {REQUIRED_TOTAL_SEGMENTATOR_VERSION}, found {version}. "
             "Pin the model package before generating a comparison cohort."
         )
-    targets = resolve_target_classes(class_names)
+    task_metadata = task_catalog_entry(task)
+    targets = resolve_task_classes(task, class_names)
     input_path = Path(input_path)
     source_hash = sha256_file(input_path)
     image, source_values, spacing = load_source_volume(input_path)
@@ -411,7 +413,7 @@ def run_external_inference(
             save_model_input(model_values, image, model_input)
             command = [
                 executable, "-i", str(model_input), "-o", str(model_outputs),
-                "--task", "total", "--device", "cpu",
+                "--task", task, "--device", "cpu",
                 "--nr_thr_resamp", "1", "--nr_thr_saving", "1",
                 "--roi_subset", *[item["modelClass"] for item in targets],
             ]
@@ -499,7 +501,8 @@ def run_external_inference(
                 "model": {
                     "name": "TotalSegmentator",
                     "version": version,
-                    "task": "total",
+                    "task": task,
+                    "taskLicense": task_metadata["licensing"]["taskLicense"],
                     "device": "cpu",
                     "resolution": "fast/3mm" if resolution == "fast" else "full/1.5mm",
                     "requestedClasses": [item["modelClass"] for item in targets],
@@ -553,9 +556,13 @@ def build_parser() -> argparse.ArgumentParser:
     )
     parser.add_argument("--preprocessing-notes", required=True, help="Record source scaling, any resampling, and why this offset is appropriate.")
     parser.add_argument(
+        "--task", choices=["total", "lung_vessels", "headneck_bones_vessels", "liver_vessels"], default="total",
+        help="Select a task documented as Apache-2.0 in the pinned registry. Licensed tasks are deliberately unavailable.",
+    )
+    parser.add_argument(
         "--classes", nargs="+", dest="class_names", default=None,
-        help=("Optional TotalSegmentator total-task classes. Accept upstream names (e.g. aorta, liver) or stable anatomy IDs "
-              "(e.g. anatomy.aorta). Use the single value 'all' for all registry classes. Default: liver, spleen and both kidneys."),
+        help=("Optional classes for the selected task. Accept upstream names or stable anatomy IDs; 'all' selects all classes in that task. "
+              "For total, default is liver, spleen and both kidneys; for an open specialist task, default selects all listed task classes."),
     )
     parser.add_argument("--resolution", choices=["fast", "full"], default="fast")
     parser.add_argument("--timeout-seconds", type=int, default=5400)
@@ -575,6 +582,7 @@ def main(argv: list[str] | None = None) -> int:
             intensity_offset=args.intensity_offset,
             intensity_semantics=args.intensity_semantics,
             preprocessing_notes=args.preprocessing_notes,
+            task=args.task,
             class_names=args.class_names,
             resolution=args.resolution,
             timeout_seconds=args.timeout_seconds,
@@ -595,6 +603,7 @@ def main(argv: list[str] | None = None) -> int:
     print(json.dumps({
         "caseId": report["caseId"],
         "datasetId": report["datasetId"],
+        "task": report["model"]["task"],
         "maskCount": len(report["organs"]),
         "emptyPredictions": [item["id"] for item in report["organs"] if item["predictionStatus"] == "empty-prediction"],
         "overlapVoxelCount": report["labelMap"]["overlapVoxelCount"],
