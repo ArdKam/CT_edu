@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#101923">
+  <meta name="description" content="Local-only experimental 3D mask correction workspace for CT Edu.">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'self'; object-src 'none'; script-src 'self'; style-src 'self' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: blob:; connect-src 'self'; form-action 'self'; frame-src 'none'">
+  <link rel="icon" type="image/svg+xml" href="../favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Vazirmatn:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../src/styles.css">
+  <link rel="stylesheet" href="./organ-mask-correction.css">
+  <title>3D mask correction · CT Edu</title>
+</head>
+<body class="lang-fa organ-correction-page">
+  <div class="app-shell">
+    <header class="topbar">
+      <a class="brand" href="./index.html" aria-label="CT Edu preview hub">
+        <span class="brand-mark" aria-hidden="true"><span></span><span></span><span></span></span>
+        <span class="brand-copy"><strong>CT <em>EDU</em></strong><small>ANATOMY LAB</small></span>
+      </a>
+      <div class="topbar-center"><span class="crumb-dot"></span><span class="rad-fa">آزمایشگاه قطعه‌بندی</span><span class="rad-en">Segmentation lab</span><span class="crumb-slash">/</span><strong class="rad-fa">اصلاح سه‌بعدی ماسک</strong><strong class="rad-en">3D mask correction</strong></div>
+      <div class="topbar-actions">
+        <span class="educational-tag"><span class="status-dot"></span><span class="rad-fa">پیش‌نویس محلی · تأییدنشده</span><span class="rad-en">Local draft · unreviewed</span></span>
+        <button id="correction-language-toggle" class="language-toggle" type="button" aria-label="Switch language">EN ↔ فا</button>
+      </div>
+    </header>
+
+    <main class="correction-main">
+      <section class="correction-intro">
+        <div>
+          <div class="eyebrow"><span class="eyebrow-line"></span><span class="rad-fa">ابزار اصلاح نویزی/مرزی · حجم مشترک</span><span class="rad-en">MASK REFINEMENT · SHARED VOLUME</span></div>
+          <h1><span class="rad-fa">اصلاح سه‌بعدی ماسک اندام</span><span class="rad-en">3D organ-mask correction</span></h1>
+          <p class="correction-lead"><span class="rad-fa">قلم و پاک‌کن روی وکسل‌های حجم واقعی کار می‌کنند. همان تغییر در نماهای محوری، کرونال و ساژیتال دیده می‌شود. پیش‌بینی اصلی دست‌نخورده می‌ماند و تغییرات فقط به‌صورت پیش‌نویس محلی نگهداری می‌شوند.</span><span class="rad-en">Paint and erase operate on voxels in the shared 3D mask volume. Edits appear in axial, coronal and sagittal views. Original predictions remain untouched; changes are a local draft only.</span></p>
+        </div>
+        <aside class="correction-warning" role="note">
+          <span class="correction-warning-mark" aria-hidden="true">!</span>
+          <div>
+            <strong><span class="rad-fa">ابزار پژوهشی/آموزشی؛ نه ابزار تشخیصی</span><span class="rad-en">Experimental teaching tool · not diagnostic</span></strong>
+            <p><span class="rad-fa">ماسک‌ها هنوز بازبینی تخصصی نشده‌اند و کالیبراسیون HU نیز تأیید نشده است. اصلاح دستی به معنی صحت آناتومیک یا تأیید آموزشی نیست. داده‌ها و پیش‌نویس‌ها به سرور ارسال نمی‌شوند.</span><span class="rad-en">Masks remain unreviewed and source HU calibration is unconfirmed. Manual editing does not imply anatomical correctness or educational approval. Data and drafts are not uploaded to a server.</span></p>
+          </div>
+        </aside>
+      </section>
+
+      <section class="correction-layout" aria-label="3D segmentation mask editor">
+        <section class="correction-viewer">
+          <div class="correction-viewer-head">
+            <div><span class="panel-kicker"><span class="rad-fa">ویرایش ماسک</span><span class="rad-en">MASK EDITOR</span></span><h2 id="correction-plane-title"><span class="rad-fa">نمای محوری</span><span class="rad-en">Axial view</span></h2></div>
+            <span id="correction-position" class="correction-position">27 / 113</span>
+          </div>
+          <div class="correction-plane-selector" role="group" aria-label="CT plane">
+            <button class="correction-plane-button" data-plane="axial" aria-pressed="true" type="button"><span class="rad-fa">محوری</span><span class="rad-en">Axial</span></button>
+            <button class="correction-plane-button" data-plane="coronal" aria-pressed="false" type="button"><span class="rad-fa">کرونال</span><span class="rad-en">Coronal</span></button>
+            <button class="correction-plane-button" data-plane="sagittal" aria-pressed="false" type="button"><span class="rad-fa">ساژیتال</span><span class="rad-en">Sagittal</span></button>
+          </div>
+          <div class="correction-slice-toolbar">
+            <button id="correction-prev" class="series-button" type="button"><span class="rad-fa">قبلی</span><span class="rad-en">Previous</span></button>
+            <button id="correction-next" class="series-button" type="button"><span class="rad-fa">بعدی</span><span class="rad-en">Next</span></button>
+            <button id="correction-reset-view" class="series-button series-button-quiet" type="button"><span class="rad-fa">مرکز نما</span><span class="rad-en">Center view</span></button>
+          </div>
+          <div class="correction-canvas-wrap" id="correction-canvas-wrap">
+            <canvas id="correction-canvas" width="256" height="256" aria-label="CT with editable model masks"></canvas>
+            <div id="correction-canvas-state" class="correction-canvas-state" role="status" aria-live="polite"><span class="correction-spinner" aria-hidden="true"></span><strong><span class="rad-fa">در حال بارگذاری ماسک‌های حجمی…</span><span class="rad-en">Loading 3D mask volumes…</span></strong></div>
+          </div>
+          <div class="correction-slice-navigation">
+            <label for="correction-slice-slider"><span class="rad-fa">شمارهٔ برش</span><span class="rad-en">Slice index</span></label>
+            <input id="correction-slice-slider" type="range" min="1" max="113" value="27" step="1" disabled>
+            <output id="correction-slice-value" for="correction-slice-slider">27 / 113</output>
+          </div>
+          <p id="correction-coordinate-readout" class="correction-coordinate-readout"><span class="rad-fa">مختصات وکسل</span><span class="rad-en">Voxel coordinates</span></p>
+          <p class="correction-canvas-help"><span class="rad-fa">برای نقاشی یا پاک‌کردن، روی ماسک کلیک و بکش. کلید Escape حرکت جاری را لغو می‌کند؛ Ctrl/Cmd+Z بازگشت و Ctrl/Cmd+Y انجام دوباره است.</span><span class="rad-en">Click and drag to paint or erase. Escape cancels the current stroke; Ctrl/Cmd+Z undoes and Ctrl/Cmd+Y redoes.</span></p>
+          <p id="correction-status" class="correction-status" role="status" aria-live="polite"><span class="rad-fa">در انتظار دادهٔ حجمی…</span><span class="rad-en">Waiting for volume data…</span></p>
+        </section>
+
+        <aside class="correction-controls">
+          <section class="correction-panel">
+            <span class="panel-kicker"><span class="rad-fa">ابزار</span><span class="rad-en">TOOLS</span></span>
+            <h2><span class="rad-fa">تنظیم قلم</span><span class="rad-en">Brush settings</span></h2>
+            <label class="correction-field-label" for="correction-active-organ"><span class="rad-fa">اندام فعال</span><span class="rad-en">Active organ</span></label>
+            <select id="correction-active-organ" disabled></select>
+            <div class="correction-mode-buttons" role="group" aria-label="Correction mode">
+              <button type="button" data-mode="paint" aria-pressed="true" disabled><span class="rad-fa">قلم</span><span class="rad-en">Paint</span></button>
+              <button type="button" data-mode="erase" aria-pressed="false" disabled><span class="rad-fa">پاک‌کن</span><span class="rad-en">Erase</span></button>
+            </div>
+            <div class="correction-radius-row"><label for="correction-brush-radius"><span class="rad-fa">شعاع قلم</span><span class="rad-en">Brush radius</span></label><output id="correction-brush-value">3 mm</output></div>
+            <input id="correction-brush-radius" type="range" min="1" max="12" value="3" step="1" disabled>
+            <p class="correction-hint"><span class="rad-fa">شعاع برحسب میلی‌متر است؛ شکل قلم با فاصلهٔ فیزیکی وکسل‌ها در هر صفحه تنظیم می‌شود.</span><span class="rad-en">Radius is in millimetres; the brush accounts for physical voxel spacing in each plane.</span></p>
+            <div id="correction-visibility-list" class="correction-visibility-list"></div>
+          </section>
+
+          <section class="correction-panel">
+            <span class="panel-kicker"><span class="rad-fa">تاریخچه</span><span class="rad-en">HISTORY</span></span>
+            <h2><span class="rad-fa">بازگشت و ذخیره</span><span class="rad-en">Undo and save</span></h2>
+            <div class="correction-button-grid">
+              <button id="correction-undo" type="button" disabled><span class="rad-fa">بازگشت</span><span class="rad-en">Undo</span></button>
+              <button id="correction-redo" type="button" disabled><span class="rad-fa">انجام دوباره</span><span class="rad-en">Redo</span></button>
+              <button id="correction-cancel-stroke" type="button" disabled><span class="rad-fa">لغو حرکت</span><span class="rad-en">Cancel stroke</span></button>
+              <button id="correction-save-draft" class="correction-primary-action" type="button" disabled><span class="rad-fa">ذخیرهٔ پیش‌نویس</span><span class="rad-en">Save draft</span></button>
+            </div>
+            <p id="correction-draft-state" class="correction-draft-state" role="status" aria-live="polite"><span class="rad-fa">ذخیره‌سازی محلی هنوز آماده نیست.</span><span class="rad-en">Local draft storage is not ready yet.</span></p>
+            <button id="correction-reset-draft" class="correction-danger-action" type="button" disabled><span class="rad-fa">حذف تمام اصلاحات محلی</span><span class="rad-en">Discard all local edits</span></button>
+          </section>
+
+          <section class="correction-panel">
+            <span class="panel-kicker"><span class="rad-fa">خروجی</span><span class="rad-en">EXPORT</span></span>
+            <h2><span class="rad-fa">دریافت فایل‌های NIfTI</span><span class="rad-en">Export NIfTI files</span></h2>
+            <p class="correction-hint"><span class="rad-fa">خروجی شامل پیش‌نویس فعلی است؛ پیش‌بینی اصلی در مخزن تغییر نمی‌کند. نقشهٔ چندبرچسبی برای وکسل‌های هم‌پوشان از اولویت اندام‌ها استفاده می‌کند، بنابراین ماسک‌های مستقل هر اندام را نیز نگه دار.</span><span class="rad-en">Exports contain the current draft; repository predictions stay unchanged. The combined label map resolves overlap by organ order, so retain the separate per-organ masks as authoritative.</span></p>
+            <button id="correction-export-organ" class="correction-export-button" type="button" disabled><span class="rad-fa">خروجی ماسک اندام فعال (.nii.gz)</span><span class="rad-en">Export active organ mask (.nii.gz)</span></button>
+            <button id="correction-export-combined" class="correction-export-button" type="button" disabled><span class="rad-fa">خروجی نقشهٔ ترکیبی (.nii.gz)</span><span class="rad-en">Export combined label map (.nii.gz)</span></button>
+          </section>
+        </aside>
+      </section>
+
+      <section class="correction-provenance">
+        <h2><span class="rad-fa">محدودیت و منشأ داده</span><span class="rad-en">Provenance and limits</span></h2>
+        <div class="correction-provenance-grid">
+          <p><strong><span class="rad-fa">پیش‌بینی اولیه</span><span class="rad-en">Original prediction</span></strong><span><span class="rad-fa">دادهٔ NIfTI اصلی فقط خواندنی بارگذاری می‌شود؛ تغییرات در آرایهٔ جداگانهٔ مرورگر اعمال می‌شوند.</span><span class="rad-en">The original NIfTI mask is loaded read-only; edits live in a separate in-browser array.</span></span></p>
+          <p><strong><span class="rad-fa">ذخیره‌سازی</span><span class="rad-en">Persistence</span></strong><span><span class="rad-fa">پیش‌نویس نسخه‌دار در IndexedDB همین مرورگر باقی می‌ماند و بین دستگاه‌ها همگام نمی‌شود.</span><span class="rad-en">A versioned draft stays in this browser's IndexedDB and does not sync across devices.</span></span></p>
+          <p><strong><span class="rad-fa">اعتبارسنجی</span><span class="rad-en">Validation</span></strong><span><span class="rad-fa">هم‌ترازی ابعاد و affine و واحد فضایی بررسی می‌شود؛ این بررسی صحت مرز اندام را ثابت نمی‌کند.</span><span class="rad-en">Dimensions, affine and spatial units are checked; this does not prove anatomical boundary accuracy.</span></span></p>
+        </div>
+      </section>
+      <footer class="correction-footer">
+        <span><span class="rad-fa">پیش‌نمایش غیرتشخیصی · پیش‌نویس بازبینی‌نشده</span><span class="rad-en">Non-diagnostic preview · unreviewed draft</span></span>
+        <a href="./organ-segmentation.html"><span class="rad-fa">بازگشت به پیش‌نمایش مدل</span><span class="rad-en">Back to model preview</span></a>
+      </footer>
+    </main>
+  </div>
+  <script defer src="./organ-mask-correction-core.js"></script>
+  <script defer src="./organ-mask-correction.js"></script>
+</body>
+</html>
