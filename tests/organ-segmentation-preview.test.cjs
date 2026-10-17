@@ -35,7 +35,7 @@ test('preview validates the generated manifest and never fabricates fallback mas
   assert.match(app, /maskPatterns\[state\.plane\]/);
   assert.match(app, /planeDefinitions/);
   assert.match(app, /function drawCrosshair/);
-  assert.match(app, /naturalWidth !== 256/);
+  assert.match(app, /naturalWidth !== width/);
   assert.match(app, /diceAgainstBundledAtlasLabel/);
 });
 
