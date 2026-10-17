@@ -1,0 +1,67 @@
+const test = require('node:test');
+const assert = require('node:assert/strict');
+const fs = require('node:fs');
+const path = require('node:path');
+
+const root = path.resolve(__dirname, '..');
+const registryPath = path.join(root, 'docs', 'SEGMENTOR_COVERAGE_REGISTRY.json');
+const registry = JSON.parse(fs.readFileSync(registryPath, 'utf8'));
+
+test('coverage registry is versioned and matches pinned TotalSegmentator v2.11.0 total class map', function () {
+  assert.equal(registry.schemaVersion, 1);
+  assert.equal(registry.upstreamSources.pinnedVersion, '2.11.0');
+  assert.equal(registry.upstreamSources.currentMainTask, 'total');
+  assert.equal(registry.structures.length, 117);
+  assert.equal(registry.upstreamSources.taskVersionIsPinned, true);
+  const labelIds = registry.structures.map(function (item) { return item.upstreamLabelId; }).sort(function (a, b) { return a - b; });
+  assert.deepEqual(labelIds, Array.from({ length: 117 }, function (_, i) { return i + 1; }));
+  const stableIds = registry.structures.map(function (item) { return item.id; });
+  assert.equal(new Set(stableIds).size, stableIds.length);
+});
+
+test('only the four current SPL predictions are marked technically validated and their limits remain explicit', function () {
+  const generated = registry.structures.filter(function (item) { return item.predictionStatus === 'prediction-generated'; });
+  assert.deepEqual(generated.map(function (item) { return item.upstreamModelClass; }).sort(),
+    ['kidney_left', 'kidney_right', 'liver', 'spleen']);
+  for (const item of generated) {
+    assert.equal(item.implementationStatus, 'technically-validated');
+    assert.equal(item.technicalValidation.status, 'passed-for-software-and-geometry-only');
+    assert.match(item.technicalValidation.scope, /not anatomical correctness/i);
+    assert.equal(item.evaluation.status, 'same-volume-reference-comparison-only');
+    assert.equal(item.evaluation.independentHeldOutEvaluationStatus, 'not-evaluated');
+    assert.equal(item.anatomicalReviewStatus, 'not-reviewed');
+    assert.equal(item.educationalApprovalStatus, 'not-approved');
+    assert.ok(Number.isFinite(item.evaluation.dice));
+  }
+  const pending = registry.structures.filter(function (item) { return item.predictionStatus === 'not-generated-in-CT-Edu'; });
+  assert.equal(pending.length, 113);
+  for (const item of pending) {
+    assert.equal(item.implementationStatus, 'model-available-not-evaluated');
+    assert.equal(item.evaluation.status, 'not-evaluated');
+    assert.equal(item.technicalValidation.status, 'not-run');
+  }
+});
+
+test('specialist task registry distinguishes open tasks from licensed candidates', function () {
+  const tasks = Object.fromEntries(registry.taskCatalog.map(function (task) { return [task.task, task]; }));
+  assert.equal(tasks.total.licensing.taskLicense, 'Apache-2.0');
+  assert.equal(tasks.lung_vessels.licensing.taskLicense, 'Apache-2.0');
+  assert.equal(tasks.headneck_bones_vessels.licensing.taskLicense, 'Apache-2.0');
+  assert.match(tasks.heartchambers_highres.licensing.taskLicense, /license-required/i);
+  assert.match(tasks.coronary_arteries.licensing.taskLicense, /license-required/i);
+  assert.equal(tasks.heartchambers_highres.execution.requestedByCTEdu, false);
+  assert.equal(tasks.coronary_arteries.execution.requestedByCTEdu, false);
+  assert.equal(registry.safetyAndInterpretation.originalSourceLabelMapPreserved, true);
+  assert.equal(registry.safetyAndInterpretation.diagnosticUse, false);
+  assert.equal(registry.safetyAndInterpretation.publicReleaseGate, 'unchanged-and-closed-unless-explicitly-approved');
+});
+
+test('human-readable coverage registry clearly separates upstream classes from validated output', function () {
+  const markdown = fs.readFileSync(path.join(root, 'docs', 'SEGMENTOR_COVERAGE_REGISTRY.md'), 'utf8');
+  assert.match(markdown, /117 named classes/i);
+  assert.match(markdown, /generates only 4/i);
+  assert.match(markdown, /not independent held-out evaluation/i);
+  assert.match(markdown, /not confirmed HU/i);
+  assert.match(markdown, /approved for educational use/i);
+  assert.match(markdown, /coronary_arteries/);
+});
