@@ -46,6 +46,7 @@ jobs:
           cp index.html cases.html abdomen-series.html data-license.html privacy.html DATA_LICENSE_REVIEW.md _site/
           cp favicon.svg _site/
           cp -R src _site/src
+          cp -R preview _site/preview
           cp -R build/ct-demo-volume _site/assets/spl-abdominal-demo
           cp licenses/SPL-Abdominal-Atlas-LICENSE.txt _site/licenses/
           touch _site/.nojekyll
@@ -80,6 +81,15 @@ jobs:
           test -s _site/assets/spl-abdominal-demo/sagittal/ct-000.png
           test -s _site/assets/spl-abdominal-demo/sagittal/labels-128.png
           test -s _site/assets/spl-abdominal-demo/sagittal/ct-255.png
+          test -s _site/preview/index.html
+          test -s _site/preview/organ-segmentation.html
+          test -s _site/preview/organ-segmentation.css
+          test -s _site/preview/organ-segmentation.js
+          test -s _site/preview/assets/organ-predictions/manifest.json
+          test "$(find _site/preview/assets/organ-predictions -maxdepth 1 -name '*.png' | wc -l | tr -d ' ')" -eq 2500
+          test "$(find _site/preview/assets/organ-predictions -maxdepth 1 -name '*.nii.gz' | wc -l | tr -d ' ')" -eq 5
+          grep -q 'experimental-unreviewed' _site/preview/assets/organ-predictions/manifest.json
+          grep -q 'organ-segmentation.html' _site/preview/index.html
           test -s _site/data-license.html
           test -s _site/licenses/SPL-Abdominal-Atlas-LICENSE.txt
 
@@ -166,4 +176,19 @@ jobs:
           fetch_with_retry "$base/assets/spl-abdominal-demo/coronal/labels-128.png" 'PNG'
           fetch_with_retry "$base/assets/spl-abdominal-demo/sagittal/ct-128.png" 'PNG'
           fetch_with_retry "$base/assets/spl-abdominal-demo/sagittal/labels-128.png" 'PNG'
-          echo "CT_EDU_TRIPLANAR_VOLUME_LIVE_VERIFIED"
+          fetch_with_retry "$base/preview/index.html" 'organ-segmentation.html'
+          fetch_with_retry "$base/preview/organ-segmentation.html" 'organ-segmentation.js'
+          fetch_with_retry "$base/preview/organ-segmentation.css" '.organ-workspace'
+          fetch_with_retry "$base/preview/organ-segmentation.js" 'TotalSegmentator'
+          fetch_with_retry "$base/preview/assets/organ-predictions/manifest.json" 'experimental-unreviewed'
+          for asset in major-organ-labelmap.nii.gz liver.nii.gz spleen.nii.gz kidney_right.nii.gz kidney_left.nii.gz; do
+            curl -fsS -L "$base/preview/assets/organ-predictions/$asset?probe=$GITHUB_RUN_ID" -o "/tmp/$asset"
+            test -s "/tmp/$asset"
+            python - "/tmp/$asset" <<'PY'
+          import sys
+          from pathlib import Path
+          data = Path(sys.argv[1]).read_bytes()
+          assert list(data[:2]) == [31, 139], "Expected gzip-compressed NIfTI asset"
+          PY
+          done
+          echo "CT_EDU_TRIPLANAR_VOLUME_AND_ORGAN_SEGMENTATION_PREVIEW_LIVE_VERIFIED"
