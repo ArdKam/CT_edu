@@ -12,7 +12,7 @@ The revised workflow preserves explicit opt-in while allowing a dedicated branch
 - The historical `codex/segmentor-three-plane-main` branch remains allowed for compatibility.
 - `main` itself is never eligible for manual inference dispatch.
 - Pull-request inference is limited to same-repository branches; fork-originated pull requests cannot run the write-capable inference job.
-- The workflow triggers on `opened`, `synchronize`, and `reopened` events and watches the generator, source-volume builder, source archive parts, and workflow file.
+- The workflow triggers on `opened`, `synchronize`, and `reopened` events when the PR changes the generator, source-volume builder, or source archive parts. Workflow-only edits run the standard repository checks but do not launch heavy inference; this prevents a workflow-trigger PR from spending CPU/model-download time merely to validate its own configuration.
 - Workflow-wide contents permission is read-only; write permission is scoped to the guarded generation job because that job commits generated assets to its opted-in branch.
 
 ## Expected behavior
