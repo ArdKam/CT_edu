@@ -4,7 +4,7 @@ on:
   pull_request:
     types: [opened]
     branches:
-      - "docs/segmentor-roadmap"
+      - "main"
     paths:
       - "scripts/generate_major_organ_masks.py"
       - ".github/workflows/organ-segmentation.yml"
@@ -19,7 +19,7 @@ concurrency:
 
 jobs:
   segment-major-organs:
-    if: ${{ github.repository == 'ArdKam/CT_edu' && ((github.event_name == 'pull_request' && github.head_ref == 'codex/automatic-major-organ-segmentation' && github.event.pull_request.head.repo.full_name == github.repository) || (github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/codex/automatic-major-organ-segmentation')) }}
+    if: ${{ github.repository == 'ArdKam/CT_edu' && ((github.event_name == 'pull_request' && github.head_ref == 'codex/segmentor-three-plane-main' && github.event.pull_request.head.repo.full_name == github.repository) || (github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/codex/segmentor-three-plane-main')) }}
     runs-on: ubuntu-latest
     timeout-minutes: 120
     steps:
@@ -58,13 +58,22 @@ jobs:
           python - <<'PY'
           import json
           from pathlib import Path
+          import nibabel as nib
+          import numpy as np
+          from PIL import Image
           root = Path("preview/assets/organ-predictions")
           manifest = json.loads((root / "manifest.json").read_text(encoding="utf-8"))
           assert manifest["schemaVersion"] == 1
           assert manifest["status"] == "experimental-unreviewed"
           assert manifest["sourceDimensionsXYZ"] == [256, 256, 113]
+          assert manifest["planeDefinitions"]["axial"]["sliceCount"] == 113
+          assert manifest["planeDefinitions"]["axial"]["imageSize"] == [256, 256]
+          assert manifest["planeDefinitions"]["coronal"]["sliceCount"] == 256
+          assert manifest["planeDefinitions"]["coronal"]["imageSize"] == [256, 113]
+          assert manifest["planeDefinitions"]["sagittal"]["sliceCount"] == 256
+          assert manifest["planeDefinitions"]["sagittal"]["imageSize"] == [256, 113]
           assert len(manifest["organs"]) == 4
-          assert len(list(root.glob("*.png"))) == 452
+          assert len(list(root.glob("*.png"))) == 2500
           assert len(list(root.glob("*.nii.gz"))) == 5
           assert (root / "major-organ-labelmap.nii.gz").is_file()
           assert manifest["labelMap"]["file"] == "major-organ-labelmap.nii.gz"
@@ -79,7 +88,35 @@ jobs:
               assert len(item["nonEmptySlices"]) > 0, item["id"]
               assert item["reviewStatus"] == "unreviewed-model-output"
               assert (root / item["maskVolumeFile"]).is_file()
+              assert set(item["maskPatterns"]) == {"axial", "coronal", "sagittal"}
+              for plane in ("axial", "coronal", "sagittal"):
+                  assert "{index:03d}" in item["maskPatterns"][plane]
+                  assert (root / item["maskPatterns"][plane].replace("{index:03d}", "000")).is_file()
               assert item["volumeLabelId"] in {1, 2, 3, 4}
+              mask_image = nib.load(str(root / item["maskVolumeFile"]))
+              assert mask_image.shape == (256, 256, 113), item["id"]
+              assert np.allclose(mask_image.affine, np.asarray(manifest["affineRAS"]), atol=1e-4), item["id"]
+              mask_xyz = np.asarray(mask_image.dataobj) > 0.5
+              plane_samples = {
+                  "axial": (0, 26, 56, 112),
+                  "coronal": (0, 127, 255),
+                  "sagittal": (0, 127, 255),
+              }
+              for k in plane_samples["axial"]:
+                  expected = np.flipud(mask_xyz[:, :, k].T)
+                  filename = item["maskPatterns"]["axial"].replace("{index:03d}", f"{k:03d}")
+                  actual = np.asarray(Image.open(root / filename).convert("L")) > 0
+                  np.testing.assert_array_equal(actual, expected, err_msg=f'{item["id"]} axial orientation at {k}')
+              for y in plane_samples["coronal"]:
+                  expected = mask_xyz[:, y, :].T
+                  filename = item["maskPatterns"]["coronal"].replace("{index:03d}", f"{y:03d}")
+                  actual = np.asarray(Image.open(root / filename).convert("L")) > 0
+                  np.testing.assert_array_equal(actual, expected, err_msg=f'{item["id"]} coronal orientation at {y}')
+              for x in plane_samples["sagittal"]:
+                  expected = np.fliplr(mask_xyz[x, :, :].T)
+                  filename = item["maskPatterns"]["sagittal"].replace("{index:03d}", f"{x:03d}")
+                  actual = np.asarray(Image.open(root / filename).convert("L")) > 0
+                  np.testing.assert_array_equal(actual, expected, err_msg=f'{item["id"]} sagittal orientation at {x}')
               print(
                   "ORGAN_SUMMARY",
                   item["id"],
@@ -87,7 +124,11 @@ jobs:
                   "dice_vs_same_atlas=", item["diceAgainstBundledAtlasLabel"],
                   "slice_range=", (min(item["nonEmptySlices"]), max(item["nonEmptySlices"]))
               )
-          print("FOUR_ORGAN_MASKS_VALIDATED")
+          combined = nib.load(str(root / manifest["labelMap"]["file"]))
+          assert combined.shape == (256, 256, 113)
+          assert np.allclose(combined.affine, np.asarray(manifest["affineRAS"]), atol=1e-4)
+          assert set(np.unique(np.asarray(combined.dataobj)).tolist()).issubset({0, 1, 2, 3, 4})
+          print("FOUR_ORGAN_MASKS_VALIDATED_IN_AXIAL_CORONAL_SAGITTAL")
           PY
 
       - name: Upload generated mask artifact

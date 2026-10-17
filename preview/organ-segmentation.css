@@ -14,7 +14,7 @@
 .organ-position{flex-shrink:0;padding:8px 11px;border-radius:9px;background:var(--surface-soft,#f0f5f3);border:1px solid var(--line);font-size:12px;font-weight:750;font-variant-numeric:tabular-nums}
 .organ-toolbar{display:flex;gap:8px;flex-wrap:wrap;padding:0 20px 14px}
 .organ-canvas-wrap{position:relative;display:flex;justify-content:center;align-items:center;min-height:300px;background:#101923;padding:16px;overflow:hidden}
-#organ-canvas{display:block;width:min(100%,650px);height:auto;max-height:70vh;object-fit:contain;aspect-ratio:1/1;background:#101923;image-rendering:auto}
+#organ-canvas{display:block;width:min(100%,650px);height:auto;max-height:70vh;object-fit:contain;background:#101923;image-rendering:auto}
 .organ-canvas-state{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:12px;padding:24px;text-align:center;background:rgba(13,24,34,.88);color:#f2f6f7;font-size:13px}
 .organ-canvas-state[hidden]{display:none}
 .organ-spinner{width:22px;height:22px;border-radius:50%;border:2px solid rgba(255,255,255,.24);border-top-color:#c7e3da;animation:organ-spin .8s linear infinite}
@@ -29,12 +29,7 @@
 .organ-control-row{display:grid;grid-template-columns:auto auto minmax(0,1fr);align-items:center;gap:9px;padding:12px 18px;border-bottom:1px solid var(--line);font-size:12px}
 .organ-control-row:last-child{border-bottom:0}
 .organ-control-row input{width:17px;height:17px;accent-color:var(--teal);margin:0}
-.organ-color-chip{width:11px;height:11px;border-radius:4px}
-.organ-color-chip.organ-liver{background:#d96d52;box-shadow:0 0 0 3px rgba(217,109,82,.18)}
-.organ-color-chip.organ-spleen{background:#bd83bf;box-shadow:0 0 0 3px rgba(189,131,191,.18)}
-.organ-color-chip.organ-kidney-right{background:#4c9f91;box-shadow:0 0 0 3px rgba(76,159,145,.18)}
-.organ-color-chip.organ-kidney-left{background:#7398d6;box-shadow:0 0 0 3px rgba(115,152,214,.18)}
-.organ-color-chip.organ-neutral{background:#96aab4;box-shadow:0 0 0 3px rgba(150,170,180,.18)}
+.organ-color-chip{width:11px;height:11px;border-radius:4px;box-shadow:0 0 0 3px color-mix(in srgb,var(--organ-color) 18%,transparent);background:var(--organ-color)}
 .organ-control-name{font-weight:700;min-width:0}
 .organ-control-meta{grid-column:2 / -1;margin-inline-start:26px;font-size:10px;line-height:1.6;color:var(--muted)}
 .organ-opacity-block{padding:17px 20px}
@@ -61,3 +56,12 @@
 .organ-download-link{display:block;padding:7px 9px;border:1px solid var(--line);border-radius:8px;background:var(--surface);color:var(--teal);font-size:10px;font-weight:700;line-height:1.55;text-decoration:none}
 .organ-download-link:hover{border-color:var(--teal);text-decoration:underline;text-underline-offset:3px}
 .organ-download-link:focus-visible{outline:3px solid var(--focus);outline-offset:2px}
+
+.organ-plane-selector{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;padding:0 20px 13px}
+.organ-plane-button{min-width:0;display:flex;align-items:center;justify-content:center;padding:9px 8px;border:1px solid var(--line);border-radius:9px;background:var(--surface);color:var(--text);font-size:11px;font-weight:700;cursor:pointer}
+.organ-plane-button[aria-pressed="true"]{border-color:var(--teal);background:var(--surface-soft,#edf5f2);color:var(--teal);box-shadow:inset 0 0 0 1px var(--teal)}
+.organ-plane-button:hover{border-color:var(--teal)}
+.organ-plane-button:focus-visible{outline:3px solid var(--focus);outline-offset:2px}
+.organ-plane-button[aria-pressed="true"]:hover{background:var(--surface-soft,#edf5f2)}
+.organ-voxel-coordinates{margin:0;padding:0 21px 9px;color:var(--muted);font-size:10px;line-height:1.65;font-variant-numeric:tabular-nums}
+@media(max-width:620px){.organ-plane-selector{padding:0 14px 12px;gap:5px}.organ-plane-button{padding:10px 4px;font-size:10px}.organ-voxel-coordinates{padding-inline:14px}}

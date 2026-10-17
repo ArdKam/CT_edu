@@ -107,12 +107,29 @@ def get_source_structure_ids(metadata: list[dict]) -> dict[str, int]:
 
 
 def save_binary_mask(mask_xyz: np.ndarray, path: Path) -> None:
-    """Save one displayed axial mask, exactly matching the CT slice row flip."""
-    mask_zyx = np.transpose(mask_xyz, (2, 1, 0))
+    """Save an axial mask in the same row-flipped orientation as CT Edu's CT PNG."""
     z_index = int(path.stem.rsplit("-", 1)[1])
-    if z_index < 0 or z_index >= mask_zyx.shape[0]:
-        raise ValueError(f"Invalid output slice index in {path.name}")
-    displayed = np.flipud(mask_zyx[z_index].astype(np.uint8) * 255)
+    if z_index < 0 or z_index >= mask_xyz.shape[2]:
+        raise ValueError(f"Invalid axial slice index in {path.name}")
+    displayed = np.flipud(mask_xyz[:, :, z_index].T.astype(np.uint8) * 255)
+    Image.fromarray(displayed, mode="L").save(path, optimize=True)
+
+
+def save_coronal_mask(mask_xyz: np.ndarray, path: Path) -> None:
+    """Save a coronal mask as rows=z, columns=x, matching the CT volume builder."""
+    y_index = int(path.stem.rsplit("-", 1)[1])
+    if y_index < 0 or y_index >= mask_xyz.shape[1]:
+        raise ValueError(f"Invalid coronal slice index in {path.name}")
+    displayed = mask_xyz[:, y_index, :].T.astype(np.uint8) * 255
+    Image.fromarray(displayed, mode="L").save(path, optimize=True)
+
+
+def save_sagittal_mask(mask_xyz: np.ndarray, path: Path) -> None:
+    """Save a sagittal mask as rows=z, columns=flipped-y, matching CT Edu's CT PNG."""
+    x_index = int(path.stem.rsplit("-", 1)[1])
+    if x_index < 0 or x_index >= mask_xyz.shape[0]:
+        raise ValueError(f"Invalid sagittal slice index in {path.name}")
+    displayed = np.fliplr(mask_xyz[x_index, :, :].T.astype(np.uint8) * 255)
     Image.fromarray(displayed, mode="L").save(path, optimize=True)
 
 
@@ -219,9 +236,14 @@ def main() -> int:
                 raise SystemExit("Prediction/reference array shape mismatch for " + item["key"])
 
             pattern = item["key"] + "-{index:03d}.png"
+            coronal_pattern = item["key"] + "-coronal-{index:03d}.png"
+            sagittal_pattern = item["key"] + "-sagittal-{index:03d}.png"
             for k in range(source_ct.shape[0]):
-                destination = output / pattern.format(index=k)
-                save_binary_mask(pred_xyz, destination)
+                save_binary_mask(pred_xyz, output / pattern.format(index=k))
+            for y_index in range(source_ct.shape[1]):
+                save_coronal_mask(pred_xyz, output / coronal_pattern.format(index=y_index))
+            for x_index in range(source_ct.shape[2]):
+                save_sagittal_mask(pred_xyz, output / sagittal_pattern.format(index=x_index))
 
             # Keep the actual 3D mask in the source volume's voxel grid as well
             # as the 2D display stack. This preserves affine/spacing for later
@@ -242,6 +264,11 @@ def main() -> int:
                 "nameFa": item["name_fa"],
                 "color": item["color"],
                 "maskPattern": pattern,
+                "maskPatterns": {
+                    "axial": pattern,
+                    "coronal": coronal_pattern,
+                    "sagittal": sagittal_pattern,
+                },
                 "maskVolumeFile": mask_volume_file,
                 "volumeLabelId": TARGETS.index(item) + 1,
                 "voxels": count,
@@ -310,7 +337,27 @@ def main() -> int:
             "requestedClasses": [item["model_name"] for item in TARGETS],
         },
         "maskImageSize": [256, 256],
-        "maskFormat": "8-bit grayscale PNG; 0=background, 255=inside predicted organ; rows are flipped to match the CT preview image.",
+        "planeDefinitions": {
+            "axial": {
+                "sliceCount": int(source_ct.shape[0]),
+                "imageSize": [int(source_ct.shape[2]), int(source_ct.shape[1])],
+                "indexAxis": "z",
+                "displayOrientation": "rows flipped so anterior is at the top",
+            },
+            "coronal": {
+                "sliceCount": int(source_ct.shape[1]),
+                "imageSize": [int(source_ct.shape[2]), int(source_ct.shape[0])],
+                "indexAxis": "y",
+                "displayOrientation": "columns x, rows z, superior at the top",
+            },
+            "sagittal": {
+                "sliceCount": int(source_ct.shape[2]),
+                "imageSize": [int(source_ct.shape[1]), int(source_ct.shape[0])],
+                "indexAxis": "x",
+                "displayOrientation": "columns y flipped, rows z, superior at the top",
+            },
+        },
+        "maskFormat": "8-bit grayscale PNG; 0=background, 255=inside predicted organ. Each plane follows the matching CT Edu reformatted slice orientation.",
         "labelMap": {
             "file": labelmap_file,
             "format": "NIfTI-1, uint8",
@@ -325,10 +372,12 @@ def main() -> int:
         "warning": "Preview only. These are model-generated, unreviewed educational candidates; not for diagnosis or clinical decisions.",
     }
     (output / "manifest.json").write_text(json.dumps(manifest, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
-    expected_pngs = len(TARGETS) * source_ct.shape[0]
+    expected_pngs = len(TARGETS) * (
+        source_ct.shape[2] + source_ct.shape[1] + source_ct.shape[0]
+    )
     actual_pngs = len(list(output.glob("*.png")))
     if actual_pngs != expected_pngs:
-        raise SystemExit(f"Expected {expected_pngs} organ-mask PNGs, found {actual_pngs}.")
+        raise SystemExit(f"Expected {expected_pngs} three-plane organ-mask PNGs, found {actual_pngs}.")
     actual_nifti = len(list(output.glob("*.nii.gz")))
     expected_nifti = len(TARGETS) + 1
     if actual_nifti != expected_nifti:
