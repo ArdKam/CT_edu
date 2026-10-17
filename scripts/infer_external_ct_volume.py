@@ -69,7 +69,7 @@ def available_total_class_targets() -> list[dict[str, Any]]:
         display_name = entry.get("displayName")
         if (
             not isinstance(stable_id, str) or not stable_id.startswith("anatomy.") or
-            not isinstance(model_class, str) or not re.fullmatch(r"[a-z0-9_]+", model_class) or
+            not isinstance(model_class, str) or not re.fullmatch(r"[A-Za-z0-9_]+", model_class) or
             not isinstance(display_name, str) or not display_name.strip()
         ):
             raise ExternalInferenceError("Coverage registry contains a malformed TotalSegmentator class entry.")
