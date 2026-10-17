@@ -180,6 +180,16 @@
         lang() === 'fa' ? verificationLabel.fa : verificationLabel.en
       );
       button.appendChild(verificationNote);
+      if (item.source && item.source.caseDiscussion) {
+        appendText(
+          button,
+          'span',
+          'guided-case-discussion-available',
+          lang() === 'fa'
+            ? 'بحث اصلی کیس موجود است · نمایش آن تشخیص را آشکار می‌کند'
+            : 'Original Case Discussion available · reveals diagnosis'
+        );
+      }
       button.addEventListener('click', function () { selectCase(item.id); });
       container.appendChild(button);
     });
