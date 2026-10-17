@@ -109,7 +109,7 @@ assert.match(page, /Show original case page/);
 assert.match(page, /Radiopaedia study page; displayed content is controlled by the source site/);
 assert.match(app, /Open Radiopaedia study page/);
 assert.match(app, /Radiopaedia controls embedded display and image loading/);
-assert.match(app, /Radiopaedia controls the displayed page and image navigation/);
+assert.match(app, /The original case page was requested to show the source description/);
 assert.doesNotMatch(app, /Open study viewer on Radiopaedia/);
 assert.doesNotMatch(page, /the viewer opens automatically/i);
 assert.match(app, /Live image loading for this case has not been independently verified/);
