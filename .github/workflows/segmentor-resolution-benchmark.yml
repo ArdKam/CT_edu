@@ -7,8 +7,6 @@ on:
     paths:
       - "scripts/benchmark_segmentor_resolution.py"
       - ".github/workflows/segmentor-resolution-benchmark.yml"
-      - "tests/segmentor-resolution-benchmark.test.cjs"
-      - "docs/SEGMENTOR_RESOLUTION_BENCHMARK.md"
   workflow_dispatch:
 
 permissions:

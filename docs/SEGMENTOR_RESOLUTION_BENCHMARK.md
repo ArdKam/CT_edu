@@ -14,7 +14,7 @@ The new `scripts/benchmark_segmentor_resolution.py` runs two sequential candidat
 - `fast-3mm`: the current `--fast` configuration.
 - `full-1p5mm`: default 1.5 mm configuration with `--fast` omitted.
 
-Both candidates use the same explicit subtraction offset, defaulted by the workflow to `1024`. That offset remains an unverified hypothesis. This design isolates resolution sensitivity but cannot correct or verify intensity calibration.
+Both candidates use the same explicit subtraction offset, defaulted by the workflow to `1024`. That offset remains an unverified hypothesis. This design isolates resolution sensitivity but cannot correct or verify intensity calibration. The calibration decision remains **not established**.
 
 The JSON report and logs record source NRRD hashes, source geometry, input-array hashes, model version, command/task/ROI list, wall-clock duration, peak RSS when GNU `time -v` is available, output NIfTI sizes, per-class predicted/reference voxel counts, Dice, sensitivity, precision, packed-mask hashes, and fast-vs-full differences. Output masks are stored only in the experiment artifact under `build/segmentor-resolution-benchmark/`; this workflow never commits or deploys predictions.
 
