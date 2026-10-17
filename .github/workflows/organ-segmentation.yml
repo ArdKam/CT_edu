@@ -63,8 +63,14 @@ jobs:
           assert manifest["schemaVersion"] == 1
           assert manifest["status"] == "experimental-unreviewed"
           assert manifest["sourceDimensionsXYZ"] == [256, 256, 113]
+          assert manifest["planeDefinitions"]["axial"]["sliceCount"] == 113
+          assert manifest["planeDefinitions"]["axial"]["imageSize"] == [256, 256]
+          assert manifest["planeDefinitions"]["coronal"]["sliceCount"] == 256
+          assert manifest["planeDefinitions"]["coronal"]["imageSize"] == [256, 113]
+          assert manifest["planeDefinitions"]["sagittal"]["sliceCount"] == 256
+          assert manifest["planeDefinitions"]["sagittal"]["imageSize"] == [256, 113]
           assert len(manifest["organs"]) == 4
-          assert len(list(root.glob("*.png"))) == 452
+          assert len(list(root.glob("*.png"))) == 2500
           assert len(list(root.glob("*.nii.gz"))) == 5
           assert (root / "major-organ-labelmap.nii.gz").is_file()
           assert manifest["labelMap"]["file"] == "major-organ-labelmap.nii.gz"
@@ -79,6 +85,10 @@ jobs:
               assert len(item["nonEmptySlices"]) > 0, item["id"]
               assert item["reviewStatus"] == "unreviewed-model-output"
               assert (root / item["maskVolumeFile"]).is_file()
+              assert set(item["maskPatterns"]) == {"axial", "coronal", "sagittal"}
+              for plane in ("axial", "coronal", "sagittal"):
+                  assert "{index:03d}" in item["maskPatterns"][plane]
+                  assert (root / item["maskPatterns"][plane].replace("{index:03d}", "000")).is_file()
               assert item["volumeLabelId"] in {1, 2, 3, 4}
               print(
                   "ORGAN_SUMMARY",
