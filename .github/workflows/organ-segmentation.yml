@@ -2,16 +2,18 @@ name: Generate experimental major-organ masks
 
 on:
   pull_request:
-    types: [opened]
+    types: [opened, synchronize, reopened]
     branches:
       - "main"
     paths:
       - "scripts/generate_major_organ_masks.py"
+      - "scripts/build_demo_assets.py"
+      - "abacktools-abdomen-2016-09-part*-of6.zip"
       - ".github/workflows/organ-segmentation.yml"
   workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read
 
 concurrency:
   group: experimental-organ-segmentation-${{ github.ref }}
@@ -19,11 +21,13 @@ concurrency:
 
 jobs:
   segment-major-organs:
-    if: ${{ github.repository == 'ArdKam/CT_edu' && ((github.event_name == 'pull_request' && github.head_ref == 'codex/segmentor-three-plane-main' && github.event.pull_request.head.repo.full_name == github.repository) || (github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/codex/segmentor-three-plane-main')) }}
+    if: ${{ github.repository == 'ArdKam/CT_edu' && ((github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository && (startsWith(github.head_ref, 'codex/segmentor-inference-') || github.head_ref == 'codex/segmentor-three-plane-main')) || (github.event_name == 'workflow_dispatch' && github.ref != 'refs/heads/main' && (startsWith(github.ref_name, 'codex/segmentor-inference-') || github.ref_name == 'codex/segmentor-three-plane-main')) ) }}
     runs-on: ubuntu-latest
     timeout-minutes: 120
+    permissions:
+      contents: write
     steps:
-      - name: Check out the experiment branch
+      - name: Check out the explicitly opted-in Segmentor inference branch
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 0
