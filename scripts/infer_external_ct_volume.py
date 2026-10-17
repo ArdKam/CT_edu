@@ -320,7 +320,7 @@ def run_external_inference(
             manifest_path.write_text(json.dumps(manifest, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
             # Re-open staged NIfTIs to ensure the saved affine, dimensions, type, and units are sound.
             for item in TARGETS:
-                staged_img = nib.load(str(stage / item["maskVolumeFile"]))
+                staged_img = nib.load(str(stage / f"{item['id']}.nii.gz"))
                 if staged_img.shape != image.shape or not np.allclose(staged_img.affine, affine, rtol=0, atol=1e-4):
                     raise ExternalInferenceError(f"Staged mask geometry validation failed for {item['id']}.")
                 unit, _ = staged_img.header.get_xyzt_units()
