@@ -60,8 +60,8 @@ The [Segmentor roadmap](docs/SEGMENTOR_ROADMAP.md) is the implementation contrac
 
 - [x] Execute TotalSegmentator on the SPL NRRD volume via the hosted GitHub Actions runner; no local installation or execution by the maintainer was required.
 - [x] Preserve source dimensions (256 × 256 × 113), RAS affine, origin, and voxel spacing in each 3D NIfTI mask and the manifest; record that subtracting a 1024 intensity offset is an experimental assumption until HU calibration is independently proven.
-- [x] Validate that all four masks are non-empty and aligned to the source voxel grid, produce 452 axial mask images plus four individual NIfTI masks and one combined label map, and compare overlap with the bundled atlas labels as a same-volume technical check only.
-- [ ] Review the unreviewed masks systematically across representative slices and planes; inference success and high same-volume Dice scores do not constitute medical approval.
+- [x] Validate that all four masks are non-empty and aligned to the source voxel grid; generate 2,500 axial/coronal/sagittal mask PNGs, four individual NIfTI masks, and one combined label map. Sampled PNG masks pass pixel-for-pixel orientation checks against their 3D masks in each plane; same-volume Dice remains a technical consistency check only.
+- [ ] Review the unreviewed masks systematically across representative slices and planes; automated orientation checks verify coordinate transformations, not correct anatomy. Inference success and high same-volume Dice scores do not constitute medical approval.
 - [x] Keep model predictions on the dedicated preview route, separate from the original SPL labelmap; the public-release approval latch remains closed.
 - [ ] Develop mask correction/editing, independent held-out evaluation, and additional organ coverage before considering production teaching use.
 
