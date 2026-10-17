@@ -52,7 +52,7 @@ class ExternalNiftiInferenceTests(unittest.TestCase):
         # Use separate regions so the combined-label-map order can be checked.
         for target in inference.TARGETS:
             mask = np.zeros(shape, dtype=np.uint8)
-            if target["id"] != "kidney_left":
+            if target["modelClass"] != "kidney_left":
                 offset = target["labelId"] - 1
                 mask[1 + offset:4 + offset, 2:5, 2:4] = 1
             self.save_nifti(output_path / f"{target['modelClass']}.nii.gz", mask, model_input.affine, "mm")
@@ -85,6 +85,31 @@ class ExternalNiftiInferenceTests(unittest.TestCase):
         nib.save(disagree, str(disagree_path))
         with self.assertRaisesRegex(inference.ExternalInferenceError, "qform and sform disagree"):
             inference.load_source_volume(disagree_path)
+
+    def test_class_selection_uses_stable_registry_ids_and_supports_selected_vessels(self) -> None:
+        selected = inference.resolve_target_classes(["aorta", "anatomy.liver"])
+        self.assertEqual([item["id"] for item in selected], ["anatomy.aorta", "anatomy.liver"])
+        self.assertEqual([item["modelClass"] for item in selected], ["aorta", "liver"])
+        self.assertEqual([item["labelId"] for item in selected], [1, 2])
+        self.assertEqual(selected[0]["anatomicalGroup"], "vessel")
+
+        with self.assertRaisesRegex(inference.ExternalInferenceError, "more than once"):
+            inference.resolve_target_classes(["liver", "anatomy.liver"])
+        with self.assertRaisesRegex(inference.ExternalInferenceError, "Unsupported TotalSegmentator"):
+            inference.resolve_target_classes(["made_up_organ"])
+        with self.assertRaisesRegex(inference.ExternalInferenceError, "'all' must be used alone"):
+            inference.resolve_target_classes(["all", "liver"])
+
+    def test_all_class_selection_covers_pinned_total_registry_without_claiming_validation(self) -> None:
+        targets = inference.resolve_target_classes(["all"])
+        self.assertEqual(len(targets), 117)
+        self.assertEqual(len({item["id"] for item in targets}), 117)
+        self.assertEqual(len({item["modelClass"] for item in targets}), 117)
+        self.assertEqual([item["labelId"] for item in targets], list(range(1, 118)))
+        self.assertTrue(any(item["modelClass"] == "aorta" for item in targets))
+        self.assertTrue(any(item["modelClass"] == "portal_vein_and_splenic_vein" for item in targets))
+        self.assertEqual(inference.resolve_target_classes(None)[0]["id"], "anatomy.liver")
+        self.assertEqual(len(inference.resolve_target_classes(None)), 4)
 
     def test_intensity_preprocessing_requires_explicit_semantics(self) -> None:
         raw = np.array([-1024.0, 0.0, 1024.0], dtype=np.float32)
