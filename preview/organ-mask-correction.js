@@ -790,13 +790,29 @@
       try {
         state.db = await openDraftDatabase();
         state.draftStorageAvailable = true;
-        await restoreDraft();
       } catch (draftError) {
+        state.db = null;
         state.draftStorageAvailable = false;
         setDraftStatus(
           'ذخیره‌سازی محلی آماده نیست؛ تغییرات در حافظه می‌مانند و با بستن صفحه از بین می‌روند. ' + String(draftError.message || draftError),
           'Local persistence is unavailable; edits remain in memory and will be lost when this page closes. ' + String(draftError.message || draftError)
         );
+      }
+      if (state.db) {
+        try {
+          await restoreDraft();
+        } catch (draftError) {
+          state.organs.forEach(function (organ) {
+            organ.data.set(organ.base);
+            state.editedOverrides[organ.id] = new Map();
+          });
+          state.undoStack = [];
+          state.redoStack = [];
+          setDraftStatus(
+            'پیش‌نویس ذخیره‌شده نامعتبر است؛ ماسک‌های اصلی بارگذاری شدند و می‌توان پیش‌نویس جدید ذخیره کرد. ' + String(draftError.message || draftError),
+            'Stored draft is invalid; original masks were restored and a new draft can be saved. ' + String(draftError.message || draftError)
+          );
+        }
       }
       renderOrganControls();
       updateBrushLabel();
