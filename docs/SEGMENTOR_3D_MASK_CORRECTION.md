@@ -18,7 +18,7 @@
 
 ## Data and editing contract
 
-The original prediction assets are fetched read-only. Edits occur in separate browser memory arrays and are tracked as a sparse map of voxel index to the corrected binary value. The original masks on disk, the source SPL label map and the model manifest are never written by this page.
+The original prediction assets are fetched read-only and fingerprinted from their exact compressed bytes. Edits occur in separate browser memory arrays and are tracked as a sparse map of voxel index to the corrected binary value. The source/model fingerprint includes the actual individual mask and combined-label-map assets so a newly generated output will not silently reuse an older correction draft. The original masks on disk, the source SPL label map and the model manifest are never written by this page.
 
 When the user completes a stroke, the workspace updates the undo history and attempts to save the versioned draft in IndexedDB. The interface reports failures and does not claim local persistence if it cannot be confirmed. On reopen, the draft is restored only for a matching source/model fingerprint and a valid schema. Clearing local edits requires explicit confirmation.
 
