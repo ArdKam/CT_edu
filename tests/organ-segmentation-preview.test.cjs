@@ -19,6 +19,7 @@ test('major-organ segmentation preview is bilingual, self-hosted, and explicitly
   assert.match(html, /not been independently.*calibrated/i);
   [
     'organ-canvas', 'organ-prev', 'organ-next', 'organ-slice-slider',
+    'organ-plane-selector', 'organ-voxel-coordinates',
     'organ-opacity', 'organ-controls-list', 'organ-model-meta'
   ].forEach(function (id) {
     assert.ok(html.includes('id="' + id + '"'), 'missing organ preview control: ' + id);
@@ -31,7 +32,9 @@ test('preview validates the generated manifest and never fabricates fallback mas
   assert.match(app, /manifest\.status !== 'experimental-unreviewed'/);
   assert.match(app, /manifest\.organs\.length !== 4/);
   assert.match(app, /No placeholder masks are displayed/);
-  assert.match(app, /maskPattern\.replace\('\{index:03d\}'/);
+  assert.match(app, /maskPatterns\[state\.plane\]/);
+  assert.match(app, /planeDefinitions/);
+  assert.match(app, /function drawCrosshair/);
   assert.match(app, /naturalWidth !== 256/);
   assert.match(app, /diceAgainstBundledAtlasLabel/);
 });
@@ -39,6 +42,9 @@ test('preview validates the generated manifest and never fabricates fallback mas
 test('automatic inference uses a real model, explicit intensity-offset assumption, and reference comparison', function () {
   const generator = read('scripts/generate_major_organ_masks.py');
   assert.match(generator, /TotalSegmentator/);
+  assert.match(generator, /save_coronal_mask/);
+  assert.match(generator, /save_sagittal_mask/);
+  assert.match(generator, /planeDefinitions/);
   assert.match(generator, /--roi_subset/);
   assert.match(generator, /liver.*spleen.*kidney_left.*kidney_right/s);
   assert.match(generator, /intensity-offset/);
@@ -57,4 +63,5 @@ test('preview build stages organ page and generated assets only when they exist'
   assert.match(workflow, /if \[ -d preview\/assets\/organ-predictions \]/);
   assert.match(workflow, /experimental-unreviewed/);
   assert.match(workflow, /organ-segmentation\.html/);
+  assert.match(workflow, /2500/);
 });
