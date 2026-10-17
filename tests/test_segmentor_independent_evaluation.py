@@ -144,14 +144,17 @@ class SegmentorIndependentEvaluationTests(unittest.TestCase):
             evaluator._validate_affine(sheared, "test-volume")
 
     def test_independent_cohort_aggregation_reports_empty_mask_failures(self) -> None:
-        reference = np.zeros((6, 6, 6), dtype=np.uint8)
-        reference[1:4, 1:4, 1:4] = 5
-        exact_prediction = np.zeros_like(reference)
+        reference1 = np.zeros((6, 6, 6), dtype=np.uint8)
+        reference1[1:4, 1:4, 1:4] = 5
+        reference2 = np.zeros((6, 6, 6), dtype=np.uint8)
+        reference2[2:5, 2:5, 2:5] = 5
+        exact_prediction = np.zeros_like(reference1)
         exact_prediction[1:4, 1:4, 1:4] = 1
-        empty_prediction = np.zeros_like(reference)
-        ref_path = self.save_volume("reference.nii.gz", reference)
-        report1 = self.evaluate(self.save_volume("pred-1.nii.gz", exact_prediction), ref_path, "case-001")
-        report2 = self.evaluate(self.save_volume("pred-2.nii.gz", empty_prediction), ref_path, "case-002")
+        empty_prediction = np.zeros_like(reference2)
+        ref_path1 = self.save_volume("reference-1.nii.gz", reference1)
+        ref_path2 = self.save_volume("reference-2.nii.gz", reference2)
+        report1 = self.evaluate(self.save_volume("pred-1.nii.gz", exact_prediction), ref_path1, "case-001")
+        report2 = self.evaluate(self.save_volume("pred-2.nii.gz", empty_prediction), ref_path2, "case-002")
         path1, path2 = self.root / "case-001.json", self.root / "case-002.json"
         path1.write_text(json.dumps(report1), encoding="utf-8")
         path2.write_text(json.dumps(report2), encoding="utf-8")
