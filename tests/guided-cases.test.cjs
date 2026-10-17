@@ -49,7 +49,7 @@ assert.equal(entries.filter(item => item.verification.status === 'verified').len
 const bowelViability = cases.getById('bowel-viability-ct');
 assert.equal(bowelViability.source.contributor, 'Michael P. Hartung');
 assert.match(bowelViability.source.url, /radiopaedia\.org\/cases\/closed-loop-obstruction-due-to-adhesive-band-resulting-in-small-bowel-ischemia-and-resection/);
-assert.equal(bowelViability.title.en, 'Abdominal CT · Case 04', 'the active case title must not reveal the diagnosis');
+assert.equal(bowelViability.title.en, 'Abdominal CT · Case 03', 'the active case title must not reveal the diagnosis');
 assert.equal(bowelViability.patientPresentation.ageSex.en, '80-year-old male');
 assert.match(bowelViability.patientPresentation.symptoms.en, /bright red blood per rectum/);
 assert.match(bowelViability.patientPresentation.labs.en, /Very high lactate/);
