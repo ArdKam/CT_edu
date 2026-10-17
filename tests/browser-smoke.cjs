@@ -635,6 +635,8 @@ const { chromium } = require('playwright');
       'Record the imaging findings systematically…', 'guided case placeholders should be translated');
     assert.equal(await guidedPage.locator('#radiopaedia-frame').getAttribute('src'), closedLoopStudyUrl,
       'language switching should preserve a source frame that the learner already requested');
+    assert.match(await guidedPage.locator('#guided-case-list .guided-case-card[data-case-id="bowel-viability-ct"]').textContent(), /Original Case Discussion available/,
+      'the case list should identify which case contains original discussion text');
     await guidedPage.locator('#guided-case-list .guided-case-card[data-case-id="bowel-viability-ct"]').click();
     assert.equal(await guidedPage.locator('#source-case-title').textContent(), 'External imaging source',
       'the source diagnosis should remain masked before report submission');
