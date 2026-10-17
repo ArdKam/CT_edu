@@ -20,8 +20,16 @@ test('external Segmentor inference pins its model version and requires explicit 
   assert.match(script, /from atomic_artifact_publish import publish_directory/);
   assert.match(script, /publish_directory\(stage, destination\)/);
   assert.match(script, /sourceInputSha256/);
+  assert.match(script, /resolve_target_classes\(class_names\)/);
+  assert.match(script, /--classes/);
+  assert.match(script, /--roi_subset/);
+  assert.match(script, /REGISTRY_PATH/);
+  assert.match(script, /len\(selected\) > 255/);
+  assert.doesNotMatch(script, /np\.stack\(\[aligned_masks/);
   assert.doesNotMatch(script, /preview\/assets\/organ-predictions/);
   assert.doesNotMatch(script, /inputPath["']?\s*:/);
+  assert.match(doc, /registry-backed class selection/i);
+  assert.match(doc, /Use .*all.*117 classes/i);
   assert.match(doc, /original dimensions, affine and millimetre spatial units are preserved/i);
   assert.match(doc, /does not add server-side inference, cloud uploads/i);
   assert.match(doc, /independent evaluation is outstanding/i);
