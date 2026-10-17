@@ -1,7 +1,7 @@
 # Radiopaedia abdominal CT case intake and verification log
 
 **Intake date:** 2026-10-14  
-**Scope:** metadata, source links, and short independently authored bilingual educational synopses; no Radiopaedia images, thumbnails, full article passages or viewer assets are copied into CT Edu.  
+**Scope:** metadata, source links, and short independently authored bilingual educational synopses; no Radiopaedia images, thumbnails or viewer assets are copied. The pre-existing `bowel-viability-ct` exercise now also displays one user-supplied verbatim Case Discussion and operative-note excerpt with attribution. Redistribution rights for this excerpt remain unverified; other case records continue to use independent synopses rather than bulk full-text copies.  
 **Status:** `partially_verified` for all records in this intake. This is a candidate teaching library, not a medically or legally approved case set.
 
 ## Summary
