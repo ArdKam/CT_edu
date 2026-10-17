@@ -82,7 +82,7 @@ test('failed staged publication restores the existing segmentation directory', f
 
 test('inference requires the intensity offset to be supplied explicitly', function () {
   const generator = fs.readFileSync(path.join(root, 'scripts/generate_major_organ_masks.py'), 'utf8');
-  assert.match(generator, /add_argument\("--intensity-offset", type=float, required=True/);
+  assert.match(generator, /add_argument\(\s*"--intensity-offset", type=float, required=True/);
   assert.match(generator, /publish_directory\(output, destination\)/);
   assert.match(generator, /ctNrrdSha256/);
   assert.match(generator, /labelMapNrrdSha256/);
