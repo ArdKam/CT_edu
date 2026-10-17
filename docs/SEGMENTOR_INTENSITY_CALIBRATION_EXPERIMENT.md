@@ -24,7 +24,20 @@
 
 For each candidate, the JSON artifact records the exact CT/label-map SHA-256 hashes, full NRRD headers, parsed MRML scene display/window-level evidence where available, source and transformed intensity statistics, model/package/task/device/resolution, input-array hash, affine/spacing, runtime, per-class voxel count and Dice against the bundled same-volume labels, packed-mask hashes, and pairwise per-class mask-difference counts/fractions. Logs and the report are uploaded as CI artifacts; generated prediction masks are not committed or published to the preview.
 
-The report sets `calibrationDecision: not-established` regardless of scores. It labels Dice as same-volume technical consistency, requires complete output from all candidates for a successful comparison, and preserves failed/partial states and logs.
+The experiment distinguishes **model execution**, **output integrity**, and **segmentation quality**. A successfully executed control that returns empty masks is recorded as an invalid segmentation result, not silently converted to a fake success and not confused with a failed process. Geometry-aligned empty masks remain available for comparison. The workflow can pass when both commands and output integrity checks complete, while the separate `segmentationOutcomeStatus` still reports poor/partial candidate quality.
+
+The report sets `calibrationDecision: not-established` regardless of scores. It labels Dice as same-volume technical consistency and preserves failed/partial states and per-candidate logs.
+
+## First hosted result (TotalSegmentator 2.11.0, CPU, fast/3mm)
+
+The initial hosted comparison completed both model commands in about 56 seconds of candidate wall time. The first condition included model-weight downloads, so the per-candidate durations are not a clean speed benchmark.
+
+- **Offset 0 (raw stored values):** the model command exited successfully, but all four output masks were empty; each Dice score against its nonempty bundled reference was 0.000000. This is a negative-control outcome, not support for treating raw values as HU.
+- **Offset 1024:** all four mask files were non-empty and geometry-aligned. Same-volume Dice was liver 0.913837 (174,982 predicted voxels / 181,482 reference), spleen 0.798247 (9,894 / 13,154), right kidney 0.881388 (32,512 / 35,862), and left kidney 0.891304 (35,768 / 35,826). These reproduce the existing technical baseline to rounding.
+
+The package MRML scene also contains a scalar-volume display node with window 1310, level 666, and `autoWindowLevel=1`. This is additional display metadata, not an intensity-calibration transform. It reinforces that neither the browser's width/level of 400/1064 nor a visual comparison can independently establish HU calibration.
+
+**Interpretation:** the model result on this one volume is highly sensitive to the subtraction assumption, and the raw/no-offset control fails to produce usable masks. The results make the `1024` hypothesis a plausible working preprocessing assumption, but they do not prove the source's true stored-value-to-HU mapping. Do not call the masks validated from these results.
 
 ## What this experiment can and cannot establish
 

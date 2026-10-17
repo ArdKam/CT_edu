@@ -14,6 +14,10 @@ test('calibration comparison keeps candidates explicit and never claims that mod
   const doc = read('docs/SEGMENTOR_INTENSITY_CALIBRATION_EXPERIMENT.md');
   assert.match(runner, /parse_candidate_offsets/);
   assert.match(runner, /calibrationDecision.*not-established/s);
+  assert.match(runner, /modelExecutionStatus/);
+  assert.match(runner, /outputIntegrityStatus/);
+  assert.match(runner, /segmentationOutcomeStatus/);
+  assert.match(runner, /Retain empty but present/);
   assert.match(runner, /diceAgainstBundledAtlasLabel/);
   assert.match(runner, /differentVoxelCount/);
   assert.match(runner, /interpretationLimits/);
