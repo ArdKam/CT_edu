@@ -40,6 +40,7 @@ class SegmentorIndependentEvaluationTests(unittest.TestCase):
         image = nib.Nifti1Image(data.astype(np.uint8), affine if affine is not None else self.affine)
         image.set_qform(image.affine, code=1)
         image.set_sform(image.affine, code=1)
+        image.header.set_xyzt_units("mm")
         nib.save(image, str(path))
         return path
 
@@ -130,11 +131,22 @@ class SegmentorIndependentEvaluationTests(unittest.TestCase):
         with self.assertRaisesRegex(evaluator.EvaluationInputError, "shape"):
             evaluator.compare_geometry(pred_image, nib.load(str(other_shape)))
 
+    def test_unknown_spatial_units_are_rejected_before_millimetre_metrics(self) -> None:
+        path = self.root / "unknown-units.nii.gz"
+        image = nib.Nifti1Image(np.zeros((4, 4, 4), dtype=np.uint8), self.affine)
+        image.set_qform(self.affine, code=1)
+        image.set_sform(self.affine, code=1)
+        nib.save(image, str(path))
+        with self.assertRaisesRegex(evaluator.EvaluationInputError, "not millimetres"):
+            evaluator.load_label_volume(path, "prediction")
+
     def test_fractional_probability_values_and_sheared_affines_are_rejected(self) -> None:
         probability_path = self.root / "probability.nii.gz"
         probability = np.zeros((4, 4, 4), dtype=np.float32)
         probability[1, 1, 1] = 0.25
-        nib.save(nib.Nifti1Image(probability, self.affine), str(probability_path))
+        probability_image = nib.Nifti1Image(probability, self.affine)
+        probability_image.header.set_xyzt_units("mm")
+        nib.save(probability_image, str(probability_path))
         with self.assertRaisesRegex(evaluator.EvaluationInputError, "non-integer values"):
             evaluator.load_label_volume(probability_path, "prediction")
 
