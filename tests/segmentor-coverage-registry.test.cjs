@@ -26,7 +26,7 @@ test('only the four current SPL predictions are marked technically validated and
   for (const item of generated) {
     assert.equal(item.implementationStatus, 'technically-validated');
     assert.equal(item.technicalValidation.status, 'passed-for-software-and-geometry-only');
-    assert.match(item.technicalValidation.scope, /not anatomical correctness/i);
+    assert.match(item.technicalValidation.scope, /not establish anatomical correctness/i);
     assert.equal(item.evaluation.status, 'same-volume-reference-comparison-only');
     assert.equal(item.evaluation.independentHeldOutEvaluationStatus, 'not-evaluated');
     assert.equal(item.anatomicalReviewStatus, 'not-reviewed');
