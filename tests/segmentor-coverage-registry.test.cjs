@@ -56,6 +56,22 @@ test('specialist task registry distinguishes open tasks from licensed candidates
   assert.equal(registry.safetyAndInterpretation.publicReleaseGate, 'unchanged-and-closed-unless-explicitly-approved');
 });
 
+
+test('coverage registry tracks current provenance safeguards without overstating external validation', function () {
+  assert.equal(registry.repositoryBaseline.branch, 'main');
+  assert.equal(registry.repositoryBaseline.commit, 'b1074711b5ac7f70b592d761df1fdb2536d2e977');
+  assert.equal(registry.currentInferenceConfiguration.sourceInputHashesAvailableOnMain, true);
+  assert.match(registry.currentInferenceConfiguration.note, /atomic/i);
+  assert.equal(registry.externalInferenceUtility.status, 'implemented-cli-no-external-cohort-yet');
+  assert.equal(registry.externalInferenceUtility.scriptPath, 'scripts/infer_external_ct_volume.py');
+  assert.equal(registry.externalInferenceUtility.arbitraryCtUploadSupported, false);
+  assert.equal(registry.externalInferenceUtility.externalCohortCasesProcessed, 0);
+  assert.equal(registry.externalInferenceUtility.independentEvaluationStatus, 'not-run-on-external-cohort');
+  assert.equal(registry.externalInferenceUtility.educationalApprovalStatus, 'not-approved');
+  assert.match(fs.readFileSync(path.join(root, 'docs', 'SEGMENTOR_COVERAGE_REGISTRY.md'), 'utf8'),
+    /No independent external cohort has been processed by this CLI/i);
+});
+
 test('human-readable coverage registry clearly separates upstream classes from validated output', function () {
   const markdown = fs.readFileSync(path.join(root, 'docs', 'SEGMENTOR_COVERAGE_REGISTRY.md'), 'utf8');
   assert.match(markdown, /117 named classes/i);
