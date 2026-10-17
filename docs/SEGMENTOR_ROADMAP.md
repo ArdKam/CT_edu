@@ -202,3 +202,16 @@ The workspace loads the existing per-organ NIfTI mask volumes read-only, validat
 
 The implementation passed the repository’s Node/unit suite, the existing CT viewer browser smoke test, and the dedicated Chromium correction smoke test in PR #37; Pages artifact staging also passed. The feature remains experimental and has not received anatomical approval. It does not establish anatomical accuracy, fix the unverified intensity conversion, add general CT upload inference or grant educational approval. Independent multi-volume validation, qualified anatomical review, exact licensing review and public-release approval remain separate gates.
 
+
+## Additive implementation note — CT-ORG held-out validation runner (2026-10-17)
+
+A controlled validation path has been added on branch `feat/segmentor-ctorg-heldout-evaluation-20261017` but has **not yet been run against real CT-ORG scans**:
+
+- `scripts/prepare_ctorg_test_subset.py` restricts extraction to CT-ORG's documented official test cases 0–20, verifies selected archive-member hashes, preserves citation/license metadata, and publishes only the requested subset atomically.
+- `scripts/evaluate_ctorg_heldout.py` invokes the existing pinned TotalSegmentator 2.11.0 controlled NIfTI CLI, compares selected grouped labels with the independent CT-ORG labels using the existing evaluator, and stores JSON metrics/provenance only. Source scans, reference masks and predicted NIfTIs are not retained in the report output directory.
+- `.github/workflows/segmentor-ctorg-heldout-evaluation.yml` is manual-only, non-main, and artifact-scoped to `reports/`; it offers a two-case pilot and the full official 21-case test split. It must not be turned into a push-triggered inference job or a Pages deployment.
+- Supported comparisons are liver, bladder, lungs (union of five predicted lobes), kidneys (left/right union), approximate broad bone (62 skeletal classes excluding costal cartilage), and brain only when CT-ORG supplies a non-empty label. Ontology limitations are written into reports.
+- CT-ORG has no vessel labels; this pipeline cannot validate vessel segmentation. Specialist vessel tasks remain experimental until a separate appropriately licensed labeled dataset is selected and vessel-specific metrics/review are implemented.
+- The next gate is to run the pilot manually on a non-main branch, fix any archive/model/runtime problems, then run the full official test subset and review case-level failures before presenting metrics. A two-case pilot is only an engineering check. Neither pilot nor 21-case summary grants anatomical review, educational approval, or release approval.
+- The SPL `1024` offset remains an unverified hypothesis; CT-ORG uses its separately documented HU source semantics and offset 0. Do not use CT-ORG success to retroactively assert the SPL data are HU.
+
