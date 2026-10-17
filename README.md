@@ -54,7 +54,7 @@ These are educational prototype exercises, not reviewed or approved clinical cas
 
 ## Dataset and release planning
 
-- [Segmentor implementation roadmap](docs/SEGMENTOR_ROADMAP.md) defines the preview-only manual annotation MVP, native-pixel overlay contract, local persistence, future intensity-region suggestions, optional AI contours, true-volume segmentation, and release gates. The Segmentor is planned work, not an implemented capability.
+- [Segmentor implementation roadmap](docs/SEGMENTOR_ROADMAP.md) separates the experimental automatic major-organ preview (implemented for liver, spleen, and both kidneys) from the planned manual annotation/correction editor, local persistence, and broader independent validation. Generated masks remain unreviewed and preview-only.
 - [Dataset selection roadmap](DATASET_ROADMAP.md) tracks candidate CT sources for head, chest and abdomen, including exact licensing and validation gates. Candidate collections are not treated as approved teaching cases until reviewed.
 - [Release gates](RELEASE_GATES.md) tracks technical, medical-content, privacy and publication requirements.
 - [Privacy notice](privacy.html) is the in-app user-facing explanation of local progress storage and current external requests.
@@ -77,7 +77,7 @@ The repository now contains an empty, versioned authoring template and a validat
 
 ## Next product work
 
-- Build toward automatic major-organ segmentation through the [Segmentor roadmap](docs/SEGMENTOR_ROADMAP.md): run a pretrained model remotely on the SPL volume, review four major-organ masks and geometry, and keep predictions preview-only. Follow with manual correction and stronger independent validation; do not treat threshold contours as organ recognition.
+- **Current Segmentor preview:** [open the bilingual segmentation workspace source](preview/organ-segmentation.html). The hosted TotalSegmentator run generated masks for liver, spleen, and both kidneys; the Pages build stages this route and verifies the manifest and NIfTI assets. Predictions are explicitly unreviewed, rely on an unconfirmed -1024 intensity-conversion assumption, and are not independent medical validation. The public Pages deploy latch remains closed. Next: systematic anatomical review, validate calibration, add correction tools, and evaluate held-out volumes.
 - Complete independent medical-image orientation/label review, source redistribution review, public security/privacy checks, accessibility audit, and physical-device Safari/iOS and Android QA before enabling public release.
 - The local bookmark feature is a first step toward a reusable case experience. Next implement a reviewed guided-case flow: clinical context, systematic review prompts, learner-entered findings, independent impression, and rubric-based feedback.
 - Only integrate selected head/chest studies after exact-version use and redistribution rights, metadata review, geometry validation, annotation interpretation, expert review, and attribution are recorded. Candidate dataset names in the roadmap are not approved production content.
