@@ -207,6 +207,42 @@ if (!engine) {
     });
     await seriesPage.close();
 
+    // Smoke-test the new Commons Special:FilePath manifests in real browsers, not only as static URL lists.
+    const sourceStackPages = [
+      { route: '/preview/thorax-series.html', axialCount: 106, alternatePlane: 'coronal', alternateCount: 67 },
+      { route: '/preview/brain-series.html', axialCount: 41, alternatePlane: 'sagittal', alternateCount: 40 },
+      { route: '/preview/brain-contrast-series.html', axialCount: 34, alternatePlane: null, alternateCount: null }
+    ];
+    for (const sourceStack of sourceStackPages) {
+      const sourcePage = await context.newPage();
+      const sourcePageErrors = [];
+      sourcePage.on('pageerror', function (error) { sourcePageErrors.push(error.message); });
+      const response = await sourcePage.goto(origin + sourceStack.route, { waitUntil: 'domcontentloaded' });
+      assert.ok(response && response.ok(), engineName + ': Wikimedia preview route should load: ' + sourceStack.route);
+      await sourcePage.waitForFunction(function () {
+        const image = document.getElementById('series-image');
+        return image && !image.hidden && image.complete && image.naturalWidth > 0;
+      }, null, { timeout: 25000 });
+      assert.equal(await sourcePage.locator('#series-slider').getAttribute('max'), String(sourceStack.axialCount),
+        engineName + ': image manifest should expose the correct axial count for ' + sourceStack.route);
+      assert.equal(await sourcePage.locator('#series-image').getAttribute('referrerpolicy'), 'no-referrer',
+        engineName + ': Wikimedia source images must not receive referrers');
+      if (sourceStack.alternatePlane) {
+        const originalUrl = await sourcePage.locator('#series-image').getAttribute('src');
+        await sourcePage.locator('[data-series-plane="' + sourceStack.alternatePlane + '"]').click();
+        await sourcePage.waitForFunction(function (expectedUrl) {
+          const image = document.getElementById('series-image');
+          return image && !image.hidden && image.complete && image.naturalWidth > 0 &&
+            image.getAttribute('src') !== expectedUrl;
+        }, originalUrl, { timeout: 25000 });
+        assert.equal(await sourcePage.locator('#series-slider').getAttribute('max'), String(sourceStack.alternateCount),
+          engineName + ': plane switch should use the correct separate stack count for ' + sourceStack.route);
+      }
+      assert.deepEqual(sourcePageErrors, [],
+        engineName + ': Wikimedia preview should have no runtime exceptions: ' + JSON.stringify(sourcePageErrors));
+      await sourcePage.close();
+    }
+
     const widthMetrics = await page.evaluate(function () {
       return {
         viewport: window.innerWidth,
