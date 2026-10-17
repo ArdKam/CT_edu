@@ -238,7 +238,7 @@ def main() -> int:
             pattern = item["key"] + "-{index:03d}.png"
             coronal_pattern = item["key"] + "-coronal-{index:03d}.png"
             sagittal_pattern = item["key"] + "-sagittal-{index:03d}.png"
-            for k in range(source_ct.shape[2]):
+            for k in range(source_ct.shape[0]):
                 save_binary_mask(pred_xyz, output / pattern.format(index=k))
             for y_index in range(source_ct.shape[1]):
                 save_coronal_mask(pred_xyz, output / coronal_pattern.format(index=y_index))
@@ -339,8 +339,8 @@ def main() -> int:
         "maskImageSize": [256, 256],
         "planeDefinitions": {
             "axial": {
-                "sliceCount": int(source_ct.shape[2]),
-                "imageSize": [int(source_ct.shape[0]), int(source_ct.shape[1])],
+                "sliceCount": int(source_ct.shape[0]),
+                "imageSize": [int(source_ct.shape[2]), int(source_ct.shape[1])],
                 "indexAxis": "z",
                 "displayOrientation": "rows flipped so anterior is at the top",
             },
@@ -351,7 +351,7 @@ def main() -> int:
                 "displayOrientation": "columns x, rows z, superior at the top",
             },
             "sagittal": {
-                "sliceCount": int(source_ct.shape[0]),
+                "sliceCount": int(source_ct.shape[2]),
                 "imageSize": [int(source_ct.shape[1]), int(source_ct.shape[0])],
                 "indexAxis": "x",
                 "displayOrientation": "columns y flipped, rows z, superior at the top",
