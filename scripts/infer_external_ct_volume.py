@@ -248,6 +248,7 @@ def run_external_inference(
     intensity_offset: float,
     intensity_semantics: str,
     preprocessing_notes: str,
+    class_names: list[str] | None = None,
     resolution: str = "fast",
     timeout_seconds: int = 5400,
     executable: str = "TotalSegmentator",
@@ -263,7 +264,6 @@ def run_external_inference(
             "Dataset ID must be a 1–128 character token containing only letters, digits, dot, underscore or hyphen."
         )
     if not isinstance(preprocessing_notes, str) or not preprocessing_notes.strip():
-
         raise ExternalInferenceError("Provide explicit preprocessing notes; do not leave calibration assumptions implicit.")
     if resolution not in {"fast", "full"}:
         raise ExternalInferenceError("Resolution must be either 'fast' or 'full'.")
@@ -275,6 +275,7 @@ def run_external_inference(
             f"Expected TotalSegmentator {REQUIRED_TOTAL_SEGMENTATOR_VERSION}, found {version}. "
             "Pin the model package before generating a comparison cohort."
         )
+    targets = resolve_target_classes(class_names)
     input_path = Path(input_path)
     source_hash = sha256_file(input_path)
     image, source_values, spacing = load_source_volume(input_path)
@@ -304,7 +305,7 @@ def run_external_inference(
                 executable, "-i", str(model_input), "-o", str(model_outputs),
                 "--task", "total", "--device", "cpu",
                 "--nr_thr_resamp", "1", "--nr_thr_saving", "1",
-                "--roi_subset", "liver", "spleen", "kidney_left", "kidney_right",
+                "--roi_subset", *[item["modelClass"] for item in targets],
             ]
             if resolution == "fast":
                 command.append("--fast")
@@ -325,7 +326,7 @@ def run_external_inference(
             aligned_masks: dict[str, np.ndarray] = {}
             organ_records: list[dict[str, Any]] = []
             target_grid = (image.shape, image.affine)
-            for item in TARGETS:
+            for item in targets:
                 predicted_path = model_outputs / f"{item['modelClass']}.nii.gz"
                 if not predicted_path.is_file():
                     raise ExternalInferenceError(f"Expected mask output is missing for {item['id']}.")
@@ -341,7 +342,7 @@ def run_external_inference(
                 if mask.shape != image.shape:
                     raise ExternalInferenceError(f"Aligned mask shape mismatch for {item['id']}.")
                 mask_voxels = int(mask.sum())
-                mask_file = f"{item['id']}.nii.gz"
+                mask_file = f"{item['modelClass']}.nii.gz"
                 nib.save(mask_image(mask, affine), str(stage / mask_file))
                 mask_sha = sha256_file(stage / mask_file)
                 aligned_masks[item["id"]] = mask
@@ -355,16 +356,16 @@ def run_external_inference(
                     "reviewStatus": "unreviewed-model-output",
                 })
 
-            stacked = np.stack([aligned_masks[item["id"]] for item in TARGETS], axis=0)
+            stacked = np.stack([aligned_masks[item["id"]] for item in targets], axis=0)
             overlap_voxels = int(np.count_nonzero(stacked.sum(axis=0) > 1))
             combined = np.zeros(image.shape, dtype=np.uint8)
-            for item in TARGETS:
+            for item in targets:
                 combined[aligned_masks[item["id"]]] = item["labelId"]
             combined_file = "major-organ-labelmap.nii.gz"
             nib.save(mask_image(combined, affine), str(stage / combined_file))
             combined_sha = sha256_file(stage / combined_file)
             unique_labels = set(np.unique(combined).tolist())
-            if not unique_labels.issubset({0, 1, 2, 3, 4}):
+            if not unique_labels.issubset(set(range(len(targets) + 1))):
                 raise ExternalInferenceError("Combined label map contains unexpected label IDs.")
 
             manifest = {
@@ -392,14 +393,14 @@ def run_external_inference(
                     "task": "total",
                     "device": "cpu",
                     "resolution": "fast/3mm" if resolution == "fast" else "full/1.5mm",
-                    "requestedClasses": [item["modelClass"] for item in TARGETS],
+                    "requestedClasses": [item["modelClass"] for item in targets],
                 },
                 "organs": organ_records,
                 "labelMap": {
                     "file": combined_file,
                     "sha256": combined_sha,
-                    "format": "NIfTI-1 uint8, 0=background, 1-4=organ labels",
-                    "labels": [{k: v for k, v in item.items() if k in {"id", "labelId", "name"}} for item in TARGETS],
+                    "format": f"NIfTI-1 uint8, 0=background, 1-{len(targets)}=selected structure labels",
+                    "labels": [{k: v for k, v in item.items() if k in {"id", "labelId", "name"}} for item in targets],
                     "overlapVoxelCount": overlap_voxels,
                     "overlapPolicy": "Individual masks are authoritative; combined map applies declared target order on overlap.",
                 },
@@ -414,8 +415,8 @@ def run_external_inference(
             manifest_path = stage / "manifest.json"
             manifest_path.write_text(json.dumps(manifest, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
             # Re-open staged NIfTIs to ensure the saved affine, dimensions, type, and units are sound.
-            for item in TARGETS:
-                staged_img = nib.load(str(stage / f"{item['id']}.nii.gz"))
+            for item in targets:
+                staged_img = nib.load(str(stage / f"{item['modelClass']}.nii.gz"))
                 if staged_img.shape != image.shape or not np.allclose(staged_img.affine, affine, rtol=0, atol=1e-4):
                     raise ExternalInferenceError(f"Staged mask geometry validation failed for {item['id']}.")
                 unit, _ = staged_img.header.get_xyzt_units()
