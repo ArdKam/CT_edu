@@ -205,7 +205,7 @@ jobs:
           import sys
           from pathlib import Path
           data = Path(sys.argv[1]).read_bytes()
-          assert data[:8] == b"\\x89PNG\\r\\n\\x1a\\n", "Expected a valid PNG asset"
+          assert list(data[:8]) == [137, 80, 78, 71, 13, 10, 26, 10], "Expected a valid PNG asset"
           PY
           done
           # Verify all five downloadable volumes are present and gzip-compressed NIfTI.
