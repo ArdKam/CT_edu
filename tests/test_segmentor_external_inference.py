@@ -170,12 +170,19 @@ class ExternalNiftiInferenceTests(unittest.TestCase):
                     preprocessing_notes="Version mismatch test.",
                 )
         with patch.object(inference, "model_version", return_value="2.11.0"):
-            with self.assertRaisesRegex(inference.ExternalInferenceError, "dataset ID"):
+            with self.assertRaisesRegex(inference.ExternalInferenceError, "Case ID"):
                 inference.run_external_inference(
                     self.input_path, self.output_path,
                     case_id=" ", dataset_id="cohort-v1",
                     intensity_offset=0, intensity_semantics="hounsfield-units-confirmed",
                     preprocessing_notes="Invalid case metadata test.",
+                )
+            with self.assertRaisesRegex(inference.ExternalInferenceError, "Dataset ID"):
+                inference.run_external_inference(
+                    self.input_path, self.output_path,
+                    case_id="case-004", dataset_id="../patient-folder",
+                    intensity_offset=0, intensity_semantics="hounsfield-units-confirmed",
+                    preprocessing_notes="Invalid dataset token test.",
                 )
         self.assertFalse(self.output_path.exists())
 
