@@ -51,6 +51,15 @@ const { chromium } = require('playwright');
       manifest.organs.map(function (organ) { return organ.id; }).sort(),
       ['kidney_left', 'kidney_right', 'liver', 'spleen']
     );
+    assert.deepEqual(Object.keys(manifest.planeDefinitions).sort(), ['axial', 'coronal', 'sagittal']);
+    assert.deepEqual(Object.keys(manifest.organs[0].maskPatterns).sort(), ['axial', 'coronal', 'sagittal']);
+    for (const plane of ['axial', 'coronal', 'sagittal']) {
+      const pattern = manifest.organs[0].maskPatterns[plane];
+      const sampleMaskUrl = 'http://127.0.0.1:8765/preview/assets/organ-predictions/' +
+        pattern.replace('{index:03d}', plane === 'axial' ? '026' : '127');
+      const sampleMask = await page.request.get(sampleMaskUrl);
+      assert.ok(sampleMask.ok(), plane + ' mask PNG should be available');
+    }
 
     await page.waitForFunction(function () {
       const state = document.getElementById('organ-canvas-state');
@@ -98,6 +107,37 @@ const { chromium } = require('playwright');
       return String('۰۱۲۳۴۵۶۷۸۹'.indexOf(digit));
     });
     assert.match(westernOpacity, /55/);
+
+    await page.locator('[data-organ-plane="coronal"]').click();
+    await page.waitForFunction(function () {
+      return document.getElementById('organ-canvas-state').hidden &&
+        document.getElementById('organ-canvas').height === 113 &&
+        document.getElementById('organ-slice-slider').max === '256';
+    }, null, { timeout: 15000 });
+    assert.equal(await page.locator('#organ-canvas').getAttribute('width'), '256');
+    assert.equal(await page.locator('#organ-canvas').getAttribute('height'), '113');
+    assert.equal(await page.locator('#organ-slice-slider').getAttribute('max'), '256');
+    assert.equal(await page.locator('[data-organ-plane="coronal"]').getAttribute('aria-pressed'), 'true');
+
+    await page.locator('[data-organ-plane="sagittal"]').click();
+    await page.waitForFunction(function () {
+      return document.getElementById('organ-canvas-state').hidden &&
+        document.getElementById('organ-canvas').height === 113 &&
+        document.getElementById('organ-slice-slider').max === '256';
+    }, null, { timeout: 15000 });
+    assert.equal(await page.locator('#organ-canvas').getAttribute('height'), '113');
+    assert.equal(await page.locator('#organ-slice-slider').getAttribute('max'), '256');
+    assert.equal(await page.locator('[data-organ-plane="sagittal"]').getAttribute('aria-pressed'), 'true');
+    assert.match(await page.locator('#organ-voxel-coordinates').textContent(), /Voxel coordinates|مختصات وکسل/);
+
+    await page.locator('[data-organ-plane="axial"]').click();
+    await page.waitForFunction(function () {
+      return document.getElementById('organ-canvas-state').hidden &&
+        document.getElementById('organ-canvas').height === 256 &&
+        document.getElementById('organ-slice-slider').max === '113';
+    }, null, { timeout: 15000 });
+    assert.equal(await page.locator('#organ-canvas').getAttribute('height'), '256');
+    assert.equal(await page.locator('[data-organ-plane="axial"]').getAttribute('aria-pressed'), 'true');
 
     await page.locator('#organ-language-toggle').click();
     assert.ok(['en', 'fa'].includes(await page.locator('html').getAttribute('lang')));
