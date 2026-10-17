@@ -104,12 +104,12 @@ assert.ok(!app.includes("return item.source.studyPageUrl || item.source.url;"));
 
 
 
-assert.match(page, /embedded image viewing is not guaranteed/);
-assert.match(page, /shows only the case page/);
+assert.match(page, /Radiopaedia may block embedded display/);
+assert.match(page, /Show original case page/);
 assert.match(page, /Radiopaedia study page; displayed content is controlled by the source site/);
 assert.match(app, /Open Radiopaedia study page/);
-assert.match(app, /embedded image viewing is not guaranteed/);
-assert.match(app, /Radiopaedia controls the displayed page and image navigation/);
+assert.match(app, /Radiopaedia controls embedded display and image loading/);
+assert.match(app, /The original case page was requested to show the source description/);
 assert.doesNotMatch(app, /Open study viewer on Radiopaedia/);
 assert.doesNotMatch(page, /the viewer opens automatically/i);
 assert.match(app, /Live image loading for this case has not been independently verified/);
@@ -118,6 +118,12 @@ assert.ok(app.includes("item.verification && item.verification.status === 'verif
 assert.match(app, /Live source loading was verified in a recorded check/);
 
 assert.match(page, /Image-loading status is shown per case/);
+assert.match(page, /id="source-show-case-page"/);
+assert.match(page, /id="source-show-study-page"/);
+assert.match(page, /id="source-hide-frame"/);
+assert.ok(app.includes("state.sourceFrameMode === 'case'"));
+assert.ok(app.includes("state.sourceFrameMode = 'case'"));
+assert.match(app, /Original Radiopaedia case page; text and rendering are controlled by the source site/);
 assert.match(page, /لینک منبع به معنی تأیید تصویر/);
 assert.ok(app.includes("button.dataset.caseVerification = verificationStatus;"));
 assert.ok(app.includes("'guided-case-verification'"));

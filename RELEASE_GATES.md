@@ -29,6 +29,7 @@ This checklist separates code that exists from educational, legal, and release r
 - [x] Label Radiopaedia destinations as source study pages rather than implying a guaranteed standalone viewer; show that live image loading, medical review and redistribution rights remain separate checks.
 - [x] Prevent the guided-case preview workflow from deploying once `CT_EDU_PUBLIC_RELEASE_APPROVED=true`, so its stable-baseline artifact cannot overwrite an approved production site.
 - [x] Show each guided-case record's source/image verification status in the case list and in the active case workspace, with bilingual copy that separates source loading from medical validation and redistribution permission.
+- [x] Add user-initiated switching between an original Radiopaedia case page and an explicitly recorded Study page in the guided-case source frame; provide close/reset controls, bilingual status copy, and an external-link fallback. This exposes source-hosted content only when requested and does not copy full case descriptions into CT Edu.
 
 ## Dataset acquisition plan
 
