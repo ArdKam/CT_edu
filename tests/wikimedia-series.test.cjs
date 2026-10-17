@@ -96,11 +96,10 @@ test('the Pages workflow stages preview routes and their shared source manifests
     ['preview/src/data/wikimedia-brain-series.js', 'wikimedia-normal-brain-case-1'],
     ['preview/src/data/wikimedia-brain-contrast-series.js', 'wikimedia-brain-contrast-case-2']
   ]) {
-    assert.ok(previewWorkflow.includes('fetch_with_retry "$base/' + url + '" \' ' + expected + '\''), 'preview workflow must live-probe ' + url);
+    const probe = 'fetch_with_retry "$base/' + url + '" ' + String.fromCharCode(39) + expected + String.fromCharCode(39);
+    assert.ok(previewWorkflow.includes(probe), 'preview workflow must live-probe ' + url);
   }
   assert.match(previewWorkflow, /if: vars\.CT_EDU_PUBLIC_RELEASE_APPROVED != 'true'/, 'preview publish behavior must retain its existing release gate');
-  const workflow = read('.github/workflows/pages-deploy.yml');
-
   const workflow = read('.github/workflows/pages-deploy.yml');
   assert.match(workflow, /cp -R src _site\/src/);
   assert.match(workflow, /cp -R preview _site\/preview/);
