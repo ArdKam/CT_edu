@@ -1,6 +1,6 @@
 # CT Edu — release gates and implementation status
 
-Last reviewed: 2026-10-16
+Last reviewed: 2026-10-17
 Scope: educational CT web app for clinical-year medical students.
 
 This checklist separates code that exists from educational, legal, and release requirements that still need independent evidence. Passing software tests does not establish medical validity.
@@ -53,6 +53,19 @@ See [DATASET_ROADMAP.md](DATASET_ROADMAP.md) for reviewed candidate sources and 
 - The latest feature PR checks and Pages builds succeeded; the actual production Pages deployment remained skipped behind the public-release approval latch. This maintenance update does not close any medical, legal, image-rights, privacy, physical-device, or full accessibility sign-off.
 
 ## Release blockers
+
+### Automatic major-organ segmentation — experimental preview
+
+The [Segmentor roadmap](docs/SEGMENTOR_ROADMAP.md) is the implementation contract. The initial model-inference experiment targets liver, spleen, right kidney, and left kidney only.
+
+- [x] Execute TotalSegmentator on the SPL NRRD volume via the hosted GitHub Actions runner; no local installation or execution by the maintainer was required.
+- [x] Preserve source dimensions (256 × 256 × 113), RAS affine, origin, and voxel spacing in each 3D NIfTI mask and the manifest; record that subtracting a 1024 intensity offset is an experimental assumption until HU calibration is independently proven.
+- [x] Validate that all four masks are non-empty and aligned to the source voxel grid, produce 452 axial mask images plus four individual NIfTI masks and one combined label map, and compare overlap with the bundled atlas labels as a same-volume technical check only.
+- [ ] Review the unreviewed masks systematically across representative slices and planes; inference success and high same-volume Dice scores do not constitute medical approval.
+- [x] Keep model predictions on the dedicated preview route, separate from the original SPL labelmap; the public-release approval latch remains closed.
+- [ ] Develop mask correction/editing, independent held-out evaluation, and additional organ coverage before considering production teaching use.
+
+See also: [Segmentor implementation roadmap](docs/SEGMENTOR_ROADMAP.md).
 
 ### Git / deployment
 

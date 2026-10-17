@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#101923">
+  <meta name="description" content="Experimental, unreviewed model-generated major-organ masks for a CT Edu teaching volume.">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'self'; object-src 'none'; script-src 'self'; style-src 'self' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: blob:; connect-src 'self'; form-action 'self'; frame-src 'none'">
+  <link rel="icon" type="image/svg+xml" href="../favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Vazirmatn:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../src/styles.css">
+  <link rel="stylesheet" href="./organ-segmentation.css">
+  <title>Major-organ segmentation experiment · CT Edu</title>
+</head>
+<body class="lang-fa organ-segmentation-page">
+  <div class="app-shell">
+    <header class="topbar">
+      <a class="brand" href="./index.html" aria-label="CT Edu preview hub">
+        <span class="brand-mark" aria-hidden="true"><span></span><span></span><span></span></span>
+        <span class="brand-copy"><strong>CT <em>EDU</em></strong><small>ANATOMY LAB</small></span>
+      </a>
+      <div class="topbar-center"><span class="crumb-dot"></span><span class="rad-fa">آزمایشگاه قطعه‌بندی</span><span class="rad-en">Segmentation lab</span><span class="crumb-slash">/</span><strong class="rad-fa">اندام‌های اصلی</strong><strong class="rad-en">Major organs</strong></div>
+      <div class="topbar-actions">
+        <span class="educational-tag"><span class="status-dot"></span><span class="rad-fa">آزمایشی و بازبینی‌نشده</span><span class="rad-en">Experimental · unreviewed</span></span>
+        <button id="organ-language-toggle" class="language-toggle" type="button" aria-label="Switch language">EN ↔ فا</button>
+      </div>
+    </header>
+
+    <main class="organ-main">
+      <section class="organ-intro">
+        <div>
+          <div class="eyebrow"><span class="eyebrow-line"></span><span class="rad-fa">آزمایش مدل · چهار اندام</span><span class="rad-en">MODEL EXPERIMENT · FOUR ORGANS</span></div>
+          <h1><span class="rad-fa">قطعه‌بندی آزمایشی اندام‌های بزرگ</span><span class="rad-en">Experimental major-organ segmentation</span></h1>
+          <p class="organ-lead"><span class="rad-fa">این صفحه خروجی مدل TotalSegmentator را روی حجم آموزشی SPL نمایش می‌دهد تا امکان فنی مدل‌سازی، هم‌ترازی و بازبینی اولیه بررسی شود. ماسک‌ها بازبینی تخصصی نشده‌اند و ابزار تشخیصی نیستند.</span><span class="rad-en">This page displays TotalSegmentator predictions on the SPL teaching volume to evaluate model feasibility, alignment and initial review. These masks have not received expert review and are not a diagnostic tool.</span></p>
+        </div>
+        <aside class="organ-warning" role="note">
+          <span class="organ-warning-mark" aria-hidden="true">!</span>
+          <div>
+            <strong><span class="rad-fa">محدودیت مهم داده</span><span class="rad-en">Important input limitation</span></strong>
+            <p><span class="rad-fa">شدت خام این اطلس به‌طور مستقل به HU کالیبره نشده است. تبدیل شدت برای مدل یک فرض آزمایشی است؛ امتیاز هم‌پوشانی با برچسب‌های همین اطلس نیز اعتبارسنجی مستقل محسوب نمی‌شود.</span><span class="rad-en">The source intensity values have not been independently calibrated to HU. The model input conversion is experimental; overlap with this atlas’s own labels is not an independent validation.</span></p>
+          </div>
+        </aside>
+      </section>
+
+      <section class="organ-workspace" aria-label="Automatic organ segmentation preview">
+        <div class="organ-viewer">
+          <div class="organ-viewer-header">
+            <div><span class="panel-kicker"><span class="rad-fa">نمای محوری</span><span class="rad-en">AXIAL VIEW</span></span><h2><span class="rad-fa">خروجی مدل روی CT</span><span class="rad-en">Model output on CT</span></h2></div>
+            <span id="organ-position" class="organ-position">27 / 113</span>
+          </div>
+          <div class="organ-toolbar">
+            <button id="organ-prev" class="series-button" type="button"><span class="rad-fa">قبلی</span><span class="rad-en">Previous</span></button>
+            <button id="organ-next" class="series-button" type="button"><span class="rad-fa">بعدی</span><span class="rad-en">Next</span></button>
+            <button id="organ-reset" class="series-button series-button-quiet" type="button"><span class="rad-fa">بازنشانی نما</span><span class="rad-en">Reset view</span></button>
+          </div>
+          <div class="organ-canvas-wrap" id="organ-canvas-wrap">
+            <canvas id="organ-canvas" width="256" height="256" aria-label="CT slice with unreviewed predicted organ masks"></canvas>
+            <div id="organ-canvas-state" class="organ-canvas-state" role="status" aria-live="polite"><span class="organ-spinner" aria-hidden="true"></span><strong><span class="rad-fa">در حال بارگذاری خروجی مدل…</span><span class="rad-en">Loading model output…</span></strong></div>
+          </div>
+          <div class="organ-slice-navigation">
+            <label for="organ-slice-slider"><span class="rad-fa">شمارهٔ برش</span><span class="rad-en">Slice index</span></label>
+            <input id="organ-slice-slider" type="range" min="1" max="113" value="27" step="1">
+            <output id="organ-slice-value" for="organ-slice-slider">27 / 113</output>
+          </div>
+          <p id="organ-status" class="organ-status" role="status" aria-live="polite"><span class="rad-fa">در انتظار خروجی مدل…</span><span class="rad-en">Waiting for model output…</span></p>
+        </div>
+
+        <aside class="organ-controls">
+          <div class="organ-controls-heading"><span class="panel-kicker"><span class="rad-fa">لایه‌های پیش‌بینی</span><span class="rad-en">PREDICTION LAYERS</span></span><h2><span class="rad-fa">اندام‌ها</span><span class="rad-en">Organs</span></h2></div>
+          <p class="organ-control-note"><span class="rad-fa">هر رنگ یک ماسک مستقل مدل است. برای بررسی مرزها، اندام‌ها را جداگانه روشن یا خاموش کن.</span><span class="rad-en">Each color represents a separate model mask. Toggle organs individually to inspect their boundaries.</span></p>
+          <div id="organ-controls-list" class="organ-controls-list" aria-live="polite"></div>
+          <div class="organ-opacity-block">
+            <label for="organ-opacity"><span class="rad-fa">شفافیت لایه</span><span class="rad-en">Overlay opacity</span></label>
+            <div class="organ-opacity-line"><input id="organ-opacity" type="range" min="15" max="100" value="72" step="1"><output id="organ-opacity-value">72%</output></div>
+          </div>
+          <div class="organ-metadata">
+            <strong><span class="rad-fa">اعتبارسنجی اولیه</span><span class="rad-en">Initial comparison</span></strong>
+            <p><span class="rad-fa">Dice با ماسک مرجع موجود فقط برای مقایسهٔ فنی روی همین حجم است؛ جایگزین ارزیابی روی بیماران مستقل یا بازبینی متخصص نیست.</span><span class="rad-en">Dice against the bundled reference masks is only a technical comparison on this same volume, not a held-out patient benchmark or expert review.</span></p>
+            <div id="organ-model-meta" class="organ-model-meta"></div>
+          </div>
+        </aside>
+      </section>
+      <footer class="organ-footer">
+        <span><span class="rad-fa">پیش‌نمایش غیرتشخیصی · مدل و تبدیل شدت بازبینی‌نشده</span><span class="rad-en">Non-diagnostic preview · model and intensity conversion unreviewed</span></span>
+        <a href="./index.html"><span class="rad-fa">بازگشت به پیش‌نمایش‌ها</span><span class="rad-en">Back to previews</span></a>
+      </footer>
+    </main>
+  </div>
+  <script defer src="./organ-segmentation.js"></script>
+</body>
+</html>

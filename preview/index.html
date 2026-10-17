@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#101923">
-  <meta name="description" content="CT Edu learning previews: guided cases and separate abdominal CT image stacks.">
+  <meta name="description" content="CT Edu learning previews: guided cases, separate abdominal CT image stacks, and an experimental major-organ segmentation preview.">
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'self'; object-src 'none'; script-src 'self'; style-src 'self' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: blob:; connect-src 'self'; form-action 'self'; frame-src 'none'">
   <link rel="icon" type="image/svg+xml" href="../favicon.svg">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -33,9 +33,9 @@
         <div class="preview-hub-copy">
           <div class="eyebrow"><span class="eyebrow-line"></span><span class="rad-fa">آزمایشگاه یادگیری · CT EDU</span><span class="rad-en">LEARNING LAB · CT EDU</span></div>
           <h1 id="preview-hub-title"><span class="rad-fa">پیش‌نمایش‌های تصویربرداری</span><span class="rad-en">Imaging learning previews</span></h1>
-          <p class="preview-hub-lead"><span class="rad-fa">دو مسیر آزمایشی برای مرور کیس‌های آموزشی و آناتومی مقطعی. این صفحه مسیرهای موجود را یک‌جا جمع می‌کند؛ محتوای دارای بازبینی تخصصی و مجوز انتشار از گزینه‌های در حال بررسی جدا نگه داشته شده است.</span><span class="rad-en">Two preview workspaces for guided cases and cross-sectional anatomy. This page gathers the available learning paths while keeping content that still needs specialist review or redistribution clearance clearly separate.</span></p>
+          <p class="preview-hub-lead"><span class="rad-fa">سه مسیر آزمایشی برای مرور کیس‌ها، آناتومی مقطعی و بررسی اولیهٔ قطعه‌بندی اندام‌ها. خروجی مدل قطعه‌بندی هنوز بازبینی نشده است؛ محتوای دارای بازبینی تخصصی و مجوز انتشار از گزینه‌های آزمایشی جدا می‌ماند.</span><span class="rad-en">Three preview workspaces for guided cases, cross-sectional anatomy, and an initial organ-segmentation experiment. Model-generated masks remain unreviewed; content requiring specialist review or redistribution clearance stays clearly separated.</span></p>
           <div class="preview-hub-facts" aria-label="Preview library summary">
-            <span class="preview-hub-fact"><strong>02</strong><span class="rad-fa">مسیر آزمایشی</span><span class="rad-en">preview workspaces</span></span>
+            <span class="preview-hub-fact"><strong>03</strong><span class="rad-fa">مسیر آزمایشی</span><span class="rad-en">preview workspaces</span></span>
             <span class="preview-hub-fact"><strong>648</strong><span class="rad-fa">تصویر در سه توالی جدا</span><span class="rad-en">images across separate stacks</span></span>
           </div>
         </div>
@@ -76,6 +76,21 @@
             <p><span class="rad-fa">سه توالی تصویری مستقل را با انتخاب نما، پیمایش برش‌ها و بزرگ‌نمایی مرور کن: ۳۲۰ محوری، ۱۵۰ کرونال و ۱۷۸ ساژیتال. این‌ها بازسازی‌های هم‌زمان از یک حجم سه‌بعدی نیستند.</span><span class="rad-en">Browse three separate image sequences with plane selection, slice navigation and zoom: 320 axial, 150 coronal and 178 sagittal images. These are not synchronized reformats from a single 3D volume.</span></p>
             <div class="preview-card-tags"><span>320 <span class="rad-fa">محوری</span><span class="rad-en">Axial</span></span><span>150 <span class="rad-fa">کرونال</span><span class="rad-en">Coronal</span></span><span>178 <span class="rad-fa">ساژیتال</span><span class="rad-en">Sagittal</span></span></div>
             <a class="preview-card-action" href="./abdomen-series.html"><span class="rad-fa">مرور تصاویر</span><span class="rad-en">Browse image stacks</span><span aria-hidden="true">↗</span></a>
+          </div>
+        </article>
+
+        <article class="preview-hub-card preview-organs-card">
+          <div class="preview-card-art preview-organs-art" aria-hidden="true">
+            <span class="preview-art-kicker">MODEL SEGMENTATION</span>
+            <div class="preview-organ-shapes"><i></i><i></i><i></i><i></i><span></span></div>
+            <div class="preview-art-badge">04</div>
+          </div>
+          <div class="preview-card-body">
+            <div class="preview-card-meta"><span class="preview-card-kicker"><span class="rad-fa">آزمایش مدل</span><span class="rad-en">MODEL EXPERIMENT</span></span><span class="preview-card-status"><span class="status-dot"></span><span class="rad-fa">بازبینی‌نشده</span><span class="rad-en">Unreviewed</span></span></div>
+            <h2><span class="rad-fa">قطعه‌بندی آزمایشی اندام‌های بزرگ</span><span class="rad-en">Experimental major-organ segmentation</span></h2>
+            <p><span class="rad-fa">پیش‌بینی مدل برای کبد، طحال و دو کلیه را روی حجم آموزشی بررسی کن. شدت خام منبع کالیبراسیون مستقل HU ندارد؛ خروجی برای ارزیابی فنی و بازبینی اولیه است، نه تشخیص.</span><span class="rad-en">Inspect model predictions for the liver, spleen and both kidneys on the teaching volume. Source intensities are not independently HU-calibrated; results are for technical evaluation and initial review, not diagnosis.</span></p>
+            <div class="preview-card-tags"><span>04 <span class="rad-fa">اندام</span><span class="rad-en">organs</span></span><span><span class="rad-fa">ماسک‌های قابل‌خاموش‌کردن</span><span class="rad-en">Toggleable masks</span></span><span><span class="rad-fa">مقایسه با اطلس</span><span class="rad-en">Atlas comparison</span></span></div>
+            <a class="preview-card-action" href="./organ-segmentation.html"><span class="rad-fa">بررسی خروجی مدل</span><span class="rad-en">Review model output</span><span aria-hidden="true">↗</span></a>
           </div>
         </article>
       </section>
