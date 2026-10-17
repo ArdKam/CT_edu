@@ -12,7 +12,9 @@ import json
 import os
 import shutil
 import sys
+import tempfile
 import zipfile
+import shutil
 from pathlib import Path, PurePosixPath
 from typing import Any
 
@@ -112,44 +114,50 @@ def extract_ctorg_test_subset(
         raise CTORGArchiveError("Refusing to write to a symlink or non-directory output path.")
     if output_dir.exists() and any(output_dir.iterdir()):
         raise CTORGArchiveError("Subset output directory must be new or empty.")
-    output_dir.mkdir(parents=True, exist_ok=True)
-
+    output_dir.parent.mkdir(parents=True, exist_ok=True)
+    stage = Path(tempfile.mkdtemp(prefix=f".{output_dir.name}.staging-", dir=output_dir.parent))
     extracted: list[dict[str, Any]] = []
-    with zipfile.ZipFile(volumes_zip, "r") as volume_archive, zipfile.ZipFile(labels_zip, "r") as label_archive:
-        for case_number in selected:
-            volume_name = f"volume-{case_number}.nii.gz"
-            label_name = f"labels-{case_number}.nii.gz"
-            volume_info = _member_for_basename(volume_archive, volume_name)
-            label_info = _member_for_basename(label_archive, label_name)
-            extracted.append({
-                "caseNumber": case_number,
-                "volume": _extract_member(volume_archive, volume_info, output_dir / volume_name),
-                "reference": _extract_member(label_archive, label_info, output_dir / label_name),
-            })
+    try:
+        with zipfile.ZipFile(volumes_zip, "r") as volume_archive, zipfile.ZipFile(labels_zip, "r") as label_archive:
+            for case_number in selected:
+                volume_name = f"volume-{case_number}.nii.gz"
+                label_name = f"labels-{case_number}.nii.gz"
+                volume_info = _member_for_basename(volume_archive, volume_name)
+                label_info = _member_for_basename(label_archive, label_name)
+                extracted.append({
+                    "caseNumber": case_number,
+                    "volume": _extract_member(volume_archive, volume_info, stage / volume_name),
+                    "reference": _extract_member(label_archive, label_info, stage / label_name),
+                })
 
-    manifest = {
-        "schemaVersion": 1,
-        "dataset": "CT-ORG",
-        "datasetVersion": "v1 / TCIA current collection record",
-        "officialSplit": "test",
-        "officialTestCaseNumbers": selected,
-        "selectedCaseCount": len(selected),
-        "sourceDataCitation": DATA_CITATION,
-        "license": LICENSE,
-        "sourceUrl": "https://www.cancerimagingarchive.net/collection/ct-org/",
-        "extractedFiles": extracted,
-        "interpretationLimits": [
-            "Only official CT-ORG cases 0-20 are permitted by this helper; training cases are rejected.",
-            "Input volumes and labels are extracted to a user-selected temporary workspace and are not copied into the repository by this script.",
-            "The caller must preserve the data citation and comply with the TCIA Data Usage Policy and CC BY 3.0.",
-        ],
-    }
-    manifest_path = output_dir / "subset-manifest.json"
-    temporary_manifest = manifest_path.with_name(manifest_path.name + ".tmp")
-    temporary_manifest.write_text(json.dumps(manifest, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
-    os.replace(temporary_manifest, manifest_path)
-    return manifest
-
+        manifest = {
+            "schemaVersion": 1,
+            "dataset": "CT-ORG",
+            "datasetVersion": "v1 / TCIA current collection record",
+            "officialSplit": "test",
+            "officialTestCaseNumbers": selected,
+            "selectedCaseCount": len(selected),
+            "sourceDataCitation": DATA_CITATION,
+            "license": LICENSE,
+            "sourceUrl": "https://www.cancerimagingarchive.net/collection/ct-org/",
+            "extractedFiles": extracted,
+            "interpretationLimits": [
+                "Only official CT-ORG cases 0-20 are permitted by this helper; training cases are rejected.",
+                "Input volumes and labels are extracted to a user-selected temporary workspace and are not copied into the repository by this script.",
+                "The caller must preserve the data citation and comply with the TCIA Data Usage Policy and CC BY 3.0.",
+            ],
+        }
+        manifest_path = stage / "subset-manifest.json"
+        temporary_manifest = manifest_path.with_name(manifest_path.name + ".tmp")
+        temporary_manifest.write_text(json.dumps(manifest, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+        os.replace(temporary_manifest, manifest_path)
+        if output_dir.exists():
+            output_dir.rmdir()  # Only an empty directory passed the precondition above.
+        os.replace(stage, output_dir)
+        return manifest
+    except Exception:
+        shutil.rmtree(stage, ignore_errors=True)
+        raise
 
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description=__doc__)
