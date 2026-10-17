@@ -72,6 +72,12 @@ def load_label_volume(path: Path, label: str) -> tuple[nib.spatialimages.Spatial
         raise EvaluationInputError(f"Could not read {label} NIfTI volume: {exc}") from exc
     if len(image.shape) != 3 or any(int(size) <= 0 for size in image.shape):
         raise EvaluationInputError(f"{label} must be a non-empty 3D NIfTI volume; got shape {image.shape}.")
+    spatial_unit, _ = image.header.get_xyzt_units()
+    if spatial_unit != "mm":
+        raise EvaluationInputError(
+            f"{label} declares spatial units {spatial_unit!r}, not millimetres. "
+            "Confirm the source geometry and explicitly set verified NIfTI spatial units to mm before evaluation."
+        )
     spacing = _validate_affine(image.affine, label)
     try:
         raw = np.asanyarray(image.dataobj)
