@@ -180,24 +180,45 @@ jobs:
           fetch_with_retry "$base/preview/abdomen-series.html" 'data-series-plane="coronal"'
           fetch_with_retry "$base/preview/organ-segmentation.html" 'organ-segmentation.js'
           fetch_with_retry "$base/preview/organ-segmentation.js" 'maskPatterns'
-          if [ -f "preview/assets/organ-predictions/manifest.json" ]; then
-            fetch_with_retry "$base/preview/assets/organ-predictions/manifest.json" 'experimental-unreviewed'
-            fetch_with_retry "$base/preview/assets/organ-predictions/manifest.json" 'planeDefinitions'
-            # Verify that the deployed preview serves masks from all three orientations.
-            fetch_with_retry "$base/preview/assets/organ-predictions/liver-026.png" 'PNG'
-            fetch_with_retry "$base/preview/assets/organ-predictions/liver-coronal-127.png" 'PNG'
-            fetch_with_retry "$base/preview/assets/organ-predictions/liver-sagittal-127.png" 'PNG'
-            for asset in major-organ-labelmap.nii.gz liver.nii.gz spleen.nii.gz kidney_right.nii.gz kidney_left.nii.gz; do
-              curl -fsS "$base/preview/assets/organ-predictions/$asset" -o "/tmp/$asset"
-              test -s "/tmp/$asset"
-              python - "/tmp/$asset" <<'PY'
+          # This deploy job intentionally has no repository checkout. Validate the live
+          # artifact unconditionally instead of using a local-file check that would skip
+          # all model-output assertions in this separate job.
+          fetch_with_retry "$base/preview/assets/organ-predictions/manifest.json" 'experimental-unreviewed'
+          fetch_with_retry "$base/preview/assets/organ-predictions/manifest.json" 'planeDefinitions'
+          curl -fsS "$base/preview/assets/organ-predictions/manifest.json" -o /tmp/organ-manifest.json
+          python - /tmp/organ-manifest.json <<'PY'
+          import json
+          import sys
+          from pathlib import Path
+          manifest = json.loads(Path(sys.argv[1]).read_text())
+          assert manifest.get("status") == "experimental-unreviewed"
+          assert manifest.get("sourceDimensionsXYZ") == [256, 256, 113]
+          assert set(manifest.get("planeDefinitions", {})) == {"axial", "coronal", "sagittal"}
+          assert len(manifest.get("organs", [])) == 4
+          for organ in manifest["organs"]:
+              assert set(organ.get("maskPatterns", {})) == {"axial", "coronal", "sagittal"}
+          PY
+          # Check representative live PNGs in each plane (valid PNG signature).
+          for asset in liver-026.png liver-coronal-127.png liver-sagittal-127.png; do
+            curl -fsS "$base/preview/assets/organ-predictions/$asset" -o "/tmp/$asset"
+            python - "/tmp/$asset" <<'PY'
           import sys
           from pathlib import Path
           data = Path(sys.argv[1]).read_bytes()
-          assert list(data[:2]) == [31, 139], "Expected gzip-compressed NIfTI asset"
+          assert data[:8] == b"\\x89PNG\\r\\n\\x1a\\n", "Expected a valid PNG asset"
           PY
-            done
-          fi
+          done
+          # Verify all five downloadable volumes are present and gzip-compressed NIfTI.
+          for asset in major-organ-labelmap.nii.gz liver.nii.gz spleen.nii.gz kidney_right.nii.gz kidney_left.nii.gz; do
+            curl -fsS "$base/preview/assets/organ-predictions/$asset" -o "/tmp/$asset"
+            python - "/tmp/$asset" <<'PY'
+          import sys
+          from pathlib import Path
+          data = Path(sys.argv[1]).read_bytes()
+          assert data[:2] == bytes([31, 139]), "Expected gzip-compressed NIfTI asset"
+          assert len(data) > 352, "NIfTI asset is unexpectedly small"
+          PY
+          done
           fetch_with_retry "$base/preview/src/abdomen-series.js" 'function switchPlane(nextPlane)'
           fetch_with_retry "$base/preview/src/data/wikimedia-abdomen-series.js" 'sagittal_plane_178.png'
           fetch_with_retry "$base/preview/src/data/guided-cases.js" 'rID-59227'
