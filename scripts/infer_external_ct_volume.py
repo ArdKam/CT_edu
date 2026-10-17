@@ -239,6 +239,9 @@ def run_external_inference(
                     raise ExternalInferenceError(f"Expected mask output is missing for {item['id']}.")
                 try:
                     predicted_image = nib.load(str(predicted_path))
+                    # Validate the model's own grid before resampling; otherwise an
+                    # unknown spatial unit or ambiguous transform could corrupt alignment.
+                    validate_geometry(predicted_image, f"model prediction {item['id']}")
                     aligned_image = resample_from_to(predicted_image, target_grid, order=0)
                     mask = np.asarray(aligned_image.dataobj) > 0.5
                 except Exception as exc:
