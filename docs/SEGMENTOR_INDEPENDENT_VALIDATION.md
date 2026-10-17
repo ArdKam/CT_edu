@@ -1,6 +1,6 @@
 # Segmentor independent-validation tooling
 
-**Status:** evaluation tooling implemented on a feature branch; no external patient cohort has been evaluated by this increment.  
+**Status:** evaluation tooling merged into `main` on 17 October 2026; no external patient cohort has been evaluated using it yet.  
 **Purpose:** make future independent-case evaluation reproducible and prevent geometry mismatches or empty masks from looking like success.  
 **Scope:** discrete NIfTI label maps; this does not add inference for arbitrary uploaded CT scans.
 
