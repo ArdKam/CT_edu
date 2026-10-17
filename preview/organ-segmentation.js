@@ -38,7 +38,10 @@
     renderOrganControls();
     updatePosition();
     updateOpacityLabel();
-    if (state.manifest) renderCurrentSlice();
+    if (state.manifest) {
+      renderModelMeta();
+      renderCurrentSlice();
+    }
   }
   function showCanvasState(kind, customMessage) {
     const panel = $('organ-canvas-state');
