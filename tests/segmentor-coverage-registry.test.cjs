@@ -65,7 +65,7 @@ test('specialist task registry distinguishes open tasks from licensed candidates
 
 test('coverage registry tracks current provenance safeguards without overstating external validation', function () {
   assert.equal(registry.repositoryBaseline.branch, 'main');
-  assert.equal(registry.repositoryBaseline.commit, '994265ec6f86231dba3d21e6948d4ceecb1c23fa');
+  assert.equal(registry.repositoryBaseline.commit, '7a69e9f1a63738d4b55f934aee886e91f9f3564a');
   assert.equal(registry.currentInferenceConfiguration.sourceInputHashesAvailableOnMain, false,
     'generator code has hash support, but the committed preview manifest still needs regeneration');
   assert.match(registry.currentInferenceConfiguration.note, /currently committed preview manifest has not yet been regenerated/i);
@@ -78,9 +78,20 @@ test('coverage registry tracks current provenance safeguards without overstating
   assert.equal(registry.externalInferenceUtility.scriptPath, 'scripts/infer_external_ct_volume.py');
   assert.equal(registry.externalInferenceUtility.arbitraryCtUploadSupported, false);
   assert.equal(registry.externalInferenceUtility.externalCohortCasesProcessed, 0);
-  assert.equal(registry.externalInferenceUtility.independentEvaluationStatus, 'not-run-on-external-cohort');
+  assert.equal(registry.externalInferenceUtility.independentEvaluationStatus, 'runner-implemented-CTORG-real-data-run-pending');
   assert.equal(registry.externalInferenceUtility.educationalApprovalStatus, 'not-approved');
   assert.equal(registry.externalInferenceUtility.selectableTotalTaskClassCount, 117);
+  assert.equal(registry.externalInferenceUtility.externalCohortCasesProcessed, 0);
+  assert.equal(registry.externalInferenceUtility.independentEvaluationStatus, 'runner-implemented-CTORG-real-data-run-pending');
+  assert.equal(registry.externalValidationRunner.status, 'implemented-manual-workflow-not-run-on-real-data');
+  assert.equal(registry.externalValidationRunner.realDataWorkflowRunsCompleted, 0);
+  assert.equal(registry.externalValidationRunner.externalCasesEvaluated, 0);
+  assert.equal(registry.externalValidationRunner.vesselValidationSupported, false);
+  assert.equal(registry.externalValidationRunner.permittedCaseNumbers.min, 0);
+  assert.equal(registry.externalValidationRunner.permittedCaseNumbers.max, 20);
+  assert.deepEqual(registry.externalValidationRunner.selectableWorkflowModes, ['pilot-2', 'official-test-21']);
+  assert.equal(registry.externalValidationRunner.reportOnlyArtifacts, true);
+  assert.equal(registry.externalValidationRunner.sourceImagesOrMasksPublished, false);
   assert.equal(registry.externalInferenceUtility.specialistTaskSelection.sourceOfTruth,
     'docs/SEGMENTOR_COVERAGE_REGISTRY.json#taskCatalog');
   assert.deepEqual(registry.externalInferenceUtility.specialistTaskSelection.enabledTasks.map(t => t.task),
@@ -92,12 +103,15 @@ test('coverage registry tracks current provenance safeguards without overstating
     ['upstream-class-name', 'stable-anatomy-id', 'all']);
   assert.deepEqual(registry.externalInferenceUtility.classSelection.defaultClasses,
     ['liver', 'spleen', 'kidney_right', 'kidney_left']);
-  assert.match(registry.externalInferenceUtility.notes.join(' '), /all-classes mode and open specialist tasks were not run/i);
-  assert.match(registry.externalInferenceUtility.notes.join(' '), /runtime, memory, artifacts and clinical\/anatomical quality still need measurement/i);
+  assert.match(registry.externalInferenceUtility.notes.join(' '), /Three open specialist tasks .* remain unrun in CT Edu/i);
+  assert.match(registry.externalInferenceUtility.notes.join(' '), /real-data workflow has not been dispatched/i);
+  assert.match(registry.externalInferenceUtility.notes.join(' '), /it provides no vessel evaluation/i);
   assert.match(fs.readFileSync(path.join(root, 'docs', 'SEGMENTOR_COVERAGE_REGISTRY.md'), 'utf8'),
     /No independent external cohort has been processed by this CLI/i);
   assert.match(fs.readFileSync(path.join(root, 'docs', 'SEGMENTOR_COVERAGE_REGISTRY.md'), 'utf8'),
     /--classes all/);
+  assert.match(fs.readFileSync(path.join(root, 'docs', 'SEGMENTOR_COVERAGE_REGISTRY.md'), 'utf8'),
+    /CT-ORG held-out validation runner/i);
 });
 
 test('human-readable coverage registry clearly separates upstream classes from validated output', function () {
