@@ -31,8 +31,7 @@ test('3D correction workspace is a local draft editor, not the independent Wikim
   assert.match(core, /brushVoxelOffsets/);
   assert.doesNotMatch(script, /assets\/spl-abdominal-demo\/.+label/);
   assert.doesNotMatch(script, /fetch\(['"]https?:/);
-  assert.match(doc, /not proof of anatomical correctness/i);
-  assert.match(doc, /not reviewed or approved/i);
+  assert.match(doc, /unreviewed draft.*not an approved reference/i);
 });
 
 test('3D mask correction route keeps all three planes on one geometry-preserving voxel grid', function () {
