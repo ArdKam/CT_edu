@@ -104,11 +104,11 @@ assert.ok(!app.includes("return item.source.studyPageUrl || item.source.url;"));
 
 
 
-assert.match(page, /embedded image viewing is not guaranteed/);
-assert.match(page, /shows only the case page/);
+assert.match(page, /Radiopaedia may block embedded display/);
+assert.match(page, /Show original case page/);
 assert.match(page, /Radiopaedia study page; displayed content is controlled by the source site/);
 assert.match(app, /Open Radiopaedia study page/);
-assert.match(app, /embedded image viewing is not guaranteed/);
+assert.match(app, /Radiopaedia controls embedded display and image loading/);
 assert.match(app, /Radiopaedia controls the displayed page and image navigation/);
 assert.doesNotMatch(app, /Open study viewer on Radiopaedia/);
 assert.doesNotMatch(page, /the viewer opens automatically/i);
