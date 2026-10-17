@@ -501,6 +501,8 @@
     if (!item) return;
     if (!window.confirm(lang() === 'fa' ? 'پیش‌نویس این کیس از همین مرورگر حذف شود؟' : 'Delete this case draft from this browser?')) return;
     delete state.drafts[item.id];
+    delete state.discussionShown[item.id];
+    delete state.hintLevels[item.id];
     try { localStorage.setItem(STORAGE_KEY, JSON.stringify({ version: 1, drafts: state.drafts })); } catch (_) {}
     el('learner-findings').value = '';
     el('learner-differential').value = '';
@@ -508,6 +510,7 @@
     el('guided-case-rubric-section').hidden = true;
     el('guided-case-submit-status').textContent = lang() === 'fa' ? 'پیش‌نویس حذف شد.' : 'Draft deleted.';
     persistDrafts();
+    renderProgressiveHints(item);
     renderSource(item);
   }
 
