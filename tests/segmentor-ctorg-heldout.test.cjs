@@ -49,5 +49,6 @@ test('CT-ORG mappings are explicitly coarse-grained and do not claim vessel eval
   assert.match(runner, /union of the left and right kidney masks/);
   assert.match(runner, /union of 62 available skeletal classes/);
   assert.match(runner, /vesselEvaluationIncluded": False/);
-  assert.match(runner, /reference-empty.*not treated as a valid absent-structure negative/i);
+  assert.match(runner, /skipped-reference-empty/i);
+  assert.match(runner, /not treated as a valid absent-structure negative/i);
 });
