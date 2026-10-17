@@ -782,3 +782,5 @@
   .guided-case-stage{padding:.8rem;margin-top:.75rem;}
   .guided-stage-heading h3{font-size:1.05rem;}
 }
+
+.guided-progressive-hints[hidden],.guided-hints-unavailable[hidden],#guided-next-hint[hidden],#source-case-discussion-toggle[hidden],#source-case-notes[hidden],#source-case-discussion[hidden]{display:none!important}
