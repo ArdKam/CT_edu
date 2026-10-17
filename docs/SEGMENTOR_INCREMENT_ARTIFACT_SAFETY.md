@@ -25,7 +25,7 @@
 - No class scope, model weights, TotalSegmentator version, resampling method, source labels, or coordinate transform was changed.
 - The original SPL CT and source labelmap are untouched. Prediction assets remain experimental and unreviewed.
 - The public release approval latch and deployment workflows were not changed. A PR build is not a production deployment.
-- The roadmap and release-gate files are intentionally not edited in this increment because an open Segmentor documentation PR (#29) is already changing the roadmap. Consolidate this record into the roadmap only after coordinating/merging that work.
+- The roadmap and release-gate files are intentionally not edited in this increment. PR #29 has since merged to `main` as `83f68eaf65a0dbebfca27d0ba6864ccf6d18f23a`, adding the comprehensive Segmentor plan and a roadmap pointer while this feature branch remains based on the preceding `643a182` commit. The current diff does not touch those shared files; refresh/compare against live `main` before merging.
 
 ## Verification status
 
