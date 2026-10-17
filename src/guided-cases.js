@@ -321,6 +321,29 @@
     el('source-case-notes-body').textContent = text(item.source.caseNotes) || text(item.summary);
     const sourceNotesLink = el('source-case-fulltext-link');
     sourceNotesLink.href = item.source.url;
+    const discussion = item.source.caseDiscussion;
+    const discussionSection = el('source-case-discussion');
+    const discussionParagraphs = el('source-case-discussion-paragraphs');
+    discussionParagraphs.replaceChildren();
+    const hasDiscussion = Boolean(discussion && Array.isArray(discussion.paragraphs) && discussion.paragraphs.length);
+    if (hasDiscussion) {
+      discussion.paragraphs.forEach(function (paragraph) {
+        discussionParagraphs.appendChild(make('p', 'source-case-discussion-paragraph', paragraph));
+      });
+    }
+    discussionSection.hidden = !sourceDetailsRevealed || !hasDiscussion;
+    const discussionAttribution = el('source-case-discussion-attribution');
+    discussionAttribution.textContent = item.source.contributor
+      ? (lang() === 'fa' ? 'نویسنده: ' : 'Original discussion by ') + item.source.contributor + (item.source.rid ? ' · ' + item.source.rid : '')
+      : item.source.citation;
+    const operativeNoteSection = el('source-case-operative-note-section');
+    operativeNoteSection.hidden = !sourceDetailsRevealed || !hasDiscussion || !discussion.operativeNote;
+    el('source-case-operative-note').textContent = hasDiscussion ? (discussion.operativeNote || '') : '';
+    const discussionSourceLink = el('source-case-discussion-source-link');
+    discussionSourceLink.href = item.source.url;
+    discussionSourceLink.textContent = lang() === 'fa'
+      ? 'مشاهدهٔ کیس اصلی در Radiopaedia ↗'
+      : 'View original case on Radiopaedia ↗';
   }
 
 
