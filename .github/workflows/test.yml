@@ -40,6 +40,8 @@ jobs:
           node --check src/data/guided-cases.js
           node --check src/data/radiopaedia-abdominal-cases.js
           node --check src/guided-cases.js
+          node --check preview/organ-segmentation.js
+          node --check tests/organ-segmentation-browser.cjs
       - name: Check archive inventory script syntax
         run: |
           python3 -m py_compile scripts/inspect_archives.py
@@ -176,6 +178,7 @@ jobs:
             sleep 1
           done
           node tests/browser-smoke.cjs
+          node tests/organ-segmentation-browser.cjs
           for engine in chromium firefox webkit; do
             echo "Running cross-engine compatibility smoke: $engine"
             BROWSER_ENGINE="$engine" node tests/browser-compat.cjs
