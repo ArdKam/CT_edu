@@ -94,6 +94,13 @@ test('the Pages workflow stages preview routes and their shared source manifests
   const previewWorkflow = read('.github/workflows/preview-guided-cases.yml');
   assert.match(previewWorkflow, /catalog_anchor = '<section class="modality-catalog"/);
   assert.match(previewWorkflow, /stack_section = """/);
+  const sectionStart = previewWorkflow.indexOf('          stack_section = """');
+  const sectionEndMarker = '</section>"""';
+  const sectionEnd = previewWorkflow.indexOf(sectionEndMarker, sectionStart);
+  assert.ok(sectionStart >= 0 && sectionEnd > sectionStart, 'publisher must have a complete homepage HTML block');
+  const embeddedHtmlLines = previewWorkflow.slice(sectionStart, sectionEnd + sectionEndMarker.length).split(/\r?\n/).slice(1);
+  assert.ok(embeddedHtmlLines.every(function (line) { return line.trim() === '' || line.startsWith('          '); }),
+    'embedded homepage HTML must remain indented inside the YAML run block');
   assert.match(previewWorkflow, /class="source-stack-shortcuts"/);
   assert.match(previewWorkflow, /\.source-stack-grid/);
   assert.ok(previewWorkflow.includes("grep -q 'source-stack-shortcuts' \"$GITHUB_WORKSPACE/_site/index.html\""), 'publisher must stage the homepage shortcuts');
