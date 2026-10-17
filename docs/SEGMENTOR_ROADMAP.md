@@ -1,20 +1,20 @@
 # Segmentor roadmap — CT Edu
 
-Status: proposed; not implemented in CT Edu.
-Scope: a safe, preview-only annotation workflow, initially for the separate Wikimedia axial image stack.
+Status: experimental automatic major-organ preview implemented; manual annotation/editor and independent medical validation remain incomplete.
+Scope: remotely generated, preview-only SPL abdominal masks for liver, spleen, and both kidneys; later manual 2D annotation work may target the separate Wikimedia axial image stack.
 Last updated: 2026-10-17.
 
-This roadmap adapts the useful parts of the supplied Base44 Segmentor prototype to CT Edu's current static, vanilla-JavaScript architecture. It is not a claim that anatomical segmentation, AI contour generation, or annotation review is already implemented.
+This roadmap adapts useful parts of the supplied Base44 Segmentor prototype to CT Edu's static, vanilla-JavaScript architecture. A hosted GitHub Actions runner has installed and executed TotalSegmentator and produced geometry-preserving 3D NIfTI masks, a combined label map, and axial PNG overlays. These are unreviewed model candidates, not clinically validated segmentations. The manual annotation editor, correction workflow, and independent evaluation are still planned work.
 
 ## Product goal
 
-Allow a learner or authorised content author to draw, edit, label, save, and review polygon annotations on a specific source image. Add deterministic intensity-region suggestions only after manual annotation is stable. Consider AI proposals and true volumetric segmentation only as later, separately validated capabilities.
+Deliver reliable automatic segmentation of major non-vascular abdominal organs first, with source geometry preserved and generated masks visible in a preview. Then add an annotation/correction workflow that lets an authorised content author inspect, edit, label, save, and review output. Intensity thresholds are not organ recognition; optional AI contour proposals and broader 3D segmentation require separate validation.
 
 ## Non-negotiable architectural boundaries
 
 - Preserve the existing SPL volumetric CT viewer, source intensities, label-map decoding, tri-planar coordinate model, quizzes, and current data stores. The Segmentor must not replace or fork these systems.
 - Build the first version as vanilla JavaScript modules consistent with CT Edu; port behaviors and algorithms from Base44, not its React component tree, SDK, entity model, or service assumptions.
-- Start with the separate Wikimedia image-stack preview, initially axial only. Its axial, coronal, and sagittal images are independent pre-rendered stacks, not spatially synchronized reformats of one known volume.
+- For model-based organ segmentation, use the geometry-bearing SPL NRRD volume and its paired label map; do not use the Wikimedia PNG stacks as 3D model input. The Wikimedia axial/coronal/sagittal stacks are independent pre-rendered sequences, not synchronized reformats of one known volume, and remain a separate future 2D annotation target.
 - Persist 2D annotations against stable dataset/version and image identity, not plane/index alone. Store polygon and label points in native source-image pixel coordinates.
 - Distinguish manual annotations, deterministic suggestions, and AI proposals by provenance. New and generated work is a draft unless explicitly reviewed. “Published” or “reviewed” must never be inferred from a successful save.
 - Do not describe grayscale/intensity-based regions as organ segmentation or AI contours as medically correct. This is an educational authoring feature, not a diagnostic tool.
