@@ -9,7 +9,7 @@
 - **scripts/evaluate_segmentor_predictions.py** compares explicitly mapped classes in a prediction NIfTI and reference NIfTI.
 - **scripts/aggregate_segmentor_evaluations.py** aggregates case reports only when at least two distinct case IDs use the same model, preprocessing, reference dataset, reference type and class mapping.
 - **tests/test_segmentor_independent_evaluation.py** exercises overlap metrics, physical surface distances, geometry rejection, empty masks, and cohort aggregation.
-- Each JSON report keeps the model and preprocessing description, reference-dataset/case IDs, input SHA-256 digests, spatial grid, class-specific metrics and interpretation limits. Reports store only input basenames and hashes, not absolute input paths or voxel data.
+- Each JSON report keeps the model and preprocessing description, reference-dataset/case IDs, input SHA-256 digests, spatial grid, class-specific metrics and interpretation limits. Reports store hashes rather than source filenames, absolute input paths or voxel data, reducing the risk of accidentally recording identifiers embedded in filenames.
 
 This is a reusable evaluation layer, not proof of improved model accuracy. The current SPL atlas remains the existing experimental sample. A future step still needs to acquire, license-review, annotate/select, and evaluate genuinely independent cases, and to create or integrate inference capable of processing those scans.
 
