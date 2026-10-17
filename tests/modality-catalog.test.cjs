@@ -6,9 +6,9 @@ const root = path.resolve(__dirname, '..');
 const read = function (name) { return fs.readFileSync(path.join(root, name), 'utf8'); };
 const catalog = require('../src/data/modality-catalog.js');
 
-test('modality catalog exposes five paths while only the primary SPL learning path is marked available', function () {
+test('modality catalog exposes eight paths while only the primary SPL learning path is marked available', function () {
   const entries = catalog.list();
-  assert.deepEqual(entries.map(function (entry) { return entry.id; }), ['abdomen-ct','abdomen-ct-series','brain-ct','chest-ct','chest-xray']);
+  assert.deepEqual(entries.map(function (entry) { return entry.id; }), ['abdomen-ct','abdomen-ct-series','thorax-ct-series','brain-ct-series','brain-contrast-ct-series','brain-ct','chest-ct','chest-xray']);
   assert.equal(entries.filter(function (entry) { return catalog.isAvailable(entry.id); }).length, 1);
   assert.equal(catalog.isAvailable('abdomen-ct'), true);
   assert.equal(catalog.isAvailable('abdomen-ct-series'), false);
@@ -19,6 +19,18 @@ test('modality catalog exposes five paths while only the primary SPL learning pa
   assert.match(series.sourceUrl, /commons\.wikimedia\.org/);
   assert.match(series.detailEn, /648 static images across three separate sequences/i);
   assert.match(series.detailEn, /in-plane spacing/i);
+  for (const [id,url] of [
+    ['thorax-ct-series','./preview/thorax-series.html'],
+    ['brain-ct-series','./preview/brain-series.html'],
+    ['brain-contrast-ct-series','./preview/brain-contrast-series.html']
+  ]) {
+    const entry = catalog.getById(id);
+    assert.equal(entry.status, 'candidate');
+    assert.equal(entry.contentAvailable, false);
+    assert.equal(entry.pageUrl, url);
+    assert.ok(entry.sourceUrl.includes('commons.wikimedia.org'));
+    assert.ok(entry.sourceNoteEn.includes('CC0 1.0'));
+  }
   assert.equal(catalog.isAvailable('brain-ct'), false);
   assert.equal(catalog.isAvailable('chest-ct'), false);
   assert.equal(catalog.isAvailable('chest-xray'), false);
