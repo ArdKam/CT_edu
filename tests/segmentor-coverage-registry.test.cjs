@@ -60,7 +60,13 @@ test('specialist task registry distinguishes open tasks from licensed candidates
 test('coverage registry tracks current provenance safeguards without overstating external validation', function () {
   assert.equal(registry.repositoryBaseline.branch, 'main');
   assert.equal(registry.repositoryBaseline.commit, 'b1074711b5ac7f70b592d761df1fdb2536d2e977');
-  assert.equal(registry.currentInferenceConfiguration.sourceInputHashesAvailableOnMain, true);
+  assert.equal(registry.currentInferenceConfiguration.sourceInputHashesAvailableOnMain, false,
+    'generator code has hash support, but the committed preview manifest still needs regeneration');
+  assert.match(registry.currentInferenceConfiguration.note, /currently committed preview manifest has not yet been regenerated/i);
+  const generator = fs.readFileSync(path.join(root, 'scripts', 'generate_major_organ_masks.py'), 'utf8');
+  assert.match(generator, /ctNrrdSha256/);
+  assert.match(generator, /labelMapNrrdSha256/);
+  assert.match(generator, /publish_directory\(output, destination\)/);
   assert.match(registry.currentInferenceConfiguration.note, /atomic/i);
   assert.equal(registry.externalInferenceUtility.status, 'implemented-cli-no-external-cohort-yet');
   assert.equal(registry.externalInferenceUtility.scriptPath, 'scripts/infer_external_ct_volume.py');
