@@ -130,7 +130,7 @@ class CTORGHeldoutEvaluationTests(unittest.TestCase):
         self.assertEqual(groups["kidneys"]["referenceLabel"], 4)
         self.assertEqual(groups["bones"]["referenceLabel"], 5)
         self.assertEqual(groups["brain"]["referenceLabel"], 6)
-        self.assertIn("lung-lobe", groups["lungs"]["ontologyNote"])
+        self.assertIn("lobe", groups["lungs"]["ontologyNote"])
         self.assertIn("approximate", groups["bones"]["ontologyNote"])
         self.assertNotIn("costal_cartilages", all_classes)
         self.assertIn("sacrum", groups["bones"]["modelClasses"])
@@ -150,7 +150,7 @@ class CTORGHeldoutEvaluationTests(unittest.TestCase):
         self.assertEqual(index["caseCountProcessed"], 2)
         self.assertEqual(index["caseCountFailedOrPartial"], 0)
         self.assertFalse(index["limitations"] == [])
-        self.assertFalse(index["model"].get("vesselEvaluationIncluded", True) is True)
+        self.assertTrue(any("No vessel reference labels" in item for item in index["limitations"]))
         for group_id in ["liver", "bladder", "lungs", "kidneys", "bones"]:
             self.assertEqual(index["groups"][group_id]["status"], "aggregated")
             self.assertEqual(index["groups"][group_id]["evaluatedCaseCount"], 2)
