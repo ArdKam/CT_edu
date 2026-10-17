@@ -128,7 +128,7 @@
       },
       modality: 'CT',
       region: 'abdomen',
-      title: { fa: 'CT شکم · کیس ۰۴', en: 'Abdominal CT · Case 04' },
+      title: { fa: 'CT شکم · کیس ۰۳', en: 'Abdominal CT · Case 03' },
       summary: {
         fa: 'CT را به‌صورت سیستماتیک مرور کن، یافته‌ها و تشخیص‌های افتراقی را ثبت کن و پیش از دیدن توضیح مرجع نتیجه‌گیری کن.',
         en: 'Review the CT systematically, record findings and a differential, and formulate an impression before revealing the reference explanation.'
