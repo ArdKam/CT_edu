@@ -6,6 +6,10 @@ Last updated: 2026-10-17.
 
 This roadmap adapts useful parts of the supplied Base44 Segmentor prototype to CT Edu's static, vanilla-JavaScript architecture. A hosted GitHub Actions runner has installed and executed TotalSegmentator and produced geometry-preserving 3D NIfTI masks, a combined label map, and axial PNG overlays. These are unreviewed model candidates, not clinically validated segmentations. The manual annotation editor, correction workflow, and independent evaluation are still planned work.
 
+## Long-term coverage plan
+
+The target of comprehensive organ and vessel segmentation, model-selection strategy, intensity/geometry requirements, class-specific evaluation, hosted inference, 3D correction, implementation phases, and next-session instructions are tracked in the [Comprehensive Segmentor implementation plan](SEGMENTOR_COMPREHENSIVE_IMPLEMENTATION_PLAN.md). Keep this plan and the detailed phase/exit criteria below in sync as implementation evidence changes.
+
 ## Product goal
 
 Deliver reliable automatic segmentation of major non-vascular abdominal organs first, with source geometry preserved and generated masks visible in a preview. Then add an annotation/correction workflow that lets an authorised content author inspect, edit, label, save, and review output. Intensity thresholds are not organ recognition; optional AI contour proposals and broader 3D segmentation require separate validation.
