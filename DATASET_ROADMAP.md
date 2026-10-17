@@ -22,6 +22,31 @@ Purpose: identify candidate sources for a public educational CT web app. **No ca
 - Current product status: **source-image preview only**. CT-Edu does not treat the separate stacks as spatially synchronized or infer DICOM geometry, in-plane spacing, patient-space coordinates, HU calibration, segmentation, or verified cross-plane alignment.
 - Before formal teaching use, check all source URLs, sequence continuity, dimensions, orientation, performance and educational suitability. The independent medical review gate remains open. These stacks supplement—but do not replace—the SPL volumetric viewer.
 
+## Normal thorax and brain CT image stacks — Wikimedia Commons
+
+Source author: Mikael Häggström, M.D. The source pages declare CC0 1.0. CT Edu loads images on demand from Wikimedia; no image binaries are bundled in the Pages artifact.
+
+### Normal thorax
+- Source: [Scrollable high-resolution CT images of a normal thorax](https://commons.wikimedia.org/wiki/Scrollable_high-resolution_computed_tomography_images_of_a_normal_thorax).
+- 266 numbered images across three source stacks: 106 axial, 67 coronal and 93 sagittal. The Commons category lists 267 files because it also includes a thumbnail; the thumbnail is not treated as a slice.
+- Source page reports 3 mm slice thickness. This is not a DICOM series; shared patient coordinates, slice spacing metadata for each separate plane, in-plane spacing, HU calibration, cross-plane registration and segmentation are not available/verified.
+
+### Normal brain, case 1 — without intravenous contrast
+- Source: [Scrollable computed tomography images of a normal brain (case 1)](https://commons.wikimedia.org/wiki/Scrollable_computed_tomography_images_of_a_normal_brain_%28case_1%29).
+- 139 images across independent stacks: 41 axial, 58 coronal and 40 sagittal.
+- Source describes normal anatomy and reports 4 mm axial slice thickness. Source page declares CC0 1.0 and includes an informed-consent note. The separate stacks are not a spatially synchronized volume and are not approved for diagnostic or segmentation use.
+
+### Brain CT, case 2 — with intravenous contrast
+- Source: [Scrollable computed tomography images of a normal brain (case 2)](https://commons.wikimedia.org/wiki/Scrollable_computed_tomography_images_of_a_normal_brain_%28case_2%29).
+- 34 numbered axial images; no coronal or sagittal sequence is included. This is a distinct source case and must not be merged with or assumed registered to case 1.
+- Source page declares CC0 1.0. Source-image availability and a license declaration do not establish clinical validity.
+
+### Implementation status and remaining gates
+- Integrated as three bilingual, on-demand preview routes under `preview/`, using the same image-stack navigation pattern as the abdomen preview. They are separately selectable from the preview hub and modality catalog.
+- The manifests use explicit source file names (thorax axial sequence omits source indices absent from the Commons category); the Pages artifact contains manifests and viewer code, not CT binaries.
+- All stacks explicitly declare `geometryVerified: false`, `synchronizedVolume: false`, and `segmentationAvailable: false`. Do not pipe these JPEG/PNG stacks into the volumetric Segmentor.
+- Before formal teaching use: verify representative and boundary URLs in a live browser, review ordering/orientation/image quality and mobile load behavior, obtain independent thoracic radiology/neuroanatomy review, and retain the source/license attribution.
+
 ## Candidates for additional regions
 
 ### CT head — RSNA Intracranial Hemorrhage Detection (candidate; current agreement must be reviewed)

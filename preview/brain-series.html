@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#101923">
+  <meta name="description" content="Bilingual source-image preview of non-contrast brain CT in three independent Wikimedia Commons image stacks.">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'self'; object-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: blob: https://upload.wikimedia.org https://commons.wikimedia.org; connect-src 'self'; form-action 'self'; frame-src 'none'">
+  <link rel="icon" type="image/svg+xml" href="../favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Vazirmatn:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./src/styles.css">
+  <link rel="stylesheet" href="./src/abdomen-series.css">
+  <title>Normal brain · non-contrast CT · CT Edu</title>
+</head>
+<body class="abdomen-series-page">
+  <div class="app-shell">
+    <header class="topbar">
+      <a class="brand" href="../index.html" aria-label="CT Edu home">
+        <span class="brand-mark" aria-hidden="true"><span></span><span></span><span></span></span>
+        <span class="brand-copy"><strong>CT <em>EDU</em></strong><small>ANATOMY LAB</small></span>
+      </a>
+      <div class="topbar-center"><span class="crumb-dot"></span><span class="rad-fa">کتابخانهٔ تصویربرداری</span><span class="rad-en">Imaging library</span><span class="crumb-slash">/</span><strong class="rad-fa">مغز طبیعی · CT بدون کنتراست</strong><strong class="rad-en">Normal brain · non-contrast CT</strong></div>
+      <div class="topbar-actions">
+        <a class="series-home-link" href="./index.html"><span class="rad-fa">بازگشت به پیش‌نمایش‌ها</span><span class="rad-en">Back to previews</span></a>
+        <button id="series-language-toggle" class="language-toggle" type="button" aria-label="Switch language">EN ↔ فا</button>
+      </div>
+    </header>
+
+    <main class="series-main">
+      <section class="series-intro" aria-labelledby="series-title">
+        <div class="series-intro-copy">
+          <div class="eyebrow"><span class="eyebrow-line"></span><span class="rad-fa">کتابخانهٔ تصویربرداری · دادهٔ مستقل</span><span class="rad-en">IMAGING LIBRARY · SEPARATE DATASET</span></div>
+          <h1 id="series-title"><span class="rad-fa">مغز طبیعی · CT بدون کنتراست</span><span class="rad-en">Normal brain · non-contrast CT</span></h1>
+          <p class="series-lead"><span class="rad-fa">مجموعهٔ CT مغز بدون تزریق با ۴۱ تصویر محوری، ۵۸ کرونال و ۴۰ ساژیتال. نماها توالی‌های تصویری مستقل‌اند و حجم DICOM هم‌تراز تشکیل نمی‌دهند.</span><span class="rad-en">Non-contrast brain CT with 41 axial, 58 coronal, and 40 sagittal images. The planes are independent image sequences and do not form a spatially aligned DICOM volume.</span></p>
+          <div class="series-facts">
+            <span class="series-fact"><strong>41</strong><span class="rad-fa">محوری</span><span class="rad-en">Axial</span></span>
+          <span class="series-fact"><strong>58</strong><span class="rad-fa">کرونال</span><span class="rad-en">Coronal</span></span>
+          <span class="series-fact"><strong>40</strong><span class="rad-fa">ساژیتال</span><span class="rad-en">Sagittal</span></span>
+          </div>
+        </div>
+        <aside class="series-status-card">
+          <div class="series-status-mark" aria-hidden="true"><span></span></div>
+          <strong><span class="rad-fa">پیش‌نمایش منبع</span><span class="rad-en">Source-image preview</span></strong>
+          <p><span class="rad-fa">تصاویر هنگام نیاز از Wikimedia بارگیری می‌شوند؛ این صفحه حجم DICOM یا مسیر آموزشی تأییدشده نیست.</span><span class="rad-en">Images load on demand from Wikimedia. This page is not a DICOM volume or a reviewed teaching module.</span></p>
+          <a href="https://commons.wikimedia.org/wiki/Scrollable_computed_tomography_images_of_a_normal_brain_(case_1)" target="_blank" rel="noopener noreferrer"><span class="rad-fa">صفحهٔ منبع در Wikimedia ↗</span><span class="rad-en">Wikimedia source page ↗</span></a>
+        </aside>
+      </section>
+
+      <section class="series-workspace" aria-label="CT image stack viewer">
+        <div class="series-workspace-heading">
+          <div><span class="panel-kicker"><span class="rad-fa" id="series-viewer-kicker-fa">نمایشگر مجموعهٔ محوری</span><span class="rad-en" id="series-viewer-kicker-en">AXIAL IMAGE STACK</span></span><h2><span class="rad-fa">مرور برش‌ها</span><span class="rad-en">Browse slices</span></h2></div>
+          <output class="series-position" id="series-position">1 / 41</output>
+        </div>
+        <div class="series-plane-switch" aria-label="Choose image plane">
+        <button class="series-plane-button" type="button" data-series-plane="axial" aria-pressed="true"><span class="rad-fa">محوری</span><span class="rad-en">Axial</span><small>41</small></button>
+        <button class="series-plane-button" type="button" data-series-plane="coronal" aria-pressed="false"><span class="rad-fa">کرونال</span><span class="rad-en">Coronal</span><small>58</small></button>
+        <button class="series-plane-button" type="button" data-series-plane="sagittal" aria-pressed="false"><span class="rad-fa">ساژیتال</span><span class="rad-en">Sagittal</span><small>40</small></button>
+        </div>
+        <div class="series-toolbar">
+          <button id="series-previous" class="series-button" type="button" aria-label="Previous image"><span class="rad-fa">قبلی</span><span class="rad-en">Previous</span><span aria-hidden="true">←</span></button>
+          <button id="series-next" class="series-button series-button-primary" type="button" aria-label="Next image"><span class="rad-fa">بعدی</span><span class="rad-en">Next</span><span aria-hidden="true">→</span></button>
+          <span class="series-toolbar-divider" aria-hidden="true"></span>
+          <button id="series-zoom-out" class="series-button series-button-quiet" type="button" aria-label="Zoom out">−</button>
+          <output id="series-zoom-value" class="series-zoom-value">100%</output>
+          <button id="series-zoom-in" class="series-button series-button-quiet" type="button" aria-label="Zoom in">+</button>
+          <button id="series-fit" class="series-button series-button-quiet" type="button"><span class="rad-fa">جا دادن</span><span class="rad-en">Fit</span></button>
+          <button id="series-retry" class="series-button series-button-quiet" type="button" hidden><span class="rad-fa">تلاش دوباره</span><span class="rad-en">Retry</span></button>
+        </div>
+        <p class="series-keyboard-hint"><span class="rad-fa">میانبرها: ← و → برای جابه‌جایی، + و − برای بزرگ‌نمایی، Home و End برای ابتدا و انتها</span><span class="rad-en">Shortcuts: ← / → navigate, + / − zoom, Home / End jump to first / last image</span></p>
+        <div class="series-stage" id="series-stage">
+          <div class="series-stage-grid" aria-hidden="true"></div>
+          <img id="series-image" alt="CT image" draggable="false" referrerpolicy="no-referrer">
+          <div id="series-image-state" class="series-image-state" role="status" aria-live="polite"><span class="series-loader" aria-hidden="true"></span><strong><span class="rad-fa">در حال بارگذاری تصویر…</span><span class="rad-en">Loading image…</span></strong></div>
+          <div class="series-stage-caption" id="series-stage-caption"><span id="series-caption-fa" class="rad-fa">مختصات و هم‌ترازی فضایی تأیید نشده‌اند</span><span id="series-caption-en" class="rad-en">Spatial coordinates and cross-plane alignment are not verified</span></div>
+        </div>
+        <div class="series-slider-block">
+          <div class="series-slider-heading"><label for="series-slider"><span class="rad-fa">شمارهٔ تصویر در این نما</span><span class="rad-en">Image index in this view</span></label><span id="series-slider-value">1 / 41</span></div>
+          <input id="series-slider" type="range" min="1" max="41" step="1" value="1" aria-label="Select image index" aria-valuetext="1 of 41">
+          <div class="series-slider-ends"><span id="series-tick-first">1</span><span id="series-tick-quarter">25</span><span id="series-tick-middle">50</span><span id="series-tick-threequarter">75</span><span id="series-tick-last">41</span></div>
+        </div>
+      </section>
+
+      <section class="series-notes" aria-label="Source and limitations">
+        <div class="series-note-card">
+          <span class="series-note-icon" aria-hidden="true">↗</span>
+          <div><h3><span class="rad-fa">منبع و اعتبار</span><span class="rad-en">Source and credit</span></h3>
+            <p><span class="rad-fa">منبع: «Scrollable computed tomography images of a normal brain (case 1)» در Wikimedia Commons، اثر Mikael Häggström, M.D.؛ منبع مجوز CC0 1.0 و ضخامت برش محوری ۴ میلی‌متر را اعلام می‌کند.</span><span class="rad-en">Source: “Scrollable computed tomography images of a normal brain (case 1)” on Wikimedia Commons by Mikael Häggström, M.D.; the source states CC0 1.0 and reports 4 mm axial slice thickness.</span></p>
+            <p><a href="https://commons.wikimedia.org/wiki/Scrollable_computed_tomography_images_of_a_normal_brain_(case_1)" target="_blank" rel="noopener noreferrer">Wikimedia Commons source page ↗</a> · <a href="https://creativecommons.org/publicdomain/zero/1.0/" target="_blank" rel="noopener noreferrer">CC0 1.0 license ↗</a></p>
+          </div>
+        </div>
+        <div class="series-note-card series-note-caution">
+          <span class="series-note-icon" aria-hidden="true">i</span>
+          <div><h3><span class="rad-fa">محدودیت‌های آموزشی</span><span class="rad-en">Educational limitations</span></h3>
+            <p><span class="rad-fa">این صفحه برای آموزش اولیهٔ آناتومی است، نه تشخیص یا تصمیم‌گیری بالینی. تصاویر ثابت از نماهای جداگانه هستند؛ مختصات، فاصلهٔ درون‌صفحه‌ای، هم‌ترازی فضایی، کالیبراسیون HU و سازگاری با ابزار قطعه‌بندی تأیید نشده‌اند. از این توالی‌ها نباید حجم سه‌بعدی یا ماسک سگمنتیشن استنباط کرد.</span><span class="rad-en">This is an introductory anatomy resource, not for diagnosis or clinical decisions. These are separate rendered image stacks; spatial coordinates, in-plane spacing, cross-plane alignment, HU calibration, and compatibility with segmentation tools are unverified. Do not infer a 3D volume or segmentation mask from these sequences.</span></p>
+          </div>
+        </div>
+      </section>
+      <footer class="series-footer"><span>CT Edu · Imaging Anatomy Lab</span><span><span class="rad-fa">تصاویر منبع به‌صورت درخواستی بارگیری می‌شوند.</span><span class="rad-en">Source images load on demand.</span></span></footer>
+    </main>
+  </div>
+  <script defer src="./src/data/wikimedia-brain-series.js"></script>
+  <script defer src="./src/abdomen-series.js"></script>
+</body>
+</html>

@@ -1,6 +1,6 @@
 (function () {
   'use strict';
-  const series = window.CTEduWikimediaAbdomenSeries;
+  const series = window.CTEduWikimediaImageSeries || window.CTEduWikimediaAbdomenSeries;
   if (!series) return;
   const byId = function (id) { return document.getElementById(id); };
   const image = byId('series-image'), stage = byId('series-stage'), stateMessage = byId('series-image-state');

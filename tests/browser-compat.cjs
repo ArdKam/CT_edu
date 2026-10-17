@@ -82,7 +82,7 @@ if (!engine) {
     }
 
 
-    assert.equal(await page.locator('#modality-catalog .modality-card').count(), 5, engineName + ': all five learning paths should render');
+    assert.equal(await page.locator('#modality-catalog .modality-card').count(), 8, engineName + ': all eight learning paths should render');
     await page.locator('[data-modality-select="chest-xray"]').click();
     await page.waitForFunction(() => window.CTEduRadiographViewer && !document.querySelector('#radiograph-workspace').hidden, null, {timeout:5000});
     await page.locator('#radiograph-file-input').setInputFiles({
@@ -107,8 +107,8 @@ if (!engine) {
     hubPage.on('pageerror', function (error) { hubErrors.push(error.message); });
     const hubResponse = await hubPage.goto(origin + '/preview/index.html', { waitUntil: 'domcontentloaded' });
     assert.ok(hubResponse && hubResponse.ok(), engineName + ': preview hub should load');
-    assert.equal(await hubPage.locator('.preview-hub-card').count(), 3,
-      engineName + ': preview hub should expose three learning workspaces');
+    assert.equal(await hubPage.locator('.preview-hub-card').count(), 6,
+      engineName + ': preview hub should expose all six learning workspaces');
     assert.equal(await hubPage.locator('.preview-hub-card a[href="./cases.html"]').count(), 1,
       engineName + ': guided-case preview route should be linked');
     assert.equal(await hubPage.locator('.preview-hub-card a[href="./abdomen-series.html"]').count(), 1,
@@ -206,6 +206,52 @@ if (!engine) {
       animations: 'disabled'
     });
     await seriesPage.close();
+
+    // Smoke-test the new Commons Special:FilePath manifests in real browsers, not only as static URL lists.
+    const sourceStackPages = [
+      { route: '/preview/thorax-series.html', axialCount: 106, alternatePlane: 'coronal', alternateCount: 67 },
+      { route: '/preview/brain-series.html', axialCount: 41, alternatePlane: 'sagittal', alternateCount: 40 },
+      { route: '/preview/brain-contrast-series.html', axialCount: 34, alternatePlane: null, alternateCount: null }
+    ];
+    for (const sourceStack of sourceStackPages) {
+      const sourcePage = await context.newPage();
+      // The static test server serves repository-root paths. Mirror the dedicated Pages workflow's
+      // intended /preview/src/ staging so this smoke tests the viewer and remote source URLs.
+      await sourcePage.route('**/preview/src/**', async function (route) {
+        const requestedPath = new URL(route.request().url()).pathname;
+        const relativePath = requestedPath.split('/preview/src/')[1] || '';
+        const sourceRoot = path.resolve(__dirname, '..', 'src');
+        const localPath = path.resolve(sourceRoot, relativePath);
+        if (!localPath.startsWith(sourceRoot + path.sep)) return route.abort();
+        await route.fulfill({ path: localPath });
+      });
+      const sourcePageErrors = [];
+      sourcePage.on('pageerror', function (error) { sourcePageErrors.push(error.message); });
+      const response = await sourcePage.goto(origin + sourceStack.route, { waitUntil: 'domcontentloaded' });
+      assert.ok(response && response.ok(), engineName + ': Wikimedia preview route should load: ' + sourceStack.route);
+      await sourcePage.waitForFunction(function () {
+        const image = document.getElementById('series-image');
+        return image && !image.hidden && image.complete && image.naturalWidth > 0;
+      }, null, { timeout: 25000 });
+      assert.equal(await sourcePage.locator('#series-slider').getAttribute('max'), String(sourceStack.axialCount),
+        engineName + ': image manifest should expose the correct axial count for ' + sourceStack.route);
+      assert.equal(await sourcePage.locator('#series-image').getAttribute('referrerpolicy'), 'no-referrer',
+        engineName + ': Wikimedia source images must not receive referrers');
+      if (sourceStack.alternatePlane) {
+        const originalUrl = await sourcePage.locator('#series-image').getAttribute('src');
+        await sourcePage.locator('[data-series-plane="' + sourceStack.alternatePlane + '"]').click();
+        await sourcePage.waitForFunction(function (expectedUrl) {
+          const image = document.getElementById('series-image');
+          return image && !image.hidden && image.complete && image.naturalWidth > 0 &&
+            image.getAttribute('src') !== expectedUrl;
+        }, originalUrl, { timeout: 25000 });
+        assert.equal(await sourcePage.locator('#series-slider').getAttribute('max'), String(sourceStack.alternateCount),
+          engineName + ': plane switch should use the correct separate stack count for ' + sourceStack.route);
+      }
+      assert.deepEqual(sourcePageErrors, [],
+        engineName + ': Wikimedia preview should have no runtime exceptions: ' + JSON.stringify(sourcePageErrors));
+      await sourcePage.close();
+    }
 
     const widthMetrics = await page.evaluate(function () {
       return {
