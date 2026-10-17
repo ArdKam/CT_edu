@@ -86,4 +86,7 @@ test('inference requires the intensity offset to be supplied explicitly', functi
   assert.match(generator, /publish_directory\(output, destination\)/);
   assert.match(generator, /ctNrrdSha256/);
   assert.match(generator, /labelMapNrrdSha256/);
+  assert.match(generator, /mask_volume\.header\.set_xyzt_units\("mm"\)/);
+  assert.match(generator, /combined_volume\.header\.set_xyzt_units\("mm"\)/);
+  assert.match(generator, /"niftiSpatialUnits": "mm"/);
 });
