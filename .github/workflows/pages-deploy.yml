@@ -86,7 +86,7 @@ jobs:
           test -s _site/preview/organ-segmentation.css
           test -s _site/preview/organ-segmentation.js
           test -s _site/preview/assets/organ-predictions/manifest.json
-          test "$(find _site/preview/assets/organ-predictions -maxdepth 1 -name '*.png' | wc -l | tr -d ' ')" -eq 452
+          test "$(find _site/preview/assets/organ-predictions -maxdepth 1 -name '*.png' | wc -l | tr -d ' ')" -eq 2500
           test "$(find _site/preview/assets/organ-predictions -maxdepth 1 -name '*.nii.gz' | wc -l | tr -d ' ')" -eq 5
           grep -q 'experimental-unreviewed' _site/preview/assets/organ-predictions/manifest.json
           grep -q 'organ-segmentation.html' _site/preview/index.html
