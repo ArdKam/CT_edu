@@ -2,6 +2,16 @@
   "schemaVersion": 1,
   "status": "experimental-unreviewed",
   "sourceDataset": "SPL Abdominal Atlas",
+  "sourceInputHashes": {
+    "algorithm": "SHA-256",
+    "ctNrrdSha256": "741e36154074b3834be49c0554e1b49875a9a96d8ed1e466d7614758f2a8f726",
+    "labelMapNrrdSha256": "f6ccae59157948bd790c0783ca672ba1bfb719239bb5ac1a9f023f63357ea02f",
+    "hashScope": "Exact NRRD member bytes extracted from the source ZIP archives."
+  },
+  "inferenceTimestampsUtc": {
+    "startedAt": "2026-10-17T09:09:33.824797Z",
+    "completedAt": "2026-10-17T09:10:04.446773Z"
+  },
   "sourceDimensionsXYZ": [
     256,
     256,
