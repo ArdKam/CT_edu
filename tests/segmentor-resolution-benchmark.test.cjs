@@ -27,7 +27,7 @@ test('resolution benchmark compares fast and full models without publishing pred
   assert.match(workflow, /--timeout-seconds 5400/);
   assert.match(workflow, /if: always\(\)/);
   assert.match(workflow, /retention-days: 30/);
-  assert.match(doc, /higher resolution/);
+  assert.match(doc, /resolution mode|lower-resolution/i);
   assert.match(doc, /not independent accuracy/);
   assert.match(doc, /not established/);
 });
