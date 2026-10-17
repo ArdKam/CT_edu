@@ -47,6 +47,12 @@ test('specialist task registry distinguishes open tasks from licensed candidates
   assert.equal(tasks.total.licensing.taskLicense, 'Apache-2.0');
   assert.equal(tasks.lung_vessels.licensing.taskLicense, 'Apache-2.0');
   assert.equal(tasks.headneck_bones_vessels.licensing.taskLicense, 'Apache-2.0');
+  assert.equal(tasks.liver_vessels.licensing.taskLicense, 'Apache-2.0');
+  for (const taskName of ['lung_vessels', 'headneck_bones_vessels', 'liver_vessels']) {
+    assert.equal(tasks[taskName].status, 'implemented-cli-not-run');
+    assert.equal(tasks[taskName].execution.cliSupported, true);
+    assert.equal(tasks[taskName].execution.executionStatus, 'not-run');
+  }
   assert.match(tasks.heartchambers_highres.licensing.taskLicense, /license-required/i);
   assert.match(tasks.coronary_arteries.licensing.taskLicense, /license-required/i);
   assert.equal(tasks.heartchambers_highres.execution.requestedByCTEdu, false);
@@ -59,7 +65,7 @@ test('specialist task registry distinguishes open tasks from licensed candidates
 
 test('coverage registry tracks current provenance safeguards without overstating external validation', function () {
   assert.equal(registry.repositoryBaseline.branch, 'main');
-  assert.equal(registry.repositoryBaseline.commit, '9a7ea034467cd95199ec1b606bc41ecb41ee18b5');
+  assert.equal(registry.repositoryBaseline.commit, '994265ec6f86231dba3d21e6948d4ceecb1c23fa');
   assert.equal(registry.currentInferenceConfiguration.sourceInputHashesAvailableOnMain, false,
     'generator code has hash support, but the committed preview manifest still needs regeneration');
   assert.match(registry.currentInferenceConfiguration.note, /currently committed preview manifest has not yet been regenerated/i);
@@ -68,19 +74,26 @@ test('coverage registry tracks current provenance safeguards without overstating
   assert.match(generator, /labelMapNrrdSha256/);
   assert.match(generator, /publish_directory\(output, destination\)/);
   assert.match(registry.currentInferenceConfiguration.note, /atomic/i);
-  assert.equal(registry.externalInferenceUtility.status, 'implemented-registry-selectable-cli-no-external-cohort-yet');
+  assert.equal(registry.externalInferenceUtility.status, 'implemented-total-and-open-specialist-task-cli-no-external-cohort-yet');
   assert.equal(registry.externalInferenceUtility.scriptPath, 'scripts/infer_external_ct_volume.py');
   assert.equal(registry.externalInferenceUtility.arbitraryCtUploadSupported, false);
   assert.equal(registry.externalInferenceUtility.externalCohortCasesProcessed, 0);
   assert.equal(registry.externalInferenceUtility.independentEvaluationStatus, 'not-run-on-external-cohort');
   assert.equal(registry.externalInferenceUtility.educationalApprovalStatus, 'not-approved');
   assert.equal(registry.externalInferenceUtility.selectableTotalTaskClassCount, 117);
+  assert.equal(registry.externalInferenceUtility.specialistTaskSelection.sourceOfTruth,
+    'docs/SEGMENTOR_COVERAGE_REGISTRY.json#taskCatalog');
+  assert.deepEqual(registry.externalInferenceUtility.specialistTaskSelection.enabledTasks.map(t => t.task),
+    ['lung_vessels', 'headneck_bones_vessels', 'liver_vessels']);
+  assert.deepEqual(registry.externalInferenceUtility.specialistTaskSelection.blockedTasks.map(t => t.task),
+    ['heartchambers_highres', 'coronary_arteries', 'brain_structures']);
+  assert.equal(registry.externalInferenceUtility.specialistTaskSelection.outputsRemainUnreviewed, true);
   assert.deepEqual(registry.externalInferenceUtility.classSelection.selectionModes,
     ['upstream-class-name', 'stable-anatomy-id', 'all']);
   assert.deepEqual(registry.externalInferenceUtility.classSelection.defaultClasses,
     ['liver', 'spleen', 'kidney_right', 'kidney_left']);
-  assert.match(registry.externalInferenceUtility.notes.join(' '), /all-classes mode was not run/i);
-  assert.match(registry.externalInferenceUtility.notes.join(' '), /runtime, memory and artifact cost must be measured/i);
+  assert.match(registry.externalInferenceUtility.notes.join(' '), /all-classes mode and open specialist tasks were not run/i);
+  assert.match(registry.externalInferenceUtility.notes.join(' '), /runtime, memory, artifacts and clinical\/anatomical quality still need measurement/i);
   assert.match(fs.readFileSync(path.join(root, 'docs', 'SEGMENTOR_COVERAGE_REGISTRY.md'), 'utf8'),
     /No independent external cohort has been processed by this CLI/i);
   assert.match(fs.readFileSync(path.join(root, 'docs', 'SEGMENTOR_COVERAGE_REGISTRY.md'), 'utf8'),
