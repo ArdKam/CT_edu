@@ -198,6 +198,20 @@ class SegmentorIndependentEvaluationTests(unittest.TestCase):
         with self.assertRaisesRegex(aggregator.AggregationInputError, "Duplicate caseId"):
             aggregator.aggregate_reports([p2, p3])
 
+    def test_cohort_aggregator_rejects_same_reference_file_under_distinct_case_ids(self) -> None:
+        reference = np.zeros((4, 4, 4), dtype=np.uint8)
+        reference[1:3, 1:3, 1:3] = 5
+        prediction = np.zeros_like(reference)
+        prediction[1:3, 1:3, 1:3] = 1
+        ref_path = self.save_volume("single-reference.nii.gz", reference)
+        report1 = self.evaluate(self.save_volume("prediction-one.nii.gz", prediction), ref_path, "case-101")
+        report2 = self.evaluate(self.save_volume("prediction-two.nii.gz", prediction), ref_path, "case-102")
+        path1, path2 = self.root / "distinct-case-101.json", self.root / "distinct-case-102.json"
+        path1.write_text(json.dumps(report1), encoding="utf-8")
+        path2.write_text(json.dumps(report2), encoding="utf-8")
+        with self.assertRaisesRegex(aggregator.AggregationInputError, "Duplicate reference-file hash"):
+            aggregator.aggregate_reports([path1, path2])
+
     def test_invalid_class_map_rejects_background_and_duplicate_labels(self) -> None:
         invalid = self.root / "invalid-map.json"
         invalid.write_text(json.dumps({
