@@ -64,6 +64,10 @@ jobs:
           python -m pip install --disable-pip-version-check "numpy<2" scipy nibabel
           python -m py_compile scripts/evaluate_segmentor_predictions.py scripts/aggregate_segmentor_evaluations.py tests/test_segmentor_independent_evaluation.py
           python -m unittest discover -s tests -p 'test_segmentor_independent_evaluation.py' -v
+      - name: Test Segmentor external NIfTI inference
+        run: |
+          python -m py_compile scripts/infer_external_ct_volume.py tests/test_segmentor_external_inference.py
+          python -m unittest discover -s tests -p 'test_segmentor_external_inference.py' -v
       - name: Prepare 113-slice CT/labelmap review bundle
         run: |
           python -m pip install --disable-pip-version-check numpy pillow
