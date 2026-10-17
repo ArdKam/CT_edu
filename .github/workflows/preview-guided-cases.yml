@@ -183,6 +183,11 @@ jobs:
           test -s "$GITHUB_WORKSPACE/_site/preview/src/data/radiopaedia-abdominal-cases.js"
           grep -q './preview/index.html' "$GITHUB_WORKSPACE/_site/index.html"
           grep -q 'Learning previews' "$GITHUB_WORKSPACE/_site/index.html"
+          grep -q 'source-stack-shortcuts' "$GITHUB_WORKSPACE/_site/index.html"
+          grep -q 'href="./preview/thorax-series.html"' "$GITHUB_WORKSPACE/_site/index.html"
+          grep -q 'href="./preview/brain-series.html"' "$GITHUB_WORKSPACE/_site/index.html"
+          grep -q 'href="./preview/brain-contrast-series.html"' "$GITHUB_WORKSPACE/_site/index.html"
+          grep -q '.source-stack-grid' "$GITHUB_WORKSPACE/_site/src/styles.css"
           grep -q './cases.html' "$GITHUB_WORKSPACE/_site/preview/index.html"
           grep -q './abdomen-series.html' "$GITHUB_WORKSPACE/_site/preview/index.html"
           grep -q './thorax-series.html' "$GITHUB_WORKSPACE/_site/preview/index.html"
@@ -241,6 +246,11 @@ jobs:
           }
           fetch_with_retry "$base/" 'preview/index.html'
           fetch_with_retry "$base/preview/index.html" 'preview-hub-title'
+          fetch_with_retry "$base/" 'source-stack-shortcuts'
+          fetch_with_retry "$base/" 'href="./preview/thorax-series.html"'
+          fetch_with_retry "$base/" 'href="./preview/brain-series.html"'
+          fetch_with_retry "$base/" 'href="./preview/brain-contrast-series.html"'
+          fetch_with_retry "$base/src/styles.css" '.source-stack-grid'
           fetch_with_retry "$base/preview/cases.html" 'Guided cases'
           fetch_with_retry "$base/preview/abdomen-series.html" 'data-series-plane="coronal"'
           fetch_with_retry "$base/preview/thorax-series.html" 'Normal thorax'
