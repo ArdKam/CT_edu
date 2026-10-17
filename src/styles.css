@@ -516,6 +516,44 @@
 .guided-local-note { margin:.9rem 0 0; color:var(--muted, #64748b); font-size:.85rem; line-height:1.7; }
 .guided-case-workspace { min-width:0; }
 .guided-active-case { display:grid; gap:1.15rem; padding:clamp(1rem,2.2vw,1.5rem); }
+/* Four-stage guided case flow */
+.guided-stage-nav { margin:0 0 1rem; }
+.guided-stage-nav ol { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:.55rem; padding:0; margin:0; list-style:none; }
+.guided-stage-nav li { display:grid; align-content:start; gap:.25rem; min-width:0; padding:.7rem .75rem; border:1px solid var(--line,#e1e6e7); border-radius:10px; background:var(--surface,#fff); }
+.guided-stage-nav li span { color:var(--muted,#64748b); font-size:.72rem; font-weight:700; text-transform:uppercase; letter-spacing:.035em; }
+.guided-stage-nav li strong { font-size:.84rem; line-height:1.4; }
+.guided-case-stage { min-width:0; margin-top:1rem; padding:1rem; border:1px solid var(--line,#e1e6e7); border-radius:16px; background:var(--surface,#fff); }
+.guided-case-stage[hidden],.guided-case-presentation[hidden] { display:none!important; }
+.guided-stage-heading { margin-bottom:1rem; }
+.guided-stage-heading h3 { margin:.25rem 0 .45rem; font-size:1.16rem; }
+.guided-stage-heading p { margin:.25rem 0 0; max-width:78ch; color:var(--muted,#64748b); line-height:1.7; }
+.guided-case-stage .guided-case-objective-block { margin-bottom:1rem; }
+.guided-case-presentation { padding:1rem; border:1px solid var(--line,#e1e6e7); border-radius:12px; background:var(--paper,#f4f5f3); }
+.guided-case-presentation h3 { margin:0 0 .85rem; font-size:1rem; }
+.guided-presentation-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:.7rem; margin:0; }
+.guided-presentation-grid > div { min-width:0; padding:.75rem; border:1px solid var(--line,#e1e6e7); border-radius:9px; background:var(--surface,#fff); }
+.guided-presentation-grid dt { margin:0 0 .35rem; color:var(--muted,#64748b); font-size:.78rem; font-weight:750; }
+.guided-presentation-grid dd { margin:0; line-height:1.7; overflow-wrap:anywhere; }
+.guided-presentation-source-note { display:block; margin-top:.8rem; color:var(--muted,#64748b); line-height:1.6; }
+.guided-case-context-block { margin-top:.8rem; }
+.guided-stage-actions { display:flex; flex-wrap:wrap; gap:.6rem; align-items:center; margin-top:.8rem; }
+#guided-hint-progress { color:var(--muted,#64748b); font-size:.85rem; }
+.guided-progressive-hints { display:grid; gap:.75rem; margin:0; padding-inline-start:1.35rem; }
+.guided-progressive-hint { padding:.85rem 1rem; border-inline-start:3px solid var(--teal,#147d78); border-radius:8px; background:var(--paper,#f4f5f3); }
+.guided-progressive-hint-title { display:block; margin-bottom:.3rem; line-height:1.5; }
+.guided-progressive-hint-text { margin:0; line-height:1.75; }
+.guided-hints-unavailable { padding:.8rem; border:1px dashed var(--line,#e1e6e7); border-radius:10px; color:var(--muted,#64748b); line-height:1.65; }
+.guided-stage-reveal { margin-top:1.2rem; padding-top:1rem; border-top:1px solid var(--line,#e1e6e7); }
+.guided-stage-reveal p { margin:0 0 .65rem; color:var(--muted,#64748b); line-height:1.6; }
+.guided-reference-diagnosis,.guided-reference-findings,.guided-reference-pathology { margin:.8rem 0; padding:1rem; border:1px solid var(--line,#e1e6e7); border-radius:12px; background:var(--paper,#f4f5f3); }
+.guided-reference-diagnosis[hidden],.guided-reference-findings[hidden],.guided-reference-pathology[hidden] { display:none!important; }
+.guided-reference-diagnosis h4,.guided-reference-findings h4,.guided-reference-pathology h4 { margin:0 0 .65rem; }
+#guided-reference-diagnosis { margin:0 0 .55rem; font-weight:750; line-height:1.65; }
+.guided-reference-certainty { margin:0; color:var(--muted,#64748b); line-height:1.7; }
+#guided-reference-findings { display:grid; gap:.45rem; margin:0; padding-inline-start:1.3rem; }
+#guided-reference-findings li { padding-inline-start:.15rem; line-height:1.75; }
+#guided-reference-pathology { margin:0 0 .4rem; line-height:1.7; }
+#guided-reference-pathology-note { color:var(--muted,#64748b); line-height:1.6; }
 .guided-active-header { display:flex; align-items:flex-start; justify-content:space-between; gap:1rem; }
 .guided-active-header h2 { margin:.35rem 0; }
 .guided-case-summary { margin:.4rem 0 0; max-width:76ch; color:var(--muted, #64748b); line-height:1.7; }
@@ -735,3 +773,14 @@
 @media(max-width:900px){.source-stack-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:650px){.source-stack-shortcuts{padding:14px 12px}.source-stack-grid{grid-template-columns:minmax(0,1fr)}.source-stack-card{padding:12px}.source-stack-shortcuts-heading h2{font-size:15px}}
 @media(prefers-reduced-motion:reduce){.source-stack-card{transition:none}.source-stack-card:hover{transform:none}}
+
+@media(max-width:640px){
+  .guided-stage-nav ol{grid-template-columns:repeat(2,minmax(0,1fr));}
+  .guided-stage-nav li{padding:.6rem;}
+  .guided-stage-nav li strong{font-size:.78rem;}
+  .guided-presentation-grid{grid-template-columns:minmax(0,1fr);}
+  .guided-case-stage{padding:.8rem;margin-top:.75rem;}
+  .guided-stage-heading h3{font-size:1.05rem;}
+}
+
+.guided-progressive-hints[hidden],.guided-hints-unavailable[hidden],#guided-next-hint[hidden],#source-case-discussion-toggle[hidden],#source-case-notes[hidden],#source-case-discussion[hidden]{display:none!important}

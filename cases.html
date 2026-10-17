@@ -75,6 +75,19 @@
 
         <div class="guided-case-workspace">
           <section id="guided-active-case-panel" class="guided-active-case panel" aria-labelledby="guided-case-title">
+            <nav class="guided-stage-nav" aria-label="Clinical case stages">
+              <ol>
+                <li><span data-fa="مرحلهٔ ۱" data-en="Stage 1">Stage 1</span><strong data-fa="تظاهر بالینی" data-en="Clinical presentation">Clinical presentation</strong></li>
+                <li><span data-fa="مرحلهٔ ۲" data-en="Stage 2">Stage 2</span><strong data-fa="تفسیر CT" data-en="CT interpretation">CT interpretation</strong></li>
+                <li><span data-fa="مرحلهٔ ۳" data-en="Stage 3">Stage 3</span><strong data-fa="سرنخ‌های مرحله‌ای" data-en="Progressive hints">Progressive hints</strong></li>
+                <li><span data-fa="مرحلهٔ ۴" data-en="Stage 4">Stage 4</span><strong data-fa="توضیح کامل" data-en="Complete explanation">Complete explanation</strong></li>
+              </ol>
+            </nav>
+            <section id="guided-stage-1" class="guided-case-stage" aria-labelledby="guided-stage-1-title">
+              <div class="guided-stage-heading">
+                <span class="panel-kicker" data-fa="مرحلهٔ ۱" data-en="STAGE 1">STAGE 1</span>
+                <h3 id="guided-stage-1-title" data-fa="تظاهر بالینی" data-en="Clinical presentation">Clinical presentation</h3>
+              </div>
             <div class="guided-active-header">
               <div>
                 <span class="panel-kicker" data-fa="تمرین ساختاریافته" data-en="STRUCTURED PRACTICE">تمرین ساختاریافته</span>
@@ -83,11 +96,28 @@
               </div>
               <span id="guided-case-level" class="guided-case-level"></span>
             </div>
-            <section class="guided-case-context-block" aria-labelledby="guided-case-context-title">
+            <section id="guided-case-presentation-block" class="guided-case-presentation" aria-labelledby="guided-case-presentation-title" hidden>
+              <h3 id="guided-case-presentation-title" data-fa="اطلاعات بیمار و تظاهر" data-en="Patient and presenting problem">Patient and presenting problem</h3>
+              <dl class="guided-presentation-grid">
+                <div><dt data-fa="سن و جنس" data-en="Age and sex">Age and sex</dt><dd id="guided-presentation-age-sex"></dd></div>
+                <div><dt data-fa="علائم مراجعه" data-en="Presenting symptoms">Presenting symptoms</dt><dd id="guided-presentation-symptoms"></dd></div>
+                <div><dt data-fa="سابقه و زمینهٔ مرتبط" data-en="Relevant history and background">Relevant history and background</dt><dd id="guided-presentation-history"></dd></div>
+                <div><dt data-fa="آزمایش‌ها" data-en="Available laboratory results">Available laboratory results</dt><dd id="guided-presentation-labs"></dd></div>
+              </dl>
+              <small id="guided-presentation-source-note" class="guided-presentation-source-note"></small>
+            </section>
+            <section id="guided-case-context-block" class="guided-case-context-block" aria-labelledby="guided-case-context-title">
               <h3 id="guided-case-context-title" data-fa="زمینهٔ بالینی آموزشی" data-en="Educational clinical context">زمینهٔ بالینی آموزشی</h3>
               <p id="guided-case-context"></p>
-              <small data-fa="این سناریو برای آموزش نوشته شده و شرح‌حال بیمارِ کیس منبع نیست." data-en="This teaching scenario is independently authored and is not the source patient's history.">این سناریو برای آموزش نوشته شده و شرح‌حال بیمارِ کیس منبع نیست.</small>
+              <small data-fa="برای این مورد، شرح‌حال واقعی منبع ثبت نشده؛ زمینهٔ بالا یک سناریوی مستقل آموزشی است." data-en="A source-patient history has not been recorded for this case; the context above is an independently authored teaching scenario.">A source-patient history has not been recorded for this case; the context above is an independently authored teaching scenario.</small>
             </section>
+            </section>
+            <section id="guided-stage-2" class="guided-case-stage" aria-labelledby="guided-stage-2-title">
+              <div class="guided-stage-heading">
+                <span class="panel-kicker" data-fa="مرحلهٔ ۲" data-en="STAGE 2">STAGE 2</span>
+                <h3 id="guided-stage-2-title" data-fa="تفسیر CT" data-en="CT interpretation">CT interpretation</h3>
+                <p data-fa="ابتدا خودت تصاویر را مرور کن، یافته‌ها را بنویس و تشخیص‌های افتراقی را در نظر بگیر." data-en="Inspect the images first, document your findings, and formulate a differential diagnosis before viewing the reference explanation.">Inspect the images first, document your findings, and formulate a differential diagnosis before viewing the reference explanation.</p>
+              </div>
             <div class="guided-case-objective-block">
               <h3 data-fa="هدف‌های مرور" data-en="Review objectives">هدف‌های مرور</h3>
               <ul id="guided-case-objectives"></ul>
@@ -98,15 +128,14 @@
                 <div>
                   <span class="panel-kicker">EXTERNAL SOURCE · RADIOPAEDIA.ORG</span>
                   <h3 id="radiopaedia-source-heading" data-fa="سری تصاویر منبع" data-en="Source image series">سری تصاویر منبع</h3>
-                  <p id="source-case-title">Closed loop small bowel obstruction</p>
+                  <p id="source-case-title">External imaging source</p>
                   <p id="source-case-attribution" class="guided-source-attribution"></p>
                 </div>
-                <a id="source-open-link" class="guided-source-link" href="https://radiopaedia.org/" target="_blank" rel="noopener noreferrer">بازکردن کیس اصلی در Radiopaedia ↗</a>
+                <a id="source-open-link" class="guided-source-link" href="https://radiopaedia.org/" target="_blank" rel="noopener noreferrer" hidden>بازکردن کیس اصلی در Radiopaedia ↗</a>
               </div>
-              <p class="guided-source-note" data-fa="اگر برای این کیس بحث اصلی در دسترس باشد، دکمهٔ «نمایش بحث اصلی کیس» آن را همین‌جا آشکار می‌کند و ممکن است تشخیص را نشان دهد. برای دیدن متن منبع در سایت خودش، «نمایش متن اصلی کیس در همین قاب» را انتخاب کن." data-en="If an original discussion is available for this case, use “Reveal original Case Discussion” to display it here; this may reveal the diagnosis. “Show original case page here” requests the source-hosted page instead.">در صورت وجود لینک Study مستقیم، ویور به‌طور خودکار باز می‌شود. اگر قاب خالی بماند، ممکن است Radiopaedia نمایش داخلی را مسدود کرده باشد؛ لینک صفحهٔ مطالعه را در تب جدید باز کن. برای بعضی کیس‌ها هنوز مسیر مستقیم Study ثبت نشده است.</p>
+              <p class="guided-source-note" data-fa="برای جلوگیری از افشای ناخواستهٔ پاسخ، تشخیص و توضیح مرجع تا مرحلهٔ ۴ پنهان می‌مانند. برای مرور تصویر، صفحهٔ مطالعه را باز کن؛ سایت منبع کنترل محتوای داخل قاب را در اختیار دارد." data-en="To avoid accidental answer reveal, the diagnosis and reference explanation stay hidden until Stage 4. Open the study page to inspect images; the source site controls the content shown inside its frame.">در صورت وجود لینک Study مستقیم، ویور به‌طور خودکار باز می‌شود. اگر قاب خالی بماند، ممکن است Radiopaedia نمایش داخلی را مسدود کرده باشد؛ لینک صفحهٔ مطالعه را در تب جدید باز کن. برای بعضی کیس‌ها هنوز مسیر مستقیم Study ثبت نشده است.</p>
               <a id="source-open-study-link" class="guided-source-link" href="https://radiopaedia.org/cases/2582/studies/6276?lang=us#t=im&v1i=478&v1z=1&v2i=931&v2z=1" target="_blank" rel="noopener noreferrer" hidden>بازکردن صفحهٔ مطالعه در Radiopaedia ↗</a>
               <div class="guided-source-actions" aria-label="Source page display controls">
-                <button id="source-case-discussion-toggle" class="guided-secondary-button" type="button" data-fa="نمایش بحث اصلی کیس (شامل تشخیص)" data-en="Reveal original Case Discussion (shows diagnosis)" hidden>Reveal original Case Discussion (shows diagnosis)</button>
                 <button id="source-show-case-page" class="guided-secondary-button" type="button" data-fa="نمایش متن اصلی کیس در همین قاب" data-en="Show original case page here">نمایش متن اصلی کیس در همین قاب</button>
                 <button id="source-show-study-page" class="guided-secondary-button" type="button" data-fa="نمایش صفحهٔ مطالعه در همین قاب" data-en="Show study page here" hidden>نمایش صفحهٔ مطالعه در همین قاب</button>
                 <button id="source-hide-frame" class="guided-secondary-button" type="button" data-fa="بستن قاب منبع" data-en="Close embedded source" hidden>بستن قاب منبع</button>
@@ -116,6 +145,63 @@
                 <iframe id="radiopaedia-frame" title="Radiopaedia study page; displayed content is controlled by the source site" loading="eager" referrerpolicy="no-referrer" sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox allow-presentation" allow="fullscreen"></iframe>
                 <div id="radiopaedia-exit-mask" class="radiopaedia-exit-mask" aria-hidden="true"></div>
               </div>
+            </section>
+
+            <form id="guided-case-form" class="guided-case-form">
+              <div class="guided-form-heading">
+                <h3 data-fa="گزارش خودت را بنویس" data-en="Write your own report">گزارش خودت را بنویس</h3>
+                <p data-fa="ابتدا تصویر و زمینهٔ بالینی را مرور کن. یافته‌ها را توصیف کن و نتیجه را متناسب با شواهد بنویس." data-en="Review the images and clinical context first. Describe the findings and keep the impression proportionate to the evidence.">ابتدا تصویر و زمینهٔ بالینی را مرور کن. یافته‌ها را توصیف کن و نتیجه را متناسب با شواهد بنویس.</p>
+              </div>
+              <label for="learner-findings"><span data-fa="Findings · یافته‌ها" data-en="Findings">Findings · یافته‌ها</span><textarea id="learner-findings" maxlength="4000" rows="5" required placeholder="..." data-fa-placeholder="یافته‌های تصویر را به ترتیب سیستماتیک ثبت کن…" data-en-placeholder="Record the imaging findings systematically…"></textarea></label>
+              <label for="learner-differential"><span data-fa="Differential · تشخیص‌های افتراقی (اختیاری)" data-en="Differential diagnosis (optional)">Differential · تشخیص‌های افتراقی (اختیاری)</span><textarea id="learner-differential" maxlength="4000" rows="3" placeholder="..." data-fa-placeholder="تشخیص‌های جایگزین و شواهد هر کدام…" data-en-placeholder="Alternatives and evidence for each…"></textarea></label>
+              <label for="learner-impression"><span data-fa="Impression · جمع‌بندی" data-en="Impression">Impression · جمع‌بندی</span><textarea id="learner-impression" maxlength="4000" rows="3" required placeholder="..." data-fa-placeholder="نتیجهٔ اصلی، شدت و عوارض مهم…" data-en-placeholder="Primary conclusion, severity, and key complications…"></textarea></label>
+              <div class="guided-form-actions">
+                <button class="guided-primary-button" type="submit" data-fa="ثبت و مرور چک‌لیست" data-en="Submit and review checklist">ثبت و مرور چک‌لیست</button>
+                <button class="guided-secondary-button" id="clear-case-draft" type="button" data-fa="حذف پیش‌نویس" data-en="Delete draft">حذف پیش‌نویس</button>
+                <span id="draft-status" role="status" aria-live="polite"></span>
+              </div>
+              <p id="guided-case-submit-status" class="guided-submit-status" role="status" aria-live="polite"></p>
+            </form>
+            </section>
+            <section id="guided-stage-3" class="guided-case-stage guided-hints-stage" aria-labelledby="guided-stage-3-title">
+              <div class="guided-stage-heading">
+                <span class="panel-kicker" data-fa="مرحلهٔ ۳" data-en="STAGE 3">STAGE 3</span>
+                <h3 id="guided-stage-3-title" data-fa="سرنخ‌های مرحله‌ای" data-en="Progressive hints">Progressive hints</h3>
+                <p data-fa="اختیاری است. سرنخ‌ها را یکی‌یکی باز کن؛ هر سرنخ بخشی از توجه تصویری را هدایت می‌کند، نه اینکه تشخیص را اعلام کند." data-en="Optional. Reveal one clue at a time. Each clue guides image review without stating the final diagnosis.">Optional. Reveal one clue at a time. Each clue guides image review without stating the final diagnosis.</p>
+              </div>
+              <p id="guided-hints-unavailable" class="guided-hints-unavailable" data-fa="برای این کیس هنوز سرنخ مرحله‌ای اختصاصی ثبت نشده است." data-en="Case-specific progressive hints have not been authored for this case yet.">Case-specific progressive hints have not been authored for this case yet.</p>
+              <ol id="guided-progressive-hints" class="guided-progressive-hints" aria-live="polite" hidden></ol>
+              <div class="guided-stage-actions">
+                <button id="guided-next-hint" class="guided-secondary-button" type="button" hidden data-fa="نمایش سرنخ بعدی" data-en="Show next hint">Show next hint</button>
+                <span id="guided-hint-progress" role="status" aria-live="polite"></span>
+              </div>
+              <div class="guided-stage-reveal">
+                <p data-fa="وقتی آماده‌ای، توضیح مرجع را ببین. این مرحله تشخیص را آشکار می‌کند." data-en="When you are ready, reveal the reference explanation. This stage reveals the diagnosis.">When you are ready, reveal the reference explanation. This stage reveals the diagnosis.</p>
+                <button id="source-case-discussion-toggle" class="guided-primary-button" type="button" data-fa="رفتن به مرحلهٔ ۴ · نمایش توضیح کامل (تشخیص آشکار می‌شود)" data-en="Go to Stage 4 · Reveal complete explanation (shows diagnosis)" hidden>Go to Stage 4 · Reveal complete explanation (shows diagnosis)</button>
+              </div>
+            </section>
+
+            <section id="guided-stage-4" class="guided-case-stage guided-reference-stage" aria-labelledby="guided-stage-4-title" hidden>
+              <div class="guided-stage-heading">
+                <span class="panel-kicker" data-fa="مرحلهٔ ۴" data-en="STAGE 4">STAGE 4</span>
+                <h3 id="guided-stage-4-title" data-fa="توضیح کامل" data-en="Complete explanation">Complete explanation</h3>
+                <p data-fa="تشخیص مرجع، یافته‌های تصویربرداری، بحث منبع و یافته‌های جراحی یا آسیب‌شناسی موجود." data-en="Reference diagnosis, imaging findings, source discussion, and available operative or pathology findings.">Reference diagnosis, imaging findings, source discussion, and available operative or pathology findings.</p>
+              </div>
+              <section id="guided-reference-diagnosis-block" class="guided-reference-diagnosis" hidden>
+                <h4 data-fa="تشخیص مرجع و میزان قطعیت" data-en="Reference diagnosis and certainty">Reference diagnosis and certainty</h4>
+                <p id="guided-reference-diagnosis"></p>
+                <p id="guided-reference-certainty" class="guided-reference-certainty"></p>
+              </section>
+              <section id="guided-reference-findings-block" class="guided-reference-findings" hidden>
+                <h4 data-fa="یافته‌های تصویربرداری مرجع" data-en="Reference imaging findings">Reference imaging findings</h4>
+                <ul id="guided-reference-findings"></ul>
+              </section>
+              <section id="guided-reference-pathology-block" class="guided-reference-pathology" hidden>
+                <h4 data-fa="آسیب‌شناسی" data-en="Pathology">Pathology</h4>
+                <p id="guided-reference-pathology"></p>
+                <small id="guided-reference-pathology-note"></small>
+              </section>
+
               <section id="source-case-notes" class="source-case-notes" aria-labelledby="source-case-notes-heading" hidden>
                 <div class="source-case-notes-heading">
                   <div><span class="panel-kicker" data-fa="یادداشت کیس منبع" data-en="SOURCE CASE NOTES">یادداشت کیس منبع</span><h4 id="source-case-notes-heading" data-fa="خلاصهٔ آموزشی کیس" data-en="Educational case synopsis">خلاصهٔ آموزشی کیس</h4></div>
@@ -143,24 +229,6 @@
                 <a id="source-article-link" href="https://radiopaedia.org/articles/small-bowel-obstruction?lang=us" target="_blank" rel="noopener noreferrer">مقالهٔ مرتبط ↗</a>
                 <span id="source-citation"></span>
               </div>
-            </section>
-
-            <form id="guided-case-form" class="guided-case-form">
-              <div class="guided-form-heading">
-                <h3 data-fa="گزارش خودت را بنویس" data-en="Write your own report">گزارش خودت را بنویس</h3>
-                <p data-fa="ابتدا تصویر و زمینهٔ بالینی را مرور کن. یافته‌ها را توصیف کن و نتیجه را متناسب با شواهد بنویس." data-en="Review the images and clinical context first. Describe the findings and keep the impression proportionate to the evidence.">ابتدا تصویر و زمینهٔ بالینی را مرور کن. یافته‌ها را توصیف کن و نتیجه را متناسب با شواهد بنویس.</p>
-              </div>
-              <label for="learner-findings"><span data-fa="Findings · یافته‌ها" data-en="Findings">Findings · یافته‌ها</span><textarea id="learner-findings" maxlength="4000" rows="5" required placeholder="..." data-fa-placeholder="یافته‌های تصویر را به ترتیب سیستماتیک ثبت کن…" data-en-placeholder="Record the imaging findings systematically…"></textarea></label>
-              <label for="learner-differential"><span data-fa="Differential · تشخیص‌های افتراقی (اختیاری)" data-en="Differential diagnosis (optional)">Differential · تشخیص‌های افتراقی (اختیاری)</span><textarea id="learner-differential" maxlength="4000" rows="3" placeholder="..." data-fa-placeholder="تشخیص‌های جایگزین و شواهد هر کدام…" data-en-placeholder="Alternatives and evidence for each…"></textarea></label>
-              <label for="learner-impression"><span data-fa="Impression · جمع‌بندی" data-en="Impression">Impression · جمع‌بندی</span><textarea id="learner-impression" maxlength="4000" rows="3" required placeholder="..." data-fa-placeholder="نتیجهٔ اصلی، شدت و عوارض مهم…" data-en-placeholder="Primary conclusion, severity, and key complications…"></textarea></label>
-              <div class="guided-form-actions">
-                <button class="guided-primary-button" type="submit" data-fa="ثبت و مرور چک‌لیست" data-en="Submit and review checklist">ثبت و مرور چک‌لیست</button>
-                <button class="guided-secondary-button" id="clear-case-draft" type="button" data-fa="حذف پیش‌نویس" data-en="Delete draft">حذف پیش‌نویس</button>
-                <span id="draft-status" role="status" aria-live="polite"></span>
-              </div>
-              <p id="guided-case-submit-status" class="guided-submit-status" role="status" aria-live="polite"></p>
-            </form>
-
             <section id="guided-case-rubric-section" class="guided-case-rubric-section" aria-labelledby="guided-case-rubric-title" hidden>
               <div class="guided-form-heading">
                 <span class="panel-kicker" data-fa="خودارزیابی · بدون نمرهٔ خودکار" data-en="SELF-REVIEW · NO AUTOMATIC SCORE">خودارزیابی · بدون نمرهٔ خودکار</span>
@@ -172,6 +240,7 @@
               <p id="guided-case-disclaimer" class="guided-case-disclaimer"></p>
             </section>
           </section>
+            </section>
         </div>
       </section>
 

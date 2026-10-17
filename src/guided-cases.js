@@ -12,7 +12,8 @@
     activeId: initialCase ? initialCase.id : null,
     drafts: readDrafts(),
     sourceFrameMode: initialCase && initialCase.source && initialCase.source.studyPageUrl ? 'study' : 'none',
-    discussionShown: Object.create(null)
+    discussionShown: Object.create(null),
+    hintLevels: Object.create(null)
   };
   const el = function (id) { return document.getElementById(id); };
   const lang = function () { return document.documentElement.lang === 'en' ? 'en' : 'fa'; };
@@ -242,6 +243,49 @@
     return getEmbeddableSourceUrl(item);
   }
 
+  function renderCasePresentation(item) {
+    const presentation = item.patientPresentation || null;
+    const presentationBlock = el('guided-case-presentation-block');
+    const contextBlock = el('guided-case-context-block');
+    presentationBlock.hidden = !presentation;
+    contextBlock.hidden = Boolean(presentation);
+    const fields = {
+      ageSex: 'guided-presentation-age-sex',
+      symptoms: 'guided-presentation-symptoms',
+      history: 'guided-presentation-history',
+      labs: 'guided-presentation-labs',
+      sourceNote: 'guided-presentation-source-note'
+    };
+    Object.keys(fields).forEach(function (key) {
+      el(fields[key]).textContent = presentation ? text(presentation[key]) : '';
+    });
+  }
+
+  function renderProgressiveHints(item) {
+    const hints = Array.isArray(item.progressiveHints) ? item.progressiveHints : [];
+    const shown = Math.min(state.hintLevels[item.id] || 0, hints.length);
+    const list = el('guided-progressive-hints');
+    const nextButton = el('guided-next-hint');
+    const unavailable = el('guided-hints-unavailable');
+    const progress = el('guided-hint-progress');
+    list.replaceChildren();
+    hints.slice(0, shown).forEach(function (hint, index) {
+      const li = make('li', 'guided-progressive-hint');
+      appendText(li, 'strong', 'guided-progressive-hint-title', text(hint.title) || (lang() === 'fa' ? 'سرنخ ' : 'Hint ') + (index + 1));
+      appendText(li, 'p', 'guided-progressive-hint-text', text(hint.text));
+      list.appendChild(li);
+    });
+    unavailable.hidden = hints.length > 0;
+    list.hidden = shown === 0 || hints.length === 0;
+    nextButton.hidden = hints.length === 0 || shown >= hints.length;
+    nextButton.textContent = lang() === 'fa'
+      ? (shown === 0 ? 'نمایش سرنخ اول' : 'نمایش سرنخ بعدی') + ' · ' + (shown + 1) + ' از ' + hints.length
+      : (shown === 0 ? 'Show first hint' : 'Show next hint') + ' · ' + (shown + 1) + ' of ' + hints.length;
+    progress.textContent = shown
+      ? (lang() === 'fa' ? shown + ' از ' + hints.length + ' سرنخ نمایش داده شده' : shown + ' of ' + hints.length + ' hints revealed')
+      : '';
+  }
+
   function renderSource(item) {
     const frame = el('radiopaedia-frame');
     const frameWrap = el('radiopaedia-frame-wrap');
@@ -276,7 +320,11 @@
     const hideFrameButton = el('source-hide-frame');
     hideFrameButton.hidden = !viewerUrl;
 
-    const sourceDetailsRevealed = Boolean(getDraft(item.id).submitted);
+    const sourceDetailsRevealed = Boolean(getDraft(item.id).submitted || state.discussionShown[item.id]);
+    const originalCaseButton = el('source-show-case-page');
+    if (item.source.referenceDetails && !sourceDetailsRevealed) originalCaseButton.hidden = true;
+    const stage4 = el('guided-stage-4');
+    if (stage4) stage4.hidden = !sourceDetailsRevealed;
     el('source-case-title').textContent = sourceDetailsRevealed
       ? item.source.title
       : (lang() === 'fa' ? 'منبع تصویربرداری خارجی' : 'External imaging source');
@@ -287,6 +335,7 @@
 
     const sourceLink = el('source-open-link');
     sourceLink.href = item.source.url;
+    sourceLink.hidden = !sourceDetailsRevealed;
     sourceLink.textContent = lang() === 'fa'
       ? 'بازکردن صفحهٔ کیس منبع در Radiopaedia ↗'
       : 'Open source case page on Radiopaedia ↗';
@@ -345,7 +394,25 @@
     const discussionRevealed = sourceDetailsRevealed || Boolean(state.discussionShown[item.id]);
     discussionSection.hidden = !discussionRevealed || !hasDiscussion;
     const discussionToggle = el('source-case-discussion-toggle');
-    discussionToggle.hidden = !hasDiscussion || discussionRevealed;
+    discussionToggle.hidden = !item.source.title || discussionRevealed;
+    const referenceDetails = item.source.referenceDetails || {};
+    const diagnosisBlock = el('guided-reference-diagnosis-block');
+    diagnosisBlock.hidden = !sourceDetailsRevealed || !item.source.title;
+    el('guided-reference-diagnosis').textContent = sourceDetailsRevealed ? item.source.title : '';
+    el('guided-reference-certainty').textContent = sourceDetailsRevealed
+      ? (text(referenceDetails.certainty) || (lang() === 'fa' ? 'میزان قطعیت در منبع مشخص نشده است.' : 'Diagnostic certainty is not specified in the source.'))
+      : '';
+    const findings = Array.isArray(referenceDetails.findings) ? referenceDetails.findings : [];
+    const findingsList = el('guided-reference-findings');
+    findingsList.replaceChildren();
+    findings.forEach(function (finding) {
+      appendText(findingsList, 'li', '', text(finding));
+    });
+    el('guided-reference-findings-block').hidden = !sourceDetailsRevealed || findings.length === 0;
+    const pathology = text(referenceDetails.pathology);
+    el('guided-reference-pathology-block').hidden = !sourceDetailsRevealed || !pathology;
+    el('guided-reference-pathology').textContent = pathology;
+    el('guided-reference-pathology-note').textContent = text(referenceDetails.pathologySourceNote);
     const discussionAttribution = el('source-case-discussion-attribution');
     discussionAttribution.textContent = item.source.contributor
       ? (lang() === 'fa' ? 'نویسنده: ' : 'Original discussion by ') + item.source.contributor + (item.source.rid ? ' · ' + item.source.rid : '')
@@ -373,6 +440,8 @@
     el('guided-case-title').textContent = text(item.title);
     el('guided-case-summary').textContent = text(item.summary);
     el('guided-case-context').textContent = text(item.clinicalContext);
+    renderCasePresentation(item);
+    renderProgressiveHints(item);
     el('guided-case-level').textContent = (lang() === 'fa' ? 'سطح: ' : 'Level: ') + ({foundations: lang() === 'fa' ? 'پایه' : 'Foundations', intermediate: lang() === 'fa' ? 'متوسط' : 'Intermediate', advanced: lang() === 'fa' ? 'پیشرفته' : 'Advanced'}[item.level] || item.level);
     el('guided-case-disclaimer').textContent = text(item.disclaimer);
     const goals = el('guided-case-objectives');
@@ -394,7 +463,9 @@
     if (!data.getById(id)) return;
     state.activeId = id;
     const selected = data.getById(id);
-    state.sourceFrameMode = selected && selected.source && selected.source.studyPageUrl ? 'study' : 'none';
+    state.sourceFrameMode = selected && selected.source && selected.source.referenceDetails
+      ? 'none'
+      : (selected && selected.source && selected.source.studyPageUrl ? 'study' : 'none');
     renderCards();
     renderActive();
     el('guided-case-title').focus({ preventScroll: true });
@@ -434,6 +505,8 @@
     if (!item) return;
     if (!window.confirm(lang() === 'fa' ? 'پیش‌نویس این کیس از همین مرورگر حذف شود؟' : 'Delete this case draft from this browser?')) return;
     delete state.drafts[item.id];
+    delete state.discussionShown[item.id];
+    delete state.hintLevels[item.id];
     try { localStorage.setItem(STORAGE_KEY, JSON.stringify({ version: 1, drafts: state.drafts })); } catch (_) {}
     el('learner-findings').value = '';
     el('learner-differential').value = '';
@@ -441,6 +514,7 @@
     el('guided-case-rubric-section').hidden = true;
     el('guided-case-submit-status').textContent = lang() === 'fa' ? 'پیش‌نویس حذف شد.' : 'Draft deleted.';
     persistDrafts();
+    renderProgressiveHints(item);
     renderSource(item);
   }
 
@@ -501,10 +575,17 @@
   });
   el('source-case-discussion-toggle').addEventListener('click', function () {
     const item = getActive();
-    if (!item || !item.source || !item.source.caseDiscussion) return;
+    if (!item || !item.source || !item.source.title) return;
     state.discussionShown[item.id] = true;
     renderActive();
-    el('source-case-discussion').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    el('guided-stage-4').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
+  el('guided-next-hint').addEventListener('click', function () {
+    const item = getActive();
+    if (!item || !Array.isArray(item.progressiveHints)) return;
+    const current = state.hintLevels[item.id] || 0;
+    state.hintLevels[item.id] = Math.min(current + 1, item.progressiveHints.length);
+    renderProgressiveHints(item);
   });
   el('language-toggle').addEventListener('click', function () { setLanguage(lang() === 'fa' ? 'en' : 'fa'); });
   if (typeof MutationObserver !== 'undefined') {

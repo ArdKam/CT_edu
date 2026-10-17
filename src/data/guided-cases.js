@@ -128,11 +128,32 @@
       },
       modality: 'CT',
       region: 'abdomen',
-      title: { fa: 'ایسکمی روده · ارزیابی CT', en: 'Bowel viability · CT review' },
+      title: { fa: 'CT شکم · کیس ۰۳', en: 'Abdominal CT · Case 03' },
       summary: {
-        fa: 'مرور را از enhancement دیواره و عروق آغاز کن و سپس یافته‌های مزانتریک و علائم دیررس را بررسی کن.',
-        en: 'Start with bowel-wall enhancement and vessels, then review mesenteric findings and late signs.'
+        fa: 'CT را به‌صورت سیستماتیک مرور کن، یافته‌ها و تشخیص‌های افتراقی را ثبت کن و پیش از دیدن توضیح مرجع نتیجه‌گیری کن.',
+        en: 'Review the CT systematically, record findings and a differential, and formulate an impression before revealing the reference explanation.'
       },
+      patientPresentation: {
+        ageSex: { fa: 'مرد ۸۰ ساله', en: '80-year-old male' },
+        symptoms: { fa: 'درد شکم، سقوط و خون روشن از رکتوم', en: 'Abdominal pain, a fall, and bright red blood per rectum' },
+        history: { fa: 'آترواسکلروز شدید آئورت شکمی در تصویربرداری دیده شده است. عروق مزانتریک باز هستند؛ سایر سابقهٔ پزشکی یا جراحی در اطلاعات منبع ذکر نشده است.', en: 'Marked abdominal aortic atherosclerosis is seen on imaging. Mesenteric vessels are patent; other medical or surgical history is not stated in the source.' },
+        labs: { fa: 'لاکتات بسیار بالا گزارش شده؛ مقدار عددی در متن منبع موجود نیست.', en: 'Very high lactate is reported; the numerical value is not provided in the source text.' },
+        sourceNote: { fa: 'اطلاعات بالینی از داده‌های کیس منبع استخراج شده است؛ دادهٔ گزارش‌نشده حدس زده نشده است.', en: 'Clinical details are taken from the source case; unreported values have not been inferred.' }
+      },
+      progressiveHints: [
+        {
+          title: { fa: 'سرنخ ۱ · توزیع روده', en: 'Hint 1 · Bowel distribution' },
+          text: { fa: 'اتساع معده و رودهٔ باریک را از نواحی با قطر طبیعی جدا کن. به اولین تغییر کالیبر اکتفا نکن و رودهٔ دیستال را دنبال کن.', en: 'Separate dilated stomach and small bowel from normal-calibre segments. Do not stop at the first calibre change; follow the distal bowel.' }
+        },
+        {
+          title: { fa: 'سرنخ ۲ · مسیر و نقاط گذار', en: 'Hint 2 · Course and transition points' },
+          text: { fa: 'خوشهٔ حلقه‌های غیرطبیعی در ربع تحتانی راست را در نماهای محوری و کرونال دنبال کن. ببین آیا مسیر روده پس از بخشی با کالیبر طبیعی دوباره به حلقهٔ غیرطبیعی متصل می‌شود.', en: 'Trace the abnormal cluster in the right lower quadrant on axial and coronal views. Determine whether bowel returns to the abnormal segment after a stretch of normal-calibre bowel.' }
+        },
+        {
+          title: { fa: 'سرنخ ۳ · دیواره و پرفیوژن', en: 'Hint 3 · Wall and perfusion' },
+          text: { fa: 'ضخامت دیواره، دانسیتهٔ پیش از تزریق، میزان enhancement در فازهای مختلف، ادم مزانتر و مایع بین حلقه‌ها را کنار هم تفسیر کن؛ هر کدام به‌تنهایی تشخیص قطعی نمی‌دهد.', en: 'Interpret wall thickness, pre-contrast attenuation, enhancement across phases, mesenteric oedema, and interloop fluid together; none is definitive in isolation.' }
+        }
+      ],
       source: {
         title: 'Closed loop obstruction due to adhesive band, resulting in small bowel ischemia and resection',
         contributor: 'Michael P. Hartung',
@@ -142,6 +163,17 @@
         citation: 'Hartung MP. Closed loop obstruction due to adhesive band, resulting in small bowel ischemia and resection. Radiopaedia.org. rID-83835.',
         articleUrl: 'https://radiopaedia.org/articles/acute-mesenteric-ischaemia?lang=us',
         articleTitle: 'Acute mesenteric ischaemia',
+        referenceDetails: {
+          certainty: { fa: 'منبع تشخیص را قطعی علامت‌گذاری کرده است؛ یافته‌های جراحی و آسیب‌شناسی نیز آسیب ایسکمیک روده را تأیید می‌کنند.', en: 'The source marks the diagnosis as certain; operative findings and pathology also corroborate ischaemic bowel injury.' },
+          findings: [
+            { fa: 'اتساع معده و رودهٔ باریک پروگزیمال تا بخش میانی.', en: 'Dilated stomach and proximal-to-mid small bowel.' },
+            { fa: 'خوشهٔ گرد حلقه‌های روده در ربع تحتانی راست، با ضخیم‌شدن دیواره، دانسیتهٔ بالاتر در CT بدون تزریق، کاهش enhancement پس از تزریق و مایع بین‌حلقه‌ای.', en: 'A rounded cluster of small bowel in the right lower quadrant, with wall thickening, increased non-contrast attenuation, diminished post-contrast enhancement, and interloop fluid.' },
+            { fa: 'رودهٔ فکالیزه به نقطهٔ گذار پروگزیمال می‌رسد؛ برای یافتن نقطهٔ گذار دوم باید بخش طبیعی‌قطر و فروریختهٔ ایلئوم را تا انتها دنبال کرد.', en: 'Fecalized small bowel reaches the proximal transition point; the normal-calibre decompressed ileum must be followed to locate the second transition point.' },
+            { fa: 'آترواسکلروز شدید آئورت شکمی، با عروق مزانتریک باز. الگوی دیواره و ادم مزانتریک در بحث منبع بیشتر با اختلال خروج وریدی سازگار دانسته شده است.', en: 'Heavy abdominal aortic atherosclerosis with patent mesenteric vessels. The source discussion considers the wall changes and mesenteric oedema more consistent with impaired venous outflow.' }
+          ],
+          pathology: { fa: 'رزکسیون رودهٔ باریک: نکروز ایسکمیک مخاط، خونریزی، احتقان عروقی و ادم.', en: 'Small-bowel resection: mucosal ischaemic necrosis, haemorrhage, vascular congestion, and oedema.' },
+          pathologySourceNote: { fa: 'خلاصهٔ گزارش آسیب‌شناسی ثبت‌شده در صفحهٔ کیس منبع.', en: 'Pathology summary recorded on the source case page.' }
+        },
         caseDiscussion: {
           paragraphs: [
             "This is a challenging case to rapidly put all of the findings together, particularly with the time pressures of an emergency department presentation.",
