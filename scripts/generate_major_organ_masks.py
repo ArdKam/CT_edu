@@ -261,6 +261,7 @@ def main() -> int:
             mask_volume = nib.Nifti1Image(pred_xyz.astype(np.uint8), affine)
             mask_volume.set_qform(affine, code=1)
             mask_volume.set_sform(affine, code=1)
+            mask_volume.header.set_xyzt_units("mm")
             mask_volume.header.set_data_dtype(np.uint8)
             nib.save(mask_volume, str(output / mask_volume_file))
             masks_xyz[item["key"]] = pred_xyz
@@ -311,6 +312,7 @@ def main() -> int:
     combined_volume = nib.Nifti1Image(combined_xyz, affine)
     combined_volume.set_qform(affine, code=1)
     combined_volume.set_sform(affine, code=1)
+    combined_volume.header.set_xyzt_units("mm")
     combined_volume.header.set_data_dtype(np.uint8)
     nib.save(combined_volume, str(output / labelmap_file))
 
@@ -331,6 +333,7 @@ def main() -> int:
         "sourceDimensionsXYZ": [256, 256, 113],
         "sourceArrayOrder": "zyx",
         "coordinateSystem": "RAS after conversion from NRRD LPS",
+        "niftiSpatialUnits": "mm",
         "affineRAS": [[float(value) for value in row] for row in affine],
         "originRASMm": [float(value) for value in affine[:3, 3]],
         "sourceNRRDGeometry": {
