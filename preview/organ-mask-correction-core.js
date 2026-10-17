@@ -39,7 +39,6 @@
       fail('Only uint8 NIfTI masks are supported; this file has a different voxel datatype.');
     }
     const units = view.getUint8(123) & 0x07;
-    if (units !== 2) fail('NIfTI spatial units must explicitly be millimetres (mm).');
     const voxOffset = view.getFloat32(108, true);
     if (!Number.isFinite(voxOffset) || voxOffset < 352 || Math.floor(voxOffset) !== voxOffset) {
       fail('NIfTI voxel-data offset is invalid.');
@@ -94,6 +93,20 @@
           }
         }
       }
+    }
+    if (units !== 2) {
+      const declaredSpacing = expected && expected.spacingMm;
+      if (units !== 0 || !expected || expected.niftiSpatialUnits !== 'mm' ||
+          !Array.isArray(expected.affineRAS) || !Array.isArray(declaredSpacing) ||
+          declaredSpacing.length !== 3 ||
+          declaredSpacing.some(function (value) { return !Number.isFinite(Number(value)) || Number(value) <= 0; }) ||
+          spacingMm.some(function (value, index) { return Math.abs(value - Number(declaredSpacing[index])) > 1e-4; })) {
+        fail('NIfTI spatial units must explicitly be millimetres (mm), or be confirmed by matching manifest affine and spacing metadata.');
+      }
+      // Compatibility for existing CT Edu mask exports whose affine is in RAS mm
+      // but whose NIfTI unit code was left unset by the old generator.
+      // This only repairs the metadata byte in memory after affine/spacing match.
+      view.setUint8(123, (view.getUint8(123) & 0xf8) | 2);
     }
     const voxels = new Uint8Array(buffer, voxOffset, voxelCount);
     const maxLabel = options.maxLabel === undefined ? 1 : options.maxLabel;
