@@ -23,7 +23,7 @@ test('3D correction workspace is a local draft editor, not the independent Wikim
   assert.match(script, /indexedDB/);
   assert.match(script, /DecompressionStream/);
   assert.match(script, /CompressionStream/);
-  assert.match(script, /original prediction assets remain untouched|پیش‌بینی اولیه دست‌نخورده/);
+  assert.match(script, /original prediction assets remain untouched|پیش‌بینی اولیه دست‌نخورده/i);
   assert.match(script, /state\.editedOverrides/);
   assert.match(script, /pointercancel/);
   assert.match(script, /cancelStroke/);
