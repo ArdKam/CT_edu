@@ -557,6 +557,15 @@
 .source-case-notes-title { margin:0 0 .55rem; font-weight:700; }
 .source-case-notes-body { margin:0 0 .75rem; color:var(--ink, #172431); line-height:1.85; }
 .source-case-notes-disclaimer { margin:.35rem 0 .75rem; color:var(--muted, #64748b); font-size:.83rem; line-height:1.7; }
+.source-case-discussion { margin-top:1rem; padding:1rem; border:1px solid var(--line, #e1e6e7); border-radius:14px; background:var(--surface, #fff); }
+.source-case-discussion h4 { margin:.3rem 0 .35rem; font-size:1.08rem; }
+.source-case-discussion-attribution { margin:0 0 .85rem; color:var(--muted, #64748b); font-size:.85rem; line-height:1.6; }
+.source-case-discussion-paragraphs { display:grid; gap:.8rem; }
+.source-case-discussion-paragraph { margin:0; color:var(--ink, #172431); line-height:1.85; max-width:82ch; overflow-wrap:anywhere; }
+.source-case-operative-note-section { margin-top:1rem; padding-top:.85rem; border-top:1px solid var(--line, #e1e6e7); }
+.source-case-operative-note-section h5 { margin:0 0 .5rem; font-size:.98rem; }
+.source-case-operative-note { margin:0 0 .8rem; padding-inline-start:1rem; border-inline-start:3px solid var(--line, #e1e6e7); color:var(--ink, #172431); line-height:1.8; }
+.source-case-discussion-source-note { margin:.9rem 0 .65rem; color:var(--muted, #64748b); font-size:.83rem; line-height:1.7; }
 .guided-source-footer { display:flex; flex-wrap:wrap; justify-content:space-between; gap:.6rem 1rem; align-items:baseline; padding-top:.75rem; border-top:1px solid var(--line, #e1e6e7); }
 .guided-source-footer span { color:var(--muted, #64748b); font-size:.76rem; line-height:1.5; }
 .guided-case-form { display:grid; gap:.9rem; }
