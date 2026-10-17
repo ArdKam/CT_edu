@@ -55,6 +55,14 @@ test('NIfTI reader accepts matching uint8 mask volumes with explicit millimetre 
 test('NIfTI reader rejects unknown units, geometry mismatch, non-mask datatypes and invalid class values', function () {
   const unknownUnits = makeNifti({ units: 0 });
   assert.throws(() => Core.parseNifti(unknownUnits.buffer), /millimetres/);
+  const manifestConfirmed = Core.parseNifti(unknownUnits.buffer, {
+    dimensionsXYZ: unknownUnits.dimensions,
+    affineRAS: unknownUnits.affine,
+    spacingMm: [0.9375, 0.9375, 1.5],
+    niftiSpatialUnits: 'mm'
+  });
+  assert.equal(manifestConfirmed.view.getUint8(123) & 0x07, 2,
+    'legacy unknown units are repaired only after matching manifest geometry and spacing');
 
   const wrongGrid = makeNifti({ dimensions: [4, 4, 2] });
   assert.throws(() => Core.parseNifti(wrongGrid.buffer, { dimensionsXYZ: [3, 4, 2] }), /dimensions/);
@@ -63,7 +71,9 @@ test('NIfTI reader rejects unknown units, geometry mismatch, non-mask datatypes 
   assert.throws(() => Core.parseNifti(wrongAffine.buffer, {
     affineRAS: [
       [1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]
-    ]
+    ],
+    spacingMm: [0.9375, 0.9375, 1.5],
+    niftiSpatialUnits: 'mm'
   }), /affine/);
 
   const wrongType = makeNifti({ datatype: 16, bitpix: 32 });
