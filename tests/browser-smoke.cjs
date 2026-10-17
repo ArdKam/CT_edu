@@ -635,6 +635,29 @@ const { chromium } = require('playwright');
       'Record the imaging findings systematically…', 'guided case placeholders should be translated');
     assert.equal(await guidedPage.locator('#radiopaedia-frame').getAttribute('src'), closedLoopStudyUrl,
       'language switching should preserve a source frame that the learner already requested');
+    await guidedPage.locator('#guided-case-list .guided-case-card[data-case-id="bowel-viability-ct"]').click();
+    assert.equal(await guidedPage.locator('#source-case-title').textContent(), 'External imaging source',
+      'the source diagnosis should remain masked before report submission');
+    assert.equal(await guidedPage.locator('#source-case-discussion').isVisible(), false,
+      'the original case discussion must stay hidden before the learner submits a report');
+    assert.equal(await guidedPage.locator('#source-open-link').getAttribute('href'),
+      'https://radiopaedia.org/cases/closed-loop-obstruction-due-to-adhesive-band-resulting-in-small-bowel-ischemia-and-resection?lang=us',
+      'the source-discussion panel must point to the exact credited source case');
+    await guidedPage.locator('#learner-findings').fill('Clustered small bowel with mural thickening and reduced enhancement; follow the ileum to both transition points.');
+    await guidedPage.locator('#learner-impression').fill('Closed-loop small-bowel obstruction with bowel-wall changes concerning for venous ischaemia; urgent surgical assessment is required.');
+    await guidedPage.locator('#guided-case-form button[type="submit"]').click();
+    assert.equal(await guidedPage.locator('#source-case-discussion').isVisible(), true,
+      'the attributed original Case Discussion should appear after report submission');
+    assert.equal(await guidedPage.locator('#source-case-discussion-paragraphs .source-case-discussion-paragraph').count(), 4,
+      'the original discussion should be rendered as four readable paragraphs');
+    assert.match(await guidedPage.locator('#source-case-discussion-paragraphs').textContent(), /normal calibre, decompressed ileum/);
+    assert.match(await guidedPage.locator('#source-case-discussion-paragraphs').textContent(), /surgical abdomen/);
+    assert.match(await guidedPage.locator('#source-case-discussion-attribution').textContent(), /Michael P\\. Hartung.*rID-83835/);
+    assert.equal(await guidedPage.locator('#source-case-operative-note-section').isVisible(), true,
+      'the separately labelled operative-note excerpt should be visible with the discussion');
+    assert.match(await guidedPage.locator('#source-case-operative-note').textContent(), /sigmoid colon epiploica and pelvic sidewall/);
+    assert.equal(await guidedPage.locator('#source-case-discussion-source-link').getAttribute('href'),
+      'https://radiopaedia.org/cases/closed-loop-obstruction-due-to-adhesive-band-resulting-in-small-bowel-ischemia-and-resection?lang=us');
     await guidedPage.waitForFunction(function () {
       return document.documentElement.scrollWidth <= window.innerWidth + 1;
     });
