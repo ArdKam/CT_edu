@@ -541,6 +541,7 @@
 .guided-source-note { color:var(--muted, #64748b); font-size:.87rem; line-height:1.7; }
 .guided-source-actions { display:flex; flex-wrap:wrap; gap:.5rem; margin:.65rem 0; }
 .guided-source-actions .guided-secondary-button { min-height:44px; }
+#source-case-discussion-toggle { border-color:var(--teal, #147d78); font-weight:750; }
 .guided-primary-button,
 .guided-secondary-button { border-radius:10px; padding:.72rem 1rem; font:inherit; font-weight:650; cursor:pointer; }
 .guided-primary-button { border:1px solid var(--teal, var(--teal)); background:var(--teal, var(--teal)); color:#fff; }
