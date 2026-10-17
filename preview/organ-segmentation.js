@@ -96,8 +96,13 @@
         renderCurrentSlice();
       });
       const chip = document.createElement('span');
-      chip.className = 'organ-color-chip';
-      chip.style.setProperty('--organ-color', organ.color);
+      const colorClassById = {
+        liver: 'organ-liver',
+        spleen: 'organ-spleen',
+        kidney_right: 'organ-kidney-right',
+        kidney_left: 'organ-kidney-left'
+      };
+      chip.className = 'organ-color-chip ' + (colorClassById[organ.id] || 'organ-neutral');
       chip.setAttribute('aria-hidden', 'true');
       const name = document.createElement('span');
       name.className = 'organ-control-name';
