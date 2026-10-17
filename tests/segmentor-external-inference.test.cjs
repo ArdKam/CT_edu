@@ -28,7 +28,7 @@ test('external Segmentor inference pins its model version and requires explicit 
   assert.doesNotMatch(script, /np\.stack\(\[aligned_masks/);
   assert.doesNotMatch(script, /preview\/assets\/organ-predictions/);
   assert.doesNotMatch(script, /inputPath["']?\s*:/);
-  assert.match(doc, /registry-backed class selection/i);
+  assert.match(doc, /select additional classes.*versioned 117-class registry/i);
   assert.match(doc, /Use .*all.*117 classes/i);
   assert.match(doc, /original dimensions, affine and millimetre spatial units are preserved/i);
   assert.match(doc, /does not add server-side inference, cloud uploads/i);
