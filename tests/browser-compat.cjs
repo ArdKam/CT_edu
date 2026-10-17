@@ -107,8 +107,8 @@ if (!engine) {
     hubPage.on('pageerror', function (error) { hubErrors.push(error.message); });
     const hubResponse = await hubPage.goto(origin + '/preview/index.html', { waitUntil: 'domcontentloaded' });
     assert.ok(hubResponse && hubResponse.ok(), engineName + ': preview hub should load');
-    assert.equal(await hubPage.locator('.preview-hub-card').count(), 3,
-      engineName + ': preview hub should expose three learning workspaces');
+    assert.equal(await hubPage.locator('.preview-hub-card').count(), 6,
+      engineName + ': preview hub should expose all six learning workspaces');
     assert.equal(await hubPage.locator('.preview-hub-card a[href="./cases.html"]').count(), 1,
       engineName + ': guided-case preview route should be linked');
     assert.equal(await hubPage.locator('.preview-hub-card a[href="./abdomen-series.html"]').count(), 1,
