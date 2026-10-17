@@ -36,7 +36,12 @@ function westernDigits(text) {
         const compressed = await assetResponse.arrayBuffer();
         const decompressed = await new Response(new Blob([compressed]).stream().pipeThrough(new DecompressionStream('gzip'))).arrayBuffer();
         parsed[organ.id] = {
-          data: Core.parseNifti(decompressed, { dimensionsXYZ: manifest.sourceDimensionsXYZ, affineRAS: manifest.affineRAS }).baseVoxels
+          data: Core.parseNifti(decompressed, {
+            dimensionsXYZ: manifest.sourceDimensionsXYZ,
+            affineRAS: manifest.affineRAS,
+            spacingMm: manifest.spacingMm,
+            niftiSpatialUnits: manifest.niftiSpatialUnits
+          }).baseVoxels
         };
       }
       const nx = manifest.sourceDimensionsXYZ[0], ny = manifest.sourceDimensionsXYZ[1], nz = manifest.sourceDimensionsXYZ[2];
