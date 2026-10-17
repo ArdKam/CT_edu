@@ -96,6 +96,13 @@ test('the Pages workflow stages preview routes and their shared source manifests
   assert.match(previewWorkflow, /stack_section = """/);
   assert.match(previewWorkflow, /class="source-stack-shortcuts"/);
   assert.match(previewWorkflow, /\.source-stack-grid/);
+  assert.ok(previewWorkflow.includes("grep -q 'source-stack-shortcuts' \"$GITHUB_WORKSPACE/_site/index.html\""), 'publisher must stage the homepage shortcuts');
+  assert.ok(previewWorkflow.includes("grep -q '.source-stack-grid' \"$GITHUB_WORKSPACE/_site/src/styles.css\""), 'publisher must include shortcut styling');
+  for (const route of ['thorax-series.html','brain-series.html','brain-contrast-series.html']) {
+    const homeProbe = 'fetch_with_retry "$base/" ' + String.fromCharCode(39) + 'href="./preview/' + route + '"' + String.fromCharCode(39);
+    assert.ok(previewWorkflow.includes(homeProbe), 'live publisher must verify homepage link to ' + route);
+  }
+  assert.ok(previewWorkflow.includes("fetch_with_retry \"$base/src/styles.css\" '.source-stack-grid'"), 'live publisher must probe shortcut styling');
   for (const route of ['thorax-series.html','brain-series.html','brain-contrast-series.html']) {
     assert.ok(previewWorkflow.includes('href="./preview/' + route + '"'), 'live homepage injection is missing ' + route);
   }
