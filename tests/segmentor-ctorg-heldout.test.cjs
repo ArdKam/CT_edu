@@ -44,7 +44,7 @@ test('CT-ORG workflow is manually invoked, non-main only, and uploads metric rep
 
 test('CT-ORG mappings are explicitly coarse-grained and do not claim vessel evaluation', function () {
   const runner = read('scripts/evaluate_ctorg_heldout.py');
-  assert.match(runner, /CT-ORG grouped class=liver/);
+  assert.match(runner, /CT-ORG grouped class=\{group_id\}/);
   assert.match(runner, /union of the five TotalSegmentator lung-lobe masks/);
   assert.match(runner, /union of the left and right kidney masks/);
   assert.match(runner, /union of 62 available skeletal classes/);
