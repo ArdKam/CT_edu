@@ -11,7 +11,7 @@ test('Segmentor inference triggers include normal PR updates and relevant source
   assert.match(workflow, /scripts\/generate_major_organ_masks\.py/);
   assert.match(workflow, /scripts\/build_demo_assets\.py/);
   assert.match(workflow, /abacktools-abdomen-2016-09-part\*-of6\.zip/);
-  assert.match(workflow, /\.github\/workflows\/organ-segmentation\.yml/);
+  assert.doesNotMatch(workflow, /- "\.github\/workflows\/organ-segmentation\.yml"/);
 });
 
 test('expensive inference is opt-in to designated in-repository branches, never main', function () {
