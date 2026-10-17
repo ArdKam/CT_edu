@@ -1,0 +1,66 @@
+name: Segmentor SPL intensity preprocessing comparison
+
+on:
+  pull_request:
+    branches:
+      - "main"
+    paths:
+      - "scripts/compare_spl_intensity_preprocessing.py"
+      - "scripts/intensity_experiment_utils.py"
+      - ".github/workflows/segmentor-intensity-calibration.yml"
+      - "docs/SEGMENTOR_INTENSITY_CALIBRATION_EXPERIMENT.md"
+      - "tests/segmentor-intensity-calibration.test.cjs"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: segmentor-spl-intensity-comparison-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  compare:
+    if: ${{ github.repository == 'ArdKam/CT_edu' && (github.event_name == 'workflow_dispatch' || github.event.pull_request.head.repo.full_name == github.repository) }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 210
+    steps:
+      - name: Check out the experiment revision
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          ref: ${{ github.head_ref || github.ref_name }}
+
+      - name: Set up Python
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: "3.11"
+
+      - name: Install pinned CPU inference dependencies
+        run: |
+          python -m pip install --upgrade --disable-pip-version-check pip
+          python -m pip install --disable-pip-version-check "numpy<2" pillow nibabel "TotalSegmentator==2.11.0"
+
+      - name: Check runner syntax
+        run: python -m py_compile scripts/compare_spl_intensity_preprocessing.py scripts/intensity_experiment_utils.py scripts/generate_major_organ_masks.py scripts/build_demo_assets.py
+
+      - name: Run controlled, labelled preprocessing comparison
+        id: experiment
+        env:
+          OMP_NUM_THREADS: "2"
+          ITK_GLOBAL_DEFAULT_NUMBER_OF_THREADS: "2"
+        run: |
+          set -euo pipefail
+          python scripts/compare_spl_intensity_preprocessing.py \
+            --offsets 0,1024 \
+            --output build/segmentor-intensity-experiment \
+            --timeout-seconds 5400
+
+      - name: Upload experiment report and per-candidate logs
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: ctedu-segmentor-intensity-preprocessing-comparison
+          path: build/segmentor-intensity-experiment/
+          if-no-files-found: warn
+          retention-days: 30
