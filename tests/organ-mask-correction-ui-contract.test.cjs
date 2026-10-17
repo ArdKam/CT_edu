@@ -10,7 +10,7 @@ test('3D correction workspace is a local draft editor, not the independent Wikim
   const html = read('preview/organ-mask-correction.html');
   const script = read('preview/organ-mask-correction.js');
   const core = read('preview/organ-mask-correction-core.js');
-  const doc = read('docs/SEGMENTOR_INDEPENDENT_VALIDATION.md'); // existing data-safety contract remains in force
+  const doc = read('docs/SEGMENTOR_3D_MASK_CORRECTION.md');
 
   assert.match(html, /organ-mask-correction-core\.js/);
   assert.match(html, /organ-mask-correction\.js/);
@@ -31,7 +31,8 @@ test('3D correction workspace is a local draft editor, not the independent Wikim
   assert.match(core, /brushVoxelOffsets/);
   assert.doesNotMatch(script, /assets\/spl-abdominal-demo\/.+label/);
   assert.doesNotMatch(script, /fetch\(['"]https?:/);
-  assert.match(doc, /not clinical validation|not.*validation/i);
+  assert.match(doc, /not proof of anatomical correctness/i);
+  assert.match(doc, /not reviewed or approved/i);
 });
 
 test('3D mask correction route keeps all three planes on one geometry-preserving voxel grid', function () {
