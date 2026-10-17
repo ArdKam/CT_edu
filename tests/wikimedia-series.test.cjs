@@ -64,7 +64,7 @@ test('the three new preview viewers expose navigation, source credit and explici
   for (const [file, manifest, count, license] of routes) {
     const html = read(file);
     assert.ok(html.includes(manifest), 'viewer missing ' + manifest);
-    assert.match(html, /src="\.\.\/src\/abdomen-series\.js"/);
+    assert.match(html, /src="\.\/src\/abdomen-series\.js"/);
     assert.match(html, /id="series-slider"/);
     assert.match(html, /id="series-retry"/);
     assert.match(html, /referrerpolicy="no-referrer"/);
