@@ -1,6 +1,6 @@
 # Segmentor 3D mask correction workspace
 
-**Status:** implementation on a dedicated feature branch; not merged or deployed from this branch.  
+**Status:** merged into `main` on 17 October 2026. The correction route is included in the Pages build; production deployment remains subject to the existing release gate.  
 **Feature:** voxel-level correction of the experimental SPL four-organ prediction volumes.  
 **Input:** the committed NIfTI masks and source-grid geometry described by `preview/assets/organ-predictions/manifest.json`.
 
