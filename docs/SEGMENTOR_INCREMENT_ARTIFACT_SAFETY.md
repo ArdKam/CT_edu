@@ -29,7 +29,9 @@
 
 ## Verification status
 
-Source-level tests have been added but must pass in GitHub Actions before this increment can be treated as verified. This increment makes no anatomical-accuracy claim and does not validate intensity calibration. The inference workflow is separately restricted to `codex/segmentor-three-plane-main`; this feature branch is not expected to regenerate masks automatically.
+Verified on code head `760e070f2b2d35f057d5a371a25f8322343d04bd` by [GitHub Actions run #868](https://github.com/ArdKam/CT_edu/actions/runs/39016061018): all 93 Node tests passed (0 failed), JavaScript checks passed, Python source compilation passed, source archive/header checks passed, the raw CT/label alignment and three-plane geometry checks passed, and the real Chromium Segmentor preview smoke test passed. The associated [Pages pull-request build #559](https://github.com/ArdKam/CT_edu/actions/runs/39016060867) succeeded; its deploy job was skipped under the existing release gate.
+
+The PR remains open and unmerged. The feature branch is based on the prior main commit and is one documentation-only commit behind current `main`; compare/update before merging. This increment makes no anatomical-accuracy claim and does not validate intensity calibration. The inference workflow is separately restricted to `codex/segmentor-three-plane-main`; this feature branch did not regenerate masks.
 
 ## Next milestone
 
