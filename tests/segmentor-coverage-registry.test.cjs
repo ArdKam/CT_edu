@@ -59,7 +59,7 @@ test('specialist task registry distinguishes open tasks from licensed candidates
 
 test('coverage registry tracks current provenance safeguards without overstating external validation', function () {
   assert.equal(registry.repositoryBaseline.branch, 'main');
-  assert.equal(registry.repositoryBaseline.commit, 'b1074711b5ac7f70b592d761df1fdb2536d2e977');
+  assert.equal(registry.repositoryBaseline.commit, '9a7ea034467cd95199ec1b606bc41ecb41ee18b5');
   assert.equal(registry.currentInferenceConfiguration.sourceInputHashesAvailableOnMain, false,
     'generator code has hash support, but the committed preview manifest still needs regeneration');
   assert.match(registry.currentInferenceConfiguration.note, /currently committed preview manifest has not yet been regenerated/i);
@@ -68,14 +68,22 @@ test('coverage registry tracks current provenance safeguards without overstating
   assert.match(generator, /labelMapNrrdSha256/);
   assert.match(generator, /publish_directory\(output, destination\)/);
   assert.match(registry.currentInferenceConfiguration.note, /atomic/i);
-  assert.equal(registry.externalInferenceUtility.status, 'implemented-cli-no-external-cohort-yet');
+  assert.equal(registry.externalInferenceUtility.status, 'implemented-registry-selectable-cli-no-external-cohort-yet');
   assert.equal(registry.externalInferenceUtility.scriptPath, 'scripts/infer_external_ct_volume.py');
   assert.equal(registry.externalInferenceUtility.arbitraryCtUploadSupported, false);
   assert.equal(registry.externalInferenceUtility.externalCohortCasesProcessed, 0);
   assert.equal(registry.externalInferenceUtility.independentEvaluationStatus, 'not-run-on-external-cohort');
   assert.equal(registry.externalInferenceUtility.educationalApprovalStatus, 'not-approved');
+  assert.equal(registry.externalInferenceUtility.selectableTotalTaskClassCount, 117);
+  assert.deepEqual(registry.externalInferenceUtility.classSelection.selectionModes,
+    ['upstream-class-name', 'stable-anatomy-id', 'all']);
+  assert.deepEqual(registry.externalInferenceUtility.classSelection.defaultClasses,
+    ['liver', 'spleen', 'kidney_right', 'kidney_left']);
+  assert.match(registry.externalInferenceUtility.notes.join(' '), /all-classes mode was not run or benchmarked/i);
   assert.match(fs.readFileSync(path.join(root, 'docs', 'SEGMENTOR_COVERAGE_REGISTRY.md'), 'utf8'),
     /No independent external cohort has been processed by this CLI/i);
+  assert.match(fs.readFileSync(path.join(root, 'docs', 'SEGMENTOR_COVERAGE_REGISTRY.md'), 'utf8'),
+    /--classes all/);
 });
 
 test('human-readable coverage registry clearly separates upstream classes from validated output', function () {
