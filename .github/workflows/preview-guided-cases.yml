@@ -105,8 +105,11 @@ jobs:
           test -s "$GITHUB_WORKSPACE/_site/preview/organ-segmentation.css"
           test -s "$GITHUB_WORKSPACE/_site/preview/organ-segmentation.js"
           if [ -f "$GITHUB_WORKSPACE/_site/preview/assets/organ-predictions/manifest.json" ]; then
-            test "$(find "$GITHUB_WORKSPACE/_site/preview/assets/organ-predictions" -maxdepth 1 -name '*.png' | wc -l | tr -d ' ')" -eq 452
+            test "$(find "$GITHUB_WORKSPACE/_site/preview/assets/organ-predictions" -maxdepth 1 -name '*.png' | wc -l | tr -d ' ')" -eq 2500
+            test "$(find "$GITHUB_WORKSPACE/_site/preview/assets/organ-predictions" -maxdepth 1 -name '*.nii.gz' | wc -l | tr -d ' ')" -eq 5
+            test -s "$GITHUB_WORKSPACE/_site/preview/assets/organ-predictions/major-organ-labelmap.nii.gz"
             grep -q 'experimental-unreviewed' "$GITHUB_WORKSPACE/_site/preview/assets/organ-predictions/manifest.json"
+            grep -q 'affineRAS' "$GITHUB_WORKSPACE/_site/preview/assets/organ-predictions/manifest.json"
           fi
           test -s "$GITHUB_WORKSPACE/_site/preview/cases.html"
           test -s "$GITHUB_WORKSPACE/_site/preview/abdomen-series.html"
@@ -178,6 +181,16 @@ jobs:
           fetch_with_retry "$base/preview/organ-segmentation.html" 'organ-segmentation.js'
           if [ -f "preview/assets/organ-predictions/manifest.json" ]; then
             fetch_with_retry "$base/preview/assets/organ-predictions/manifest.json" 'experimental-unreviewed'
+            for asset in major-organ-labelmap.nii.gz liver.nii.gz spleen.nii.gz kidney_right.nii.gz kidney_left.nii.gz; do
+              curl -fsS "$base/preview/assets/organ-predictions/$asset" -o "/tmp/$asset"
+              test -s "/tmp/$asset"
+              python - "/tmp/$asset" <<'PY'
+          import sys
+          from pathlib import Path
+          data = Path(sys.argv[1]).read_bytes()
+          assert list(data[:2]) == [31, 139], "Expected gzip-compressed NIfTI asset"
+          PY
+            done
           fi
           fetch_with_retry "$base/preview/src/abdomen-series.js" 'function switchPlane(nextPlane)'
           fetch_with_retry "$base/preview/src/data/wikimedia-abdomen-series.js" 'sagittal_plane_178.png'
