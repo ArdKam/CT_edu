@@ -82,6 +82,25 @@ test('the three new preview viewers expose navigation, source credit and explici
 });
 
 test('the Pages workflow stages preview routes and their shared source manifests without bundling image binaries', function () {
+  const previewWorkflow = read('.github/workflows/preview-guided-cases.yml');
+  assert.match(previewWorkflow, /cp src\/data\/wikimedia-thorax-series\.js src\/data\/wikimedia-brain-series\.js src\/data\/wikimedia-brain-contrast-series\.js "\$preview\/src\/data\/"/);
+  assert.match(previewWorkflow, /cp preview\/thorax-series\.html preview\/brain-series\.html preview\/brain-contrast-series\.html "\$preview\/"/);
+  for (const route of ['thorax-series.html','brain-series.html','brain-contrast-series.html']) {
+    assert.ok(previewWorkflow.includes('test -s "$GITHUB_WORKSPACE/_site/preview/' + route + '"'), 'preview workflow must stage ' + route);
+  }
+  for (const [url, expected] of [
+    ['preview/thorax-series.html', 'Normal thorax'],
+    ['preview/brain-series.html', 'Normal brain'],
+    ['preview/brain-contrast-series.html', 'Contrast-enhanced brain CT'],
+    ['preview/src/data/wikimedia-thorax-series.js', 'wikimedia-normal-thorax'],
+    ['preview/src/data/wikimedia-brain-series.js', 'wikimedia-normal-brain-case-1'],
+    ['preview/src/data/wikimedia-brain-contrast-series.js', 'wikimedia-brain-contrast-case-2']
+  ]) {
+    assert.ok(previewWorkflow.includes('fetch_with_retry "$base/' + url + '" \' ' + expected + '\''), 'preview workflow must live-probe ' + url);
+  }
+  assert.match(previewWorkflow, /if: vars\.CT_EDU_PUBLIC_RELEASE_APPROVED != 'true'/, 'preview publish behavior must retain its existing release gate');
+  const workflow = read('.github/workflows/pages-deploy.yml');
+
   const workflow = read('.github/workflows/pages-deploy.yml');
   assert.match(workflow, /cp -R src _site\/src/);
   assert.match(workflow, /cp -R preview _site\/preview/);
