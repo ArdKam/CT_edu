@@ -638,7 +638,7 @@ const { chromium } = require('playwright');
     assert.match(await guidedPage.locator('#guided-case-list .guided-case-card[data-case-id="bowel-viability-ct"]').textContent(), /Original Case Discussion available/,
       'the case list should identify which case contains original discussion text');
     await guidedPage.locator('#guided-case-list .guided-case-card[data-case-id="bowel-viability-ct"]').click();
-    assert.equal(await guidedPage.locator('#guided-case-title').textContent(), 'Abdominal CT · Case 04',
+    assert.equal(await guidedPage.locator('#guided-case-title').textContent(), 'Abdominal CT · Case 03',
       'the case title should remain neutral and diagnosis-safe');
     assert.equal(await guidedPage.locator('#guided-case-presentation-block').isVisible(), true,
       'Stage 1 should show source-reported clinical presentation details');
