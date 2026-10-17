@@ -2,7 +2,7 @@
 
 **Registry schema:** 1  
 **Last updated:** 2026-10-17  
-**Baseline checked:** `main` at `9a7ea034467cd95199ec1b606bc41ecb41ee18b5`  
+**Baseline checked:** `main` at `7a69e9f1a63738d4b55f934aee886e91f9f3564a`  
 **Pinned baseline model:** TotalSegmentator 2.11.0, task `total`, CPU, `fast/3mm`
 
 This page summarizes `SEGMENTOR_COVERAGE_REGISTRY.json`, the machine-readable record of upstream class availability versus what CT Edu has actually generated, technically checked, independently evaluated, anatomically reviewed and approved.
@@ -19,6 +19,8 @@ This page summarizes `SEGMENTOR_COVERAGE_REGISTRY.json`, the machine-readable re
 - The repository also now has a **controlled external-NIfTI inference CLI** at `scripts/infer_external_ct_volume.py`. It supports the same four major-organ classes for a supplied local 3D NIfTI and writes masks with provenance; it is not a public upload endpoint and does not change the precomputed SPL preview.
 - The external-NIfTI CLI now accepts explicit class selection from the pinned `total`-task coverage registry: default four major organs, individual upstream class names/stable anatomy IDs, or `--classes all` for the 117 classes listed by TotalSegmentator 2.11.0. It supports selecting vessel and vertebral classes that exist in that task, but does not imply validation. The all-classes mode has not been run or benchmarked.
 - The CLI also now exposes the three specialist tasks the pinned registry records as Apache-2.0: `lung_vessels`, `headneck_bones_vessels`, and `liver_vessels`. They are **implemented but not run** in CT Edu. The CLI blocks `heartchambers_highres`, `coronary_arteries`, and `brain_structures` because the registry records these as license-required and their exact task/model terms have not been cleared.
+- A controlled CT-ORG held-out validation runner is now implemented at `scripts/evaluate_ctorg_heldout.py`, with selected-case extraction in `scripts/prepare_ctorg_test_subset.py` and a manual non-main workflow. It permits only official CT-ORG test cases 0–20 and uploads metric reports only. The real-data workflow has **not** been run yet, so external case count and independent evaluation results remain zero.
+- CT-ORG has labels for liver, bladder, whole lungs, kidneys, broad bone and some brain labels; it has **no vessel references**. Lungs/kidneys are unions, and bone is an approximate union of 62 model classes, so these are grouped metrics rather than detailed anatomy validation.
 - No independent external cohort has been processed by this CLI as of this baseline. Therefore the generated-prediction count in this registry remains 4 (the SPL preview), independent evaluation remains 0, and anatomical review/educational approval remain 0. The 117-class inventory remains an upstream availability catalogue, not a claim that 117 CT Edu masks are generated or validated.
 - The bundled SPL generator code now computes exact source-member hashes, uses atomic artifact publication/failure recovery, and explicitly writes millimetre spatial units to its generated NIfTI masks. However, the currently committed preview manifest has not been regenerated with the source hashes, so the code capability and committed-asset state remain distinct. Its 1024 intensity offset remains an unverified hypothesis.
 
