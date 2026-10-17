@@ -4,7 +4,7 @@
   "lastUpdated": "2026-10-17",
   "repositoryBaseline": {
     "branch": "main",
-    "commit": "9a7ea034467cd95199ec1b606bc41ecb41ee18b5"
+    "commit": "994265ec6f86231dba3d21e6948d4ceecb1c23fa"
   },
   "purpose": "Track upstream model availability separately from CT Edu output generation, technical checks, independent evaluation, anatomical review and approval for educational use.",
   "statusDefinitions": {
@@ -115,7 +115,7 @@
       "task": "lung_vessels",
       "version": "2.11.0",
       "modality": "CT",
-      "status": "candidate-not-run",
+      "status": "implemented-cli-not-run",
       "classes": [
         "lung_vessels",
         "lung_trachea_bronchia"
@@ -128,7 +128,10 @@
       "execution": {
         "device": "not-run",
         "resolution": "not-benchmarked",
-        "requestedByCTEdu": false
+        "requestedByCTEdu": false,
+        "cliSupported": true,
+        "executionStatus": "not-run",
+        "implementedIn": "scripts/infer_external_ct_volume.py"
       },
       "knownLimitations": [
         "Do not assume vessel completeness or branch-level precision without dedicated evaluation.",
@@ -140,7 +143,7 @@
       "task": "headneck_bones_vessels",
       "version": "2.11.0",
       "modality": "CT",
-      "status": "candidate-not-run",
+      "status": "implemented-cli-not-run",
       "classes": [
         "internal_carotid_artery_right",
         "internal_carotid_artery_left",
@@ -163,7 +166,10 @@
       "execution": {
         "device": "not-run",
         "resolution": "not-benchmarked",
-        "requestedByCTEdu": false
+        "requestedByCTEdu": false,
+        "cliSupported": true,
+        "executionStatus": "not-run",
+        "implementedIn": "scripts/infer_external_ct_volume.py"
       },
       "knownLimitations": [
         "A task class list is not CT Edu validation.",
@@ -175,7 +181,7 @@
       "task": "liver_vessels",
       "version": "2.11.0",
       "modality": "CT",
-      "status": "candidate-not-run",
+      "status": "implemented-cli-not-run",
       "classes": [
         "liver_vessels",
         "liver_tumor"
@@ -188,7 +194,10 @@
       "execution": {
         "device": "not-run",
         "resolution": "not-benchmarked",
-        "requestedByCTEdu": false
+        "requestedByCTEdu": false,
+        "cliSupported": true,
+        "executionStatus": "not-run",
+        "implementedIn": "scripts/infer_external_ct_volume.py"
       },
       "knownLimitations": [
         "Pinned README marks this task with a limited-training-data robustness caveat.",
@@ -218,7 +227,9 @@
       "execution": {
         "device": "not-run",
         "resolution": "not-benchmarked",
-        "requestedByCTEdu": false
+        "requestedByCTEdu": false,
+        "cliSupported": false,
+        "executionStatus": "blocked-pending-exact-license-review"
       },
       "knownLimitations": [
         "Do not run or publish results until the exact task license and authorized access path are confirmed."
@@ -241,7 +252,9 @@
       "execution": {
         "device": "not-run",
         "resolution": "not-benchmarked",
-        "requestedByCTEdu": false
+        "requestedByCTEdu": false,
+        "cliSupported": false,
+        "executionStatus": "blocked-pending-exact-license-review"
       },
       "knownLimitations": [
         "Vendor notes possible use on non-contrast images but CT Edu must verify applicable acquisition conditions, licensing and independent performance."
@@ -279,7 +292,9 @@
       "execution": {
         "device": "not-run",
         "resolution": "not-benchmarked",
-        "requestedByCTEdu": false
+        "requestedByCTEdu": false,
+        "cliSupported": false,
+        "executionStatus": "blocked-pending-exact-license-review"
       },
       "knownLimitations": [
         "This specialist task has not been run or validated by CT Edu."
@@ -5437,7 +5452,7 @@
     }
   ],
   "externalInferenceUtility": {
-    "status": "implemented-registry-selectable-cli-no-external-cohort-yet",
+    "status": "implemented-total-and-open-specialist-task-cli-no-external-cohort-yet",
     "scriptPath": "scripts/infer_external_ct_volume.py",
     "documentationPath": "docs/SEGMENTOR_EXTERNAL_NIFTI_INFERENCE.md",
     "model": "TotalSegmentator",
@@ -5456,9 +5471,10 @@
     "notes": [
       "This utility processes a supplied local NIfTI and writes masks plus provenance without copying the CT into its output directory.",
       "It does not alter the precomputed SPL preview assets and does not add a public upload endpoint.",
-      "By default it selects the four major abdominal classes, but it can also select any of the 117 pinned TotalSegmentator 2.11.0 total-task classes, including supported upstream vessel and vertebral classes.",
-      "A selectable upstream class is not a generated, independently evaluated, anatomically reviewed, or educationally approved CT Edu class.",
-      "The all-classes mode was not run by this change; its runtime, memory and artifact cost must be measured on a suitable controlled host.",
+      "The total task supports selection of any of the 117 pinned TotalSegmentator 2.11.0 total-task classes; the default remains liver, spleen and both kidneys.",
+      "Three open specialist tasks are selectable by CLI: lung_vessels, headneck_bones_vessels, and liver_vessels. They have not been run in CT Edu. License-required brain/cardiac/coronary tasks remain blocked pending exact terms review.",
+      "A selectable upstream class/task is not a generated, independently evaluated, anatomically reviewed, or educationally approved CT Edu class.",
+      "The all-classes mode and open specialist tasks were not run by this change; runtime, memory, artifacts and clinical/anatomical quality still need measurement on appropriately licensed data.",
       "Input intensity semantics must be explicitly declared; this does not independently prove Hounsfield-unit calibration."
     ],
     "selectableTotalTaskClassCount": 117,
@@ -5479,7 +5495,69 @@
         "all"
       ],
       "maximumCombinedLabelClasses": 255,
-      "outputPolicy": "Separate binary NIfTI masks remain authoritative; combined uint8 label IDs are assigned in selection order and report overlap counts."
+      "outputPolicy": "Separate binary NIfTI masks remain authoritative; combined uint8 label IDs are assigned in selection order and report overlap counts.",
+      "allowedTasks": [
+        "total"
+      ]
+    },
+    "specialistTaskSelection": {
+      "sourceOfTruth": "docs/SEGMENTOR_COVERAGE_REGISTRY.json#taskCatalog",
+      "enabledTasks": [
+        {
+          "task": "lung_vessels",
+          "license": "Apache-2.0",
+          "classes": [
+            "lung_vessels",
+            "lung_trachea_bronchia"
+          ],
+          "executionStatus": "not-run"
+        },
+        {
+          "task": "headneck_bones_vessels",
+          "license": "Apache-2.0",
+          "classes": [
+            "internal_carotid_artery_right",
+            "internal_carotid_artery_left",
+            "internal_jugular_vein_right",
+            "internal_jugular_vein_left",
+            "larynx_air",
+            "thyroid_cartilage",
+            "hyoid",
+            "cricoid_cartilage",
+            "zygomatic_arch_right",
+            "zygomatic_arch_left",
+            "styloid_process_right",
+            "styloid_process_left"
+          ],
+          "executionStatus": "not-run"
+        },
+        {
+          "task": "liver_vessels",
+          "license": "Apache-2.0",
+          "classes": [
+            "liver_vessels",
+            "liver_tumor"
+          ],
+          "executionStatus": "not-run"
+        }
+      ],
+      "blockedTasks": [
+        {
+          "task": "heartchambers_highres",
+          "reason": "license-required; exact task/model terms not cleared"
+        },
+        {
+          "task": "coronary_arteries",
+          "reason": "license-required; exact task/model terms not cleared"
+        },
+        {
+          "task": "brain_structures",
+          "reason": "license-required; exact task/model terms not cleared"
+        }
+      ],
+      "enforcement": "The CLI reads this versioned task catalog and rejects tasks not explicitly enabled with an Apache-2.0 declaration.",
+      "outputsRemainUnreviewed": true,
+      "notes": "Task support is implemented and unit-tested; no inference, vessel accuracy evaluation, anatomical review, or educational approval is implied."
     }
   }
 }
