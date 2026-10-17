@@ -1,0 +1,64 @@
+name: Segmentor fast-vs-full resolution benchmark
+
+on:
+  pull_request:
+    branches:
+      - "main"
+    paths:
+      - "scripts/benchmark_segmentor_resolution.py"
+      - ".github/workflows/segmentor-resolution-benchmark.yml"
+      - "tests/segmentor-resolution-benchmark.test.cjs"
+      - "docs/SEGMENTOR_RESOLUTION_BENCHMARK.md"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: segmentor-resolution-benchmark-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  benchmark:
+    if: ${{ github.repository == 'ArdKam/CT_edu' && (github.event_name == 'workflow_dispatch' || github.event.pull_request.head.repo.full_name == github.repository) }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 210
+    steps:
+      - name: Check out benchmark revision
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          ref: ${{ github.head_ref || github.ref_name }}
+
+      - name: Set up Python
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: "3.11"
+
+      - name: Install pinned CPU inference dependencies
+        run: |
+          python -m pip install --upgrade --disable-pip-version-check pip
+          python -m pip install --disable-pip-version-check "numpy<2" pillow nibabel "TotalSegmentator==2.11.0"
+
+      - name: Check benchmark and generator syntax
+        run: python -m py_compile scripts/benchmark_segmentor_resolution.py scripts/generate_major_organ_masks.py scripts/build_demo_assets.py
+
+      - name: Run fast-versus-full resolution comparison
+        env:
+          OMP_NUM_THREADS: "2"
+          ITK_GLOBAL_DEFAULT_NUMBER_OF_THREADS: "2"
+        run: |
+          set -euo pipefail
+          python scripts/benchmark_segmentor_resolution.py \
+            --intensity-offset 1024 \
+            --output build/segmentor-resolution-benchmark \
+            --timeout-seconds 5400
+
+      - name: Upload benchmark report, candidate masks and logs
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: ctedu-segmentor-resolution-benchmark
+          path: build/segmentor-resolution-benchmark/
+          if-no-files-found: warn
+          retention-days: 30
