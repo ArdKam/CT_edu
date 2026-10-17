@@ -708,3 +708,21 @@
     min-height:36px;
   }
 }
+
+/* Featured links to the externally hosted thorax/brain image stacks. */
+.source-stack-shortcuts{margin:0 0 18px;padding:17px 20px 15px;border:1px solid #dce7e3;border-radius:var(--radius);background:linear-gradient(125deg,rgba(255,255,255,.9),rgba(244,249,247,.88));box-shadow:0 7px 24px rgba(25,42,55,.025)}
+.source-stack-shortcuts-heading{margin-bottom:12px}
+.source-stack-shortcuts-heading h2{margin:0 0 4px;color:#243640;font-size:16px;letter-spacing:-.02em}
+.source-stack-shortcuts-heading p{margin:0;color:var(--muted);font-size:10px;line-height:1.7}
+.source-stack-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.source-stack-card{display:flex;flex-direction:column;align-items:flex-start;gap:5px;min-width:0;padding:13px 14px;border:1px solid #e0e8e5;border-radius:10px;background:rgba(255,255,255,.92);text-decoration:none;transition:border-color .15s,background .15s,transform .15s}
+.source-stack-card:hover{border-color:#a9cec7;background:#f9fcfb;transform:translateY(-1px)}
+.source-stack-card:focus-visible{outline:3px solid var(--focus);outline-offset:3px}
+.source-stack-overline{color:#61817a;font-size:8px;font-weight:700;letter-spacing:.12em;line-height:1.5}
+.source-stack-card strong{color:#2a424b;font-size:12px;font-weight:650;line-height:1.6}
+.source-stack-meta{color:var(--muted);font-size:9px;line-height:1.7}
+.source-stack-cta{margin-top:3px;color:#287a74;font-size:10px;font-weight:650;line-height:1.5}
+.source-stack-limits{margin:11px 0 0;color:#6d746f;font-size:9px;line-height:1.75}
+@media(max-width:900px){.source-stack-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:650px){.source-stack-shortcuts{padding:14px 12px}.source-stack-grid{grid-template-columns:minmax(0,1fr)}.source-stack-card{padding:12px}.source-stack-shortcuts-heading h2{font-size:15px}}
+@media(prefers-reduced-motion:reduce){.source-stack-card{transition:none}.source-stack-card:hover{transform:none}}
