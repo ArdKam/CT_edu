@@ -95,12 +95,12 @@ jobs:
 
           catalog_anchor = '<section class="modality-catalog" id="modality-catalog" aria-labelledby="modality-catalog-title">'
           stack_section = """      <section class="source-stack-shortcuts" aria-labelledby="source-stack-shortcuts-title">
-        <div class="source-stack-shortcuts-heading">
+          <div class="source-stack-shortcuts-heading">
           <span class="modality-catalog-kicker">ADDED SOURCE IMAGE STACKS</span>
           <h2 id="source-stack-shortcuts-title"><span class="rad-fa">مجموعه‌های تصویری تازه</span><span class="rad-en">Additional CT image stacks</span></h2>
           <p><span class="rad-fa">توالی‌های تصویری مستقل برای مرور آناتومی طبیعی؛ تصاویر از Wikimedia Commons بارگیری می‌شوند.</span><span class="rad-en">Independent image stacks for reviewing normal anatomy; images load from Wikimedia Commons on demand.</span></p>
-        </div>
-        <div class="source-stack-grid">
+          </div>
+          <div class="source-stack-grid">
           <a class="source-stack-card" href="./preview/thorax-series.html">
             <span class="source-stack-overline">THORAX CT</span>
             <strong><span class="rad-fa">CT قفسهٔ سینهٔ طبیعی</span><span class="rad-en">Normal thorax CT</span></strong>
@@ -119,9 +119,9 @@ jobs:
             <span class="source-stack-meta"><span class="rad-fa">۳۴ تصویر محوری · فقط یک نما</span><span class="rad-en">34 axial images · single plane only</span></span>
             <span class="source-stack-cta"><span class="rad-fa">بازکردن پیش‌نمایش ↗</span><span class="rad-en">Open image-stack preview ↗</span></span>
           </a>
-        </div>
-        <p class="source-stack-limits"><span class="rad-fa">محدودیت: این‌ها توالی‌های تصویری ثابت هستند، نه حجم DICOM تأییدشده؛ هم‌ترازی سه‌بعدی، قطعه‌بندی و کاربرد تشخیصی ارائه نمی‌شود.</span><span class="rad-en">Limitations: these are fixed image stacks, not verified DICOM volumes; 3D alignment, segmentation and diagnostic use are not provided.</span></p>
-      </section>"""
+          </div>
+          <p class="source-stack-limits"><span class="rad-fa">محدودیت: این‌ها توالی‌های تصویری ثابت هستند، نه حجم DICOM تأییدشده؛ هم‌ترازی سه‌بعدی، قطعه‌بندی و کاربرد تشخیصی ارائه نمی‌شود.</span><span class="rad-en">Limitations: these are fixed image stacks, not verified DICOM volumes; 3D alignment, segmentation and diagnostic use are not provided.</span></p>
+          </section>"""
           if catalog_anchor not in html:
               raise SystemExit("Could not find the stable-homepage modality catalog insertion point")
           if 'class="source-stack-shortcuts"' not in html:
