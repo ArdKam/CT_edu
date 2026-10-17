@@ -105,7 +105,7 @@ jobs:
           test -s "$GITHUB_WORKSPACE/_site/preview/organ-segmentation.css"
           test -s "$GITHUB_WORKSPACE/_site/preview/organ-segmentation.js"
           if [ -f "$GITHUB_WORKSPACE/_site/preview/assets/organ-predictions/manifest.json" ]; then
-            test "$(find "$GITHUB_WORKSPACE/_site/preview/assets/organ-predictions" -maxdepth 1 -name '*.png' | wc -l | tr -d ' ')" -eq 452
+            test "$(find "$GITHUB_WORKSPACE/_site/preview/assets/organ-predictions" -maxdepth 1 -name '*.png' | wc -l | tr -d ' ')" -eq 2500
             test "$(find "$GITHUB_WORKSPACE/_site/preview/assets/organ-predictions" -maxdepth 1 -name '*.nii.gz' | wc -l | tr -d ' ')" -eq 5
             test -s "$GITHUB_WORKSPACE/_site/preview/assets/organ-predictions/major-organ-labelmap.nii.gz"
             grep -q 'experimental-unreviewed' "$GITHUB_WORKSPACE/_site/preview/assets/organ-predictions/manifest.json"
