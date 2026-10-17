@@ -321,6 +321,8 @@
     hideFrameButton.hidden = !viewerUrl;
 
     const sourceDetailsRevealed = Boolean(getDraft(item.id).submitted || state.discussionShown[item.id]);
+    const originalCaseButton = el('source-show-case-page');
+    if (item.source.referenceDetails && !sourceDetailsRevealed) originalCaseButton.hidden = true;
     const stage4 = el('guided-stage-4');
     if (stage4) stage4.hidden = !sourceDetailsRevealed;
     el('source-case-title').textContent = sourceDetailsRevealed
@@ -461,7 +463,9 @@
     if (!data.getById(id)) return;
     state.activeId = id;
     const selected = data.getById(id);
-    state.sourceFrameMode = selected && selected.source && selected.source.studyPageUrl ? 'study' : 'none';
+    state.sourceFrameMode = selected && selected.source && selected.source.referenceDetails
+      ? 'none'
+      : (selected && selected.source && selected.source.studyPageUrl ? 'study' : 'none');
     renderCards();
     renderActive();
     el('guided-case-title').focus({ preventScroll: true });
