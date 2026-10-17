@@ -69,6 +69,15 @@ test('NIfTI reader rejects unknown units, geometry mismatch, non-mask datatypes 
   const wrongType = makeNifti({ datatype: 16, bitpix: 32 });
   assert.throws(() => Core.parseNifti(wrongType.buffer), /uint8/);
 
+  const shearAffine = [
+    [0.9375, 0.1, 0, 12],
+    [0, 0.9375, 0, -21],
+    [0, 0, -1.5, 84],
+    [0, 0, 0, 1]
+  ];
+  const sheared = makeNifti({ affine: shearAffine });
+  assert.throws(() => Core.parseNifti(sheared.buffer), /sheared\/non-orthogonal/);
+
   const notBinary = makeNifti({ data: [0, 2] });
   assert.throws(() => Core.parseNifti(notBinary.buffer), /unexpected label value/);
 });
@@ -85,6 +94,7 @@ test('coordinate mapping agrees across all three orthogonal views', function () 
   assert.deepEqual(sagittal, { x: 1, y: 3, z: 1, offset: 22 });
 
   assert.equal(Core.voxelFromPlanePixel('axial', 2, 0, 0, dimensions), null);
+  assert.equal(Core.voxelFromPlanePixel('axial', -1, 0, 0, dimensions), null);
   assert.equal(Core.voxelOffset(3, 0, 0, dimensions), -1);
 });
 
