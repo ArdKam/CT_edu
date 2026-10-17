@@ -11,7 +11,8 @@
   const state = {
     activeId: initialCase ? initialCase.id : null,
     drafts: readDrafts(),
-    sourceFrameMode: initialCase && initialCase.source && initialCase.source.studyPageUrl ? 'study' : 'none'
+    sourceFrameMode: initialCase && initialCase.source && initialCase.source.studyPageUrl ? 'study' : 'none',
+    discussionShown: Object.create(null)
   };
   const el = function (id) { return document.getElementById(id); };
   const lang = function () { return document.documentElement.lang === 'en' ? 'en' : 'fa'; };
@@ -331,7 +332,10 @@
         discussionParagraphs.appendChild(make('p', 'source-case-discussion-paragraph', paragraph));
       });
     }
-    discussionSection.hidden = !sourceDetailsRevealed || !hasDiscussion;
+    const discussionRevealed = sourceDetailsRevealed || Boolean(state.discussionShown[item.id]);
+    discussionSection.hidden = !discussionRevealed || !hasDiscussion;
+    const discussionToggle = el('source-case-discussion-toggle');
+    discussionToggle.hidden = !hasDiscussion || discussionRevealed;
     const discussionAttribution = el('source-case-discussion-attribution');
     discussionAttribution.textContent = item.source.contributor
       ? (lang() === 'fa' ? 'نویسنده: ' : 'Original discussion by ') + item.source.contributor + (item.source.rid ? ' · ' + item.source.rid : '')
@@ -484,6 +488,13 @@
   el('source-hide-frame').addEventListener('click', function () {
     state.sourceFrameMode = 'none';
     renderActive();
+  });
+  el('source-case-discussion-toggle').addEventListener('click', function () {
+    const item = getActive();
+    if (!item || !item.source || !item.source.caseDiscussion) return;
+    state.discussionShown[item.id] = true;
+    renderActive();
+    el('source-case-discussion').scrollIntoView({ behavior: 'smooth', block: 'start' });
   });
   el('language-toggle').addEventListener('click', function () { setLanguage(lang() === 'fa' ? 'en' : 'fa'); });
   if (typeof MutationObserver !== 'undefined') {
