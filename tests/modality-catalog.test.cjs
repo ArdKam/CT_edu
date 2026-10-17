@@ -28,8 +28,8 @@ test('modality catalog exposes eight paths while only the primary SPL learning p
     assert.equal(entry.status, 'candidate');
     assert.equal(entry.contentAvailable, false);
     assert.equal(entry.pageUrl, url);
-    assert.match(entry.sourceUrl, /commons\\.wikimedia\\.org/);
-    assert.match(entry.sourceNoteEn, /CC0 1\\.0/);
+    assert.ok(entry.sourceUrl.includes('commons.wikimedia.org'));
+    assert.ok(entry.sourceNoteEn.includes('CC0 1.0'));
   }
   assert.equal(catalog.isAvailable('brain-ct'), false);
   assert.equal(catalog.isAvailable('chest-ct'), false);
