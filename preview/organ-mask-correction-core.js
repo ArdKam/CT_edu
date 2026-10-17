@@ -69,7 +69,24 @@
       linear[0][2] * (linear[1][0] * linear[2][1] - linear[1][1] * linear[2][0]);
     if (!Number.isFinite(determinant) || Math.abs(determinant) < 1e-9) fail('NIfTI affine is singular.');
     const spacingMm = affineSpacing(affine);
-    if (expected && Array.isArray(expected.affineRAS)) {
+    const unitDirections = [0, 1, 2].map(function (column) {
+      return [affine[0][column] / spacingMm[column], affine[1][column] / spacingMm[column], affine[2][column] / spacingMm[column]];
+    });
+    for (let first = 0; first < 3; first += 1) {
+      for (let second = first + 1; second < 3; second += 1) {
+        const dot = unitDirections[first][0] * unitDirections[second][0] +
+          unitDirections[first][1] * unitDirections[second][1] +
+          unitDirections[first][2] * unitDirections[second][2];
+        if (Math.abs(dot) > 1e-4) fail('NIfTI has sheared/non-orthogonal axes; the tri-planar editor requires the expected orthogonal grid.');
+      }
+    }
+    if (expected && expected.affineRAS !== undefined) {
+      if (!Array.isArray(expected.affineRAS) || expected.affineRAS.length !== 4 ||
+          expected.affineRAS.some(function (row) {
+            return !Array.isArray(row) || row.length !== 4 || row.some(function (value) { return !Number.isFinite(Number(value)); });
+          })) {
+        fail('Expected source affine metadata is malformed.');
+      }
       for (let row = 0; row < 4; row += 1) {
         for (let column = 0; column < 4; column += 1) {
           if (Math.abs(affine[row][column] - Number(expected.affineRAS[row][column])) > 1e-4) {
@@ -106,7 +123,7 @@
   function voxelFromPlanePixel(plane, index, pixelX, pixelY, dimensionsXYZ) {
     const nx = dimensionsXYZ[0], ny = dimensionsXYZ[1], nz = dimensionsXYZ[2];
     if (!Number.isInteger(pixelX) || !Number.isInteger(pixelY) ||
-        !Number.isInteger(index) || pixelX < 0 || pixelY < 0) return null;
+        !Number.isInteger(index) || pixelX < 0 || pixelY < 0 || index < 0) return null;
     let x, y, z;
     if (plane === 'axial') {
       if (pixelX >= nx || pixelY >= ny || index >= nz) return null;
