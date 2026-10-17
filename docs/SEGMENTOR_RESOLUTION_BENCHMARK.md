@@ -18,6 +18,30 @@ Both candidates use the same explicit subtraction offset, defaulted by the workf
 
 The JSON report and logs record source NRRD hashes, source geometry, input-array hashes, model version, command/task/ROI list, wall-clock duration, peak RSS when GNU `time -v` is available, output NIfTI sizes, per-class predicted/reference voxel counts, Dice, sensitivity, precision, packed-mask hashes, and fast-vs-full differences. Output masks are stored only in the experiment artifact under `build/segmentor-resolution-benchmark/`; this workflow never commits or deploys predictions.
 
+## First hosted benchmark result
+
+The corrected hosted run [#39018241962](https://github.com/ArdKam/CT_edu/actions/runs/39018241962) completed both candidates and uploaded the [benchmark artifact #12096150393](https://github.com/ArdKam/CT_edu/actions/runs/39018241962/artifacts/12096150393). Both candidates reported complete execution, output integrity and non-empty masks for all four organs.
+
+| Structure | Fast 3 mm Dice | Full 1.5 mm Dice | Change | Fast sensitivity / precision | Full sensitivity / precision |
+|---|---:|---:|---:|---:|---:|
+| Liver | 0.913837 | 0.936233 | +0.022396 | 0.897472 / 0.930810 | 0.934120 / 0.938355 |
+| Spleen | 0.798247 | 0.848230 | +0.049983 | 0.699331 / 0.929755 | 0.758629 / 0.961831 |
+| Right kidney | 0.881388 | 0.916943 | +0.035555 | 0.840221 / 0.926796 | 0.894596 / 0.940435 |
+| Left kidney | 0.891304 | 0.933692 | +0.042388 | 0.890582 / 0.892026 | 0.934266 / 0.933120 |
+
+On this volume, moving to the full-resolution configuration increased the same-volume Dice for every evaluated organ. The mean Dice across these four structures rose from 0.871194 to 0.908775 (+0.037581). The largest change was the spleen (+0.049983), whose fast-model sensitivity was 0.699331 against the bundled same-volume label.
+
+| Measurement | Fast 3 mm | Full 1.5 mm |
+|---|---:|---:|
+| Candidate wall-clock duration (end-to-end) | 20.452 s | 30.433 s |
+| GNU `time -v` elapsed command time | 19.22 s | 29.30 s |
+| Peak RSS measured by GNU `time -v` | 4,194,092 KiB (~4.00 GiB) | 3,817,516 KiB (~3.64 GiB) |
+| Four saved organ NIfTI files combined | 169,117 bytes | 168,706 bytes |
+
+In this single sequential run, full resolution took about 48.8% longer by candidate wall time. The measured peak RSS was lower for the full-resolution candidate, which is unexpected enough that it should not be generalized from a single observation. The workflow logs also show model-weight download time was included, and the two configurations downloaded different resolution-specific weights, so these durations are end-to-end measurements, not an isolated warm-cache inference-speed benchmark. Output NIfTI volume sizes were nearly identical.
+
+**Interpretation limit:** these are same-atlas overlaps against labels bundled with the same input volume. Full resolution performed better on this technical comparison; this does not establish independent accuracy, expert anatomical correctness, or generalization beyond this atlas. The intensity offset remains the unverified 1024 hypothesis and the calibration decision remains not established.
+
 ## Interpreting the numbers
 
 - Wall time includes input preparation, model startup, loading/download of weights, inference/resampling and output saving. The first candidate may download weights before the second candidate, so a one-pass timing is not a fair warm-cache latency comparison.
