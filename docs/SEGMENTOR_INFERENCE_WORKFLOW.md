@@ -1,6 +1,6 @@
 # Segmentor inference workflow — opt-in branch contract
 
-**Status:** workflow trigger hardening proposed on a dedicated PR; no inference run or mask publication is caused by this documentation change.  
+**Status:** workflow trigger hardening proposed on a dedicated PR. Workflow-only edits are excluded from the inference path filter; they are checked by standard CI without intentionally launching additional model inference.  
 **Scope:** the existing SPL four-organ generation workflow only. This does not add arbitrary CT upload, new model classes, calibration evidence, or validation.
 
 ## Why this change exists
