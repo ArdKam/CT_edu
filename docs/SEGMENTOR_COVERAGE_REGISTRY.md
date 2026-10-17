@@ -18,7 +18,7 @@ This page summarizes `SEGMENTOR_COVERAGE_REGISTRY.json`, the machine-readable re
 
 - The repository also now has a **controlled external-NIfTI inference CLI** at `scripts/infer_external_ct_volume.py`. It supports the same four major-organ classes for a supplied local 3D NIfTI and writes masks with provenance; it is not a public upload endpoint and does not change the precomputed SPL preview.
 - No independent external cohort has been processed by this CLI as of this baseline. Therefore the generated-prediction count in this registry remains 4 (the SPL preview), independent evaluation remains 0, and anatomical review/educational approval remain 0.
-- The bundled SPL generator now records exact source-member hashes, uses atomic artifact publication/failure recovery, and explicitly writes millimetre spatial units to its generated NIfTI masks. Its 1024 intensity offset remains an unverified hypothesis.
+- The bundled SPL generator code now computes exact source-member hashes, uses atomic artifact publication/failure recovery, and explicitly writes millimetre spatial units to its generated NIfTI masks. However, the currently committed preview manifest has not been regenerated with the source hashes, so the code capability and committed-asset state remain distinct. Its 1024 intensity offset remains an unverified hypothesis.
 
 ## Implementation status summary
 
