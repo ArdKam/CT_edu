@@ -658,6 +658,9 @@ const { chromium } = require('playwright');
     assert.match(await guidedPage.locator('#source-case-operative-note').textContent(), /sigmoid colon epiploica and pelvic sidewall/);
     assert.equal(await guidedPage.locator('#source-case-discussion-source-link').getAttribute('href'),
       'https://radiopaedia.org/cases/closed-loop-obstruction-due-to-adhesive-band-resulting-in-small-bowel-ischemia-and-resection?lang=us');
+    await guidedPage.locator('#guided-case-list .guided-case-card').first().click();
+    assert.match(await guidedPage.locator('#learner-findings').inputValue(), /Dilated small bowel/,
+      'returning to the original case should restore its independent draft after the discussion-case test');
     await guidedPage.waitForFunction(function () {
       return document.documentElement.scrollWidth <= window.innerWidth + 1;
     });
