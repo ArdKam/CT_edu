@@ -49,8 +49,15 @@ class ExternalNiftiInferenceTests(unittest.TestCase):
         output_path = Path(command[command.index("-o") + 1])
         model_input = nib.load(str(input_path))
         shape = model_input.shape
+        subset_index = command.index("--roi_subset") + 1
+        model_classes = []
+        for token in command[subset_index:]:
+            if token.startswith("--"):
+                break
+            model_classes.append(token)
+        selected_targets = inference.resolve_target_classes(model_classes)
         # Use separate regions so the combined-label-map order can be checked.
-        for target in inference.TARGETS:
+        for target in selected_targets:
             mask = np.zeros(shape, dtype=np.uint8)
             if target["modelClass"] != "kidney_left":
                 offset = target["labelId"] - 1
@@ -161,6 +168,30 @@ class ExternalNiftiInferenceTests(unittest.TestCase):
         stored_manifest = json.loads((self.output_path / "manifest.json").read_text(encoding="utf-8"))
         self.assertNotIn(self.input_path.name, json.dumps(stored_manifest))
         self.assertEqual(stored_manifest["sourceInputSha256"], inference.sha256_file(self.input_path))
+
+    def test_external_inference_can_generate_a_selected_vessel_and_organ(self) -> None:
+        with patch.object(inference, "model_version", return_value="2.11.0"), \
+             patch.object(inference.subprocess, "run", side_effect=self.fake_model_run) as model_run:
+            report = inference.run_external_inference(
+                self.input_path,
+                self.output_path,
+                case_id="case-vessel-001",
+                dataset_id="independent-cohort-v1",
+                intensity_offset=0,
+                intensity_semantics="hounsfield-units-confirmed",
+                preprocessing_notes="Fixture uses calibrated HU values and an explicit orthogonal RAS affine.",
+                class_names=["aorta", "anatomy.liver"],
+                resolution="fast",
+                timeout_seconds=300,
+            )
+        self.assertEqual([item["modelClass"] for item in report["organs"]], ["aorta", "liver"])
+        self.assertEqual([item["id"] for item in report["organs"]], ["anatomy.aorta", "anatomy.liver"])
+        self.assertEqual([item["labelId"] for item in report["labelMap"]["labels"]], [1, 2])
+        self.assertTrue((self.output_path / "aorta.nii.gz").is_file())
+        self.assertTrue((self.output_path / "liver.nii.gz").is_file())
+        command = model_run.call_args.args[0]
+        subset = command[command.index("--roi_subset") + 1:command.index("--fast")]
+        self.assertEqual(subset, ["aorta", "liver"])
 
     def test_failed_model_run_preserves_previous_output_and_cleans_stage(self) -> None:
         self.output_path.mkdir()
