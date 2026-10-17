@@ -159,7 +159,9 @@
     var uncompressed = await decompressGzip(compressed);
     var parsed = Core.parseNifti(uncompressed, {
       dimensionsXYZ: state.dimensions,
-      affineRAS: state.manifest.affineRAS
+      affineRAS: state.manifest.affineRAS,
+      spacingMm: state.manifest.spacingMm,
+      niftiSpatialUnits: state.manifest.niftiSpatialUnits
     }, { maxLabel: maxLabel });
     return {
       fileName: fileName,
@@ -202,6 +204,8 @@
     if (!manifest || manifest.schemaVersion !== 1 || manifest.status !== 'experimental-unreviewed' ||
         !Array.isArray(manifest.sourceDimensionsXYZ) || manifest.sourceDimensionsXYZ.join(',') !== DIMS.join(',') ||
         !Array.isArray(manifest.affineRAS) || manifest.affineRAS.length !== 4 ||
+        manifest.niftiSpatialUnits !== 'mm' ||
+        !Array.isArray(manifest.spacingMm) || manifest.spacingMm.length !== 3 ||
         !Array.isArray(manifest.organs) || manifest.organs.length !== 4 ||
         !manifest.labelMap || typeof manifest.labelMap.file !== 'string') {
       throw new Error('The experimental mask manifest is missing required schema or geometry metadata.');
